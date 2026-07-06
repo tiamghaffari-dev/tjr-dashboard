@@ -271,10 +271,88 @@ function buildSignal(htfDf, ltfDf, assetClass, rrTarget = 2.0, sweepLookbackBars
 
 function round6(x) { return Math.round(x * 1e6) / 1e6; }
 
+// Purely additive, for visualization only — never touches buildSignal's
+// validated decision logic. Mirrors the same steps but always surfaces
+// whatever partial structure was found (sweep without BOS, BOS without a
+// valid zone, etc.), so a chart can show "this is what's been analyzed so
+// far" even when the mechanical signal is still "kein Setup"/"Watchlist".
+function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
+  const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
+  const bias = htfDf.length ? htfTrend : 0;
+  const biasLabel = { 1: "bullish", "-1": "bearish", 0: "neutral" }[bias];
+
+  const ann = {
+    bias: biasLabel,
+    htfLastBos: htfBos.length ? htfBos[htfBos.length - 1] : null,
+    sweep: null, bos: null, orderBlock: null,
+    equilibrium: null, zoneKind: null, zoneRange: null,
+  };
+  if (bias === 0) return ann;
+
+  const { bosEvents: ltfBos, swingsSorted: ltfSwings } = computeTrendAndBos(ltfDf);
+  const sweeps = findLiquiditySweeps(ltfDf, ltfSwings);
+  const wantType = bias === 1 ? "sell_side_sweep" : "buy_side_sweep";
+  let recentSweep = null;
+  for (let i = sweeps.length - 1; i >= 0; i--) {
+    const sw = sweeps[i];
+    if (sw.type === wantType && sw.pos >= ltfDf.length - sweepLookbackBars) { recentSweep = sw; break; }
+  }
+  if (!recentSweep) return ann;
+  ann.sweep = recentSweep;
+
+  const wantDir = bias === 1 ? "up" : "down";
+  const sinceSweep = ltfDf.filter((r) => r.ts >= recentSweep.ts);
+  let legLow, legHigh;
+  if (wantDir === "up") {
+    legLow = recentSweep.level;
+    legHigh = sinceSweep.length ? Math.max(...sinceSweep.map((r) => r.high)) : recentSweep.level;
+  } else {
+    legHigh = recentSweep.level;
+    legLow = sinceSweep.length ? Math.min(...sinceSweep.map((r) => r.low)) : recentSweep.level;
+  }
+  ann.equilibrium = (legLow + legHigh) / 2;
+
+  const confirmingBos = ltfBos.filter((b) => b.ts > recentSweep.ts && b.dir === wantDir);
+  if (confirmingBos.length === 0) return ann;
+  const bosEvent = confirmingBos[0];
+  ann.bos = bosEvent;
+
+  const ob = findOrderBlock(ltfDf, bosEvent.ts, wantDir);
+  if (ob) ann.orderBlock = ob;
+
+  const fvgs = unmitigatedFvgs(ltfDf, findFvgs(ltfDf));
+  const wantedZone = wantDir === "up" ? "discount" : "premium";
+  const candidates = [];
+  for (const g of fvgs) {
+    if (g.ts > recentSweep.ts) {
+      const midG = (g.top + g.bottom) / 2;
+      const { zone: z } = premiumDiscountZone(legLow, legHigh, midG);
+      if ((g.type === "bullish" && wantDir === "up" && z === wantedZone)
+        || (g.type === "bearish" && wantDir === "down" && z === wantedZone)) {
+        candidates.push({ kind: "FVG", top: g.top, bottom: g.bottom });
+      }
+    }
+  }
+  if (ob) {
+    const midOb = (ob.top + ob.bottom) / 2;
+    const { zone: z } = premiumDiscountZone(legLow, legHigh, midOb);
+    if (z === wantedZone) candidates.push({ kind: "OrderBlock", top: ob.top, bottom: ob.bottom });
+  }
+  if (candidates.length) {
+    const currentPrice = ltfDf[ltfDf.length - 1].close;
+    candidates.sort((a, b) => (
+      Math.abs(currentPrice - (a.top + a.bottom) / 2) - Math.abs(currentPrice - (b.top + b.bottom) / 2)
+    ));
+    ann.zoneKind = candidates[0].kind;
+    ann.zoneRange = [candidates[0].bottom, candidates[0].top];
+  }
+  return ann;
+}
+
 if (typeof module !== "undefined") {
   module.exports = {
     parseTs, loadCandles, resample, findSwings, computeTrendAndBos,
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
-    premiumDiscountZone, buildSignal,
+    premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }
