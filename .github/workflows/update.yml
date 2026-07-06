@@ -1,0 +1,33 @@
+name: Update TJR Report
+
+on:
+  schedule:
+    # alle 15 Minuten, Mo-Fr, 06:00-21:59 UTC (deckt Wiener Handelszeit + Vorlauf ab)
+    - cron: "*/15 6-21 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Report generieren
+        env:
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        run: node build.js
+
+      - name: Änderungen committen und pushen
+        run: |
+          git config user.name "tjr-bot"
+          git config user.email "actions@github.com"
+          git add docs/index.html
+          git diff --quiet --cached || git commit -m "Report aktualisiert: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
