@@ -1,12 +1,13 @@
 // build.js — fetches live FMP data, runs the TJR engine, optionally adds a
-// supplementary AI assessment via the Anthropic API, and renders docs/index.html.
-// Run via: FMP_API_KEY=xxx ANTHROPIC_API_KEY=yyy node build.js
-// (ANTHROPIC_API_KEY is optional — without it the AI assessment is skipped,
-// the mechanical engine keeps working on its own.)
+// supplementary AI assessment via the Anthropic API, sends a push notification
+// on new ENTRY signals via ntfy.sh, and renders docs/index.html + docs/chart.html.
+// Run via: FMP_API_KEY=xxx ANTHROPIC_API_KEY=yyy NTFY_TOPIC=zzz node build.js
+// (ANTHROPIC_API_KEY and NTFY_TOPIC are both optional — without them those
+// features are skipped, the mechanical engine keeps working on its own.)
 const fs = require("fs");
 const path = require("path");
 const {
-  parseTs, loadCandles, resample, buildSignal,
+  parseTs, loadCandles, resample, buildSignal, buildAnnotations,
 } = require("./engine.js");
 
 const API_KEY = process.env.FMP_API_KEY;
@@ -16,8 +17,10 @@ if (!API_KEY) {
 }
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || null;
 const ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
+const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 
 const BASE = "https://financialmodelingprep.com/stable";
+const STATE_PATH = path.join(__dirname, "state.json");
 
 const ASSETS = [
   { name: "Bitcoin", symbol: "BTCUSD", display: "BTCUSD", icon: "₿" },
@@ -61,7 +64,10 @@ async function analyzeAsset(asset) {
   const htf = resample(df1h, 240);
   const ltf = resample(df5m, 15);
   const sig = buildSignal(htf, ltf);
-  return { sig, ltf: ltf.slice(-100) };
+  const ann = buildAnnotations(htf, ltf);
+  // 150 15-min-Baren (~1.5 Tage) reichen fuer den Sweep-Lookback (40 Baren)
+  // plus genug sichtbaren Kontext davor/danach fuer den Chart.
+  return { sig, ann, ltf: ltf.slice(-150) };
 }
 
 async function loadNews() {
@@ -125,15 +131,61 @@ Einordnung.`;
   }
 }
 
+function loadPrevState() {
+  try {
+    return JSON.parse(fs.readFileSync(STATE_PATH, "utf8"));
+  } catch (e) {
+    return {};
+  }
+}
+
+// Push-Benachrichtigung ueber ntfy.sh (kein Account/Key noetig, nur ein
+// geheimer Topic-Name). Nur bei neuem ENTRY-Signal (rising edge), nicht bei
+// jedem Refresh solange das Signal aktiv bleibt — sonst Spam alle 5 Minuten.
+async function sendNtfy(asset, sig) {
+  if (!NTFY_TOPIC) return;
+  const dir = sig.bias === "bullish" ? "LONG" : "SHORT";
+  const message = `${dir} ${asset.display} — Entry ${sig.entry}, Stop ${sig.stop}, Target ${sig.target}, R:R ${sig.rr}. ${sig.detail || ""}`.trim();
+  try {
+    await fetch(`https://ntfy.sh/${encodeURIComponent(NTFY_TOPIC)}`, {
+      method: "POST",
+      signal: AbortSignal.timeout(15000),
+      headers: {
+        Title: `TJR Entry: ${asset.name} ${dir}`,
+        Priority: "high",
+        Tags: "chart_with_upwards_trend",
+      },
+      body: message,
+    });
+    console.log(`ALERT gesendet: ${asset.name} ${dir}`);
+  } catch (e) {
+    console.error(`ntfy-Benachrichtigung fehlgeschlagen fuer ${asset.name}:`, e.message || e);
+  }
+}
+
+function renderFromTemplate(templateFile, outFile, payload) {
+  const templatePath = path.join(__dirname, "docs", templateFile);
+  const tpl = fs.readFileSync(templatePath, "utf8");
+  const out = tpl
+    .replace("__PRECOMPUTED_JSON__", JSON.stringify(payload))
+    .replace("__GENERATED_AT__", `Zuletzt aktualisiert: ${payload.generatedAt}`);
+  fs.writeFileSync(path.join(__dirname, "docs", outFile), out, "utf8");
+  console.log(`docs/${outFile} geschrieben.`);
+}
+
 async function main() {
   const assets = [];
   for (const asset of ASSETS) {
     try {
-      const { sig, ltf } = await analyzeAsset(asset);
-      assets.push({ asset, sig, ltf, error: null, aiNote: null });
+      const { sig, ann, ltf } = await analyzeAsset(asset);
+      assets.push({
+        asset, sig, ann, ltf, error: null, aiNote: null,
+      });
       console.log(`OK   ${asset.name}: bias=${sig.bias} signal=${sig.signal}`);
     } catch (e) {
-      assets.push({ asset, sig: null, ltf: null, error: e.message || String(e), aiNote: null });
+      assets.push({
+        asset, sig: null, ann: null, ltf: null, error: e.message || String(e), aiNote: null,
+      });
       console.error(`FEHLER ${asset.name}: ${e.message || e}`);
     }
   }
@@ -155,21 +207,34 @@ async function main() {
     console.log("ANTHROPIC_API_KEY nicht gesetzt — KI-Einschaetzung wird uebersprungen.");
   }
 
+  // Nur bei neuem ENTRY (vorher kein ENTRY) eine Push-Benachrichtigung senden.
+  const prevState = loadPrevState();
+  const newState = {};
+  if (NTFY_TOPIC) {
+    for (const item of assets) {
+      if (item.error) continue;
+      const isEntry = item.sig.signal === "ENTRY";
+      newState[item.asset.symbol] = isEntry;
+      const wasEntry = !!prevState[item.asset.symbol];
+      if (isEntry && !wasEntry) {
+        await sendNtfy(item.asset, item.sig);
+      }
+    }
+    fs.writeFileSync(STATE_PATH, JSON.stringify(newState, null, 2), "utf8");
+  } else {
+    console.log("NTFY_TOPIC nicht gesetzt — Push-Benachrichtigungen werden uebersprungen.");
+  }
+
   const payload = {
     generatedAt: new Date().toISOString(),
     assets,
     news,
     aiEnabled: !!ANTHROPIC_API_KEY,
+    alertsEnabled: !!NTFY_TOPIC,
   };
 
-  const templatePath = path.join(__dirname, "docs", "report_template.html");
-  const tpl = fs.readFileSync(templatePath, "utf8");
-  const out = tpl
-    .replace("__PRECOMPUTED_JSON__", JSON.stringify(payload))
-    .replace("__GENERATED_AT__", `Zuletzt aktualisiert: ${payload.generatedAt}`);
-
-  fs.writeFileSync(path.join(__dirname, "docs", "index.html"), out, "utf8");
-  console.log("docs/index.html geschrieben.");
+  renderFromTemplate("report_template.html", "index.html", payload);
+  renderFromTemplate("chart_template.html", "chart.html", payload);
 }
 
 main().catch((e) => {
