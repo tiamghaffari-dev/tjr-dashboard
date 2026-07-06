@@ -2,8 +2,12 @@ name: Update TJR Report
 
 on:
   schedule:
-    # alle 15 Minuten, Mo-Fr, 06:00-21:59 UTC (deckt Wiener Handelszeit + Vorlauf ab)
-    - cron: "*/15 6-21 * * 1-5"
+    # 08:00-14:59 Vienna (CEST/UTC+2): alle 15 Minuten
+    - cron: "*/15 6-12 * * 1-5"
+    # 15:00-16:59 Vienna: dichter getaktet, alle 5 Minuten (Kill-Zone / Fokusfenster)
+    - cron: "*/5 13-14 * * 1-5"
+    # 17:00-23:59 Vienna: wieder alle 15 Minuten
+    - cron: "*/15 15-21 * * 1-5"
   workflow_dispatch: {}
 
 permissions:
