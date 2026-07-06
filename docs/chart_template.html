@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>TJR Live-Chart-Analyse</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(88, 101, 242, 0.16), transparent 42%),
+      radial-gradient(circle at 85% 8%, rgba(57, 255, 136, 0.10), transparent 40%),
+      #05060a;
+    color: #e8eaf0;
+    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  body { padding: 22px 24px 40px; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
+  h1 {
+    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
+    background: linear-gradient(90deg, #7dd3fc, #a78bfa 45%, #39ff88 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tag {
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(122,140,255,0.35);
+    color: #9fb2ff; background: rgba(122,140,255,0.08);
+  }
+  .navlink {
+    font-size: 11.5px; font-family: -apple-system, sans-serif; text-decoration: none;
+    color: #9fb2ff; border: 1px solid rgba(122,140,255,0.35); border-radius: 8px;
+    padding: 5px 10px; background: rgba(122,140,255,0.08); transition: background 0.15s ease;
+  }
+  .navlink:hover { background: rgba(122,140,255,0.18); }
+  .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 16px 0; font-family: -apple-system, sans-serif; }
+  .status-line {
+    font-size: 12px; color: #6b7185; margin-bottom: 18px; padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab {
+    font-family: -apple-system, sans-serif; font-size: 12.5px; font-weight: 600;
+    padding: 8px 14px; border-radius: 10px; cursor: pointer; user-select: none;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    color: #9198ad; transition: all 0.15s ease;
+  }
+  .tab:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .tab.active {
+    background: linear-gradient(180deg, rgba(122,140,255,0.18), rgba(122,140,255,0.06));
+    border-color: rgba(122,140,255,0.5); color: #eef0ff;
+  }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(260px, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+    padding: 16px 18px 14px;
+  }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .panel-head h2 { font-size: 15px; margin: 0; font-family: -apple-system, sans-serif; font-weight: 700; color: #f2f3f8; }
+  .symbol { color: #6b7185; font-size: 11px; letter-spacing: 0.5px; }
+
+  #chart-container { width: 100%; height: 460px; }
+
+  .badges { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  .badge {
+    font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+    letter-spacing: 0.3px; font-family: -apple-system, sans-serif; border: 1px solid transparent;
+  }
+  .bias-bullish { background: rgba(57,255,136,0.12); color: #4fff9c; border-color: rgba(57,255,136,0.3); }
+  .bias-bearish { background: rgba(255,90,90,0.12); color: #ff6b6b; border-color: rgba(255,90,90,0.3); }
+  .bias-neutral { background: rgba(255,255,255,0.06); color: #9aa0b4; border-color: rgba(255,255,255,0.12); }
+  .sig-entry { background: linear-gradient(90deg, #17c96b, #39ff88); color: #041a0d; box-shadow: 0 0 14px rgba(57,255,136,0.45); }
+  .sig-watch { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
+  .sig-none { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
+  .sig-error { background: rgba(255,90,90,0.14); color: #ff6b6b; border-color: rgba(255,90,90,0.35); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 10.5px; color: #9198ad; font-family: -apple-system, sans-serif; margin: 10px 0 4px; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .swatch { width: 12px; height: 3px; border-radius: 2px; display: inline-block; }
+
+  .steps { font-size: 12px; font-family: -apple-system, sans-serif; margin: 6px 0 14px; }
+  .step { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: baseline; }
+  .step:last-child { border-bottom: none; }
+  .step-icon { flex-shrink: 0; width: 16px; text-align: center; }
+  .step-icon.ok { color: #4fff9c; }
+  .step-icon.pending { color: #4b5064; }
+  .step-label { color: #6b7185; min-width: 128px; }
+  .step-text { color: #d7dbe8; }
+
+  .info-table { font-size: 12px; margin-bottom: 4px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+  .info-table div { display: flex; justify-content: space-between; padding: 5px 10px; background: rgba(255,255,255,0.02); }
+  .info-table div:nth-child(even) { background: rgba(255,255,255,0.045); }
+  .info-table span:first-child { color: #6b7185; font-family: -apple-system, sans-serif; font-size: 11px; }
+  .info-table span:last-child { color: #e8eaf0; font-weight: 600; font-size: 11.5px; text-align: right; }
+  .info-table .row-entry span:last-child { color: #4fff9c; }
+  .info-table .row-stop span:last-child { color: #ff6b6b; }
+  .info-table .row-target span:last-child { color: #ffd25c; }
+
+  .ai-note {
+    font-size: 11.5px; line-height: 1.5; color: #d9d3ff; margin: 10px 0 0;
+    padding: 8px 10px; border-radius: 8px; font-family: -apple-system, sans-serif;
+    background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.25);
+  }
+  .ai-note .ai-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; color: #a78bfa; margin-bottom: 3px; text-transform: uppercase; }
+  .err { color: #ff8080; font-size: 12px; font-family: -apple-system, sans-serif; }
+  ::selection { background: rgba(122,140,255,0.35); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>TJR LIVE-CHART-ANALYSE</h1>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a class="navlink" href="index.html">← Zurück zum Dashboard</a>
+      <span class="tag">no auto-trades · analysis only</span>
+    </div>
+  </div>
+  <div class="subtitle">Candlestick-Chart (15min) mit automatisch eingezeichneter ICT/SMC-Struktur — Sweep, BOS, FVG/Order-Block-Zone, Equilibrium. Wird auch gezeigt, wenn (noch) kein Entry aktiv ist.</div>
+  <div id="status" class="status-line">__GENERATED_AT__</div>
+
+  <div id="tabs" class="tabs"></div>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="panel-head">
+        <h2 id="asset-title">–</h2>
+        <span class="symbol" id="asset-symbol">–</span>
+      </div>
+      <div id="chart-container"></div>
+      <div class="legend">
+        <span><i class="swatch" style="background:#7dd3fc"></i>Liquidity Sweep</span>
+        <span><i class="swatch" style="background:#a78bfa"></i>BOS</span>
+        <span><i class="swatch" style="background:#9198ad"></i>Equilibrium</span>
+        <span><i class="swatch" style="background:#d8b98c"></i>FVG / Order-Block-Zone</span>
+        <span><i class="swatch" style="background:#4fff9c"></i>Entry</span>
+        <span><i class="swatch" style="background:#ff6b6b"></i>Stop</span>
+        <span><i class="swatch" style="background:#ffd25c"></i>Target</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Analyse-Status</h2></div>
+      <div id="badges" class="badges"></div>
+      <div id="steps" class="steps"></div>
+      <div id="info-table" class="info-table"></div>
+      <div id="ai-note-slot"></div>
+      <div id="error-slot"></div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+const PRECOMPUTED = __PRECOMPUTED_JSON__;
+let chart = null;
+let series = null;
+let activeIndex = 0;
+
+function fmtOrDash(x) { return (x === null || x === undefined) ? "–" : x; }
+function badgeClassBias(bias) {
+  if (bias === "bullish") return "bias-bullish";
+  if (bias === "bearish") return "bias-bearish";
+  return "bias-neutral";
+}
+function badgeClassSignal(sig) {
+  if (sig === "ENTRY") return "sig-entry";
+  if (sig && sig.startsWith("Watchlist")) return "sig-watch";
+  return "sig-none";
+}
+function biasArrow(bias) {
+  if (bias === "bullish") return "▲";
+  if (bias === "bearish") return "▼";
+  return "●";
+}
+function sweepLabel(sweep) {
+  return sweep.type === "sell_side_sweep" ? "Sellside Liquidity" : "Buyside Liquidity";
+}
+
+function analysisSteps(sig, ann) {
+  const steps = [];
+  steps.push({
+    ok: ann.bias !== "neutral", label: "4H-Bias",
+    text: ann.bias.toUpperCase(),
+  });
+  steps.push({
+    ok: !!ann.sweep, label: "Liquidity Sweep",
+    text: ann.sweep ? `${sweepLabel(ann.sweep)} @ ${(+ann.sweep.level).toPrecision(6)}` : "noch nicht gefunden",
+  });
+  steps.push({
+    ok: !!ann.bos, label: "Bestätigender BOS",
+    text: ann.bos ? `${ann.bos.dir === "up" ? "↑" : "↓"} @ ${(+ann.bos.level).toPrecision(6)}` : "noch nicht bestätigt",
+  });
+  steps.push({
+    ok: !!ann.zoneKind, label: "Entry-Zone (FVG/OB)",
+    text: ann.zoneKind ? `${ann.zoneKind} [${ann.zoneRange[0].toPrecision(6)} - ${ann.zoneRange[1].toPrecision(6)}]` : "keine gültige Zone",
+  });
+  steps.push({
+    ok: sig.signal === "ENTRY", label: "Signal",
+    text: sig.signal,
+  });
+  return steps;
+}
+
+function renderTabs() {
+  const tabsEl = document.getElementById("tabs");
+  tabsEl.innerHTML = "";
+  PRECOMPUTED.assets.forEach((item, i) => {
+    const tab = document.createElement("div");
+    tab.className = "tab" + (i === activeIndex ? " active" : "");
+    tab.textContent = `${item.asset.icon} ${item.asset.name}`;
+    tab.onclick = () => { activeIndex = i; renderAll(); };
+    tabsEl.appendChild(tab);
+  });
+}
+
+function renderSidebar(item) {
+  const badgesEl = document.getElementById("badges");
+  const stepsEl = document.getElementById("steps");
+  const tableEl = document.getElementById("info-table");
+  const aiEl = document.getElementById("ai-note-slot");
+  const errEl = document.getElementById("error-slot");
+  badgesEl.innerHTML = ""; stepsEl.innerHTML = ""; tableEl.innerHTML = ""; aiEl.innerHTML = ""; errEl.innerHTML = "";
+
+  document.getElementById("asset-title").textContent = `${item.asset.icon} ${item.asset.name}`;
+  document.getElementById("asset-symbol").textContent = item.asset.display;
+
+  if (item.error) {
+    errEl.innerHTML = `<div class="err">${item.error}</div>`;
+    return;
+  }
+
+  const { sig, ann } = item;
+  badgesEl.innerHTML = `<span class="badge ${badgeClassBias(sig.bias)}">${biasArrow(sig.bias)} 4H ${sig.bias.toUpperCase()}</span>
+    <span class="badge ${badgeClassSignal(sig.signal)}">${sig.signal.split(" (")[0]}</span>`;
+
+  stepsEl.innerHTML = analysisSteps(sig, ann).map((s) => (
+    `<div class="step"><span class="step-icon ${s.ok ? "ok" : "pending"}">${s.ok ? "✓" : "…"}</span>
+      <span class="step-label">${s.label}</span><span class="step-text">${s.text}</span></div>`
+  )).join("");
+
+  tableEl.innerHTML = `
+    <div class="row-entry"><span>Entry</span><span>${fmtOrDash(sig.entry)}</span></div>
+    <div class="row-stop"><span>Stop</span><span>${fmtOrDash(sig.stop)}</span></div>
+    <div class="row-target"><span>Target</span><span>${fmtOrDash(sig.target)}</span></div>
+    <div><span>R:R</span><span>${sig.rr ? "1:" + sig.rr : "–"}</span></div>
+    <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>`;
+
+  if (item.aiNote) {
+    aiEl.innerHTML = `<div class="ai-note"><span class="ai-label">KI-Einschätzung (ergänzend, ersetzt nicht die Regel-Engine)</span>${item.aiNote}</div>`;
+  }
+}
+
+function renderChart(item) {
+  const container = document.getElementById("chart-container");
+  container.innerHTML = "";
+  if (item.error || !item.ltf || !item.ltf.length) return;
+
+  chart = LightweightCharts.createChart(container, {
+    width: container.clientWidth,
+    height: 460,
+    layout: { background: { color: "transparent" }, textColor: "#9198ad" },
+    grid: {
+      vertLines: { color: "rgba(255,255,255,0.05)" },
+      horzLines: { color: "rgba(255,255,255,0.05)" },
+    },
+    timeScale: { timeVisible: true, secondsVisible: false, borderColor: "rgba(255,255,255,0.1)" },
+    rightPriceScale: { borderColor: "rgba(255,255,255,0.1)" },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+  });
+
+  series = chart.addCandlestickSeries({
+    upColor: "#4fff9c", downColor: "#ff6b6b", borderVisible: false,
+    wickUpColor: "#4fff9c", wickDownColor: "#ff6b6b",
+  });
+
+  const candles = item.ltf.map((c) => ({
+    time: Math.floor(c.ts / 1000), open: c.open, high: c.high, low: c.low, close: c.close,
+  }));
+  series.setData(candles);
+
+  const { ann, sig } = item;
+  const markers = [];
+
+  if (ann.sweep) {
+    series.createPriceLine({
+      price: ann.sweep.level, color: "#7dd3fc", lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
+      title: sweepLabel(ann.sweep),
+    });
+    markers.push({
+      time: Math.floor(ann.sweep.ts / 1000), position: "belowBar",
+      color: "#7dd3fc", shape: "circle", text: "Sweep",
+    });
+  }
+  if (ann.bos) {
+    series.createPriceLine({
+      price: ann.bos.level, color: "#a78bfa", lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
+      title: "BOS",
+    });
+    markers.push({
+      time: Math.floor(ann.bos.ts / 1000),
+      position: ann.bos.dir === "up" ? "belowBar" : "aboveBar",
+      color: "#a78bfa", shape: ann.bos.dir === "up" ? "arrowUp" : "arrowDown", text: "BOS",
+    });
+  }
+  if (ann.equilibrium !== null) {
+    series.createPriceLine({
+      price: ann.equilibrium, color: "#9198ad", lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
+      title: "Equilibrium",
+    });
+  }
+  if (ann.zoneRange) {
+    const kind = ann.zoneKind === "FVG" ? "FVG" : "OB";
+    series.createPriceLine({
+      price: ann.zoneRange[1], color: "#d8b98c", lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
+      title: `${kind} oben`,
+    });
+    series.createPriceLine({
+      price: ann.zoneRange[0], color: "#d8b98c", lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
+      title: `${kind} unten`,
+    });
+  }
+  if (sig.entry !== null) {
+    series.createPriceLine({
+      price: sig.entry, color: "#4fff9c", lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: "Entry",
+    });
+    series.createPriceLine({
+      price: sig.stop, color: "#ff6b6b", lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: "Stop",
+    });
+    series.createPriceLine({
+      price: sig.target, color: "#ffd25c", lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: "Target",
+    });
+  }
+
+  markers.sort((a, b) => a.time - b.time);
+  if (markers.length) series.setMarkers(markers);
+
+  chart.timeScale().fitContent();
+
+  window.addEventListener("resize", () => {
+    if (chart) chart.applyOptions({ width: container.clientWidth });
+  });
+}
+
+function renderAll() {
+  renderTabs();
+  const item = PRECOMPUTED.assets[activeIndex];
+  renderSidebar(item);
+  renderChart(item);
+}
+
+renderAll();
+</script>
+</body>
+</html>
