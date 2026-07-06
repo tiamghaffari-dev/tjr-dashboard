@@ -107,6 +107,12 @@
   .info-table .row-target span:last-child { color: #ffd25c; }
   .info-table .row-grund span:last-child { color: #9fb2ff; font-weight: 500; text-align: right; max-width: 60%; }
 
+  .navlink {
+    font-size: 11.5px; font-family: -apple-system, sans-serif; text-decoration: none;
+    color: #9fb2ff; border: 1px solid rgba(122,140,255,0.35); border-radius: 8px;
+    padding: 5px 10px; background: rgba(122,140,255,0.08); transition: background 0.15s ease;
+  }
+  .navlink:hover { background: rgba(122,140,255,0.18); }
   .err { color: #ff8080; font-size: 12px; font-family: -apple-system, sans-serif; }
   .ai-note {
     font-size: 11.5px; line-height: 1.5; color: #d9d3ff; margin-bottom: 10px;
@@ -124,7 +130,10 @@
       <span class="dot"></span>
       <h1>TJR LIVE-REPORT // ICT-SMC</h1>
     </div>
-    <span class="tag">no auto-trades · analysis only</span>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a class="navlink" href="chart.html">📈 Live-Chart-Analyse</a>
+      <span class="tag">no auto-trades · analysis only</span>
+    </div>
   </div>
   <div class="subtitle">Bitcoin · Ethereum · XRP · GBP/USD · S&amp;P 500 · Gold — 4H-Bias / Sweep / BOS / Entry-Zone, automatisch aktualisiert via GitHub Actions</div>
   <div id="status" class="status-line">__GENERATED_AT__</div>
