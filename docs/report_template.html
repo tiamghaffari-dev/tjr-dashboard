@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>TJR Live-Style Report</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(88, 101, 242, 0.16), transparent 42%),
+      radial-gradient(circle at 85% 8%, rgba(57, 255, 136, 0.10), transparent 40%),
+      #05060a;
+    color: #e8eaf0;
+    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  body { padding: 22px 24px 40px; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
+  h1 {
+    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
+    background: linear-gradient(90deg, #7dd3fc, #a78bfa 45%, #39ff88 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tag {
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(122,140,255,0.35);
+    color: #9fb2ff; background: rgba(122,140,255,0.08);
+  }
+  .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 16px 0; font-family: -apple-system, sans-serif; }
+  .status-line {
+    font-size: 12px; color: #6b7185; margin-bottom: 18px; padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .news-box {
+    background: linear-gradient(135deg, rgba(255,196,0,0.08), rgba(255,196,0,0.02));
+    border: 1px solid rgba(255,196,0,0.28); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px;
+    font-family: -apple-system, sans-serif; animation: fadeUp 0.4s ease;
+  }
+  .news-box.empty { background: linear-gradient(135deg, rgba(57,255,136,0.07), rgba(57,255,136,0.01)); border-color: rgba(57,255,136,0.25); color: #9be8b8; }
+  .news-title { font-weight: 700; margin-bottom: 6px; color: #ffd25c; letter-spacing: 0.3px; }
+  .news-box.empty .news-title { color: #6be79a; }
+  .news-item { margin: 3px 0; color: #d8d2b8; }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    position: relative; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+    padding: 16px 18px 14px; backdrop-filter: blur(6px);
+    animation: fadeUp 0.45s ease both;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(122,140,255,0.4);
+    box-shadow: 0 12px 30px -14px rgba(88,101,242,0.45);
+  }
+  .card.glow-entry { border-color: rgba(57,255,136,0.5); box-shadow: 0 0 0 1px rgba(57,255,136,0.15), 0 14px 34px -16px rgba(57,255,136,0.35); }
+  .card.glow-error { border-color: rgba(255,90,90,0.4); }
+
+  .card-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .card-head h2 { font-size: 15px; margin: 0; font-family: -apple-system, sans-serif; font-weight: 700; color: #f2f3f8; letter-spacing: 0.2px; }
+  .symbol { color: #6b7185; font-size: 11px; letter-spacing: 0.5px; }
+
+  .badges { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  .badge {
+    font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+    letter-spacing: 0.3px; font-family: -apple-system, sans-serif;
+    border: 1px solid transparent;
+  }
+  .bias-bullish { background: rgba(57,255,136,0.12); color: #4fff9c; border-color: rgba(57,255,136,0.3); }
+  .bias-bearish { background: rgba(255,90,90,0.12); color: #ff6b6b; border-color: rgba(255,90,90,0.3); }
+  .bias-neutral { background: rgba(255,255,255,0.06); color: #9aa0b4; border-color: rgba(255,255,255,0.12); }
+  .sig-entry {
+    background: linear-gradient(90deg, #17c96b, #39ff88); color: #041a0d;
+    box-shadow: 0 0 14px rgba(57,255,136,0.45);
+  }
+  .sig-watch { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
+  .sig-none { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
+  .sig-error { background: rgba(255,90,90,0.14); color: #ff6b6b; border-color: rgba(255,90,90,0.35); }
+
+  .info-table { font-size: 12px; margin-bottom: 10px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+  .info-table div {
+    display: flex; justify-content: space-between; padding: 5px 10px;
+    background: rgba(255,255,255,0.02);
+  }
+  .info-table div:nth-child(even) { background: rgba(255,255,255,0.045); }
+  .info-table span:first-child { color: #6b7185; font-family: -apple-system, sans-serif; font-size: 11px; }
+  .info-table span:last-child { color: #e8eaf0; font-weight: 600; font-size: 11.5px; text-align: right; }
+  .info-table .row-entry span:last-child { color: #4fff9c; }
+  .info-table .row-stop span:last-child { color: #ff6b6b; }
+  .info-table .row-target span:last-child { color: #ffd25c; }
+  .info-table .row-grund span:last-child { color: #9fb2ff; font-weight: 500; text-align: right; max-width: 60%; }
+
+  .err { color: #ff8080; font-size: 12px; font-family: -apple-system, sans-serif; }
+  canvas { max-height: 150px; }
+  ::selection { background: rgba(122,140,255,0.35); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>TJR LIVE-REPORT // ICT-SMC</h1>
+    </div>
+    <span class="tag">no auto-trades · analysis only</span>
+  </div>
+  <div class="subtitle">Bitcoin · Ethereum · XRP · GBP/USD · S&amp;P 500 · Gold — 4H-Bias / Sweep / BOS / Entry-Zone, automatisch aktualisiert via GitHub Actions</div>
+  <div id="status" class="status-line">__GENERATED_AT__</div>
+  <div id="news"></div>
+  <div id="grid" class="grid"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
+<script>
+const PRECOMPUTED = __PRECOMPUTED_JSON__;
+
+function fmtTs(ms) {
+  const d = new Date(ms);
+  const p = n => String(n).padStart(2, "0");
+  return `${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())} ET`;
+}
+function badgeClassBias(bias) {
+  if (bias === "bullish") return "bias-bullish";
+  if (bias === "bearish") return "bias-bearish";
+  return "bias-neutral";
+}
+function badgeClassSignal(sig) {
+  if (sig === "ENTRY") return "sig-entry";
+  if (sig && sig.startsWith("Watchlist")) return "sig-watch";
+  return "sig-none";
+}
+function biasArrow(bias) {
+  if (bias === "bullish") return "▲";
+  if (bias === "bearish") return "▼";
+  return "●";
+}
+function sweepText(sig) {
+  if (!sig.sweep) return "–";
+  const label = sig.sweep.type === "sell_side_sweep" ? "Sellside" : "Buyside";
+  return `${label} @ ${(+sig.sweep.level).toPrecision(6)}`;
+}
+function bosText(sig) {
+  if (!sig.bos) return "–";
+  const arrow = sig.bos.dir === "up" ? "↑" : "↓";
+  return `${arrow} @ ${(+sig.bos.level).toPrecision(6)}`;
+}
+function zoneText(sig) { return sig.zone ? sig.zone : "–"; }
+function shortGrund(sig) {
+  const s = sig.signal;
+  if (s === "ENTRY") return "Preis in Entry-Zone";
+  if (s.startsWith("Watchlist (Sweep ohne")) return "Sweep unbestätigt";
+  if (s.startsWith("Watchlist (auf Retracement")) return "Wartet auf Retracement";
+  if (s.startsWith("Watchlist (BOS bestätigt")) return "Keine Zone im Premium/Discount";
+  if (s === "kein Setup") return "Kein Sweep in Bias-Richtung";
+  return s;
+}
+function fmtOrDash(x) { return (x === null || x === undefined) ? "–" : x; }
+
+function renderCard(asset, sig, ltf, error) {
+  const card = document.createElement("div");
+  if (error) {
+    card.className = "card glow-error";
+    card.innerHTML = `<div class="card-head"><h2>${asset.icon} ${asset.name}</h2><span class="symbol">${asset.display}</span></div>
+      <div class="badges"><span class="badge sig-error">FEHLER</span></div>
+      <div class="err">${error}</div>`;
+    return card;
+  }
+  card.className = "card" + (sig.signal === "ENTRY" ? " glow-entry" : "");
+
+  const head = document.createElement("div");
+  head.className = "card-head";
+  head.innerHTML = `<h2>${asset.icon} ${asset.name}</h2><span class="symbol">${asset.display}</span>`;
+  card.appendChild(head);
+
+  const badges = document.createElement("div");
+  badges.className = "badges";
+  badges.innerHTML = `<span class="badge ${badgeClassBias(sig.bias)}">${biasArrow(sig.bias)} 4H ${sig.bias.toUpperCase()}</span>
+    <span class="badge ${badgeClassSignal(sig.signal)}">${sig.signal.split(" (")[0]}</span>`;
+  card.appendChild(badges);
+
+  const table = document.createElement("div");
+  table.className = "info-table";
+  table.innerHTML = `
+    <div class="row-grund"><span>Grund</span><span>${shortGrund(sig)}</span></div>
+    <div><span>Sweep</span><span>${sweepText(sig)}</span></div>
+    <div><span>BOS</span><span>${bosText(sig)}</span></div>
+    <div><span>Zone</span><span>${zoneText(sig)}</span></div>
+    <div class="row-entry"><span>Entry</span><span>${fmtOrDash(sig.entry)}</span></div>
+    <div class="row-stop"><span>Stop</span><span>${fmtOrDash(sig.stop)}</span></div>
+    <div class="row-target"><span>Target</span><span>${fmtOrDash(sig.target)}</span></div>
+    <div><span>R:R</span><span>${sig.rr ? "1:" + sig.rr : "–"}</span></div>
+    <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>`;
+  card.appendChild(table);
+
+  const canvas = document.createElement("canvas");
+  card.appendChild(canvas);
+  const labels = ltf.map(r => fmtTs(r.ts).slice(5, 16));
+  const lineColor = sig.bias === "bearish" ? "#ff6b6b" : "#4fff9c";
+  const datasets = [{
+    label: "Close (15min)", data: ltf.map(r => r.close),
+    borderColor: lineColor, borderWidth: 1.6, pointRadius: 0, tension: 0.15,
+    fill: true, backgroundColor: (ctx) => {
+      const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 150);
+      g.addColorStop(0, lineColor + "33"); g.addColorStop(1, lineColor + "00");
+      return g;
+    },
+  }];
+  if (sig.entry !== null) {
+    datasets.push({ label: "Entry", data: ltf.map(() => sig.entry), borderColor: "#4fff9c", borderWidth: 1, borderDash: [4, 3], pointRadius: 0 });
+    datasets.push({ label: "Stop", data: ltf.map(() => sig.stop), borderColor: "#ff6b6b", borderWidth: 1, borderDash: [4, 3], pointRadius: 0 });
+    datasets.push({ label: "Target", data: ltf.map(() => sig.target), borderColor: "#ffd25c", borderWidth: 1, borderDash: [4, 3], pointRadius: 0 });
+  }
+  new Chart(canvas.getContext("2d"), {
+    type: "line",
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: sig.entry !== null, labels: { boxWidth: 10, font: { size: 10 }, color: "#9198ad" } },
+        tooltip: { backgroundColor: "#12141c", titleColor: "#e8eaf0", bodyColor: "#e8eaf0", borderColor: "rgba(255,255,255,0.1)", borderWidth: 1 },
+      },
+      scales: {
+        x: { display: false },
+        y: { ticks: { font: { size: 10 }, color: "#6b7185" }, grid: { color: "rgba(255,255,255,0.05)" } },
+      },
+    },
+  });
+  return card;
+}
+
+function main() {
+  const gridEl = document.getElementById("grid");
+  const newsEl = document.getElementById("news");
+
+  if (PRECOMPUTED.news.length > 0) {
+    const box = document.createElement("div");
+    box.className = "news-box";
+    box.innerHTML = `<div class="news-title">⚠ High-Impact News heute (USD/GBP)</div>` +
+      PRECOMPUTED.news.map(ev => `<div class="news-item">${ev.date.slice(11,16)} ET — ${ev.event} (${ev.currency})</div>`).join("");
+    newsEl.appendChild(box);
+  } else {
+    const box = document.createElement("div");
+    box.className = "news-box empty";
+    box.innerHTML = `<div class="news-title">✓ Keine High-Impact News (USD/GBP) heute</div>`;
+    newsEl.appendChild(box);
+  }
+
+  for (const item of PRECOMPUTED.assets) {
+    gridEl.appendChild(renderCard(item.asset, item.sig, item.ltf, item.error));
+  }
+}
+main();
+</script>
+</body>
+</html>
