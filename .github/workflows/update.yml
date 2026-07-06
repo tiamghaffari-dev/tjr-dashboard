@@ -27,12 +27,13 @@ jobs:
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: node build.js
 
       - name: Änderungen committen und pushen
         run: |
           git config user.name "tjr-bot"
           git config user.email "actions@github.com"
-          git add docs/index.html
+          git add docs/index.html docs/chart.html state.json
           git diff --quiet --cached || git commit -m "Report aktualisiert: $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
