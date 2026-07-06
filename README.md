@@ -61,13 +61,16 @@ an ist.
 
 ## Zeitplan anpassen
 
-In `.github/workflows/update.yml` steht:
+In `.github/workflows/update.yml` stehen drei Cron-Zeilen (UTC, Wien ist
+aktuell Sommerzeit = UTC+2):
 ```
-cron: "*/15 6-21 * * 1-5"
+- cron: "*/15 6-12 * * 1-5"   # 08:00-14:59 Wien: alle 15 Minuten
+- cron: "*/5 13-14 * * 1-5"   # 15:00-16:59 Wien: alle 5 Minuten (Fokusfenster)
+- cron: "*/15 15-21 * * 1-5"  # 17:00-23:59 Wien: wieder alle 15 Minuten
 ```
-Das ist UTC-Zeit, alle 15 Minuten von 06:00–21:59 UTC, Montag–Freitag.
-Wien ist aktuell (Sommerzeit) UTC+2, das deckt also ca. 08:00–23:59 Wiener
-Zeit ab. Zeiten/Frequenz kannst du direkt in der Cron-Syntax anpassen.
+Zwischen 15 und 17 Uhr Wiener Zeit läuft der Report also alle 5 statt alle
+15 Minuten. Zeiten/Frequenz kannst du direkt in der Cron-Syntax anpassen —
+GitHub Actions erlaubt praktisch keine kürzeren Abstände als 5 Minuten.
 
 ## Unterschied zum Cowork-Dashboard
 
