@@ -108,6 +108,12 @@
   .info-table .row-grund span:last-child { color: #9fb2ff; font-weight: 500; text-align: right; max-width: 60%; }
 
   .err { color: #ff8080; font-size: 12px; font-family: -apple-system, sans-serif; }
+  .ai-note {
+    font-size: 11.5px; line-height: 1.5; color: #d9d3ff; margin-bottom: 10px;
+    padding: 8px 10px; border-radius: 8px; font-family: -apple-system, sans-serif;
+    background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.25);
+  }
+  .ai-note .ai-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; color: #a78bfa; margin-bottom: 3px; text-transform: uppercase; }
   canvas { max-height: 150px; }
   ::selection { background: rgba(122,140,255,0.35); }
 </style>
@@ -171,7 +177,7 @@ function shortGrund(sig) {
 }
 function fmtOrDash(x) { return (x === null || x === undefined) ? "–" : x; }
 
-function renderCard(asset, sig, ltf, error) {
+function renderCard(asset, sig, ltf, error, aiNote) {
   const card = document.createElement("div");
   if (error) {
     card.className = "card glow-error";
@@ -206,6 +212,13 @@ function renderCard(asset, sig, ltf, error) {
     <div><span>R:R</span><span>${sig.rr ? "1:" + sig.rr : "–"}</span></div>
     <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>`;
   card.appendChild(table);
+
+  if (aiNote) {
+    const note = document.createElement("div");
+    note.className = "ai-note";
+    note.innerHTML = `<span class="ai-label">KI-Einschätzung (ergänzend, ersetzt nicht die Regel-Engine)</span>${aiNote}`;
+    card.appendChild(note);
+  }
 
   const canvas = document.createElement("canvas");
   card.appendChild(canvas);
@@ -261,7 +274,7 @@ function main() {
   }
 
   for (const item of PRECOMPUTED.assets) {
-    gridEl.appendChild(renderCard(item.asset, item.sig, item.ltf, item.error));
+    gridEl.appendChild(renderCard(item.asset, item.sig, item.ltf, item.error, item.aiNote));
   }
 }
 main();
