@@ -20,10 +20,16 @@ selbst eintragen kannst.
   Karte im Report.
 - `docs/report_template.html` — das Dashboard-Template (dunkles Design,
   Tabelle pro Asset statt Fließtext, plus optionaler KI-Kommentar-Block).
+- `docs/chart_template.html` — die Live-Chart-Analyse-Seite: Candlestick-Chart
+  (TradingView Lightweight Charts) pro Asset mit automatisch eingezeichneter
+  ICT/SMC-Struktur (Sweep, BOS, FVG/Order-Block-Zone, Equilibrium) — zeigt
+  auch, was analysiert wurde, wenn (noch) kein Entry aktiv ist.
 - `.github/workflows/update.yml` — GitHub Actions Workflow, der `build.js`
   nach Zeitplan ausführt und das Ergebnis committet.
-- `docs/index.html` — die tatsächlich veröffentlichte Seite (wird von GitHub
-  Pages ausgeliefert, entsteht automatisch beim ersten Workflow-Lauf).
+- `docs/index.html` / `docs/chart.html` — die tatsächlich veröffentlichten
+  Seiten (werden von GitHub Pages ausgeliefert, entstehen automatisch bei
+  jedem Workflow-Lauf). Über den Dashboard-Link "📈 Live-Chart-Analyse"
+  bzw. den Link "← Zurück zum Dashboard" erreichbar.
 
 ## Was noch zu tun ist (ca. 5 Minuten)
 
@@ -49,7 +55,23 @@ selbst eintragen kannst.
    - Gleicher Weg wie oben: **Settings → Secrets and variables → Actions →
      New repository secret**. Name: `ANTHROPIC_API_KEY`, Wert: dein Key.
 
-3. **Workflow einmal manuell anstoßen** (nicht auf den ersten Cron-Lauf
+3. **ntfy.sh-Topic hinterlegen** (optional — nur für Push-Benachrichtigungen
+   bei neuem ENTRY-Signal; ohne diesen Key läuft alles wie gewohnt, nur ohne
+   Push):
+   - Kein Account/Key nötig — such dir einfach einen eigenen, nicht
+     erratbaren Topic-Namen aus (z.B. `tjr-tiam-x7k2`, wie ein Passwort
+     behandeln, da das Repo öffentlich ist und jeder den Topic-Namen kennen
+     könnte).
+   - App "ntfy" installieren (iOS/Android, kostenlos) oder im Browser
+     `https://ntfy.sh/<dein-topic-name>` öffnen, dort auf "Subscribe"/im
+     App auf "+" und den gleichen Topic-Namen eintragen.
+   - Gleicher Weg wie oben: **Settings → Secrets and variables → Actions →
+     New repository secret**. Name: `NTFY_TOPIC`, Wert: dein gewählter
+     Topic-Name.
+   - Es wird nur benachrichtigt, wenn ein Asset NEU auf "ENTRY" wechselt
+     (nicht bei jedem Refresh, solange das Signal aktiv bleibt).
+
+4. **Workflow einmal manuell anstoßen** (nicht auf den ersten Cron-Lauf
    warten): Tab **Actions** → "Update TJR Report" → "Run workflow".
 
 Nach wenigen Minuten ist die Seite live unter:
