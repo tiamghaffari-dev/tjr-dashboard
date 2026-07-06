@@ -207,21 +207,22 @@ async function main() {
     console.log("ANTHROPIC_API_KEY nicht gesetzt — KI-Einschaetzung wird uebersprungen.");
   }
 
-  // Nur bei neuem ENTRY (vorher kein ENTRY) eine Push-Benachrichtigung senden.
+  // State (welches Asset zuletzt ENTRY war) wird immer geschrieben, damit
+  // git add state.json nie auf eine fehlende Datei trifft. Nur das SENDEN
+  // der Push-Benachrichtigung haengt am optionalen NTFY_TOPIC.
   const prevState = loadPrevState();
   const newState = {};
-  if (NTFY_TOPIC) {
-    for (const item of assets) {
-      if (item.error) continue;
-      const isEntry = item.sig.signal === "ENTRY";
-      newState[item.asset.symbol] = isEntry;
-      const wasEntry = !!prevState[item.asset.symbol];
-      if (isEntry && !wasEntry) {
-        await sendNtfy(item.asset, item.sig);
-      }
+  for (const item of assets) {
+    if (item.error) continue;
+    const isEntry = item.sig.signal === "ENTRY";
+    newState[item.asset.symbol] = isEntry;
+    const wasEntry = !!prevState[item.asset.symbol];
+    if (isEntry && !wasEntry && NTFY_TOPIC) {
+      await sendNtfy(item.asset, item.sig);
     }
-    fs.writeFileSync(STATE_PATH, JSON.stringify(newState, null, 2), "utf8");
-  } else {
+  }
+  fs.writeFileSync(STATE_PATH, JSON.stringify(newState, null, 2), "utf8");
+  if (!NTFY_TOPIC) {
     console.log("NTFY_TOPIC nicht gesetzt — Push-Benachrichtigungen werden uebersprungen.");
   }
 
