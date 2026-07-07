@@ -53,6 +53,22 @@
   .news-box.empty .news-title { color: #6be79a; }
   .news-item { margin: 3px 0; color: #d8d2b8; }
 
+  .settings-box {
+    background: linear-gradient(135deg, rgba(122,140,255,0.09), rgba(122,140,255,0.02));
+    border: 1px solid rgba(122,140,255,0.25); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 20px; font-size: 12px;
+    font-family: -apple-system, sans-serif; display: flex; align-items: center;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .settings-title { font-weight: 700; color: #9fb2ff; letter-spacing: 0.3px; flex-basis: 100%; margin-bottom: 2px; }
+  .settings-field { display: flex; align-items: center; gap: 6px; }
+  .settings-field label { color: #7c8399; }
+  .settings-field input {
+    width: 90px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px; color: #e8eaf0; padding: 4px 8px; font-family: inherit; font-size: 12px;
+  }
+  .settings-hint { color: #565c70; font-size: 10.5px; flex-basis: 100%; }
+
   .grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
     gap: 16px;
@@ -106,6 +122,7 @@
   .info-table .row-stop span:last-child { color: #ff6b6b; }
   .info-table .row-target span:last-child { color: #ffd25c; }
   .info-table .row-grund span:last-child { color: #9fb2ff; font-weight: 500; text-align: right; max-width: 60%; }
+  .info-table .row-size span:last-child { color: #7dd3fc; }
 
   .navlink {
     font-size: 11.5px; font-family: -apple-system, sans-serif; text-decoration: none;
@@ -137,6 +154,20 @@
   </div>
   <div class="subtitle">Bitcoin · Ethereum · XRP · GBP/USD · S&amp;P 500 · Gold — 4H-Bias / Sweep / BOS / Entry-Zone, automatisch aktualisiert via GitHub Actions</div>
   <div id="status" class="status-line">__GENERATED_AT__</div>
+
+  <div class="settings-box">
+    <div class="settings-title">💰 Positionsgrößen-Rechner</div>
+    <div class="settings-field">
+      <label for="acct-size">Kontogröße</label>
+      <input type="number" id="acct-size" min="0" step="100">
+    </div>
+    <div class="settings-field">
+      <label for="risk-pct">Risiko % / Trade</label>
+      <input type="number" id="risk-pct" min="0" step="0.1">
+    </div>
+    <div class="settings-hint">Wird nur lokal in deinem Browser gespeichert (localStorage), nirgendwo hochgeladen. Positionsgröße = (Kontogröße × Risiko%) ÷ Stop-Distanz. Bei Forex: 100.000 Einheiten = 1 Standard-Lot. Keine Anlageberatung.</div>
+  </div>
+
   <div id="news"></div>
   <div id="grid" class="grid"></div>
 
@@ -186,6 +217,29 @@ function shortGrund(sig) {
 }
 function fmtOrDash(x) { return (x === null || x === undefined) ? "–" : x; }
 
+// --- Positionsgrößen-Rechner: rein clientseitig, nichts wird gesendet/gespeichert
+// ausser im eigenen Browser (localStorage). Kein Teil der rueckgetesteten
+// Regel-Engine - reine Anzeige-Hilfe fuer Risk-Management (bekannte Luecke,
+// TJR Bootcamp Day 39 "Calculating Lot Size").
+const ACCT_KEY = "tjr_acct_size";
+const RISK_KEY = "tjr_risk_pct";
+function getAcctSize() { return parseFloat(localStorage.getItem(ACCT_KEY)) || 1000; }
+function getRiskPct() { return parseFloat(localStorage.getItem(RISK_KEY)) || 1; }
+function positionSizeText(asset, sig) {
+  if (sig.entry === null || sig.stop === null) return "–";
+  const acct = getAcctSize();
+  const riskPct = getRiskPct();
+  const riskAmount = acct * (riskPct / 100);
+  const stopDist = Math.abs(sig.entry - sig.stop);
+  if (!stopDist) return "–";
+  const qty = riskAmount / stopDist;
+  let text = `${qty.toLocaleString("de-AT", { maximumFractionDigits: qty < 1 ? 6 : 2 })} Einh.`;
+  if (asset.symbol === "GBPUSD") {
+    text += ` (≈ ${(qty / 100000).toFixed(3)} Lots)`;
+  }
+  return text;
+}
+
 function renderCard(asset, sig, ltf, error, aiNote) {
   const card = document.createElement("div");
   if (error) {
@@ -219,6 +273,7 @@ function renderCard(asset, sig, ltf, error, aiNote) {
     <div class="row-stop"><span>Stop</span><span>${fmtOrDash(sig.stop)}</span></div>
     <div class="row-target"><span>Target</span><span>${fmtOrDash(sig.target)}</span></div>
     <div><span>R:R</span><span>${sig.rr ? "1:" + sig.rr : "–"}</span></div>
+    <div class="row-size"><span>Positionsgröße</span><span>${positionSizeText(asset, sig)}</span></div>
     <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>`;
   card.appendChild(table);
 
@@ -268,6 +323,8 @@ function renderCard(asset, sig, ltf, error, aiNote) {
 function main() {
   const gridEl = document.getElementById("grid");
   const newsEl = document.getElementById("news");
+  gridEl.innerHTML = "";
+  newsEl.innerHTML = "";
 
   if (PRECOMPUTED.news.length > 0) {
     const box = document.createElement("div");
@@ -286,6 +343,23 @@ function main() {
     gridEl.appendChild(renderCard(item.asset, item.sig, item.ltf, item.error, item.aiNote));
   }
 }
+
+function initSettings() {
+  const acctEl = document.getElementById("acct-size");
+  const riskEl = document.getElementById("risk-pct");
+  acctEl.value = getAcctSize();
+  riskEl.value = getRiskPct();
+  acctEl.addEventListener("input", () => {
+    localStorage.setItem(ACCT_KEY, acctEl.value || "0");
+    main();
+  });
+  riskEl.addEventListener("input", () => {
+    localStorage.setItem(RISK_KEY, riskEl.value || "0");
+    main();
+  });
+}
+
+initSettings();
 main();
 </script>
 </body>
