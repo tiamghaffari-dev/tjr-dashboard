@@ -23,7 +23,22 @@ selbst eintragen kannst.
 - `docs/chart_template.html` — die Live-Chart-Analyse-Seite: Candlestick-Chart
   (TradingView Lightweight Charts) pro Asset mit automatisch eingezeichneter
   ICT/SMC-Struktur (Sweep, BOS, FVG/Order-Block-Zone, Equilibrium) — zeigt
-  auch, was analysiert wurde, wenn (noch) kein Entry aktiv ist.
+  auch, was analysiert wurde, wenn (noch) kein Entry aktiv ist. Zeigt
+  zusätzlich Session-Start-Marker (Asia/London/NY) im Chart ein.
+- **Positionsgrößen-Rechner** (auf `index.html` und `chart.html`): Kontogröße
+  + Risiko % eintragen, Positionsgröße wird automatisch aus Entry/Stop-Distanz
+  berechnet (Positionsgröße = (Kontogröße × Risiko%) ÷ Stop-Distanz; bei Forex
+  zusätzlich in Standard-Lots umgerechnet). Läuft komplett im Browser
+  (localStorage) — nichts wird an den Server geschickt oder in der
+  Actions-Pipeline gespeichert. Schließt eine bekannte Lücke: TJR Bootcamp
+  Day 39 heißt "Calculating Lot Size", aber die Engine hatte bisher keine
+  Positionsgrößen-Berechnung.
+- **Session-Start-Marker** im Chart (Asia/London/NY): Standard-ICT-Kill-Zone-
+  Startzeiten in US/Eastern (20:00/02:00/07:00 ET). Wichtig: das ist eine
+  verbreitete Standard-Konvention, keine aus TJRs Bootcamp-Video bestätigte
+  Zeit — die Video-Auswertung ist aktuell technisch blockiert (YouTube-Player
+  in der Sandbox), daher konnten TJRs eigene Session-Zeiten noch nicht
+  verifiziert werden. In der Chart-Legende entsprechend gekennzeichnet.
 - `.github/workflows/update.yml` — GitHub Actions Workflow, der `build.js`
   nach Zeitplan ausführt und das Ergebnis committet.
 - `docs/index.html` / `docs/chart.html` — die tatsächlich veröffentlichten
