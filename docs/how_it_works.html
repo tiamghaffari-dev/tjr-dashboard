@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wie funktioniert das? — TJR Live-Report</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(88, 101, 242, 0.16), transparent 42%),
+      radial-gradient(circle at 85% 8%, rgba(57, 255, 136, 0.10), transparent 40%),
+      #05060a;
+    color: #e8eaf0;
+    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  body { padding: 22px 24px 60px; max-width: 780px; margin: 0 auto; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
+  h1 {
+    font-size: 19px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
+    background: linear-gradient(90deg, #7dd3fc, #a78bfa 45%, #39ff88 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .back {
+    font-family: -apple-system, sans-serif; font-size: 12.5px; font-weight: 600;
+    padding: 7px 14px; border-radius: 10px; text-decoration: none;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    color: #9198ad; transition: all 0.15s ease;
+  }
+  .back:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+
+  .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 28px 0; font-family: -apple-system, sans-serif; }
+
+  section { margin-bottom: 28px; }
+  h2 {
+    font-size: 14px; font-family: -apple-system, sans-serif; font-weight: 700;
+    color: #f2f3f8; letter-spacing: 0.3px; margin: 0 0 10px 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  h2 .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%; font-size: 11px; font-weight: 700;
+    background: rgba(122,140,255,0.15); color: #9fb2ff; flex-shrink: 0;
+  }
+  p, li { font-size: 13px; line-height: 1.6; color: #c3c8d6; font-family: -apple-system, sans-serif; }
+  p { margin: 0 0 10px 0; }
+  ul { margin: 0 0 10px 0; padding-left: 20px; }
+  code {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px; padding: 1px 5px; font-family: "SF Mono", monospace; font-size: 12px;
+    color: #ffd25c;
+  }
+
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
+    padding: 16px 18px;
+  }
+
+  .schedule-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 12.5px; font-family: -apple-system, sans-serif; gap: 12px;
+  }
+  .schedule-row:last-child { border-bottom: none; }
+  .schedule-row .time { color: #e8eaf0; font-weight: 600; white-space: nowrap; }
+  .schedule-row .freq { color: #7c8399; text-align: right; }
+  .schedule-row.focus .time { color: #4fff9c; }
+  .schedule-row.focus .freq { color: #4fff9c; }
+  .badge-focus {
+    display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.3px;
+    padding: 1px 6px; border-radius: 10px; margin-left: 6px;
+    background: rgba(57,255,136,0.14); color: #4fff9c; border: 1px solid rgba(57,255,136,0.3);
+    text-transform: uppercase;
+  }
+
+  .steps { counter-reset: step; }
+  .step {
+    display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-marker {
+    counter-increment: step; flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+    background: rgba(167,139,250,0.15); color: #a78bfa; font-family: -apple-system, sans-serif;
+  }
+  .step-marker::before { content: counter(step); }
+  .step-body { font-size: 12.5px; font-family: -apple-system, sans-serif; color: #c3c8d6; }
+  .step-body strong { color: #e8eaf0; }
+
+  .assets-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;
+  }
+  .asset-chip {
+    font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600;
+    padding: 6px 12px; border-radius: 20px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    color: #d7dbe8;
+  }
+
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px; font-family: -apple-system, sans-serif;
+    letter-spacing: 0.3px; margin-bottom: 10px;
+  }
+  .status-off { background: rgba(255,196,0,0.14); color: #ffd25c; border: 1px solid rgba(255,196,0,0.35); }
+  .status-off::before { content: "●"; font-size: 8px; }
+
+  .prompt-box {
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+    padding: 10px 12px; font-size: 11.5px; line-height: 1.6; color: #9aa0b4;
+    font-family: "SF Mono", monospace; margin-top: 10px; white-space: pre-wrap;
+  }
+
+  .footer-note {
+    font-size: 11.5px; color: #565c70; font-family: -apple-system, sans-serif;
+    border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; margin-top: 32px;
+  }
+  .footer-note a { color: #7dd3fc; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>WIE FUNKTIONIERT DAS?</h1>
+    </div>
+    <a class="back" href="index.html">← Zurück zum Dashboard</a>
+  </div>
+  <div class="subtitle">Zeitplan, Datenquellen und Ablauf hinter dem TJR Live-Report — mechanisch und (optional) KI-gestützt.</div>
+
+  <section>
+    <h2><span class="num">1</span>Wann wird analysiert</h2>
+    <div class="card">
+      <div class="schedule-row">
+        <span class="time">Mo–Fr, 08:00–15:00 Wien</span>
+        <span class="freq">alle 15 Minuten</span>
+      </div>
+      <div class="schedule-row focus">
+        <span class="time">Mo–Fr, 15:00–17:00 Wien <span class="badge-focus">Fokusfenster</span></span>
+        <span class="freq">alle 5 Minuten</span>
+      </div>
+      <div class="schedule-row">
+        <span class="time">Mo–Fr, 17:00–24:00 Wien</span>
+        <span class="freq">alle 15 Minuten</span>
+      </div>
+      <div class="schedule-row">
+        <span class="time">Sa/So, sowie außerhalb 08–24 Wien</span>
+        <span class="freq">pausiert (kein Lauf)</span>
+      </div>
+    </div>
+    <p style="margin-top:10px">Zwischen 15 und 17 Uhr Wiener Zeit läuft alles dichter, weil das laut TJR die eigentliche Handelszeit ist. Läuft komplett automatisch über GitHub Actions in der Cloud — unabhängig davon, ob dein Laptop an ist. Die Zeitzone wird DST-sicher berechnet (Sommer-/Winterzeit-Wechsel wird automatisch berücksichtigt).</p>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span>Woran gearbeitet wird</h2>
+    <div class="card">
+      <p style="margin-bottom:10px">Bei jedem Lauf werden dieselben 6 Assets neu analysiert:</p>
+      <div class="assets-grid">
+        <span class="asset-chip">₿ Bitcoin</span>
+        <span class="asset-chip">Ξ Ethereum</span>
+        <span class="asset-chip">✧ XRP</span>
+        <span class="asset-chip">£ GBP/USD</span>
+        <span class="asset-chip">▦ S&amp;P 500</span>
+        <span class="asset-chip">◎ Gold</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span>Die mechanische Analyse (rückgetestet)</h2>
+    <div class="card steps">
+      <div class="step">
+        <span class="step-marker"></span>
+        <span class="step-body"><strong>4H-Bias bestimmen</strong> — Marktstruktur auf dem 4-Stunden-Chart (bullish/bearish/neutral) aus 30 Tagen 1H-Kerzen resampled.</span>
+      </div>
+      <div class="step">
+        <span class="step-marker"></span>
+        <span class="step-body"><strong>Liquidity Sweep suchen</strong> — auf dem 15-Minuten-Chart, ob ein vorheriges Hoch/Tief kurz durchbrochen und zurückerobert wurde (letzte 7 Tage, resampled aus 5-Min-Kerzen).</span>
+      </div>
+      <div class="step">
+        <span class="step-marker"></span>
+        <span class="step-body"><strong>Bestätigenden BOS finden</strong> — Break of Structure in Richtung des 4H-Bias nach dem Sweep.</span>
+      </div>
+      <div class="step">
+        <span class="step-marker"></span>
+        <span class="step-body"><strong>Entry-Zone prüfen</strong> — Fair Value Gap oder Order Block im richtigen Preisbereich (Premium/Discount relativ zur Equilibrium-Linie).</span>
+      </div>
+      <div class="step">
+        <span class="step-marker"></span>
+        <span class="step-body"><strong>Signal setzen</strong> — erst wenn alle vier Schritte zutreffen, wird aus "Watchlist" ein <strong>ENTRY</strong> mit Entry/Stop/Target.</span>
+      </div>
+    </div>
+    <p style="margin-top:10px">Diese Logik ist 1:1 aus der rückgetesteten Python-Engine portiert und wird von der KI nicht verändert oder überstimmt — sie ist die alleinige Entscheidungsgrundlage für das Signal.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">4</span>Die optionale KI-Einschätzung</h2>
+    <div class="card">
+      <span class="status-pill status-off">Aktuell deaktiviert</span>
+      <p>Wenn ein eigener <code>ANTHROPIC_API_KEY</code> als GitHub-Secret hinterlegt ist, holt <code>build.js</code> zusätzlich pro Asset eine kurze Einschätzung von Claude Haiku — als ergänzenden Kommentar, nie als Ersatz für das mechanische Signal. Aktuell ist dieser Key noch nicht gesetzt, deshalb läuft der Report ohne KI-Karte (siehe README im Repo für die 5-Minuten-Anleitung, falls du das aktivieren willst).</p>
+      <p>Sobald aktiv, bekommt die KI pro Asset genau das hier zu sehen:</p>
+      <div class="prompt-box">Asset: {Name} ({Symbol})
+Mechanische Regel-Engine sagt: Bias={bullish/bearish/neutral}, Signal={ENTRY/Watchlist/...}
+Letzte 20 15-Minuten-Kerzen (UTC): {OHLC-Werte}
+Heutige High-Impact-News (USD/GBP): {ForexFactory-Kalender oder "keine"}
+
+→ Claude gibt max. 2 Sätze zurück: passt das Signal gerade zum
+  Marktbild und den News, oder ist Vorsicht angebracht?</div>
+      <p style="margin-top:10px">Läuft im selben Takt wie die mechanische Analyse (siehe Zeitplan oben) — bei jedem Workflow-Lauf, für jedes der 6 Assets einzeln.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">5</span>Datenquellen</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Kursdaten</strong> — Financial Modeling Prep (1-Stunden- und 5-Minuten-Kerzen, live).</li>
+        <li><strong>News</strong> — ForexFactory-Kalender (High-Impact USD/GBP-Termine für den aktuellen Tag).</li>
+        <li><strong>Push-Alerts</strong> — optional über ntfy.sh, nur bei neuem ENTRY-Signal und nur innerhalb des 15–17-Uhr-Fokusfensters.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    Mehr Details (Setup, Secrets, Architektur) stehen im <code>README.md</code> des Repos. Diese Seite ist reine Dokumentation und lädt keine Live-Daten.
+  </div>
+</body>
+</html>
