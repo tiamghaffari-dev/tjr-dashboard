@@ -70,13 +70,28 @@ async function analyzeAsset(asset) {
   return { sig, ann, ltf: ltf.slice(-150) };
 }
 
+// Nutzt ForexFactory's oeffentlichen Kalender-Feed (via nfs.faireconomy.media,
+// dem Datenanbieter hinter forexfactory.com/calendar — kein API-Key noetig,
+// kein Scraping der HTML-Seite). Ersetzt den FMP economic-calendar-Endpoint,
+// der auf Tiams Plan dauerhaft HTTP 402 (Restricted Endpoint) lieferte.
+// Feed liefert die aktuelle Kalenderwoche; wir filtern auf USD/GBP + High-
+// Impact + heutiges Datum (UTC-Tag, wie beim Rest von build.js). Gibt exakt
+// dieselbe Form {date, event, currency, impact} wie vorher zurueck, damit
+// Templates und der KI-Prompt in getAiAssessment() unveraendert bleiben.
 async function loadNews() {
-  const today = new Date();
-  const d = fmtDate(today);
-  const url = `${BASE}/economic-calendar?from=${d}&to=${d}&apikey=${API_KEY}`;
-  const events = await fetchJson(url, "economic-calendar");
+  const url = "https://nfs.faireconomy.media/ff_calendar_thisweek.json";
+  const events = await fetchJson(url, "forexfactory-calendar");
   if (!Array.isArray(events)) return [];
-  return events.filter((e) => NEWS_CURRENCIES.includes(e.currency) && e.impact === "High");
+  const todayUtc = fmtDate(new Date());
+  return events
+    .filter((e) => NEWS_CURRENCIES.includes(e.country) && e.impact === "High")
+    .filter((e) => {
+      const d = new Date(e.date);
+      return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === todayUtc;
+    })
+    .map((e) => ({
+      date: e.date, event: e.title, currency: e.country, impact: e.impact,
+    }));
 }
 
 // Supplementary, non-authoritative AI read on top of the mechanical engine.
