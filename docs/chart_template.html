@@ -98,6 +98,7 @@
   .sig-watch { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
   .sig-none { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
   .sig-error { background: rgba(255,90,90,0.14); color: #ff6b6b; border-color: rgba(255,90,90,0.35); }
+  .badge-outside { background: rgba(255,255,255,0.05); color: #9198ad; border-color: rgba(255,255,255,0.15); }
 
   .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 10.5px; color: #9198ad; font-family: -apple-system, sans-serif; margin: 10px 0 4px; }
   .legend span { display: inline-flex; align-items: center; gap: 5px; }
@@ -144,7 +145,7 @@
     </div>
   </div>
   <div class="subtitle">Candlestick-Chart (15min) mit automatisch eingezeichneter ICT/SMC-Struktur — Sweep, BOS, FVG/Order-Block-Zone, Equilibrium. Wird auch gezeigt, wenn (noch) kein Entry aktiv ist.</div>
-  <div id="status" class="status-line">__GENERATED_AT__</div>
+  <div id="status" class="status-line">__GENERATED_AT__ <span id="window-status"></span></div>
 
   <div class="settings-box">
     <div class="settings-title">💰 Positionsgrößen-Rechner</div>
@@ -326,7 +327,10 @@ function renderSidebar(item) {
 
   const { sig, ann } = item;
   badgesEl.innerHTML = `<span class="badge ${badgeClassBias(sig.bias)}">${biasArrow(sig.bias)} 4H ${sig.bias.toUpperCase()}</span>
-    <span class="badge ${badgeClassSignal(sig.signal)}">${sig.signal.split(" (")[0]}</span>`;
+    <span class="badge ${badgeClassSignal(sig.signal)}">${sig.signal.split(" (")[0]}</span>`
+    + (sig.signal === "ENTRY" && !PRECOMPUTED.inTradingWindow
+      ? `<span class="badge badge-outside" title="TJR tradet nur 15-17 Uhr Wien — dieses Signal liegt ausserhalb, kein Push-Alert gesendet">außerhalb Handelszeit (15–17 Wien)</span>`
+      : "");
 
   stepsEl.innerHTML = analysisSteps(sig, ann).map((s) => (
     `<div class="step"><span class="step-icon ${s.ok ? "ok" : "pending"}">${s.ok ? "✓" : "…"}</span>
@@ -450,6 +454,13 @@ function renderAll() {
   const item = PRECOMPUTED.assets[activeIndex];
   renderSidebar(item);
   renderChart(item);
+
+  const winEl = document.getElementById("window-status");
+  if (winEl) {
+    winEl.textContent = PRECOMPUTED.inTradingWindow
+      ? "· ✓ innerhalb Handelsfenster (15–17 Wien)"
+      : "· außerhalb Handelsfenster (15–17 Wien) — Alerts pausiert";
+  }
 }
 
 function initSettings() {
