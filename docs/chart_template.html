@@ -43,6 +43,22 @@
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
+  .settings-box {
+    background: linear-gradient(135deg, rgba(122,140,255,0.09), rgba(122,140,255,0.02));
+    border: 1px solid rgba(122,140,255,0.25); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 20px; font-size: 12px;
+    font-family: -apple-system, sans-serif; display: flex; align-items: center;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .settings-title { font-weight: 700; color: #9fb2ff; letter-spacing: 0.3px; flex-basis: 100%; margin-bottom: 2px; }
+  .settings-field { display: flex; align-items: center; gap: 6px; }
+  .settings-field label { color: #7c8399; }
+  .settings-field input {
+    width: 90px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px; color: #e8eaf0; padding: 4px 8px; font-family: inherit; font-size: 12px;
+  }
+  .settings-hint { color: #565c70; font-size: 10.5px; flex-basis: 100%; }
+
   .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
   .tab {
     font-family: -apple-system, sans-serif; font-size: 12.5px; font-weight: 600;
@@ -104,6 +120,7 @@
   .info-table .row-entry span:last-child { color: #4fff9c; }
   .info-table .row-stop span:last-child { color: #ff6b6b; }
   .info-table .row-target span:last-child { color: #ffd25c; }
+  .info-table .row-size span:last-child { color: #7dd3fc; }
 
   .ai-note {
     font-size: 11.5px; line-height: 1.5; color: #d9d3ff; margin: 10px 0 0;
@@ -129,6 +146,19 @@
   <div class="subtitle">Candlestick-Chart (15min) mit automatisch eingezeichneter ICT/SMC-Struktur — Sweep, BOS, FVG/Order-Block-Zone, Equilibrium. Wird auch gezeigt, wenn (noch) kein Entry aktiv ist.</div>
   <div id="status" class="status-line">__GENERATED_AT__</div>
 
+  <div class="settings-box">
+    <div class="settings-title">💰 Positionsgrößen-Rechner</div>
+    <div class="settings-field">
+      <label for="acct-size">Kontogröße</label>
+      <input type="number" id="acct-size" min="0" step="100">
+    </div>
+    <div class="settings-field">
+      <label for="risk-pct">Risiko % / Trade</label>
+      <input type="number" id="risk-pct" min="0" step="0.1">
+    </div>
+    <div class="settings-hint">Wird nur lokal in deinem Browser gespeichert (localStorage). Positionsgröße = (Kontogröße × Risiko%) ÷ Stop-Distanz. Bei Forex: 100.000 Einheiten = 1 Standard-Lot. Keine Anlageberatung.</div>
+  </div>
+
   <div id="tabs" class="tabs"></div>
 
   <div class="layout">
@@ -146,6 +176,7 @@
         <span><i class="swatch" style="background:#4fff9c"></i>Entry</span>
         <span><i class="swatch" style="background:#ff6b6b"></i>Stop</span>
         <span><i class="swatch" style="background:#ffd25c"></i>Target</span>
+        <span><i class="swatch" style="background:#565c70"></i>Session-Start (Standard-ICT-Zeiten ET, nicht TJR-bestätigt)</span>
       </div>
     </div>
 
@@ -184,6 +215,60 @@ function biasArrow(bias) {
 }
 function sweepLabel(sweep) {
   return sweep.type === "sell_side_sweep" ? "Sellside Liquidity" : "Buyside Liquidity";
+}
+
+// --- Positionsgrößen-Rechner (siehe index.html/report_template.html für
+// dieselbe Logik) — rein clientseitig, kein Teil der Regel-Engine.
+const ACCT_KEY = "tjr_acct_size";
+const RISK_KEY = "tjr_risk_pct";
+function getAcctSize() { return parseFloat(localStorage.getItem(ACCT_KEY)) || 1000; }
+function getRiskPct() { return parseFloat(localStorage.getItem(RISK_KEY)) || 1; }
+function positionSizeText(asset, sig) {
+  if (sig.entry === null || sig.stop === null) return "–";
+  const acct = getAcctSize();
+  const riskPct = getRiskPct();
+  const riskAmount = acct * (riskPct / 100);
+  const stopDist = Math.abs(sig.entry - sig.stop);
+  if (!stopDist) return "–";
+  const qty = riskAmount / stopDist;
+  let text = `${qty.toLocaleString("de-AT", { maximumFractionDigits: qty < 1 ? 6 : 2 })} Einh.`;
+  if (asset.symbol === "GBPUSD") {
+    text += ` (≈ ${(qty / 100000).toFixed(3)} Lots)`;
+  }
+  return text;
+}
+
+// Standard-ICT-Kill-Zone-Startzeiten in US/Eastern (nicht direkt aus TJRs
+// Video bestätigt, da das Bootcamp-Review technisch blockiert ist — als
+// verbreitete Standard-Konvention markiert, siehe Legende/README).
+// Die Kerzen-Timestamps sind bereits ET-Uhrzeiten (nur intern als
+// Pseudo-UTC gespeichert, siehe engine.js parseTs), daher direkt per
+// getUTCHours/-Minutes auswertbar.
+const SESSIONS = [
+  { hour: 20, label: "Asia" },
+  { hour: 2, label: "London" },
+  { hour: 7, label: "NY" },
+];
+function sessionMarkers(ltf) {
+  const out = [];
+  const seen = new Set();
+  for (const c of ltf) {
+    const d = new Date(c.ts);
+    const h = d.getUTCHours();
+    const m = d.getUTCMinutes();
+    if (m >= 15) continue;
+    for (const s of SESSIONS) {
+      if (h !== s.hour) continue;
+      const key = d.getUTCFullYear() + "-" + d.getUTCMonth() + "-" + d.getUTCDate() + "-" + s.label;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({
+        time: Math.floor(c.ts / 1000), position: "aboveBar",
+        color: "#565c70", shape: "square", text: s.label,
+      });
+    }
+  }
+  return out;
 }
 
 function analysisSteps(sig, ann) {
@@ -253,6 +338,7 @@ function renderSidebar(item) {
     <div class="row-stop"><span>Stop</span><span>${fmtOrDash(sig.stop)}</span></div>
     <div class="row-target"><span>Target</span><span>${fmtOrDash(sig.target)}</span></div>
     <div><span>R:R</span><span>${sig.rr ? "1:" + sig.rr : "–"}</span></div>
+    <div class="row-size"><span>Positionsgröße</span><span>${positionSizeText(item.asset, sig)}</span></div>
     <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>`;
 
   if (item.aiNote) {
@@ -289,7 +375,7 @@ function renderChart(item) {
   series.setData(candles);
 
   const { ann, sig } = item;
-  const markers = [];
+  let markers = sessionMarkers(item.ltf);
 
   if (ann.sweep) {
     series.createPriceLine({
@@ -366,6 +452,22 @@ function renderAll() {
   renderChart(item);
 }
 
+function initSettings() {
+  const acctEl = document.getElementById("acct-size");
+  const riskEl = document.getElementById("risk-pct");
+  acctEl.value = getAcctSize();
+  riskEl.value = getRiskPct();
+  acctEl.addEventListener("input", () => {
+    localStorage.setItem(ACCT_KEY, acctEl.value || "0");
+    renderSidebar(PRECOMPUTED.assets[activeIndex]);
+  });
+  riskEl.addEventListener("input", () => {
+    localStorage.setItem(RISK_KEY, riskEl.value || "0");
+    renderSidebar(PRECOMPUTED.assets[activeIndex]);
+  });
+}
+
+initSettings();
 renderAll();
 </script>
 </body>
