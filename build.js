@@ -139,6 +139,20 @@ function loadPrevState() {
   }
 }
 
+// Tiam tradet nur 15:00-17:00 Wiener Zeit (siehe README/Cron-Kommentar).
+// Nutzt Intl mit timeZone "Europe/Vienna" statt eines festen UTC-Offsets,
+// damit der Sommer-/Winterzeit-Wechsel automatisch mitgeht (im Sommer ist
+// Wien UTC+2, im Winter UTC+1 — ein fixer Offset waere im Winter falsch).
+function isViennaTradingWindow(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Europe/Vienna", hour: "2-digit", minute: "2-digit", hour12: false,
+  }).formatToParts(date);
+  const hour = Number(parts.find((p) => p.type === "hour").value);
+  const minute = Number(parts.find((p) => p.type === "minute").value);
+  const mins = hour * 60 + minute;
+  return mins >= 15 * 60 && mins < 17 * 60; // 15:00-16:59 Wien
+}
+
 // Push-Benachrichtigung ueber ntfy.sh (kein Account/Key noetig, nur ein
 // geheimer Topic-Name). Nur bei neuem ENTRY-Signal (rising edge), nicht bei
 // jedem Refresh solange das Signal aktiv bleibt — sonst Spam alle 5 Minuten.
@@ -209,7 +223,12 @@ async function main() {
 
   // State (welches Asset zuletzt ENTRY war) wird immer geschrieben, damit
   // git add state.json nie auf eine fehlende Datei trifft. Nur das SENDEN
-  // der Push-Benachrichtigung haengt am optionalen NTFY_TOPIC.
+  // der Push-Benachrichtigung haengt am optionalen NTFY_TOPIC UND am
+  // Handelsfenster (Tiam tradet nur 15-17 Uhr Wien wie TJR selbst — ein
+  // ENTRY ausserhalb dieses Fensters wird trotzdem angezeigt, aber nicht
+  // per Push gemeldet, um Alert-Spam ausserhalb der eigentlichen Handelszeit
+  // zu vermeiden).
+  const inWindow = isViennaTradingWindow();
   const prevState = loadPrevState();
   const newState = {};
   for (const item of assets) {
@@ -217,8 +236,10 @@ async function main() {
     const isEntry = item.sig.signal === "ENTRY";
     newState[item.asset.symbol] = isEntry;
     const wasEntry = !!prevState[item.asset.symbol];
-    if (isEntry && !wasEntry && NTFY_TOPIC) {
+    if (isEntry && !wasEntry && NTFY_TOPIC && inWindow) {
       await sendNtfy(item.asset, item.sig);
+    } else if (isEntry && !wasEntry && NTFY_TOPIC && !inWindow) {
+      console.log(`ALERT uebersprungen (ausserhalb 15-17 Wien): ${item.asset.name}`);
     }
   }
   fs.writeFileSync(STATE_PATH, JSON.stringify(newState, null, 2), "utf8");
@@ -232,6 +253,7 @@ async function main() {
     news,
     aiEnabled: !!ANTHROPIC_API_KEY,
     alertsEnabled: !!NTFY_TOPIC,
+    inTradingWindow: inWindow,
   };
 
   renderFromTemplate("report_template.html", "index.html", payload);
