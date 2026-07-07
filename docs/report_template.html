@@ -36,6 +36,14 @@
     padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(122,140,255,0.35);
     color: #9fb2ff; background: rgba(122,140,255,0.08);
   }
+  .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .howto-link {
+    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 6px; text-decoration: none;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
+    color: #9198ad; transition: all 0.15s ease;
+  }
+  .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
   .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 16px 0; font-family: -apple-system, sans-serif; }
   .status-line {
     font-size: 12px; color: #6b7185; margin-bottom: 18px; padding-bottom: 14px;
@@ -151,7 +159,10 @@
       <span class="dot"></span>
       <h1>TJR LIVE-REPORT // ICT-SMC</h1>
     </div>
-    <span class="tag">no auto-trades · analysis only</span>
+    <div class="topbar-right">
+      <a class="howto-link" href="how_it_works.html">ℹ️ Wie funktioniert das?</a>
+      <span class="tag">no auto-trades · analysis only</span>
+    </div>
   </div>
   <div class="subtitle">Bitcoin · Ethereum · XRP · GBP/USD · S&amp;P 500 · Gold — 4H-Bias / Sweep / BOS / Entry-Zone mit vollem Chart, automatisch aktualisiert via GitHub Actions (alle 5 Minuten zwischen 15 und 17 Uhr Wien, sonst alle 15 Minuten — das ist TJRs eigentliche Handelszeit)</div>
   <div id="status" class="status-line">__GENERATED_AT__ <span id="window-status"></span></div>
