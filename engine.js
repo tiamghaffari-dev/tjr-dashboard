@@ -329,14 +329,14 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
       const { zone: z } = premiumDiscountZone(legLow, legHigh, midG);
       if ((g.type === "bullish" && wantDir === "up" && z === wantedZone)
         || (g.type === "bearish" && wantDir === "down" && z === wantedZone)) {
-        candidates.push({ kind: "FVG", top: g.top, bottom: g.bottom });
+        candidates.push({ kind: "FVG", top: g.top, bottom: g.bottom, ts: g.ts });
       }
     }
   }
   if (ob) {
     const midOb = (ob.top + ob.bottom) / 2;
     const { zone: z } = premiumDiscountZone(legLow, legHigh, midOb);
-    if (z === wantedZone) candidates.push({ kind: "OrderBlock", top: ob.top, bottom: ob.bottom });
+    if (z === wantedZone) candidates.push({ kind: "OrderBlock", top: ob.top, bottom: ob.bottom, ts: ob.ts });
   }
   if (candidates.length) {
     const currentPrice = ltfDf[ltfDf.length - 1].close;
@@ -345,6 +345,12 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
     ));
     ann.zoneKind = candidates[0].kind;
     ann.zoneRange = [candidates[0].bottom, candidates[0].top];
+    // Box start = the candle where the zone actually originates (OB candle, or the
+    // FVG's middle candle). Box end = the confirming BOS candle (bos is always set
+    // by this point, see the early-return above) — bounds the box to "the move this
+    // zone caused", matching TJR's own on-chart boxes (tight to origin, not stretched
+    // to present time) instead of the old full-width horizontal lines.
+    ann.zoneTs = candidates[0].ts;
   }
   return ann;
 }
