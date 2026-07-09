@@ -187,7 +187,8 @@
     <span><i class="swatch" style="background:#7dd3fc"></i>Liquidity Sweep</span>
     <span><i class="swatch" style="background:#a78bfa"></i>BOS</span>
     <span><i class="swatch" style="background:#9198ad"></i>Equilibrium</span>
-    <span><i class="swatch" style="background:#d8b98c"></i>FVG / Order-Block-Zone</span>
+    <span><i class="swatch" style="background:rgba(255,107,157,0.65)"></i>FVG-Zone</span>
+    <span><i class="swatch" style="background:rgba(79,255,190,0.65)"></i>Order-Block-Zone</span>
     <span><i class="swatch" style="background:#4fff9c"></i>Entry</span>
     <span><i class="swatch" style="background:#ff6b6b"></i>Stop</span>
     <span><i class="swatch" style="background:#ffd25c"></i>Target</span>
@@ -322,6 +323,44 @@ function renderAssetNav() {
   )).join("");
 }
 
+// Draws the FVG/OrderBlock entry zone as an actual box (dashed border, translucent
+// fill), the way TJR draws it by hand on his own charts — not as two full-width
+// horizontal lines. Confirmed from real footage (see memory project_tjr_visual_style):
+// he uses the Rectangle tool, dashed border, semi-transparent fill, boxed tightly
+// around the origin candle(s), not spanning the whole chart. Colors vary a bit in
+// his own videos (pink/red, green/teal, gray all seen) — picked one fixed, distinct
+// color per zone type here for visual consistency rather than chasing one "true" hue.
+// Implementation: Lightweight Charts has no native rectangle primitive, so this uses
+// the well-known Area-series trick — an Area series filled down to a fixed baseValue
+// price, fed only the data points inside the box's time range, renders as a flat
+// filled band exactly where data exists and nowhere else.
+function drawZoneBox(chart, candles, ann, markers) {
+  const isFvg = ann.zoneKind === "FVG";
+  const top = ann.zoneRange[1];
+  const bottom = ann.zoneRange[0];
+  const fillColor = isFvg ? "rgba(255,107,157,0.16)" : "rgba(79,255,190,0.16)";
+  const borderColor = isFvg ? "rgba(255,107,157,0.65)" : "rgba(79,255,190,0.65)";
+
+  const startTs = Math.floor(ann.zoneTs / 1000);
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+  const zoneData = candles.slice(startIdx, Math.min(startIdx + 6, candles.length));
+  if (zoneData.length === 0) return;
+
+  const boxSeries = chart.addAreaSeries({
+    topColor: fillColor, bottomColor: fillColor,
+    lineColor: borderColor, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  boxSeries.applyOptions({ baseValue: { type: "price", price: bottom } });
+  boxSeries.setData(zoneData.map((c) => ({ time: c.time, value: top })));
+
+  markers.push({
+    time: zoneData[0].time, position: isFvg ? "aboveBar" : "belowBar",
+    color: borderColor, shape: "square", text: isFvg ? "FVG" : "OB",
+  });
+}
+
 function renderChart(item) {
   const container = document.getElementById("chart-" + assetId(item.asset));
   if (!container || item.error || !item.ltf || !item.ltf.length) return;
@@ -382,18 +421,8 @@ function renderChart(item) {
       title: "Equilibrium",
     });
   }
-  if (ann.zoneRange) {
-    const kind = ann.zoneKind === "FVG" ? "FVG" : "OB";
-    series.createPriceLine({
-      price: ann.zoneRange[1], color: "#d8b98c", lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
-      title: `${kind} oben`,
-    });
-    series.createPriceLine({
-      price: ann.zoneRange[0], color: "#d8b98c", lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
-      title: `${kind} unten`,
-    });
+  if (ann.zoneRange && ann.zoneTs) {
+    drawZoneBox(chart, candles, ann, markers);
   }
   if (sig.entry !== null) {
     series.createPriceLine({
