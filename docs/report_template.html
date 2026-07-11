@@ -729,6 +729,31 @@ function drawHistoricalPositionBox(chart, candles, rec) {
   riskSeries.setData(segData.map((d) => ({ time: d.time, value: rec.stop })));
 }
 
+// Tiam, 2026-07-12: Screenshot geschickt - zu viele volle-Chart-Breite-Linien
+// (Sweep/BOS/Equilibrium/iFVG) mit axisLabelVisible stapeln ihre farbigen
+// Preis-Achsen-Labels uebereinander, sobald die Werte nah beieinander liegen
+// (was bei einem einzelnen Setup fast immer der Fall ist) - Ergebnis: eine
+// Wand aus Farbkaesten am rechten Rand. Fix: diese "Analyse"-Linien (wie
+// entstand das Signal) bekommen KEIN Achsen-Label mehr und werden auf ein
+// begrenztes Zeitfenster (gleich wie die Zone-Box) statt volle Chart-Breite
+// gezeichnet - Identifikation laeuft stattdessen ueber die ohnehin schon
+// vorhandenen kompakten Marker (Sweep-Kreis, BOS-Pfeil, etc.). Nur die drei
+// wirklich handlungsrelevanten Linien (Entry/Stop/Target) behalten ihr
+// Achsen-Label, das reduziert den Stapel von 7 auf 3 Eintraege.
+const ANALYSIS_LINE_MAX_BARS = 3 * 96; // gleiches Zeitfenster wie die Zone-Box-Begrenzung
+
+function drawBoundedAnalysisLine(chart, candles, startTs, price, color, lineStyle) {
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+  const endIdx = Math.min(candles.length - 1, startIdx + ANALYSIS_LINE_MAX_BARS);
+  const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time, value: price }));
+  if (segData.length === 0) return;
+  chart.addLineSeries({
+    color, lineWidth: 1, lineStyle,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  }).setData(segData);
+}
+
 function renderChart(item) {
   const container = document.getElementById("chart-" + assetId(item.asset));
   if (!container || item.error || !item.ltf || !item.ltf.length) return;
@@ -762,22 +787,14 @@ function renderChart(item) {
   drawSessionLevels(chart, candles, computeSessionLevels(item.ltf), markers);
 
   if (ann.sweep) {
-    series.createPriceLine({
-      price: ann.sweep.level, color: "#7dd3fc", lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
-      title: sweepLabel(ann.sweep),
-    });
+    drawBoundedAnalysisLine(chart, candles, ann.sweep.ts, ann.sweep.level, "#7dd3fc", LightweightCharts.LineStyle.Solid);
     markers.push({
       time: Math.floor(ann.sweep.ts / 1000), position: "belowBar",
       color: "#7dd3fc", shape: "circle", text: "Sweep",
     });
   }
   if (ann.bos) {
-    series.createPriceLine({
-      price: ann.bos.level, color: "#a78bfa", lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
-      title: "BOS",
-    });
+    drawBoundedAnalysisLine(chart, candles, ann.bos.ts, ann.bos.level, "#a78bfa", LightweightCharts.LineStyle.Solid);
     markers.push({
       time: Math.floor(ann.bos.ts / 1000),
       position: ann.bos.dir === "up" ? "belowBar" : "aboveBar",
@@ -786,22 +803,23 @@ function renderChart(item) {
   }
   if (ann.confirmation && ann.confirmation.kind === "iFVG") {
     const e = ann.confirmation.event;
-    series.createPriceLine({
-      price: e.dir === "up" ? e.top : e.bottom, color: "#f0abfc", lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Dotted, axisLabelVisible: true,
-      title: "iFVG",
-    });
+    const ifvgPrice = e.dir === "up" ? e.top : e.bottom;
+    drawBoundedAnalysisLine(chart, candles, e.ts, ifvgPrice, "#f0abfc", LightweightCharts.LineStyle.Dotted);
     markers.push({
       time: Math.floor(e.ts / 1000),
       position: e.dir === "up" ? "belowBar" : "aboveBar",
       color: "#f0abfc", shape: e.dir === "up" ? "arrowUp" : "arrowDown", text: "iFVG",
     });
   }
-  if (ann.equilibrium !== null) {
-    series.createPriceLine({
-      price: ann.equilibrium, color: "#9198ad", lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true,
-      title: "Equilibrium",
+  if (ann.equilibrium !== null && ann.sweep) {
+    // Equilibrium hatte bisher gar keinen Marker (nur die volle Achsen-Label-
+    // Linie) - jetzt bekommt sie einen kompakten "EQ"-Marker wie die anderen
+    // Analyse-Linien, verankert am selben Sweep-Zeitpunkt, aus dem sich die
+    // Equilibrium-Berechnung ableitet.
+    drawBoundedAnalysisLine(chart, candles, ann.sweep.ts, ann.equilibrium, "#9198ad", LightweightCharts.LineStyle.Solid);
+    markers.push({
+      time: Math.floor(ann.sweep.ts / 1000), position: "aboveBar",
+      color: "#9198ad", shape: "circle", text: "EQ",
     });
   }
   if (ann.zoneRange && ann.zoneTs) {
