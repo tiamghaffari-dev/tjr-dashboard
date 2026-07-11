@@ -632,9 +632,14 @@ function drawSessionLevels(chart, candles, levels, markers) {
 // (Risikozone) - funktioniert automatisch fuer LONG und SHORT, weil die
 // Area-Series einfach zwischen baseValue (Entry) und dem Zielwert fuellt,
 // unabhaengig davon ob dieser darueber oder darunter liegt.
+// Tiam, 2026-07-12: Screenshot von TradingViews echtem Long-Position-Tool
+// geschickt ("das meine ich ja") - solide Fuellung (kein duennes/transparentes
+// Tinting), gestrichelte Aussenkante an Target/Stop, durchgezogene Trennlinie
+// am Entry. Deckkraft deutlich erhoeht (0.18 -> 0.42) und Aussenlinie auf
+// gestrichelt umgestellt, um dem Vorbild optisch naeher zu kommen.
 const POSITION_BOX_COLORS = {
-  profit: { fill: "rgba(79,255,190,0.18)", line: "rgba(79,255,190,0.55)" },
-  risk: { fill: "rgba(255,107,157,0.18)", line: "rgba(255,107,157,0.55)" },
+  profit: { fill: "rgba(79,255,190,0.42)", line: "rgba(79,255,190,0.9)" },
+  risk: { fill: "rgba(255,107,157,0.42)", line: "rgba(255,107,157,0.9)" },
 };
 
 function drawPositionBox(chart, candles, sig, startTs) {
@@ -646,7 +651,8 @@ function drawPositionBox(chart, candles, sig, startTs) {
 
   const profitSeries = chart.addAreaSeries({
     topColor: POSITION_BOX_COLORS.profit.fill, bottomColor: POSITION_BOX_COLORS.profit.fill,
-    lineColor: POSITION_BOX_COLORS.profit.line, lineWidth: 1,
+    lineColor: POSITION_BOX_COLORS.profit.line, lineWidth: 2,
+    lineStyle: LightweightCharts.LineStyle.Dashed,
     priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
   });
   profitSeries.applyOptions({ baseValue: { type: "price", price: sig.entry } });
@@ -654,11 +660,20 @@ function drawPositionBox(chart, candles, sig, startTs) {
 
   const riskSeries = chart.addAreaSeries({
     topColor: POSITION_BOX_COLORS.risk.fill, bottomColor: POSITION_BOX_COLORS.risk.fill,
-    lineColor: POSITION_BOX_COLORS.risk.line, lineWidth: 1,
+    lineColor: POSITION_BOX_COLORS.risk.line, lineWidth: 2,
+    lineStyle: LightweightCharts.LineStyle.Dashed,
     priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
   });
   riskSeries.applyOptions({ baseValue: { type: "price", price: sig.entry } });
   riskSeries.setData(segData.map((d) => ({ time: d.time, value: sig.stop })));
+
+  // Duenne durchgezogene Trennlinie am Entry-Preis (wie die weisse Linie im
+  // Referenz-Screenshot, die die gruene von der roten Zone trennt).
+  const entrySplitSeries = chart.addLineSeries({
+    color: "rgba(255,255,255,0.85)", lineWidth: 1,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  entrySplitSeries.setData(segData.map((d) => ({ time: d.time, value: sig.entry })));
 }
 
 function renderChart(item) {
