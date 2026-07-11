@@ -741,13 +741,16 @@ function renderChart(item) {
   }
   if (sig.entry !== null) {
     // Box zuerst zeichnen (liegt hinter den duennen Preis-Linien) - Startpunkt
-    // ist der tatsaechliche Einstiegszeitpunkt bei einer offenen Position,
-    // sonst ein kurzer Rueckblick-Zeitraum bis "jetzt" fuer ein gerade erst
-    // erkanntes Setup, das noch nicht ausgeloest wurde.
+    // ist der tatsaechliche Einstiegszeitpunkt bei einer offenen Position; ist
+    // die Position noch nicht ausgeloest (Watchlist), wird die Box stattdessen
+    // am Ursprung der Entry-Zone (ann.zoneTs, gleicher Ankerpunkt wie die OB/
+    // FVG-Box) verankert statt an einem knappen 20-Kerzen-Rueckblick - sonst
+    // ist die Box bei einer mehrtaegigen Chart-Ansicht kaum sichtbar (nur ein
+    // paar Stunden breit).
     const openRec = (item.signals || []).find((r) => r.status === "open");
     const boxStartTs = openRec
       ? Math.floor(openRec.entryTs / 1000)
-      : candles[Math.max(0, candles.length - 21)].time;
+      : (ann.zoneTs ? Math.floor(ann.zoneTs / 1000) : candles[Math.max(0, candles.length - 21)].time);
     drawPositionBox(chart, candles, sig, boxStartTs);
 
     series.createPriceLine({
