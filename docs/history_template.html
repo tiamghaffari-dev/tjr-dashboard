@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>TJR Verlauf // ICT-SMC</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(88, 101, 242, 0.16), transparent 42%),
+      radial-gradient(circle at 85% 8%, rgba(57, 255, 136, 0.10), transparent 40%),
+      #05060a;
+    color: #e8eaf0;
+    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  body { padding: 22px 24px 48px; max-width: 1180px; margin: 0 auto; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
+  h1 {
+    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
+    background: linear-gradient(90deg, #7dd3fc, #a78bfa 45%, #39ff88 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .back-link {
+    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 6px; text-decoration: none;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
+    color: #9198ad; transition: all 0.15s ease;
+  }
+  .back-link:hover { color: #e8eaf0; border-color: rgba(255,255,255,0.3); }
+  .subtitle { font-size: 12px; color: #7c8399; margin: 10px 0 20px; line-height: 1.5; }
+
+  .summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 22px; }
+  .summary-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .summary-card .label { font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: #7c8399; margin-bottom: 6px; }
+  .summary-card .value { font-size: 20px; font-weight: 700; }
+  .v-win { color: #4fff9c; }
+  .v-loss { color: #ff6b6b; }
+  .v-open { color: #ffd25c; }
+  .v-neutral { color: #e8eaf0; }
+
+  .asset-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .asset-card {
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.15s ease;
+  }
+  .asset-card:hover, .asset-card.active { border-color: rgba(122,140,255,0.5); background: rgba(122,140,255,0.06); }
+  .asset-card .name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .asset-card .stats { font-size: 11px; color: #9198ad; display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .filters { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .filters select {
+    font-family: inherit; font-size: 12px; background: rgba(255,255,255,0.04);
+    color: #e8eaf0; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 10px;
+  }
+  .filters .reset-link { font-size: 11px; color: #9198ad; cursor: pointer; text-decoration: underline; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th {
+    text-align: left; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase;
+    color: #7c8399; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  tbody td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px;
+    font-weight: 700; letter-spacing: 0.3px; border: 1px solid transparent;
+  }
+  .badge-win { background: rgba(57,255,136,0.14); color: #4fff9c; border-color: rgba(57,255,136,0.35); }
+  .badge-loss { background: rgba(255,107,157,0.14); color: #ff6b6b; border-color: rgba(255,107,157,0.35); }
+  .badge-open { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
+  .badge-stale { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.15); }
+  .dir-long { color: #4fff9c; }
+  .dir-short { color: #ff6b6b; }
+  .empty-state { color: #7c8399; font-size: 13px; padding: 30px 10px; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>TJR VERLAUF // ALLE ASSETS</h1>
+    </div>
+    <a class="back-link" href="index.html">← Live-Dashboard</a>
+  </div>
+  <div class="subtitle">
+    Jedes ENTRY-Signal, das die Engine seit Start des automatischen Trackings gefeuert hat (Paper-Trading, kein echtes Geld) —
+    Ergebnis wird mechanisch anhand der echten Kursdaten ermittelt (Stop oder Target zuerst getroffen). "Offen" zeigt den
+    aktuellen unrealisierten Fortschritt in R. Nur Signale innerhalb 15–17 Uhr Wien werden geloggt.
+    <span id="generated-at">__GENERATED_AT__</span>
+  </div>
+
+  <div id="summary" class="summary-row"></div>
+  <div id="assetCards" class="asset-cards"></div>
+
+  <div class="filters">
+    <label for="statusFilter" style="font-size:11px;color:#9198ad;">Status:</label>
+    <select id="statusFilter">
+      <option value="all">Alle</option>
+      <option value="win">Nur Win</option>
+      <option value="loss">Nur Loss</option>
+      <option value="open">Nur Offen</option>
+      <option value="stale">Nur Abgelaufen</option>
+    </select>
+    <span class="reset-link" id="resetFilter">Asset-Filter zurücksetzen</span>
+  </div>
+
+  <div id="tableWrap"></div>
+
+<script>
+const DATA = __PRECOMPUTED_JSON__;
+
+let activeAsset = null;
+let activeStatus = "all";
+
+const STATUS_META = {
+  win:   { label: "WIN",        cls: "badge-win" },
+  loss:  { label: "LOSS",       cls: "badge-loss" },
+  open:  { label: "OFFEN",      cls: "badge-open" },
+  stale: { label: "ABGELAUFEN", cls: "badge-stale" },
+};
+
+function assetMeta(symbol) {
+  return DATA.assetsMeta.find((a) => a.symbol === symbol) || { symbol, name: symbol, icon: "•" };
+}
+
+function fmtDate(ts) {
+  if (!ts) return "–";
+  const d = new Date(ts);
+  const p = (n) => String(n).padStart(2, "0");
+  return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+function computeStats(signals) {
+  const closed = signals.filter((r) => r.status === "win" || r.status === "loss");
+  const wins = signals.filter((r) => r.status === "win").length;
+  const losses = signals.filter((r) => r.status === "loss").length;
+  const open = signals.filter((r) => r.status === "open").length;
+  const stale = signals.filter((r) => r.status === "stale").length;
+  const winRate = closed.length ? Math.round((wins / closed.length) * 100) : null;
+  return { total: signals.length, wins, losses, open, stale, closed: closed.length, winRate };
+}
+
+function renderSummary() {
+  const s = computeStats(DATA.signals);
+  const el = document.getElementById("summary");
+  el.innerHTML = `
+    <div class="summary-card"><div class="label">Gesamt Signale</div><div class="value v-neutral">${s.total}</div></div>
+    <div class="summary-card"><div class="label">Win-Rate (abgeschlossen)</div><div class="value v-neutral">${s.winRate === null ? "–" : s.winRate + "%"}</div></div>
+    <div class="summary-card"><div class="label">Wins</div><div class="value v-win">${s.wins}</div></div>
+    <div class="summary-card"><div class="label">Losses</div><div class="value v-loss">${s.losses}</div></div>
+    <div class="summary-card"><div class="label">Offen</div><div class="value v-open">${s.open}</div></div>
+    <div class="summary-card"><div class="label">Abgelaufen</div><div class="value v-neutral">${s.stale}</div></div>`;
+}
+
+function renderAssetCards() {
+  const el = document.getElementById("assetCards");
+  el.innerHTML = DATA.assetsMeta.map((a) => {
+    const signals = DATA.signals.filter((r) => r.asset === a.symbol);
+    const s = computeStats(signals);
+    const isActive = activeAsset === a.symbol;
+    return `
+      <div class="asset-card${isActive ? " active" : ""}" data-symbol="${a.symbol}">
+        <div class="name">${a.icon} ${a.display || a.name}</div>
+        <div class="stats">
+          <span>${s.total} Signale</span>
+          <span class="v-win">${s.wins}W</span>
+          <span class="v-loss">${s.losses}L</span>
+          ${s.open ? `<span class="v-open">${s.open} offen</span>` : ""}
+          ${s.winRate !== null ? `<span>${s.winRate}% WR</span>` : ""}
+        </div>
+      </div>`;
+  }).join("");
+  el.querySelectorAll(".asset-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const sym = card.getAttribute("data-symbol");
+      activeAsset = activeAsset === sym ? null : sym;
+      renderAssetCards();
+      renderTable();
+    });
+  });
+}
+
+function renderTable() {
+  let rows = DATA.signals.slice();
+  if (activeAsset) rows = rows.filter((r) => r.asset === activeAsset);
+  if (activeStatus !== "all") rows = rows.filter((r) => r.status === activeStatus);
+  rows.sort((a, b) => b.entryTs - a.entryTs);
+
+  const wrap = document.getElementById("tableWrap");
+  if (!rows.length) {
+    wrap.innerHTML = `<div class="empty-state">Keine Signale für diesen Filter — entweder wurde hier noch nichts gehandelt, oder alles ist rausgefiltert.</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Datum (Entry)</th><th>Asset</th><th>Richtung</th><th>Entry</th><th>Stop</th>
+          <th>Target</th><th>R:R</th><th>Zone</th><th>Status</th><th>Ergebnis</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((r) => {
+          const meta = assetMeta(r.asset);
+          const statusMeta = STATUS_META[r.status] || STATUS_META.open;
+          let ergebnis = "–";
+          if (r.status === "win" || r.status === "loss") {
+            const sign = r.rMultiple >= 0 ? "+" : "";
+            ergebnis = `${sign}${r.rMultiple}R`;
+          } else if (r.status === "open" && typeof r.unrealizedR === "number") {
+            const sign = r.unrealizedR >= 0 ? "+" : "";
+            ergebnis = `${sign}${r.unrealizedR}R (unrealisiert)`;
+          }
+          return `
+          <tr>
+            <td>${fmtDate(r.entryTs)}</td>
+            <td>${meta.icon} ${meta.display || meta.name}</td>
+            <td class="${r.direction === "LONG" ? "dir-long" : "dir-short"}">${r.direction}</td>
+            <td>${r.entry ?? "–"}</td>
+            <td>${r.stop ?? "–"}</td>
+            <td>${r.target ?? "–"}</td>
+            <td>${r.rr ? "1:" + r.rr : "–"}</td>
+            <td>${r.zoneKind || "–"}</td>
+            <td><span class="badge ${statusMeta.cls}">${statusMeta.label}</span></td>
+            <td>${ergebnis}</td>
+          </tr>`;
+        }).join("")}
+      </tbody>
+    </table>`;
+}
+
+document.getElementById("statusFilter").addEventListener("change", (e) => {
+  activeStatus = e.target.value;
+  renderTable();
+});
+document.getElementById("resetFilter").addEventListener("click", () => {
+  activeAsset = null;
+  renderAssetCards();
+  renderTable();
+});
+
+const genEl = document.getElementById("generated-at");
+if (genEl) genEl.textContent = "Zuletzt aktualisiert: " + DATA.generatedAt;
+
+renderSummary();
+renderAssetCards();
+renderTable();
+</script>
+</body>
+</html>
