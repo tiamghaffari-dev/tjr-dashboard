@@ -131,6 +131,9 @@
   .sig-none { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
   .sig-error { background: rgba(255,90,90,0.14); color: #ff6b6b; border-color: rgba(255,90,90,0.35); }
   .badge-outside { background: rgba(255,255,255,0.05); color: #9198ad; border-color: rgba(255,255,255,0.15); }
+  .mode-analyzing { background: rgba(57,255,136,0.12); color: #4fff9c; border-color: rgba(57,255,136,0.3); }
+  .mode-monitoring { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
+  .mode-idle { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
 
   .steps { font-size: 12px; font-family: -apple-system, sans-serif; margin: 6px 0 14px; }
   .step { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: baseline; }
@@ -248,6 +251,15 @@ function badgeClassSignal(sig) {
   if (sig === "ENTRY") return "sig-entry";
   if (sig && sig.startsWith("Watchlist")) return "sig-watch";
   return "sig-none";
+}
+// Tiam, 2026-07-12: "die KI soll nur zwischen 15 und 17 Uhr analysieren [...]
+// nach 17-18 Uhr soll die KI nichts mehr machen ausser zu schauen ob der
+// gesetzte Trade in die richtige Richtung geht." - macht den aktuellen
+// Betriebsmodus pro Asset sichtbar statt es zu verstecken.
+function modeBadge(item) {
+  if (item.mode === "analyzing") return `<span class="badge mode-analyzing" title="Innerhalb 15-17 Wien - aktive Analyse mit allen TJR-Tools">🔎 Analysiere</span>`;
+  if (item.mode === "monitoring") return `<span class="badge mode-monitoring" title="Ausserhalb Handelsfenster - keine neuen Setups, nur die offene Position wird beobachtet">👁 Beobachte Position</span>`;
+  return `<span class="badge mode-idle" title="Ausserhalb Handelsfenster, kein offener Trade - pausiert bis 15 Uhr Wien">⏸ Pausiert</span>`;
 }
 function biasArrow(bias) {
   if (bias === "bullish") return "▲";
@@ -522,10 +534,18 @@ function renderChart(item) {
   for (const rec of (item.signals || [])) {
     const style = SIGNAL_OUTCOME_STYLE[rec.status] || SIGNAL_OUTCOME_STYLE.open;
     const isLong = rec.direction === "LONG";
+    // Tiam, 2026-07-12: "schaut ob der Trade wirklich in die richtige
+    // Richtung geht" - bei noch offenen Trades den unrealisierten
+    // R-Fortschritt statt eines bloßen "OFFEN" anzeigen.
+    let text = style.text;
+    if (rec.status === "open" && typeof rec.unrealizedR === "number") {
+      const sign = rec.unrealizedR >= 0 ? "+" : "";
+      text = `OFFEN ${sign}${rec.unrealizedR}R`;
+    }
     markers.push({
       time: Math.floor(rec.entryTs / 1000),
       position: isLong ? "belowBar" : "aboveBar",
-      color: style.color, shape: isLong ? "arrowUp" : "arrowDown", text: style.text,
+      color: style.color, shape: isLong ? "arrowUp" : "arrowDown", text,
     });
   }
 
@@ -566,7 +586,7 @@ function renderAssetSection(item) {
   const { sig, ann } = item;
   const glow = sig.signal === "ENTRY" ? " glow-entry" : "";
   const outsideBadge = (sig.signal === "ENTRY" && !PRECOMPUTED.inTradingWindow)
-    ? `<span class="badge badge-outside" title="TJR tradet nur 15-17 Uhr Wien — dieses Signal liegt ausserhalb, kein Push-Alert gesendet">außerhalb Handelszeit (15–17 Wien)</span>`
+    ? `<span class="badge badge-outside" title="TJR tradet nur 15-17 Uhr Wien — dieses Signal liegt ausserhalb und wird nicht als Paper-Trade geloggt">außerhalb Handelszeit (15–17 Wien)</span>`
     : "";
 
   section.innerHTML = `
@@ -579,6 +599,7 @@ function renderAssetSection(item) {
         <div class="badges">
           <span class="badge ${badgeClassBias(sig.bias)}">${biasArrow(sig.bias)} 4H ${sig.bias.toUpperCase()}</span>
           <span class="badge ${badgeClassSignal(sig.signal)}">${sig.signal.split(" (")[0]}</span>
+          ${modeBadge(item)}
           ${outsideBadge}
         </div>
         <div class="chart-container" id="chart-${id}"></div>
@@ -613,9 +634,14 @@ function main() {
 
   const winEl = document.getElementById("window-status");
   if (winEl) {
-    winEl.textContent = PRECOMPUTED.inTradingWindow
-      ? "· ✓ innerhalb Handelsfenster (15–17 Wien)"
-      : "· außerhalb Handelsfenster (15–17 Wien) — Alerts pausiert";
+    const anyOpenTrade = PRECOMPUTED.assets.some((a) => !a.error && a.hasOpenTrade);
+    if (PRECOMPUTED.inTradingWindow) {
+      winEl.textContent = "· ✓ analysiere aktiv (15–17 Wien)";
+    } else if (anyOpenTrade) {
+      winEl.textContent = "· außerhalb Handelsfenster (15–17 Wien) — beobachte offene Position(en), keine neuen Setups";
+    } else {
+      winEl.textContent = "· außerhalb Handelsfenster (15–17 Wien) — pausiert, keine neue Analyse";
+    }
   }
 
   if (PRECOMPUTED.news.length > 0) {
