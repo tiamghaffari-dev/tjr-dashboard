@@ -223,6 +223,10 @@
     <span><i class="swatch" style="background:#ff6b6b"></i>Stop</span>
     <span><i class="swatch" style="background:#ffd25c"></i>Target</span>
     <span><i class="swatch" style="background:#565c70"></i>Session-Start (Standard-ICT-Zeiten ET, nicht TJR-bestätigt)</span>
+    <span><i class="swatch" style="background:#4fff9c"></i>Vergangenes Signal: Win</span>
+    <span><i class="swatch" style="background:#ff6b6b"></i>Vergangenes Signal: Loss</span>
+    <span><i class="swatch" style="background:#ffd25c"></i>Vergangenes Signal: noch offen</span>
+    <span><i class="swatch" style="background:#7c8399"></i>Vergangenes Signal: abgelaufen (stale)</span>
   </div>
 
   <div id="assets"></div>
@@ -442,6 +446,7 @@ function renderChart(item) {
     time: Math.floor(c.ts / 1000), open: c.open, high: c.high, low: c.low, close: c.close,
   }));
   series.setData(candles);
+  const DEFAULT_VIEW_CANDLES = 3 * 96; // ~3 Tage bei 15-Min-Kerzen als Erstansicht
 
   const { ann, sig } = item;
   let markers = sessionMarkers(item.ltf);
@@ -507,6 +512,22 @@ function renderChart(item) {
     });
   }
 
+  const SIGNAL_OUTCOME_STYLE = {
+    win: { color: "#4fff9c", text: "WIN" },
+    loss: { color: "#ff6b6b", text: "LOSS" },
+    open: { color: "#ffd25c", text: "OFFEN" },
+    stale: { color: "#7c8399", text: "ABGELAUFEN" },
+  };
+  for (const rec of (item.signals || [])) {
+    const style = SIGNAL_OUTCOME_STYLE[rec.status] || SIGNAL_OUTCOME_STYLE.open;
+    const isLong = rec.direction === "LONG";
+    markers.push({
+      time: Math.floor(rec.entryTs / 1000),
+      position: isLong ? "belowBar" : "aboveBar",
+      color: style.color, shape: isLong ? "arrowUp" : "arrowDown", text: style.text,
+    });
+  }
+
   markers.sort((a, b) => a.time - b.time);
   if (markers.length) series.setMarkers(markers);
 
@@ -514,6 +535,11 @@ function renderChart(item) {
   if (savedRange) {
     try { chart.timeScale().setVisibleRange(savedRange); }
     catch (e) { chart.timeScale().fitContent(); }
+  } else if (candles.length > DEFAULT_VIEW_CANDLES) {
+    chart.timeScale().setVisibleRange({
+      from: candles[candles.length - DEFAULT_VIEW_CANDLES].time,
+      to: candles[candles.length - 1].time,
+    });
   } else {
     chart.timeScale().fitContent();
   }
