@@ -23,6 +23,17 @@ const BASE = "https://financialmodelingprep.com/stable";
 const STATE_PATH = path.join(__dirname, "state.json");
 const SIGNALS_LOG_PATH = path.join(__dirname, "signals_log.json");
 
+// Tiam, 2026-07-11: "man scrollt beim Chart und sieht da wurde mal
+// analysiert und das war ein Profit oder Fail" — Chart soll die letzten
+// 10-20 Tage Historie zeigen (scrollbar wie bei TradingView), nicht nur die
+// letzten ~1.5 Tage. FETCH_BUFFER_DAYS gibt beim Datenabruf etwas Puffer
+// (Wochenenden/wenig Aktivitaet), damit am Ende wirklich CHART_HISTORY_DAYS
+// Tage mit Kerzen uebrig bleiben.
+const CHART_HISTORY_DAYS = 20;
+const FETCH_BUFFER_DAYS = 5;
+const CANDLES_PER_DAY_15M = 96; // 24h * 60min / 15min
+const CHART_HISTORY_CANDLES = CHART_HISTORY_DAYS * CANDLES_PER_DAY_15M;
+
 const ASSETS = [
   { name: "Bitcoin", symbol: "BTCUSD", display: "BTCUSD", icon: "₿" },
   { name: "Ethereum", symbol: "ETHUSD", display: "ETHUSD", icon: "Ξ" },
@@ -59,18 +70,19 @@ async function fetchCandles(symbol, interval, from, to) {
 async function analyzeAsset(asset) {
   const today = new Date();
   const from1h = new Date(today); from1h.setDate(from1h.getDate() - 30);
-  const from5m = new Date(today); from5m.setDate(from5m.getDate() - 7);
+  const from5m = new Date(today); from5m.setDate(from5m.getDate() - (CHART_HISTORY_DAYS + FETCH_BUFFER_DAYS));
   const df1h = await fetchCandles(asset.symbol, "1hour", from1h, today);
   const df5m = await fetchCandles(asset.symbol, "5min", from5m, today);
   const htf = resample(df1h, 240);
   const ltf = resample(df5m, 15);
   const sig = buildSignal(htf, ltf);
   const ann = buildAnnotations(htf, ltf);
-  // 150 15-min-Baren (~1.5 Tage) reichen fuer den Sweep-Lookback (40 Baren)
-  // plus genug sichtbaren Kontext davor/danach fuer den Chart. ltfFull (volle
-  // 7-Tage-Reihe) wird separat zurueckgegeben fuer resolveSignals() weiter
-  // unten, die auch aeltere offene Paper-Trades noch aufloesen koennen muss.
-  return { sig, ann, ltf: ltf.slice(-150), ltfFull: ltf };
+  // CHART_HISTORY_CANDLES (~20 Tage) werden an den Client geschickt, damit man
+  // im Chart weit genug zurueckscrollen kann, um vergangene Analysen/Signale
+  // zu sehen (siehe CHART_HISTORY_DAYS oben). ltfFull (volle Rohreihe inkl.
+  // FETCH_BUFFER_DAYS) wird separat zurueckgegeben fuer resolveSignals()
+  // weiter unten, die auch aeltere offene Paper-Trades noch aufloesen muss.
+  return { sig, ann, ltf: ltf.slice(-CHART_HISTORY_CANDLES), ltfFull: ltf };
 }
 
 // Nutzt ForexFactory's oeffentlichen Kalender-Feed (via nfs.faireconomy.media,
@@ -343,6 +355,17 @@ async function main() {
   console.log(`Paper-Trades: ${signalsLog.length} gesamt, ${closedSignals.length} abgeschlossen (${wins} Gewinn), ${signalsLog.filter((r) => r.status === "open").length} offen.`);
   if (!NTFY_TOPIC) {
     console.log("NTFY_TOPIC nicht gesetzt — Push-Benachrichtigungen werden uebersprungen.");
+  }
+
+  // Vergangene Paper-Trade-Signale (win/loss/open/stale) der letzten
+  // CHART_HISTORY_DAYS pro Asset anhaengen, damit report_template.html sie
+  // direkt im Chart als Marker einzeichnen kann (Tiam, 2026-07-11).
+  const chartHistoryCutoff = Date.now() - CHART_HISTORY_DAYS * 86400000;
+  for (const item of assets) {
+    if (item.error) continue;
+    item.signals = signalsLog.filter(
+      (r) => r.asset === item.asset.symbol && r.entryTs >= chartHistoryCutoff,
+    );
   }
 
   const payload = {
