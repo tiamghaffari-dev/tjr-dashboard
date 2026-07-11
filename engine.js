@@ -154,6 +154,49 @@ function premiumDiscountZone(legLow, legHigh, price) {
   return { zone: price < mid ? "discount" : "premium", mid };
 }
 
+// iFVG (inverse FVG) — TJR's own glossary definition (Bootcamp Day 30 / "Beginners
+// Guide"): "fvg that gets disrespected within current trend that shows a change of
+// trend". An FVG that later gets closed (not just wicked) through its FAR edge signals
+// a trend shift — functions as a CONFIRMATION signal alongside BOS, not an entry zone
+// itself. Deliberately stricter than unmitigatedFvgs (which only checks a wick touch):
+// this requires a close through the opposite edge, mirroring BOS's close-based rule.
+function findIfvg(df, fvgs) {
+  const events = [];
+  for (const gap of fvgs) {
+    const after = df.filter(r => r.ts > gap.ts);
+    if (gap.type === "bullish") {
+      const broken = after.find(r => r.close < gap.bottom);
+      if (broken) events.push({ ts: broken.ts, dir: "down", originTs: gap.ts, top: gap.top, bottom: gap.bottom });
+    } else {
+      const broken = after.find(r => r.close > gap.top);
+      if (broken) events.push({ ts: broken.ts, dir: "up", originTs: gap.ts, top: gap.top, bottom: gap.bottom });
+    }
+  }
+  return events.sort((a, b) => a.ts - b.ts);
+}
+
+// Breaker Block — TJR's own glossary definition: "move up or down prior to the break
+// of structure to the up/downside in trend shift". Implemented as: the Order Block of
+// the PREVIOUS (opposite) trend direction that existed before the current liquidity
+// sweep and has since been broken by a close through it — the old OB flips polarity
+// (former resistance becomes support, or vice versa) and becomes the new zone for the
+// trend shift. Reuses findOrderBlock's same window logic, just anchored at the last
+// opposite-direction BOS before the sweep instead of the confirming BOS/iFVG after it.
+function findBreakerBlock(df, bosEvents, sweepTs, direction) {
+  const oppositeDir = direction === "up" ? "down" : "up";
+  const priorOppositeBos = bosEvents.filter(b => b.ts < sweepTs && b.dir === oppositeDir);
+  if (priorOppositeBos.length === 0) return null;
+  const anchorTs = priorOppositeBos[priorOppositeBos.length - 1].ts;
+  const oldOb = findOrderBlock(df, anchorTs, oppositeDir);
+  if (!oldOb) return null;
+  const after = df.filter(r => r.ts > oldOb.ts);
+  const broken = oppositeDir === "up"
+    ? after.some(r => r.close < oldOb.bottom)
+    : after.some(r => r.close > oldOb.top);
+  if (!broken) return null;
+  return { ts: oldOb.ts, type: `breaker_${direction}`, top: oldOb.top, bottom: oldOb.bottom };
+}
+
 function buildSignal(htfDf, ltfDf, assetClass, rrTarget = 2.0, sweepLookbackBars = 40) {
   const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
   const bias = htfDf.length ? htfTrend : 0;
@@ -189,14 +232,28 @@ function buildSignal(htfDf, ltfDf, assetClass, rrTarget = 2.0, sweepLookbackBars
 
   const wantDir = bias === 1 ? "up" : "down";
   const confirmingBos = ltfBos.filter(b => b.ts > recentSweep.ts && b.dir === wantDir);
-  if (confirmingBos.length === 0) {
-    result.detail = `Liquidity Sweep am ${new Date(recentSweep.ts).toISOString()} gefunden, aber noch kein bestaetigender BOS auf LTF.`;
+
+  // TJR's own framework (Bootcamp Day 30 / "Beginners Guide" glossary): confirmation =
+  // bos, ifvg, smt. SMT (needs a second correlated data feed) is separate, not implemented.
+  const ifvgEvents = findIfvg(ltfDf, findFvgs(ltfDf));
+  const confirmingIfvg = ifvgEvents.filter(e => e.ts > recentSweep.ts && e.dir === wantDir);
+
+  if (confirmingBos.length === 0 && confirmingIfvg.length === 0) {
+    result.detail = `Liquidity Sweep am ${new Date(recentSweep.ts).toISOString()} gefunden, aber noch kein bestaetigender BOS oder iFVG auf LTF.`;
     result.signal = "Watchlist (Sweep ohne Bestaetigung)";
     return result;
   }
 
-  const bosEvent = confirmingBos[0];
-  const ob = findOrderBlock(ltfDf, bosEvent.ts, wantDir);
+  // Confirmation can be BOS OR iFVG — take whichever happened first after the sweep.
+  const confCandidates = [];
+  if (confirmingBos.length) confCandidates.push({ kind: "BOS", ts: confirmingBos[0].ts, event: confirmingBos[0] });
+  if (confirmingIfvg.length) confCandidates.push({ kind: "iFVG", ts: confirmingIfvg[0].ts, event: confirmingIfvg[0] });
+  confCandidates.sort((a, b) => a.ts - b.ts);
+  const conf = confCandidates[0];
+
+  const bosEvent = confirmingBos.length ? confirmingBos[0] : null;
+  const ob = findOrderBlock(ltfDf, conf.ts, wantDir);
+  const bb = findBreakerBlock(ltfDf, ltfBos, recentSweep.ts, wantDir);
 
   const sinceSweep = ltfDf.filter(r => r.ts >= recentSweep.ts);
   let legLow, legHigh;
@@ -230,10 +287,15 @@ function buildSignal(htfDf, ltfDf, assetClass, rrTarget = 2.0, sweepLookbackBars
     const { zone: z } = premiumDiscountZone(legLow, legHigh, midOb);
     if (z === wantedZone) candidates.push({ kind: "OrderBlock", top: ob.top, bottom: ob.bottom });
   }
+  if (bb) {
+    const midBb = (bb.top + bb.bottom) / 2;
+    const { zone: z } = premiumDiscountZone(legLow, legHigh, midBb);
+    if (z === wantedZone) candidates.push({ kind: "BreakerBlock", top: bb.top, bottom: bb.bottom });
+  }
 
   if (candidates.length === 0) {
-    result.signal = "Watchlist (BOS bestaetigt, keine Entry-Zone im Discount/Premium)";
-    result.detail = `Sweep+BOS am ${new Date(bosEvent.ts).toISOString()} bestaetigt Bias ${biasLabel}, aber keine FVG/OB im ${wantedZone}.`;
+    result.signal = `Watchlist (${conf.kind} bestaetigt, keine Entry-Zone im Discount/Premium)`;
+    result.detail = `Sweep+${conf.kind} am ${new Date(conf.ts).toISOString()} bestaetigt Bias ${biasLabel}, aber keine FVG/OB/Breaker im ${wantedZone}.`;
     return result;
   }
 
@@ -258,12 +320,17 @@ function buildSignal(htfDf, ltfDf, assetClass, rrTarget = 2.0, sweepLookbackBars
 
   const inZoneNow = cand.bottom <= currentPrice && currentPrice <= cand.top;
 
+  const confDesc = conf.kind === "BOS"
+    ? `BOS ${conf.event.dir} am ${new Date(conf.ts).toISOString()}`
+    : `iFVG-Bruch (Richtung ${conf.event.dir}) am ${new Date(conf.ts).toISOString()}`;
+
   Object.assign(result, {
     signal: inZoneNow ? "ENTRY" : "Watchlist (auf Retracement in Zone warten)",
     detail: `Sweep ${recentSweep.type} @ ${recentSweep.level.toPrecision(6)} am ${new Date(recentSweep.ts).toISOString()}, `
-      + `BOS ${bosEvent.dir} am ${new Date(bosEvent.ts).toISOString()}, Entry-Zone: ${cand.kind} [${cand.bottom.toPrecision(6)} - ${cand.top.toPrecision(6)}] (${zone}).`,
+      + `${confDesc}, Entry-Zone: ${cand.kind} [${cand.bottom.toPrecision(6)} - ${cand.top.toPrecision(6)}] (${zone}).`,
     entry: round6(entry), stop: round6(stop), target: round6(target), rr: rrTarget,
-    sweep: recentSweep, bos: bosEvent, zoneKind: cand.kind, zoneRange: [cand.bottom, cand.top],
+    sweep: recentSweep, bos: bosEvent, confirmation: conf,
+    zoneKind: cand.kind, zoneRange: [cand.bottom, cand.top],
     currentPrice,
   });
   return result;
@@ -284,7 +351,7 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
   const ann = {
     bias: biasLabel,
     htfLastBos: htfBos.length ? htfBos[htfBos.length - 1] : null,
-    sweep: null, bos: null, orderBlock: null,
+    sweep: null, bos: null, orderBlock: null, breakerBlock: null, confirmation: null,
     equilibrium: null, zoneKind: null, zoneRange: null,
   };
   if (bias === 0) return ann;
@@ -313,12 +380,23 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
   ann.equilibrium = (legLow + legHigh) / 2;
 
   const confirmingBos = ltfBos.filter((b) => b.ts > recentSweep.ts && b.dir === wantDir);
-  if (confirmingBos.length === 0) return ann;
-  const bosEvent = confirmingBos[0];
-  ann.bos = bosEvent;
+  const ifvgEvents = findIfvg(ltfDf, findFvgs(ltfDf));
+  const confirmingIfvg = ifvgEvents.filter((e) => e.ts > recentSweep.ts && e.dir === wantDir);
+  if (confirmingBos.length === 0 && confirmingIfvg.length === 0) return ann;
 
-  const ob = findOrderBlock(ltfDf, bosEvent.ts, wantDir);
+  const confCandidates = [];
+  if (confirmingBos.length) confCandidates.push({ kind: "BOS", ts: confirmingBos[0].ts, event: confirmingBos[0] });
+  if (confirmingIfvg.length) confCandidates.push({ kind: "iFVG", ts: confirmingIfvg[0].ts, event: confirmingIfvg[0] });
+  confCandidates.sort((a, b) => a.ts - b.ts);
+  const conf = confCandidates[0];
+  ann.confirmation = conf;
+  if (confirmingBos.length) ann.bos = confirmingBos[0];
+
+  const ob = findOrderBlock(ltfDf, conf.ts, wantDir);
   if (ob) ann.orderBlock = ob;
+
+  const bb = findBreakerBlock(ltfDf, ltfBos, recentSweep.ts, wantDir);
+  if (bb) ann.breakerBlock = bb;
 
   const fvgs = unmitigatedFvgs(ltfDf, findFvgs(ltfDf));
   const wantedZone = wantDir === "up" ? "discount" : "premium";
@@ -337,6 +415,11 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
     const midOb = (ob.top + ob.bottom) / 2;
     const { zone: z } = premiumDiscountZone(legLow, legHigh, midOb);
     if (z === wantedZone) candidates.push({ kind: "OrderBlock", top: ob.top, bottom: ob.bottom, ts: ob.ts });
+  }
+  if (bb) {
+    const midBb = (bb.top + bb.bottom) / 2;
+    const { zone: z } = premiumDiscountZone(legLow, legHigh, midBb);
+    if (z === wantedZone) candidates.push({ kind: "BreakerBlock", top: bb.top, bottom: bb.bottom, ts: bb.ts });
   }
   if (candidates.length) {
     const currentPrice = ltfDf[ltfDf.length - 1].close;
@@ -359,6 +442,7 @@ if (typeof module !== "undefined") {
   module.exports = {
     parseTs, loadCandles, resample, findSwings, computeTrendAndBos,
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
+    findIfvg, findBreakerBlock,
     premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }
