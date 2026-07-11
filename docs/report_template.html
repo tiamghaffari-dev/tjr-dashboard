@@ -365,6 +365,80 @@ function sessionMarkers(ltf) {
   return out;
 }
 
+// Tiam, 2026-07-11 (Chart-Tools Schritt 2): "die oldtime highs der asian und
+// newyork time session so wie es tjr gemacht hat" - TJR markiert die jeweils
+// letzte ABGESCHLOSSENE Asia-/NY-Session als Liquiditaets-Level (High + Low),
+// beschriftet mit Text, bis der Level vom Preis genommen ("geswept") wird -
+// siehe project_tjr_visual_style Memory: "liquidity lines are labeled
+// directly with text". Session-Enden werden aus den bereits vorhandenen
+// SESSIONS-Startzeiten abgeleitet (Ende = Start der naechsten Session im
+// Zyklus), damit es nur EINE Session-Zeit-Definition im gesamten Chart gibt
+// statt zweier widerspruechlicher.
+const SESSION_LEVEL_COLORS = { Asia: "#fbbf24", NY: "#fb7185" };
+const SESSION_RANGES = SESSIONS.map((s, i) => ({
+  label: s.label,
+  startHour: s.hour,
+  endHour: SESSIONS[(i + 1) % SESSIONS.length].hour,
+})).filter((s) => SESSION_LEVEL_COLORS[s.label]);
+
+function sessionInstanceKey(ts, s) {
+  const d = new Date(ts);
+  const h = d.getUTCHours();
+  const inSession = s.startHour < s.endHour
+    ? (h >= s.startHour && h < s.endHour)
+    : (h >= s.startHour || h < s.endHour);
+  if (!inSession) return null;
+  const instDate = new Date(d);
+  if (s.startHour > s.endHour && h < s.endHour) {
+    instDate.setUTCDate(instDate.getUTCDate() - 1);
+  }
+  return instDate.getUTCFullYear() + "-" + instDate.getUTCMonth() + "-" + instDate.getUTCDate();
+}
+
+function computeSessionLevels(ltf) {
+  if (!ltf.length) return [];
+  const buckets = new Map();
+  for (const c of ltf) {
+    for (const s of SESSION_RANGES) {
+      const key = sessionInstanceKey(c.ts, s);
+      if (key === null) continue;
+      const bucketKey = s.label + "|" + key;
+      if (!buckets.has(bucketKey)) {
+        buckets.set(bucketKey, {
+          label: s.label, color: SESSION_LEVEL_COLORS[s.label],
+          high: c.high, low: c.low, startTs: c.ts, endTs: c.ts,
+        });
+      } else {
+        const b = buckets.get(bucketKey);
+        b.high = Math.max(b.high, c.high);
+        b.low = Math.min(b.low, c.low);
+        b.startTs = Math.min(b.startTs, c.ts);
+        b.endTs = Math.max(b.endTs, c.ts);
+      }
+    }
+  }
+  const bySessionLabel = new Map();
+  for (const b of buckets.values()) {
+    if (!bySessionLabel.has(b.label)) bySessionLabel.set(b.label, []);
+    bySessionLabel.get(b.label).push(b);
+  }
+  const lastCandleTs = ltf[ltf.length - 1].ts;
+  const out = [];
+  for (const instances of bySessionLabel.values()) {
+    instances.sort((a, b) => a.startTs - b.startTs);
+    let chosen = instances[instances.length - 1];
+    // Die zuletzt gebaute Session koennte noch offen/laufend sein (endTs ==
+    // letzte Kerze im Chart, aber Session-Endstunde noch nicht erreicht) -
+    // dann zeigt TJR die davorliegende, fertig abgeschlossene Session als
+    // aktives Liquiditaets-Level.
+    if (chosen && chosen.endTs === lastCandleTs && instances.length > 1) {
+      chosen = instances[instances.length - 2];
+    }
+    if (chosen) out.push(chosen);
+  }
+  return out;
+}
+
 // Tiam, 2026-07-12: "simple fuer einen Webseitbesucher" - eine Zeile in
 // Alltagssprache statt "4H-Bias/Sweep/BOS/Entry-Zone"-Jargon, direkt sichtbar;
 // die Fachbegriffe bleiben verfuegbar, aber hinter einem <details>-Toggle.
@@ -510,6 +584,46 @@ function drawZoneBox(chart, candles, ann, markers) {
   });
 }
 
+// Zeichnet Session-High/Low als beschriftete, BEGRENZTE horizontale Segmente
+// (nicht chart-breite Linien) - beginnt am Start der jeweils letzten
+// abgeschlossenen Asia-/NY-Session und laeuft bis zum Sweep (eine Kerze
+// durchbricht den Level) oder bis zur aktuellsten Kerze, je nachdem was
+// zuerst eintritt. Gleiche Area-Series-Technik wie drawZoneBox, nur ohne
+// Fuellung (Linie statt Box).
+function drawSessionLevels(chart, candles, levels, markers) {
+  for (const lvl of levels) {
+    const sides = [
+      { price: lvl.high, dir: "high", suffix: "High" },
+      { price: lvl.low, dir: "low", suffix: "Low" },
+    ];
+    for (const side of sides) {
+      const startTs = Math.floor(lvl.startTs / 1000);
+      const startIdx = candles.findIndex((c) => c.time >= startTs);
+      if (startIdx === -1) continue;
+
+      let endIdx = candles.length - 1;
+      for (let i = startIdx + 1; i < candles.length; i++) {
+        const c = candles[i];
+        const swept = side.dir === "high" ? c.high > side.price : c.low < side.price;
+        if (swept) { endIdx = i; break; }
+      }
+      const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time, value: side.price }));
+      if (segData.length === 0) continue;
+
+      const lineSeries = chart.addLineSeries({
+        color: lvl.color, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed,
+        priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+      });
+      lineSeries.setData(segData);
+
+      markers.push({
+        time: segData[0].time, position: side.dir === "high" ? "aboveBar" : "belowBar",
+        color: lvl.color, shape: "circle", text: `${lvl.label} ${side.suffix}`,
+      });
+    }
+  }
+}
+
 function renderChart(item) {
   const container = document.getElementById("chart-" + assetId(item.asset));
   if (!container || item.error || !item.ltf || !item.ltf.length) return;
@@ -540,6 +654,7 @@ function renderChart(item) {
 
   const { ann, sig } = item;
   let markers = sessionMarkers(item.ltf);
+  drawSessionLevels(chart, candles, computeSessionLevels(item.ltf), markers);
 
   if (ann.sweep) {
     series.createPriceLine({
