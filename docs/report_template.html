@@ -478,13 +478,17 @@ function drawZoneBox(chart, candles, ann, markers) {
   if (startIdx === -1) return;
 
   // Extend the box until the zone is actually mitigated (a candle CLOSES through
-  // the far/invalidating side) or, if never mitigated yet, all the way to the
-  // last candle (present time) — instead of a fixed 6-candle width. Matches how
-  // TJR draws these by hand: the box keeps growing as long as the zone is still
-  // "live". Bullish zone (support) invalidated by a close below its bottom;
-  // bearish zone (resistance) invalidated by a close above its top.
-  let endIdx = candles.length - 1;
-  for (let i = startIdx + 1; i < candles.length; i++) {
+  // the far/invalidating side) — but cap the growth at MAX_ZONE_BARS even if still
+  // unmitigated. Tiam, 2026-07-11: "Order Blocks sollen nicht unendlich lange Boxen
+  // sein sondern angepasst" — a zone that survives ~3 Handelstage without being hit
+  // is stale/no longer the structure TJR would actually be tracking live; letting it
+  // stretch across the full 20-Tage chart history made it look "endless" instead of
+  // fitted. Bullish zone (support) invalidated by a close below its bottom; bearish
+  // zone (resistance) invalidated by a close above its top.
+  const MAX_ZONE_BARS = 3 * 96; // ~3 Tage bei 15-Min-Kerzen, gleich wie DEFAULT_VIEW_CANDLES
+  const maxEndIdx = Math.min(candles.length - 1, startIdx + MAX_ZONE_BARS);
+  let endIdx = maxEndIdx;
+  for (let i = startIdx + 1; i <= maxEndIdx; i++) {
     const c = candles[i];
     const invalidated = ann.bias === "bullish" ? c.close < bottom : c.close > top;
     if (invalidated) { endIdx = i; break; }
