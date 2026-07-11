@@ -174,6 +174,7 @@
     pointer-events: none;
   }
   .refresh-toast.show { opacity: 1; transform: translateY(0); }
+  .refresh-countdown { color: #7c8399; font-size: 0.85em; margin-left: 6px; }
 </style>
 </head>
 <body>
@@ -189,7 +190,7 @@
     </div>
   </div>
   <div class="subtitle">Bitcoin · Ethereum · XRP · GBP/USD · S&amp;P 500 · Gold — 4H-Bias / Sweep / BOS / Entry-Zone mit vollem Chart, automatisch aktualisiert via GitHub Actions (alle 5 Minuten zwischen 15 und 17 Uhr Wien, sonst alle 15 Minuten — das ist TJRs eigentliche Handelszeit)</div>
-  <div id="status" class="status-line"><span id="generated-at">__GENERATED_AT__</span> <span id="window-status"></span> <span id="live-indicator" class="live-indicator">● live</span></div>
+  <div id="status" class="status-line"><span id="generated-at">__GENERATED_AT__</span> <span id="window-status"></span> <span id="live-indicator" class="live-indicator">● live</span> <span id="refresh-countdown" class="refresh-countdown"></span></div>
 
   <div class="settings-box">
     <div class="settings-title">💰 Positionsgrößen-Rechner</div>
@@ -731,7 +732,20 @@ async function pollForUpdate() {
     console.error("Auto-Refresh fehlgeschlagen:", e);
   }
 }
-setInterval(pollForUpdate, REFRESH_INTERVAL_MS);
+let secondsUntilRefresh = REFRESH_INTERVAL_MS / 1000;
+function tickCountdown() {
+  const el = document.getElementById("refresh-countdown");
+  secondsUntilRefresh -= 1;
+  if (secondsUntilRefresh <= 0) {
+    if (el) el.textContent = "\u00b7 aktualisiere...";
+    pollForUpdate().finally(() => {
+      secondsUntilRefresh = REFRESH_INTERVAL_MS / 1000;
+    });
+  } else if (el) {
+    el.textContent = `\u00b7 n\u00e4chstes Update in ${secondsUntilRefresh}s`;
+  }
+}
+setInterval(tickCountdown, 1000);
 
 initSettings();
 main();
