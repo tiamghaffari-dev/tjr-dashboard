@@ -676,6 +676,59 @@ function drawPositionBox(chart, candles, sig, startTs) {
   entrySplitSeries.setData(segData.map((d) => ({ time: d.time, value: sig.entry })));
 }
 
+// Tiam, 2026-07-12: "lass die aelteren Analysen auf dem Chart... damit man
+// immer auf die Backtest zugreifen kann. aber so dass es die neue Analyse
+// nicht stoert bzw unuebersichtlich macht" - jeder abgeschlossene Paper-
+// Trade (win/loss/stale) bekommt die gleiche gruen/rot-Box wie der aktuell
+// laufende, aber deutlich gedaempfter (niedrige Deckkraft, duennere Linie)
+// und STRIKT auf seinen eigenen Zeitraum begrenzt (Entry bis Resolved) -
+// dadurch ueberlappt sie nie mit der aktuellen, live/vollfarbig gezeichneten
+// Box (die immer an ann.zoneTs bzw. dem offenen Trade haengt) und stapelt
+// sich nicht ueber die Zeit, weil jede alte Box exakt in ihrem eigenen
+// vergangenen Zeitfenster sitzt statt bis "jetzt" zu reichen.
+const HISTORICAL_BOX_COLORS = {
+  profit: { fill: "rgba(79,255,190,0.12)", line: "rgba(79,255,190,0.3)" },
+  risk: { fill: "rgba(255,107,157,0.12)", line: "rgba(255,107,157,0.3)" },
+};
+const STALE_BOX_FALLBACK_BARS = 40; // ~10h bei 15-Min-Kerzen, falls kein resolvedTs vorliegt
+
+function drawHistoricalPositionBox(chart, candles, rec) {
+  if (rec.status === "open") return; // die laufende Position zeigt bereits drawPositionBox()
+  if (rec.entry == null || rec.stop == null || rec.target == null) return;
+  const startTs = Math.floor(rec.entryTs / 1000);
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+
+  let endIdx;
+  if (rec.resolvedTs) {
+    const endTs = Math.floor(rec.resolvedTs / 1000);
+    endIdx = candles.findIndex((c) => c.time >= endTs);
+    if (endIdx === -1) endIdx = candles.length - 1;
+  } else {
+    endIdx = Math.min(candles.length - 1, startIdx + STALE_BOX_FALLBACK_BARS);
+  }
+  if (endIdx < startIdx) endIdx = startIdx;
+
+  const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
+  if (segData.length === 0) return;
+
+  const profitSeries = chart.addAreaSeries({
+    topColor: HISTORICAL_BOX_COLORS.profit.fill, bottomColor: HISTORICAL_BOX_COLORS.profit.fill,
+    lineColor: HISTORICAL_BOX_COLORS.profit.line, lineWidth: 1,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  profitSeries.applyOptions({ baseValue: { type: "price", price: rec.entry } });
+  profitSeries.setData(segData.map((d) => ({ time: d.time, value: rec.target })));
+
+  const riskSeries = chart.addAreaSeries({
+    topColor: HISTORICAL_BOX_COLORS.risk.fill, bottomColor: HISTORICAL_BOX_COLORS.risk.fill,
+    lineColor: HISTORICAL_BOX_COLORS.risk.line, lineWidth: 1,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  riskSeries.applyOptions({ baseValue: { type: "price", price: rec.entry } });
+  riskSeries.setData(segData.map((d) => ({ time: d.time, value: rec.stop })));
+}
+
 function renderChart(item) {
   const container = document.getElementById("chart-" + assetId(item.asset));
   if (!container || item.error || !item.ltf || !item.ltf.length) return;
@@ -789,6 +842,7 @@ function renderChart(item) {
     stale: { color: "#7c8399", text: "ABGELAUFEN" },
   };
   for (const rec of (item.signals || [])) {
+    drawHistoricalPositionBox(chart, candles, rec);
     const style = SIGNAL_OUTCOME_STYLE[rec.status] || SIGNAL_OUTCOME_STYLE.open;
     const isLong = rec.direction === "LONG";
     // Tiam, 2026-07-12: "schaut ob der Trade wirklich in die richtige
