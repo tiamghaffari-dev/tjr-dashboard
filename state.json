@@ -4,5 +4,8 @@
   "XRPUSD": false,
   "GBPUSD": false,
   "^GSPC": false,
-  "GCUSD": false
+  "GCUSD": false,
+  "_meta": {
+    "windowOpen": false
+  }
 }
