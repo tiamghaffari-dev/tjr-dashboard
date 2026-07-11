@@ -22,6 +22,14 @@ const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 const BASE = "https://financialmodelingprep.com/stable";
 const STATE_PATH = path.join(__dirname, "state.json");
 const SIGNALS_LOG_PATH = path.join(__dirname, "signals_log.json");
+// Tiam, 2026-07-12: "die KI soll nur zwischen 15 und 17 Uhr analysieren [...]
+// nach 17-18 Uhr soll die KI nichts mehr machen ausser zu schauen ob der
+// gesetzte Trade [...] in die richtige Richtung geht. Sonst erinnert er sich
+// was er gemacht hat und merkt sich das auch fuers naechste Mal." -
+// session_log.json haelt EINEN Eintrag pro Handelstag fest (auch wenn kein
+// ENTRY gefeuert ist), damit "kein Setup heute" nicht spurlos verschwindet -
+// signals_log.json allein erfasst nur tatsaechliche Entries, keine Tage ohne.
+const SESSION_LOG_PATH = path.join(__dirname, "session_log.json");
 
 // Tiam, 2026-07-11: "man scrollt beim Chart und sieht da wurde mal
 // analysiert und das war ein Profit oder Fail" — Chart soll die letzten
@@ -177,6 +185,14 @@ function loadSignalsLog() {
   }
 }
 
+function loadSessionLog() {
+  try {
+    return JSON.parse(fs.readFileSync(SESSION_LOG_PATH, "utf8"));
+  } catch (e) {
+    return [];
+  }
+}
+
 // Automatisches Paper-Trading-Tracking (Tiam, 2026-07-11: "die KI soll selber
 // analysieren, schauen ob es profitabel oder nicht ist und lernt dabei dazu"
 // - ausdruecklich OHNE manuelles Melden durch Tiam). Jedes ENTRY-Signal wird
@@ -215,6 +231,21 @@ function resolveSignals(signalsLog, asset, ltfFull) {
   }
 }
 
+// Tiam will ausserhalb des Handelsfensters nicht "nichts sehen", sondern
+// konkret erkennen, ob ein offener Paper-Trade gerade in die richtige
+// Richtung laeuft ("schaut ob der Trade wirklich in die richtige Richtung
+// geht") - nicht erst beim finalen Win/Loss. unrealizedR druckt den
+// aktuellen Fortschritt in R-Vielfachen aus (Distanz Entry->aktueller Preis
+// relativ zur Distanz Entry->Stop, Richtung beruecksichtigt): positiv =
+// Richtung Target, negativ = Richtung Stop.
+function unrealizedR(rec, currentPrice) {
+  if (rec.status !== "open" || currentPrice == null) return null;
+  const riskDist = Math.abs(rec.entry - rec.stop);
+  if (!riskDist) return null;
+  const moveDist = rec.direction === "LONG" ? currentPrice - rec.entry : rec.entry - currentPrice;
+  return Math.round((moveDist / riskDist) * 100) / 100;
+}
+
 // Loggt ein neues Paper-Trade-Signal im Moment, wo ENTRY erstmals wahr wird
 // (rising edge - dieselbe wasEntry/isEntry-Pruefung wie beim ntfy-Alert, also
 // ein Log-Eintrag pro Episode, nicht einer pro 5-15-Minuten-Lauf solange das
@@ -246,6 +277,12 @@ function isViennaTradingWindow(date = new Date()) {
   const minute = Number(parts.find((p) => p.type === "minute").value);
   const mins = hour * 60 + minute;
   return mins >= 15 * 60 && mins < 17 * 60; // 15:00-16:59 Wien
+}
+
+// Kalendertag in Wiener Zeit als YYYY-MM-DD (fuer session_log.json - ein
+// Eintrag pro Handelstag, unabhaengig von UTC-Tagesgrenze).
+function viennaDateStr(date = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Vienna" }).format(date);
 }
 
 // Push-Benachrichtigung ueber ntfy.sh (kein Account/Key noetig, nur ein
@@ -335,19 +372,57 @@ async function main() {
     const isEntry = item.sig.signal === "ENTRY";
     newState[item.asset.symbol] = isEntry;
     const wasEntry = !!prevState[item.asset.symbol];
-    if (isEntry && !wasEntry) {
+    // Tiam, 2026-07-12: neue Trades werden jetzt NUR innerhalb 15-17 Wien
+    // geloggt ("die KI soll nur zwischen 15 und 17 Uhr analysieren") - vorher
+    // wurde ein mechanisches ENTRY ausserhalb des Fensters trotzdem als
+    // Paper-Trade erfasst (nur der Push-Alert war gesperrt). Jetzt: ausserhalb
+    // des Fensters wird ein erkanntes Setup zwar noch angezeigt (siehe
+    // outsideBadge im Template), aber nicht mehr geloggt/getradet.
+    if (isEntry && !wasEntry && inWindow) {
       logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs);
       console.log(`PAPER-TRADE geloggt: ${item.asset.name} ${item.sig.bias === "bullish" ? "LONG" : "SHORT"}`);
+    } else if (isEntry && !wasEntry && !inWindow) {
+      console.log(`Setup erkannt, aber ausserhalb Handelsfenster - kein Paper-Trade geloggt: ${item.asset.name}`);
     }
     if (ltfFullBySymbol[item.asset.symbol]) {
       resolveSignals(signalsLog, item.asset, ltfFullBySymbol[item.asset.symbol]);
     }
+    // Modus pro Asset fuers Dashboard: "analyzing" (aktiv im Handelsfenster),
+    // "monitoring" (ausserhalb, aber ein offener Paper-Trade laeuft noch -
+    // "nichts machen ausser schauen ob der Trade in die richtige Richtung
+    // geht"), "idle" (ausserhalb, nichts offen - komplett pausiert).
+    const openRec = signalsLog.find((r) => r.asset === item.asset.symbol && r.status === "open");
+    item.hasOpenTrade = !!openRec;
+    item.mode = inWindow ? "analyzing" : (openRec ? "monitoring" : "idle");
     if (isEntry && !wasEntry && NTFY_TOPIC && inWindow) {
       await sendNtfy(item.asset, item.sig);
     } else if (isEntry && !wasEntry && NTFY_TOPIC && !inWindow) {
       console.log(`ALERT uebersprungen (ausserhalb 15-17 Wien): ${item.asset.name}`);
     }
   }
+  const meta = prevState._meta || {};
+  const todayVienna = viennaDateStr();
+  if (meta.windowOpen && !inWindow && meta.lastSessionLogDate !== todayVienna) {
+    const sessionLog = loadSessionLog();
+    sessionLog.push({
+      date: todayVienna,
+      closedAt: new Date().toISOString(),
+      perAsset: assets.filter((a) => !a.error).map((item) => ({
+        symbol: item.asset.symbol,
+        bias: item.sig.bias,
+        signal: item.sig.signal,
+        zoneKind: item.ann.zoneKind,
+        sweepType: item.ann.sweep ? item.ann.sweep.type : null,
+        hasOpenTrade: item.hasOpenTrade,
+      })),
+    });
+    fs.writeFileSync(SESSION_LOG_PATH, JSON.stringify(sessionLog, null, 2), "utf8");
+    console.log(`Session-Log geschrieben fuer ${todayVienna} (Handelsfenster geschlossen).`);
+    meta.lastSessionLogDate = todayVienna;
+  }
+  meta.windowOpen = inWindow;
+  newState._meta = meta;
+
   fs.writeFileSync(STATE_PATH, JSON.stringify(newState, null, 2), "utf8");
   fs.writeFileSync(SIGNALS_LOG_PATH, JSON.stringify(signalsLog, null, 2), "utf8");
   const closedSignals = signalsLog.filter((r) => r.status === "win" || r.status === "loss");
@@ -363,9 +438,11 @@ async function main() {
   const chartHistoryCutoff = Date.now() - CHART_HISTORY_DAYS * 86400000;
   for (const item of assets) {
     if (item.error) continue;
-    item.signals = signalsLog.filter(
-      (r) => r.asset === item.asset.symbol && r.entryTs >= chartHistoryCutoff,
-    );
+    item.signals = signalsLog
+      .filter((r) => r.asset === item.asset.symbol && r.entryTs >= chartHistoryCutoff)
+      .map((r) => (r.status === "open"
+        ? { ...r, unrealizedR: unrealizedR(r, item.sig.currentPrice) }
+        : r));
   }
 
   const payload = {
