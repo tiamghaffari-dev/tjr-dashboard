@@ -624,6 +624,43 @@ function drawSessionLevels(chart, candles, levels, markers) {
   }
 }
 
+// Tiam, 2026-07-11 (Chart-Tools Schritt 3): "die long position skala verwendet
+// wo es so gruen und rot ist" - TJR benutzt TradingViews natives Long/Short-
+// Position-Tool (siehe project_tjr_visual_style Memory), das zwei Boxen um
+// den Entry-Preis zeichnet. Hier per zwei Area-Series nachgebaut: gruene Box
+// zwischen Entry und Target (Gewinnzone), rote Box zwischen Entry und Stop
+// (Risikozone) - funktioniert automatisch fuer LONG und SHORT, weil die
+// Area-Series einfach zwischen baseValue (Entry) und dem Zielwert fuellt,
+// unabhaengig davon ob dieser darueber oder darunter liegt.
+const POSITION_BOX_COLORS = {
+  profit: { fill: "rgba(79,255,190,0.18)", line: "rgba(79,255,190,0.55)" },
+  risk: { fill: "rgba(255,107,157,0.18)", line: "rgba(255,107,157,0.55)" },
+};
+
+function drawPositionBox(chart, candles, sig, startTs) {
+  if (sig.entry === null || sig.stop === null || sig.target === null) return;
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+  const segData = candles.slice(startIdx).map((c) => ({ time: c.time }));
+  if (segData.length === 0) return;
+
+  const profitSeries = chart.addAreaSeries({
+    topColor: POSITION_BOX_COLORS.profit.fill, bottomColor: POSITION_BOX_COLORS.profit.fill,
+    lineColor: POSITION_BOX_COLORS.profit.line, lineWidth: 1,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  profitSeries.applyOptions({ baseValue: { type: "price", price: sig.entry } });
+  profitSeries.setData(segData.map((d) => ({ time: d.time, value: sig.target })));
+
+  const riskSeries = chart.addAreaSeries({
+    topColor: POSITION_BOX_COLORS.risk.fill, bottomColor: POSITION_BOX_COLORS.risk.fill,
+    lineColor: POSITION_BOX_COLORS.risk.line, lineWidth: 1,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  riskSeries.applyOptions({ baseValue: { type: "price", price: sig.entry } });
+  riskSeries.setData(segData.map((d) => ({ time: d.time, value: sig.stop })));
+}
+
 function renderChart(item) {
   const container = document.getElementById("chart-" + assetId(item.asset));
   if (!container || item.error || !item.ltf || !item.ltf.length) return;
@@ -703,6 +740,16 @@ function renderChart(item) {
     drawZoneBox(chart, candles, ann, markers);
   }
   if (sig.entry !== null) {
+    // Box zuerst zeichnen (liegt hinter den duennen Preis-Linien) - Startpunkt
+    // ist der tatsaechliche Einstiegszeitpunkt bei einer offenen Position,
+    // sonst ein kurzer Rueckblick-Zeitraum bis "jetzt" fuer ein gerade erst
+    // erkanntes Setup, das noch nicht ausgeloest wurde.
+    const openRec = (item.signals || []).find((r) => r.status === "open");
+    const boxStartTs = openRec
+      ? Math.floor(openRec.entryTs / 1000)
+      : candles[Math.max(0, candles.length - 21)].time;
+    drawPositionBox(chart, candles, sig, boxStartTs);
+
     series.createPriceLine({
       price: sig.entry, color: "#4fff9c", lineWidth: 1,
       lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: "Entry",
