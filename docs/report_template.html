@@ -159,9 +159,25 @@
   .ai-note .ai-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; color: #a78bfa; margin-bottom: 3px; text-transform: uppercase; }
   .err { color: #ff8080; font-size: 12px; font-family: -apple-system, sans-serif; }
   ::selection { background: rgba(122,140,255,0.35); }
+
+  .live-indicator {
+    color: #4fff9c; font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px;
+    animation: livePulse 2s ease-in-out infinite;
+  }
+  @keyframes livePulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+  .refresh-toast {
+    position: fixed; bottom: 18px; right: 18px; z-index: 999;
+    background: rgba(20,24,38,0.95); border: 1px solid rgba(57,255,136,0.4);
+    color: #9be8b8; font-family: -apple-system, sans-serif; font-size: 12px;
+    padding: 8px 14px; border-radius: 10px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+  }
+  .refresh-toast.show { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
+  <div id="refresh-toast" class="refresh-toast">🔄 Chart aktualisiert</div>
   <div class="topbar">
     <div class="brand">
       <span class="dot"></span>
@@ -173,7 +189,7 @@
     </div>
   </div>
   <div class="subtitle">Bitcoin · Ethereum · XRP · GBP/USD · S&amp;P 500 · Gold — 4H-Bias / Sweep / BOS / Entry-Zone mit vollem Chart, automatisch aktualisiert via GitHub Actions (alle 5 Minuten zwischen 15 und 17 Uhr Wien, sonst alle 15 Minuten — das ist TJRs eigentliche Handelszeit)</div>
-  <div id="status" class="status-line">__GENERATED_AT__ <span id="window-status"></span></div>
+  <div id="status" class="status-line"><span id="generated-at">__GENERATED_AT__</span> <span id="window-status"></span> <span id="live-indicator" class="live-indicator">● live</span></div>
 
   <div class="settings-box">
     <div class="settings-title">💰 Positionsgrößen-Rechner</div>
@@ -213,8 +229,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4/dist/lightweight-charts.standalone.production.js"></script>
 <script>
-const PRECOMPUTED = __PRECOMPUTED_JSON__;
+let PRECOMPUTED = __PRECOMPUTED_JSON__;
 const charts = {};
+const chartRanges = {};
 
 function fmtOrDash(x) { return (x === null || x === undefined) ? "–" : x; }
 function badgeClassBias(bias) {
@@ -493,7 +510,13 @@ function renderChart(item) {
   markers.sort((a, b) => a.time - b.time);
   if (markers.length) series.setMarkers(markers);
 
-  chart.timeScale().fitContent();
+  const savedRange = chartRanges[assetId(item.asset)];
+  if (savedRange) {
+    try { chart.timeScale().setVisibleRange(savedRange); }
+    catch (e) { chart.timeScale().fitContent(); }
+  } else {
+    chart.timeScale().fitContent();
+  }
   charts[assetId(item.asset)] = { chart, container };
 }
 
@@ -547,10 +570,19 @@ function renderAssetSection(item) {
 }
 
 function main() {
+  for (const id in charts) {
+    try { chartRanges[id] = charts[id].chart.timeScale().getVisibleRange(); } catch (e) { /* ignore */ }
+    try { charts[id].chart.remove(); } catch (e) { /* ignore */ }
+    delete charts[id];
+  }
+
   const assetsEl = document.getElementById("assets");
   const newsEl = document.getElementById("news");
   assetsEl.innerHTML = "";
   newsEl.innerHTML = "";
+
+  const genEl = document.getElementById("generated-at");
+  if (genEl) genEl.textContent = "Zuletzt aktualisiert: " + PRECOMPUTED.generatedAt;
 
   const winEl = document.getElementById("window-status");
   if (winEl) {
@@ -638,6 +670,42 @@ window.addEventListener("resize", () => {
     chart.applyOptions({ width: container.clientWidth });
   }
 });
+
+// Auto-Refresh: die Webseite wird von GitHub Actions alle 5-15 Minuten neu
+// gebaut (siehe .github/workflows/update.yml), aber ohne diesen Poller
+// musste man die Seite manuell neu laden, um die neuen Daten/Chart zu sehen
+// (Tiam, 2026-07-11: "ich muss immer die Webseite neu starten damit ich den
+// neuen Chart sehe"). Holt periodisch dieselbe Seite frisch vom Server (nicht
+// aus dem Cache), liest das eingebettete PRECOMPUTED-JSON neu aus und
+// rendert Charts/Tabellen neu, sobald sich generatedAt geaendert hat - ohne
+// Seiten-Neuladen, Zoom/Pan-Stand pro Chart bleibt dabei erhalten (siehe
+// chartRanges in renderChart/main oben).
+const REFRESH_INTERVAL_MS = 30000;
+
+function showRefreshToast() {
+  const toast = document.getElementById("refresh-toast");
+  if (!toast) return;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2600);
+}
+
+async function pollForUpdate() {
+  try {
+    const res = await fetch(location.pathname + "?_=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) return;
+    const html = await res.text();
+    const match = html.match(/let PRECOMPUTED = ([\s\S]*?);\nconst charts = \{\};/);
+    if (!match) return;
+    const fresh = JSON.parse(match[1]);
+    if (fresh.generatedAt === PRECOMPUTED.generatedAt) return;
+    PRECOMPUTED = fresh;
+    main();
+    showRefreshToast();
+  } catch (e) {
+    console.error("Auto-Refresh fehlgeschlagen:", e);
+  }
+}
+setInterval(pollForUpdate, REFRESH_INTERVAL_MS);
 
 initSettings();
 main();
