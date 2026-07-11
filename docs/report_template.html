@@ -66,10 +66,9 @@
     background: linear-gradient(135deg, rgba(122,140,255,0.09), rgba(122,140,255,0.02));
     border: 1px solid rgba(122,140,255,0.25); border-radius: 12px;
     padding: 12px 16px; margin-bottom: 20px; font-size: 12px;
-    font-family: -apple-system, sans-serif; display: flex; align-items: center;
-    gap: 16px; flex-wrap: wrap;
+    font-family: -apple-system, sans-serif;
   }
-  .settings-title { font-weight: 700; color: #9fb2ff; letter-spacing: 0.3px; flex-basis: 100%; margin-bottom: 2px; }
+  .settings-body { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
   .settings-field { display: flex; align-items: center; gap: 6px; }
   .settings-field label { color: #7c8399; }
   .settings-field input {
@@ -95,9 +94,42 @@
   }
   .assetnav a:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
 
-  .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 10.5px; color: #9198ad; font-family: -apple-system, sans-serif; margin: 4px 0 22px; }
+  .legend-wrap { margin: 4px 0 22px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 10.5px; color: #9198ad; font-family: -apple-system, sans-serif; margin-top: 10px; }
   .legend span { display: inline-flex; align-items: center; gap: 5px; }
   .swatch { width: 12px; height: 3px; border-radius: 2px; display: inline-block; }
+
+  /* Tiam, 2026-07-12: "kannst du die gesamte Webseite noch etwas schoener
+     machen [...] simple fuer einen Webseitbesucher" - technisches
+     ICT-Fachvokabular (Sweep, BOS, FVG, Equilibrium...) steht jetzt
+     standardmaessig eingeklappt hinter <details>, damit ein Erstbesucher
+     zuerst eine einfache Alltagssprache-Zusammenfassung sieht statt einer
+     Fachbegriff-Wand. Tiam/Power-User koennen jederzeit aufklappen. */
+  details.collapsible > summary {
+    cursor: pointer; list-style: none; font-family: -apple-system, sans-serif;
+    font-weight: 700; color: #9fb2ff; font-size: 12.5px; letter-spacing: 0.3px;
+    padding: 4px 0; user-select: none;
+  }
+  details.collapsible > summary::-webkit-details-marker { display: none; }
+  details.collapsible > summary::before { content: "\25B8  "; color: #6b7185; }
+  details.collapsible[open] > summary::before { content: "\25BE  "; }
+  details.collapsible > summary:hover { color: #d7dbe8; }
+  .tech-details { margin-top: 10px; }
+
+  .plain-headline {
+    font-family: -apple-system, sans-serif; font-size: 14px; line-height: 1.5;
+    padding: 10px 14px; border-radius: 10px; margin-bottom: 12px;
+    background: rgba(255,255,255,0.03); border-left: 3px solid #565c70;
+    color: #d7dbe8;
+  }
+  .plain-headline .headline-emoji { margin-right: 6px; }
+  .plain-headline.headline-entry { border-left-color: #39ff88; background: rgba(57,255,136,0.06); }
+  .plain-headline.headline-watch { border-left-color: #ffd25c; background: rgba(255,196,0,0.06); }
+  .plain-headline.headline-monitor { border-left-color: #7dd3fc; background: rgba(125,211,252,0.06); }
+  .plain-headline.headline-none { border-left-color: #565c70; }
+
+  .subtitle .inline-link { color: #9fb2ff; text-decoration: none; border-bottom: 1px dotted rgba(159,178,255,0.5); }
+  .subtitle .inline-link:hover { color: #d7dbe8; }
 
   .asset-section { margin-bottom: 26px; scroll-margin-top: 16px; animation: fadeUp 0.4s ease both; }
   .asset-section + .asset-section { padding-top: 26px; border-top: 1px solid rgba(255,255,255,0.06); }
@@ -193,46 +225,51 @@
       <span class="tag">no auto-trades · analysis only</span>
     </div>
   </div>
-  <div class="subtitle">Bitcoin · Ethereum · XRP · GBP/USD · S&amp;P 500 · Gold — 4H-Bias / Sweep / BOS / Entry-Zone mit vollem Chart, automatisch aktualisiert via GitHub Actions (alle 5 Minuten zwischen 15 und 17 Uhr Wien, sonst alle 15 Minuten — das ist TJRs eigentliche Handelszeit)</div>
+  <div class="subtitle">Live-Analyse von Bitcoin, Ethereum, XRP, GBP/USD, S&amp;P 500 und Gold im Stil von TJR (ICT/Smart-Money) — aktualisiert sich automatisch, aktiv analysiert wird nur 15–17 Uhr Wien (TJRs eigentliche Handelszeit). <a class="inline-link" href="how_it_works.html">Wie funktioniert das genau?</a></div>
   <div id="status" class="status-line"><span id="generated-at">__GENERATED_AT__</span> <span id="window-status"></span> <span id="live-indicator" class="live-indicator">● live</span> <span id="refresh-countdown" class="refresh-countdown"></span></div>
 
-  <div class="settings-box">
-    <div class="settings-title">💰 Positionsgrößen-Rechner</div>
-    <div class="settings-field">
-      <label for="acct-size">Kontogröße</label>
-      <input type="number" id="acct-size" min="0" step="100">
+  <details class="settings-box collapsible">
+    <summary>💰 Positionsgrößen-Rechner (optional)</summary>
+    <div class="settings-body">
+      <div class="settings-field">
+        <label for="acct-size">Kontogröße</label>
+        <input type="number" id="acct-size" min="0" step="100">
+      </div>
+      <div class="settings-field">
+        <label for="risk-pct">Risiko % / Trade</label>
+        <input type="number" id="risk-pct" min="0" step="0.1">
+      </div>
+      <div class="settings-field">
+        <span class="settings-hint-inline">TJR-Risiko-Stufen:</span>
+        <button type="button" class="risk-tier-btn" data-tier="derisk">Derisk 12.5%</button>
+        <button type="button" class="risk-tier-btn" data-tier="normal">Normal 25%</button>
+        <button type="button" class="risk-tier-btn" data-tier="confident">Confident 50%</button>
+      </div>
+      <div class="settings-hint">Wird nur lokal in deinem Browser gespeichert (localStorage), nirgendwo hochgeladen. Positionsgröße = (Kontogröße × Risiko%) ÷ Stop-Distanz. Bei Forex: 100.000 Einheiten = 1 Standard-Lot. Risiko-Stufen nach TJR (Bootcamp Day 39: "normal risk: 25, derisk: 12.5, confident: 50") — Einheit im Video nicht zweifelsfrei erkennbar, hier als % vom Konto umgesetzt. Keine Anlageberatung.</div>
     </div>
-    <div class="settings-field">
-      <label for="risk-pct">Risiko % / Trade</label>
-      <input type="number" id="risk-pct" min="0" step="0.1">
-    </div>
-    <div class="settings-field">
-      <span class="settings-hint-inline">TJR-Risiko-Stufen:</span>
-      <button type="button" class="risk-tier-btn" data-tier="derisk">Derisk 12.5%</button>
-      <button type="button" class="risk-tier-btn" data-tier="normal">Normal 25%</button>
-      <button type="button" class="risk-tier-btn" data-tier="confident">Confident 50%</button>
-    </div>
-    <div class="settings-hint">Wird nur lokal in deinem Browser gespeichert (localStorage), nirgendwo hochgeladen. Positionsgröße = (Kontogröße × Risiko%) ÷ Stop-Distanz. Bei Forex: 100.000 Einheiten = 1 Standard-Lot. Risiko-Stufen nach TJR (Bootcamp Day 39: "normal risk: 25, derisk: 12.5, confident: 50") — Einheit im Video nicht zweifelsfrei erkennbar, hier als % vom Konto umgesetzt. Keine Anlageberatung.</div>
-  </div>
+  </details>
 
   <div id="news"></div>
 
   <div id="assetnav" class="assetnav"></div>
-  <div class="legend">
-    <span><i class="swatch" style="background:#7dd3fc"></i>Liquidity Sweep</span>
-    <span><i class="swatch" style="background:#a78bfa"></i>BOS</span>
-    <span><i class="swatch" style="background:#9198ad"></i>Equilibrium</span>
-    <span><i class="swatch" style="background:rgba(255,107,157,0.65)"></i>FVG-Zone</span>
-    <span><i class="swatch" style="background:rgba(79,255,190,0.65)"></i>Order-Block-Zone</span>
-    <span><i class="swatch" style="background:#4fff9c"></i>Entry</span>
-    <span><i class="swatch" style="background:#ff6b6b"></i>Stop</span>
-    <span><i class="swatch" style="background:#ffd25c"></i>Target</span>
-    <span><i class="swatch" style="background:#565c70"></i>Session-Start (Standard-ICT-Zeiten ET, nicht TJR-bestätigt)</span>
-    <span><i class="swatch" style="background:#4fff9c"></i>Vergangenes Signal: Win</span>
-    <span><i class="swatch" style="background:#ff6b6b"></i>Vergangenes Signal: Loss</span>
-    <span><i class="swatch" style="background:#ffd25c"></i>Vergangenes Signal: noch offen</span>
-    <span><i class="swatch" style="background:#7c8399"></i>Vergangenes Signal: abgelaufen (stale)</span>
-  </div>
+  <details class="legend-wrap collapsible">
+    <summary>🎨 Farben im Chart erklärt</summary>
+    <div class="legend">
+      <span><i class="swatch" style="background:#7dd3fc"></i>Liquidity Sweep</span>
+      <span><i class="swatch" style="background:#a78bfa"></i>BOS</span>
+      <span><i class="swatch" style="background:#9198ad"></i>Equilibrium</span>
+      <span><i class="swatch" style="background:rgba(255,107,157,0.65)"></i>FVG-Zone</span>
+      <span><i class="swatch" style="background:rgba(79,255,190,0.65)"></i>Order-Block-Zone</span>
+      <span><i class="swatch" style="background:#4fff9c"></i>Entry</span>
+      <span><i class="swatch" style="background:#ff6b6b"></i>Stop</span>
+      <span><i class="swatch" style="background:#ffd25c"></i>Target</span>
+      <span><i class="swatch" style="background:#565c70"></i>Session-Start (Standard-ICT-Zeiten ET, nicht TJR-bestätigt)</span>
+      <span><i class="swatch" style="background:#4fff9c"></i>Vergangenes Signal: Win</span>
+      <span><i class="swatch" style="background:#ff6b6b"></i>Vergangenes Signal: Loss</span>
+      <span><i class="swatch" style="background:#ffd25c"></i>Vergangenes Signal: noch offen</span>
+      <span><i class="swatch" style="background:#7c8399"></i>Vergangenes Signal: abgelaufen (stale)</span>
+    </div>
+  </details>
 
   <div id="assets"></div>
 
@@ -326,6 +363,41 @@ function sessionMarkers(ltf) {
     }
   }
   return out;
+}
+
+// Tiam, 2026-07-12: "simple fuer einen Webseitbesucher" - eine Zeile in
+// Alltagssprache statt "4H-Bias/Sweep/BOS/Entry-Zone"-Jargon, direkt sichtbar;
+// die Fachbegriffe bleiben verfuegbar, aber hinter einem <details>-Toggle.
+function biasPlain(bias) {
+  if (bias === "bullish") return "tendiert aktuell eher nach oben";
+  if (bias === "bearish") return "tendiert aktuell eher nach unten";
+  return "hat aktuell keine klare Richtung";
+}
+function findOpenRecord(item) {
+  return (item.signals || []).find((r) => r.status === "open");
+}
+function plainHeadline(item) {
+  const { sig, mode } = item;
+  const name = item.asset.name;
+  const biasText = biasPlain(sig.bias);
+  if (sig.signal === "ENTRY" && mode === "analyzing") {
+    const dir = sig.bias === "bullish" ? "Kaufsignal" : "Verkaufssignal";
+    return { emoji: "🟢", text: `${name} ${biasText}. ${dir} gerade aktiv!`, cls: "headline-entry" };
+  }
+  if (sig.signal === "ENTRY" && mode !== "analyzing") {
+    return { emoji: "🟡", text: `${name} ${biasText}. Setup gefunden, aber außerhalb der Handelszeit (15–17 Uhr Wien) — wird nicht ausgeführt.`, cls: "headline-watch" };
+  }
+  if (mode === "monitoring") {
+    const rec = findOpenRecord(item);
+    let progress = "";
+    if (rec && typeof rec.unrealizedR === "number") {
+      progress = rec.unrealizedR >= 0
+        ? ` Läuft aktuell ${rec.unrealizedR}R in die richtige Richtung.`
+        : ` Läuft aktuell ${Math.abs(rec.unrealizedR)}R gegen die Position.`;
+    }
+    return { emoji: "👁", text: `${name} ${biasText}. Offene Position wird beobachtet.${progress}`, cls: "headline-monitor" };
+  }
+  return { emoji: "⚪", text: `${name} ${biasText}. Kein Handelssignal gerade — wird weiter beobachtet.`, cls: "headline-none" };
 }
 
 function analysisSteps(sig, ann) {
@@ -589,6 +661,7 @@ function renderAssetSection(item) {
   const outsideBadge = (sig.signal === "ENTRY" && !PRECOMPUTED.inTradingWindow)
     ? `<span class="badge badge-outside" title="TJR tradet nur 15-17 Uhr Wien — dieses Signal liegt ausserhalb und wird nicht als Paper-Trade geloggt">außerhalb Handelszeit (15–17 Wien)</span>`
     : "";
+  const headline = plainHeadline(item);
 
   section.innerHTML = `
     <div class="layout">
@@ -597,6 +670,7 @@ function renderAssetSection(item) {
           <h2>${item.asset.icon} ${item.asset.name}</h2>
           <span class="symbol">${item.asset.display}</span>
         </div>
+        <div class="plain-headline ${headline.cls}"><span class="headline-emoji">${headline.emoji}</span>${headline.text}</div>
         <div class="badges">
           <span class="badge ${badgeClassBias(sig.bias)}">${biasArrow(sig.bias)} 4H ${sig.bias.toUpperCase()}</span>
           <span class="badge ${badgeClassSignal(sig.signal)}">${sig.signal.split(" (")[0]}</span>
@@ -606,13 +680,16 @@ function renderAssetSection(item) {
         <div class="chart-container" id="chart-${id}"></div>
       </div>
       <div class="panel${glow}">
-        <div class="panel-head"><h2>Analyse-Status</h2></div>
-        <div class="steps">${analysisSteps(sig, ann).map((s) => (
-          `<div class="step"><span class="step-icon ${s.ok ? "ok" : "pending"}">${s.ok ? "✓" : "…"}</span>
-            <span class="step-label">${s.label}</span><span class="step-text">${s.text}</span></div>`
-        )).join("")}</div>
+        <div class="panel-head"><h2>Details</h2></div>
         <div class="info-table" id="table-${id}"></div>
         <div id="ai-${id}"></div>
+        <details class="tech-details collapsible">
+          <summary>🔍 Technische Details (ICT-Fachbegriffe)</summary>
+          <div class="steps">${analysisSteps(sig, ann).map((s) => (
+            `<div class="step"><span class="step-icon ${s.ok ? "ok" : "pending"}">${s.ok ? "✓" : "…"}</span>
+              <span class="step-label">${s.label}</span><span class="step-text">${s.text}</span></div>`
+          )).join("")}</div>
+        </details>
       </div>
     </div>`;
   return section;
