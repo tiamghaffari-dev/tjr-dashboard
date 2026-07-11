@@ -456,6 +456,26 @@ async function main() {
 
   renderFromTemplate("report_template.html", "index.html", payload);
   renderFromTemplate("chart_template.html", "chart.html", payload);
+
+  // Tiam, 2026-07-12: "mach auf der Webseite eine Seite die man anklicken
+  // kann [...] wo man den Verlauf aller Assets sieht wie die Analyse lief,
+  // also erfolgreich oder nicht." - eigene Seite mit der KOMPLETTEN
+  // signals_log.json-Historie (nicht nur die letzten CHART_HISTORY_DAYS wie
+  // beim Chart), pro Asset gruppiert mit Win-Rate. Offene Trades bekommen
+  // denselben unrealizedR-Fortschritt wie im Haupt-Dashboard.
+  const historyPayload = {
+    generatedAt: new Date().toISOString(),
+    assetsMeta: ASSETS.map((a) => ({
+      symbol: a.symbol, name: a.name, display: a.display, icon: a.icon,
+    })),
+    signals: signalsLog.map((r) => {
+      if (r.status !== "open") return r;
+      const item = assets.find((a) => !a.error && a.asset.symbol === r.asset);
+      const currentPrice = item ? item.sig.currentPrice : null;
+      return { ...r, unrealizedR: unrealizedR(r, currentPrice) };
+    }),
+  };
+  renderFromTemplate("history_template.html", "history.html", historyPayload);
 }
 
 main().catch((e) => {
