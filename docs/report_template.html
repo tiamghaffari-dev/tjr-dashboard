@@ -289,11 +289,15 @@ function analysisSteps(sig, ann) {
     text: ann.sweep ? `${sweepLabel(ann.sweep)} @ ${(+ann.sweep.level).toPrecision(6)}` : "noch nicht gefunden",
   });
   steps.push({
-    ok: !!ann.bos, label: "Bestätigender BOS",
-    text: ann.bos ? `${ann.bos.dir === "up" ? "↑" : "↓"} @ ${(+ann.bos.level).toPrecision(6)}` : "noch nicht bestätigt",
+    ok: !!ann.confirmation, label: "Bestätigung (BOS/iFVG)",
+    text: ann.confirmation
+      ? (ann.confirmation.kind === "BOS"
+          ? `BOS ${ann.confirmation.event.dir === "up" ? "↑" : "↓"} @ ${(+ann.confirmation.event.level).toPrecision(6)}`
+          : `iFVG-Bruch (${ann.confirmation.event.dir === "up" ? "↑" : "↓"})`)
+      : "noch nicht bestätigt",
   });
   steps.push({
-    ok: !!ann.zoneKind, label: "Entry-Zone (FVG/OB)",
+    ok: !!ann.zoneKind, label: "Entry-Zone (FVG/OB/Breaker)",
     text: ann.zoneKind ? `${ann.zoneKind} [${ann.zoneRange[0].toPrecision(6)} - ${ann.zoneRange[1].toPrecision(6)}]` : "keine gültige Zone",
   });
   steps.push({
@@ -334,12 +338,18 @@ function renderAssetNav() {
 // the well-known Area-series trick — an Area series filled down to a fixed baseValue
 // price, fed only the data points inside the box's time range, renders as a flat
 // filled band exactly where data exists and nowhere else.
+const ZONE_STYLES = {
+  FVG: { fill: "rgba(255,107,157,0.16)", border: "rgba(255,107,157,0.65)", label: "FVG", pos: "aboveBar" },
+  OrderBlock: { fill: "rgba(79,255,190,0.16)", border: "rgba(79,255,190,0.65)", label: "OB", pos: "belowBar" },
+  BreakerBlock: { fill: "rgba(255,210,92,0.16)", border: "rgba(255,210,92,0.65)", label: "BB", pos: "belowBar" },
+};
+
 function drawZoneBox(chart, candles, ann, markers) {
-  const isFvg = ann.zoneKind === "FVG";
+  const style = ZONE_STYLES[ann.zoneKind] || ZONE_STYLES.OrderBlock;
   const top = ann.zoneRange[1];
   const bottom = ann.zoneRange[0];
-  const fillColor = isFvg ? "rgba(255,107,157,0.16)" : "rgba(79,255,190,0.16)";
-  const borderColor = isFvg ? "rgba(255,107,157,0.65)" : "rgba(79,255,190,0.65)";
+  const fillColor = style.fill;
+  const borderColor = style.border;
 
   const startTs = Math.floor(ann.zoneTs / 1000);
   const startIdx = candles.findIndex((c) => c.time >= startTs);
@@ -356,8 +366,8 @@ function drawZoneBox(chart, candles, ann, markers) {
   boxSeries.setData(zoneData.map((c) => ({ time: c.time, value: top })));
 
   markers.push({
-    time: zoneData[0].time, position: isFvg ? "aboveBar" : "belowBar",
-    color: borderColor, shape: "square", text: isFvg ? "FVG" : "OB",
+    time: zoneData[0].time, position: style.pos,
+    color: borderColor, shape: "square", text: style.label,
   });
 }
 
@@ -412,6 +422,19 @@ function renderChart(item) {
       time: Math.floor(ann.bos.ts / 1000),
       position: ann.bos.dir === "up" ? "belowBar" : "aboveBar",
       color: "#a78bfa", shape: ann.bos.dir === "up" ? "arrowUp" : "arrowDown", text: "BOS",
+    });
+  }
+  if (ann.confirmation && ann.confirmation.kind === "iFVG") {
+    const e = ann.confirmation.event;
+    series.createPriceLine({
+      price: e.dir === "up" ? e.top : e.bottom, color: "#f0abfc", lineWidth: 1,
+      lineStyle: LightweightCharts.LineStyle.Dotted, axisLabelVisible: true,
+      title: "iFVG",
+    });
+    markers.push({
+      time: Math.floor(e.ts / 1000),
+      position: e.dir === "up" ? "belowBar" : "aboveBar",
+      color: "#f0abfc", shape: e.dir === "up" ? "arrowUp" : "arrowDown", text: "iFVG",
     });
   }
   if (ann.equilibrium !== null) {
