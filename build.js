@@ -21,6 +21,7 @@ const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 
 const BASE = "https://financialmodelingprep.com/stable";
 const STATE_PATH = path.join(__dirname, "state.json");
+const SIGNALS_LOG_PATH = path.join(__dirname, "signals_log.json");
 
 const ASSETS = [
   { name: "Bitcoin", symbol: "BTCUSD", display: "BTCUSD", icon: "₿" },
@@ -66,8 +67,10 @@ async function analyzeAsset(asset) {
   const sig = buildSignal(htf, ltf);
   const ann = buildAnnotations(htf, ltf);
   // 150 15-min-Baren (~1.5 Tage) reichen fuer den Sweep-Lookback (40 Baren)
-  // plus genug sichtbaren Kontext davor/danach fuer den Chart.
-  return { sig, ann, ltf: ltf.slice(-150) };
+  // plus genug sichtbaren Kontext davor/danach fuer den Chart. ltfFull (volle
+  // 7-Tage-Reihe) wird separat zurueckgegeben fuer resolveSignals() weiter
+  // unten, die auch aeltere offene Paper-Trades noch aufloesen koennen muss.
+  return { sig, ann, ltf: ltf.slice(-150), ltfFull: ltf };
 }
 
 // Nutzt ForexFactory's oeffentlichen Kalender-Feed (via nfs.faireconomy.media,
@@ -154,6 +157,71 @@ function loadPrevState() {
   }
 }
 
+function loadSignalsLog() {
+  try {
+    return JSON.parse(fs.readFileSync(SIGNALS_LOG_PATH, "utf8"));
+  } catch (e) {
+    return [];
+  }
+}
+
+// Automatisches Paper-Trading-Tracking (Tiam, 2026-07-11: "die KI soll selber
+// analysieren, schauen ob es profitabel oder nicht ist und lernt dabei dazu"
+// - ausdruecklich OHNE manuelles Melden durch Tiam). Jedes ENTRY-Signal wird
+// beim Entstehen geloggt (logNewSignal) und bei jedem folgenden Build-Lauf
+// gegen die frisch geholten Kerzen aufgeloest (resolveSignals), bis Stop oder
+// Target getroffen wird. Gleiche konservative Tie-Break-Regel wie im
+// historischen Backtest (Backtest/backtest.py backtest_signals(): Stop wird
+// VOR Target geprueft, falls beides in derselben Kerze passiert) - damit
+// Live-Tracking und Backtest konsistent bleiben. Ergebnis landet dauerhaft in
+// signals_log.json (im Repo committed, siehe .github/workflows/update.yml),
+// nicht nur in einem Cowork-Memory - die eigentliche "Lern"-Auswertung
+// (wiederkehrende Fehlermuster erkennen) passiert separat beim periodischen
+// Review dieser Datei, siehe Memory project_tjr_trade_journal.
+const STALE_DAYS = 10;
+function resolveSignals(signalsLog, asset, ltfFull) {
+  const oldestTs = ltfFull.length ? ltfFull[0].ts : null;
+  for (const rec of signalsLog) {
+    if (rec.asset !== asset.symbol || rec.status !== "open") continue;
+    const candles = ltfFull.filter((c) => c.ts >= rec.entryTs);
+    for (const c of candles) {
+      const hitStop = rec.direction === "LONG" ? c.low <= rec.stop : c.high >= rec.stop;
+      const hitTarget = rec.direction === "LONG" ? c.high >= rec.target : c.low <= rec.target;
+      if (hitStop) {
+        rec.status = "loss"; rec.resolvedTs = c.ts; rec.rMultiple = -1.0;
+        break;
+      }
+      if (hitTarget) {
+        rec.status = "win"; rec.resolvedTs = c.ts; rec.rMultiple = rec.rr;
+        break;
+      }
+    }
+    if (rec.status === "open" && oldestTs !== null && rec.entryTs < oldestTs) {
+      const ageDays = (Date.now() - rec.entryTs) / 86400000;
+      if (ageDays > STALE_DAYS) rec.status = "stale";
+    }
+  }
+}
+
+// Loggt ein neues Paper-Trade-Signal im Moment, wo ENTRY erstmals wahr wird
+// (rising edge - dieselbe wasEntry/isEntry-Pruefung wie beim ntfy-Alert, also
+// ein Log-Eintrag pro Episode, nicht einer pro 5-15-Minuten-Lauf solange das
+// Signal aktiv bleibt).
+function logNewSignal(signalsLog, asset, sig, ann, firedAtTs) {
+  signalsLog.push({
+    id: `${asset.symbol}-${firedAtTs}`,
+    asset: asset.symbol,
+    direction: sig.bias === "bullish" ? "LONG" : "SHORT",
+    entryTs: firedAtTs,
+    entry: sig.entry, stop: sig.stop, target: sig.target, rr: sig.rr,
+    bias: sig.bias,
+    sweepType: ann.sweep ? ann.sweep.type : null,
+    confirmationKind: ann.confirmation ? ann.confirmation.kind : null,
+    zoneKind: ann.zoneKind,
+    status: "open", resolvedTs: null, rMultiple: null,
+  });
+}
+
 // Tiam tradet nur 15:00-17:00 Wiener Zeit (siehe README/Cron-Kommentar).
 // Nutzt Intl mit timeZone "Europe/Vienna" statt eines festen UTC-Offsets,
 // damit der Sommer-/Winterzeit-Wechsel automatisch mitgeht (im Sommer ist
@@ -204,12 +272,14 @@ function renderFromTemplate(templateFile, outFile, payload) {
 
 async function main() {
   const assets = [];
+  const ltfFullBySymbol = {};
   for (const asset of ASSETS) {
     try {
-      const { sig, ann, ltf } = await analyzeAsset(asset);
+      const { sig, ann, ltf, ltfFull } = await analyzeAsset(asset);
       assets.push({
         asset, sig, ann, ltf, error: null, aiNote: null,
       });
+      ltfFullBySymbol[asset.symbol] = ltfFull;
       console.log(`OK   ${asset.name}: bias=${sig.bias} signal=${sig.signal}`);
     } catch (e) {
       assets.push({
@@ -246,11 +316,20 @@ async function main() {
   const inWindow = isViennaTradingWindow();
   const prevState = loadPrevState();
   const newState = {};
+  const signalsLog = loadSignalsLog();
+  const nowTs = Date.now();
   for (const item of assets) {
     if (item.error) continue;
     const isEntry = item.sig.signal === "ENTRY";
     newState[item.asset.symbol] = isEntry;
     const wasEntry = !!prevState[item.asset.symbol];
+    if (isEntry && !wasEntry) {
+      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs);
+      console.log(`PAPER-TRADE geloggt: ${item.asset.name} ${item.sig.bias === "bullish" ? "LONG" : "SHORT"}`);
+    }
+    if (ltfFullBySymbol[item.asset.symbol]) {
+      resolveSignals(signalsLog, item.asset, ltfFullBySymbol[item.asset.symbol]);
+    }
     if (isEntry && !wasEntry && NTFY_TOPIC && inWindow) {
       await sendNtfy(item.asset, item.sig);
     } else if (isEntry && !wasEntry && NTFY_TOPIC && !inWindow) {
@@ -258,6 +337,10 @@ async function main() {
     }
   }
   fs.writeFileSync(STATE_PATH, JSON.stringify(newState, null, 2), "utf8");
+  fs.writeFileSync(SIGNALS_LOG_PATH, JSON.stringify(signalsLog, null, 2), "utf8");
+  const closedSignals = signalsLog.filter((r) => r.status === "win" || r.status === "loss");
+  const wins = closedSignals.filter((r) => r.status === "win").length;
+  console.log(`Paper-Trades: ${signalsLog.length} gesamt, ${closedSignals.length} abgeschlossen (${wins} Gewinn), ${signalsLog.filter((r) => r.status === "open").length} offen.`);
   if (!NTFY_TOPIC) {
     console.log("NTFY_TOPIC nicht gesetzt — Push-Benachrichtigungen werden uebersprungen.");
   }
