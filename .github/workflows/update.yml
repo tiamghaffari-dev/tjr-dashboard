@@ -34,6 +34,6 @@ jobs:
         run: |
           git config user.name "tjr-bot"
           git config user.email "actions@github.com"
-          git add docs/index.html docs/chart.html state.json
+          git add docs/index.html docs/chart.html state.json signals_log.json
           git diff --quiet --cached || git commit -m "Report aktualisiert: $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
