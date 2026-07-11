@@ -77,6 +77,14 @@
     border-radius: 6px; color: #e8eaf0; padding: 4px 8px; font-family: inherit; font-size: 12px;
   }
   .settings-hint { color: #565c70; font-size: 10.5px; flex-basis: 100%; }
+  .risk-tier-btn {
+    font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer;
+    padding: 4px 9px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04); color: #9198ad; transition: all 0.15s ease;
+  }
+  .risk-tier-btn:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .risk-tier-btn.active { background: rgba(122,140,255,0.18); border-color: rgba(122,140,255,0.55); color: #d7dbe8; }
+  .settings-hint-inline { color: #7c8399; font-size: 10.5px; }
 
   .assetnav { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
   .assetnav a {
@@ -177,7 +185,13 @@
       <label for="risk-pct">Risiko % / Trade</label>
       <input type="number" id="risk-pct" min="0" step="0.1">
     </div>
-    <div class="settings-hint">Wird nur lokal in deinem Browser gespeichert (localStorage), nirgendwo hochgeladen. Positionsgröße = (Kontogröße × Risiko%) ÷ Stop-Distanz. Bei Forex: 100.000 Einheiten = 1 Standard-Lot. Keine Anlageberatung.</div>
+    <div class="settings-field">
+      <span class="settings-hint-inline">TJR-Risiko-Stufen:</span>
+      <button type="button" class="risk-tier-btn" data-tier="derisk">Derisk 12.5%</button>
+      <button type="button" class="risk-tier-btn" data-tier="normal">Normal 25%</button>
+      <button type="button" class="risk-tier-btn" data-tier="confident">Confident 50%</button>
+    </div>
+    <div class="settings-hint">Wird nur lokal in deinem Browser gespeichert (localStorage), nirgendwo hochgeladen. Positionsgröße = (Kontogröße × Risiko%) ÷ Stop-Distanz. Bei Forex: 100.000 Einheiten = 1 Standard-Lot. Risiko-Stufen nach TJR (Bootcamp Day 39: "normal risk: 25, derisk: 12.5, confident: 50") — Einheit im Video nicht zweifelsfrei erkennbar, hier als % vom Konto umgesetzt. Keine Anlageberatung.</div>
   </div>
 
   <div id="news"></div>
@@ -231,6 +245,7 @@ function assetId(asset) {
 // TJR Bootcamp Day 39 "Calculating Lot Size").
 const ACCT_KEY = "tjr_acct_size";
 const RISK_KEY = "tjr_risk_pct";
+const RISK_TIERS = { derisk: 12.5, normal: 25, confident: 50 };
 function getAcctSize() { return parseFloat(localStorage.getItem(ACCT_KEY)) || 1000; }
 function getRiskPct() { return parseFloat(localStorage.getItem(RISK_KEY)) || 1; }
 function positionSizeText(asset, sig) {
@@ -354,7 +369,20 @@ function drawZoneBox(chart, candles, ann, markers) {
   const startTs = Math.floor(ann.zoneTs / 1000);
   const startIdx = candles.findIndex((c) => c.time >= startTs);
   if (startIdx === -1) return;
-  const zoneData = candles.slice(startIdx, Math.min(startIdx + 6, candles.length));
+
+  // Extend the box until the zone is actually mitigated (a candle CLOSES through
+  // the far/invalidating side) or, if never mitigated yet, all the way to the
+  // last candle (present time) — instead of a fixed 6-candle width. Matches how
+  // TJR draws these by hand: the box keeps growing as long as the zone is still
+  // "live". Bullish zone (support) invalidated by a close below its bottom;
+  // bearish zone (resistance) invalidated by a close above its top.
+  let endIdx = candles.length - 1;
+  for (let i = startIdx + 1; i < candles.length; i++) {
+    const c = candles[i];
+    const invalidated = ann.bias === "bullish" ? c.close < bottom : c.close > top;
+    if (invalidated) { endIdx = i; break; }
+  }
+  const zoneData = candles.slice(startIdx, endIdx + 1);
   if (zoneData.length === 0) return;
 
   const boxSeries = chart.addAreaSeries({
@@ -576,7 +604,31 @@ function initSettings() {
   });
   riskEl.addEventListener("input", () => {
     localStorage.setItem(RISK_KEY, riskEl.value || "0");
+    updateTierButtons();
     for (const item of PRECOMPUTED.assets) renderInfoTable(item);
+  });
+
+  document.querySelectorAll(".risk-tier-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const pct = RISK_TIERS[btn.dataset.tier];
+      riskEl.value = pct;
+      localStorage.setItem(RISK_KEY, String(pct));
+      updateTierButtons();
+      for (const item of PRECOMPUTED.assets) renderInfoTable(item);
+    });
+  });
+  updateTierButtons();
+}
+
+// Highlights whichever tier button (if any) matches the current risk% value —
+// TJR's own on-chart note (Bootcamp Day 39): "1: normal risk: 25. 2: derisk:
+// 12.5. 3: confident: 50." — three conviction-based risk levels instead of one
+// flat %. Unit (percent vs. fixed $) wasn't 100% confirmed from the video
+// frames sampled; implemented here as percent of account per Tiam's call.
+function updateTierButtons() {
+  const current = getRiskPct();
+  document.querySelectorAll(".risk-tier-btn").forEach((btn) => {
+    btn.classList.toggle("active", RISK_TIERS[btn.dataset.tier] === current);
   });
 }
 
