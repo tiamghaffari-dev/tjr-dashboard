@@ -559,7 +559,11 @@ function drawZoneBox(chart, candles, ann, markers) {
   // stretch across the full 20-Tage chart history made it look "endless" instead of
   // fitted. Bullish zone (support) invalidated by a close below its bottom; bearish
   // zone (resistance) invalidated by a close above its top.
-  const MAX_ZONE_BARS = 3 * 96; // ~3 Tage bei 15-Min-Kerzen, gleich wie DEFAULT_VIEW_CANDLES
+  // Tiam, 2026-07-12: "sie koennen durchaus lang sein aber nicht zu lang dass
+  // die weiteren Analysen danach davon gestoert werden" - von 3 Tagen auf 1
+  // Tag verkuerzt, damit eine einzelne Zone nicht fast die ganze
+  // Standardansicht (3 Tage) dominiert und spaetere Struktur ueberlagert.
+  const MAX_ZONE_BARS = 96; // ~1 Tag bei 15-Min-Kerzen
   const maxEndIdx = Math.min(candles.length - 1, startIdx + MAX_ZONE_BARS);
   let endIdx = maxEndIdx;
   for (let i = startIdx + 1; i <= maxEndIdx; i++) {
@@ -740,7 +744,9 @@ function drawHistoricalPositionBox(chart, candles, rec) {
 // vorhandenen kompakten Marker (Sweep-Kreis, BOS-Pfeil, etc.). Nur die drei
 // wirklich handlungsrelevanten Linien (Entry/Stop/Target) behalten ihr
 // Achsen-Label, das reduziert den Stapel von 7 auf 3 Eintraege.
-const ANALYSIS_LINE_MAX_BARS = 3 * 96; // gleiches Zeitfenster wie die Zone-Box-Begrenzung
+// Tiam, 2026-07-12: gleiche Verkuerzung wie bei MAX_ZONE_BARS (1 Tag statt 3) -
+// "nicht zu lang dass die weiteren Analysen danach davon gestoert werden".
+const ANALYSIS_LINE_MAX_BARS = 96; // ~1 Tag bei 15-Min-Kerzen
 
 function drawBoundedAnalysisLine(chart, candles, startTs, price, color, lineStyle) {
   const startIdx = candles.findIndex((c) => c.time >= startTs);
@@ -833,24 +839,20 @@ function renderChart(item) {
     // FVG-Box) verankert statt an einem knappen 20-Kerzen-Rueckblick - sonst
     // ist die Box bei einer mehrtaegigen Chart-Ansicht kaum sichtbar (nur ein
     // paar Stunden breit).
+    // Tiam, 2026-07-12: "horizontale Linien sollen nicht unendlich lang sein" -
+    // Lightweight Charts' createPriceLine() zeichnet IMMER ueber die volle
+    // Chart-Breite (kein Zeitfenster-Limit moeglich, anders als bei den
+    // Area/Line-Series-basierten Boxen/Linien oben). Die separaten Entry/
+    // Stop/Target-Achsen-Label-Linien wurden deshalb entfernt - die Box
+    // selbst (bereits zeitlich begrenzt) markiert diese drei Level schon
+    // ueber ihre gestrichelte Kante (Target/Stop) und die weisse Trennlinie
+    // (Entry); die exakten Zahlen stehen zusaetzlich in der "Details"-Tabelle
+    // rechts neben dem Chart.
     const openRec = (item.signals || []).find((r) => r.status === "open");
     const boxStartTs = openRec
       ? Math.floor(openRec.entryTs / 1000)
       : (ann.zoneTs ? Math.floor(ann.zoneTs / 1000) : candles[Math.max(0, candles.length - 21)].time);
     drawPositionBox(chart, candles, sig, boxStartTs);
-
-    series.createPriceLine({
-      price: sig.entry, color: "#4fff9c", lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: "Entry",
-    });
-    series.createPriceLine({
-      price: sig.stop, color: "#ff6b6b", lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: "Stop",
-    });
-    series.createPriceLine({
-      price: sig.target, color: "#ffd25c", lineWidth: 1,
-      lineStyle: LightweightCharts.LineStyle.Solid, axisLabelVisible: true, title: "Target",
-    });
   }
 
   const SIGNAL_OUTCOME_STYLE = {
