@@ -23,11 +23,15 @@
   }
   body { padding: 22px 24px 48px; }
 
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
-  .brand { display: flex; align-items: center; gap: 10px; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
+  /* Tiam, 2026-07-12: "es soll simple gross und einfach zu verstehen sein" -
+     Titel deutlich vergroessert (21px -> 36px) und das kryptische
+     "// ICT-SMC"-Suffix aus dem Titel selbst entfernt (steht jetzt als
+     kleines, dezentes Badge daneben statt im Haupttitel zu stehen). */
   h1 {
-    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
+    font-size: 36px; margin: 0; letter-spacing: 0.3px; font-weight: 800;
     background: linear-gradient(90deg, #7dd3fc, #a78bfa 45%, #39ff88 90%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
@@ -36,18 +40,27 @@
     padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(122,140,255,0.35);
     color: #9fb2ff; background: rgba(122,140,255,0.08);
   }
+  .brand-badge {
+    font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(122,140,255,0.3);
+    color: #9fb2ff; background: rgba(122,140,255,0.08); white-space: nowrap;
+  }
   .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .howto-link {
-    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
-    padding: 4px 10px; border-radius: 6px; text-decoration: none;
+    font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600;
+    padding: 5px 11px; border-radius: 6px; text-decoration: none;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
     color: #9198ad; transition: all 0.15s ease;
   }
   .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
-  .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 16px 0; font-family: -apple-system, sans-serif; }
+  .subtitle {
+    color: #a8afc2; font-size: 16px; line-height: 1.5; margin: 10px 0 16px 0;
+    font-family: -apple-system, sans-serif;
+  }
   .status-line {
-    font-size: 12px; color: #6b7185; margin-bottom: 18px; padding-bottom: 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 13.5px; color: #8790a8; margin-bottom: 20px; padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06); line-height: 1.6;
+    font-family: -apple-system, sans-serif;
   }
 
   .news-box {
@@ -217,7 +230,8 @@
   <div class="topbar">
     <div class="brand">
       <span class="dot"></span>
-      <h1>TJR LIVE-REPORT // ICT-SMC</h1>
+      <h1>TJR Live-Report</h1>
+      <span class="brand-badge">ICT / Smart Money</span>
     </div>
     <div class="topbar-right">
       <a class="howto-link" href="how_it_works.html">ℹ️ Wie funktioniert das?</a>
@@ -225,7 +239,7 @@
       <span class="tag">no auto-trades · analysis only</span>
     </div>
   </div>
-  <div class="subtitle">Live-Analyse von Bitcoin, Ethereum, XRP, GBP/USD, S&amp;P 500 und Gold im Stil von TJR (ICT/Smart-Money) — aktualisiert sich automatisch, aktiv analysiert wird nur 15–17 Uhr Wien (TJRs eigentliche Handelszeit). <a class="inline-link" href="how_it_works.html">Wie funktioniert das genau?</a></div>
+  <div class="subtitle">Automatische Live-Analyse von 6 Assets im Handelsstil von TJR — aktiv gehandelt wird nur 15–17 Uhr (Wien). <a class="inline-link" href="how_it_works.html">Wie funktioniert das genau?</a></div>
   <div id="status" class="status-line"><span id="generated-at">__GENERATED_AT__</span> <span id="window-status"></span> <span id="live-indicator" class="live-indicator">● live</span> <span id="refresh-countdown" class="refresh-countdown"></span></div>
 
   <details class="settings-box collapsible">
@@ -965,18 +979,29 @@ function main() {
   assetsEl.innerHTML = "";
   newsEl.innerHTML = "";
 
+  // Tiam, 2026-07-12: "es soll simple gross und einfach zu verstehen sein" -
+  // ein rohes ISO-Zeitformat ("2026-07-12T17:34:40.575Z") ist fuer einen
+  // Besucher nicht lesbar; hier stattdessen als Wiener Ortszeit formatiert.
+  // Die Handelsfenster-Zeit (15-17 Wien) steht schon im Untertitel, wird hier
+  // deshalb nicht mehr wiederholt - kuerzere, klarere Statuszeile.
   const genEl = document.getElementById("generated-at");
-  if (genEl) genEl.textContent = "Zuletzt aktualisiert: " + PRECOMPUTED.generatedAt;
+  if (genEl) {
+    const d = new Date(PRECOMPUTED.generatedAt);
+    const formatted = d.toLocaleString("de-AT", {
+      timeZone: "Europe/Vienna", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+    });
+    genEl.textContent = "Aktualisiert: " + formatted + " Uhr";
+  }
 
   const winEl = document.getElementById("window-status");
   if (winEl) {
     const anyOpenTrade = PRECOMPUTED.assets.some((a) => !a.error && a.hasOpenTrade);
     if (PRECOMPUTED.inTradingWindow) {
-      winEl.textContent = "· ✓ analysiere aktiv (15–17 Wien)";
+      winEl.textContent = "· ✓ analysiert gerade aktiv";
     } else if (anyOpenTrade) {
-      winEl.textContent = "· außerhalb Handelsfenster (15–17 Wien) — beobachte offene Position(en), keine neuen Setups";
+      winEl.textContent = "· pausiert — beobachtet offene Position(en)";
     } else {
-      winEl.textContent = "· außerhalb Handelsfenster (15–17 Wien) — pausiert, keine neue Analyse";
+      winEl.textContent = "· pausiert bis 15 Uhr";
     }
   }
 
