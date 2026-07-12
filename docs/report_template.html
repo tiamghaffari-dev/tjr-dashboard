@@ -98,14 +98,29 @@
   .risk-tier-btn.active { background: rgba(122,140,255,0.18); border-color: rgba(122,140,255,0.55); color: #d7dbe8; }
   .settings-hint-inline { color: #7c8399; font-size: 10.5px; }
 
-  .assetnav { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
-  .assetnav a {
-    font-family: -apple-system, sans-serif; font-size: 12.5px; font-weight: 600;
-    padding: 8px 14px; border-radius: 10px; cursor: pointer; user-select: none;
+  /* Tiam, 2026-07-12: "ich finde generell das Layout nicht cool" ->
+     komplette Struktur-Ueberarbeitung: statt einer langen Liste aller 6
+     Assets untereinander (viel Scrollen) jetzt eine kompakte
+     Uebersichts-Kachelreihe oben (Bias + Signal auf einen Blick), Klick auf
+     eine Kachel klappt darunter NUR das gewaehlte Asset auf (Chart +
+     Details). Andere Assets bleiben im DOM (fuer main()-Refresh-Logik),
+     sind aber ausgeblendet bis sie angeklickt werden - siehe
+     .asset-section / .asset-section.active weiter unten. */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 22px; }
+  .overview-card {
+    cursor: pointer; user-select: none; font-family: -apple-system, sans-serif;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-    color: #9198ad; transition: all 0.15s ease; text-decoration: none;
+    border-radius: 12px; padding: 12px 14px; transition: all 0.15s ease;
   }
-  .assetnav a:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .overview-card:hover { border-color: rgba(122,140,255,0.4); }
+  .overview-card.active {
+    border-color: rgba(122,140,255,0.6); background: rgba(122,140,255,0.09);
+    box-shadow: 0 0 0 1px rgba(122,140,255,0.25);
+  }
+  .overview-card.has-entry { border-color: rgba(57,255,136,0.55); box-shadow: 0 0 14px -4px rgba(57,255,136,0.4); }
+  .ov-name { font-weight: 700; font-size: 13px; color: #f2f3f8; margin-bottom: 8px; }
+  .ov-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+  .ov-badges .badge { font-size: 9.5px; padding: 3px 7px; }
 
   .legend-wrap { margin: 4px 0 22px; }
   .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 10.5px; color: #9198ad; font-family: -apple-system, sans-serif; margin-top: 10px; }
@@ -144,8 +159,8 @@
   .subtitle .inline-link { color: #9fb2ff; text-decoration: none; border-bottom: 1px dotted rgba(159,178,255,0.5); }
   .subtitle .inline-link:hover { color: #d7dbe8; }
 
-  .asset-section { margin-bottom: 26px; scroll-margin-top: 16px; animation: fadeUp 0.4s ease both; }
-  .asset-section + .asset-section { padding-top: 26px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .asset-section { display: none; margin-bottom: 26px; scroll-margin-top: 16px; }
+  .asset-section.active { display: block; animation: fadeUp 0.4s ease both; }
 
   .layout { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(260px, 1fr); gap: 16px; align-items: start; }
   @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
@@ -265,7 +280,7 @@
 
   <div id="news"></div>
 
-  <div id="assetnav" class="assetnav"></div>
+  <div id="overview" class="overview-grid"></div>
   <details class="legend-wrap collapsible">
     <summary>🎨 Farben im Chart erklärt</summary>
     <div class="legend">
@@ -530,11 +545,83 @@ function renderInfoTable(item) {
     <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>`;
 }
 
-function renderAssetNav() {
-  const navEl = document.getElementById("assetnav");
-  navEl.innerHTML = PRECOMPUTED.assets.map((item) => (
-    `<a href="#${assetId(item.asset)}">${item.asset.icon} ${item.asset.name}</a>`
-  )).join("");
+// Tiam, 2026-07-12: Struktur-Ueberarbeitung - kompakte Uebersicht statt
+// langer Linkliste. selectedAssetId bleibt ein Modul-Level-Wert (nicht in
+// localStorage), damit die Auswahl innerhalb einer Sitzung stabil bleibt,
+// auch wenn main() beim Auto-Refresh alle 30s neu rendert (gleiches Muster
+// wie chartRanges oben).
+let selectedAssetId = null;
+
+function pickDefaultAssetId() {
+  const entryItem = PRECOMPUTED.assets.find(
+    (it) => !it.error && it.sig.signal === "ENTRY" && it.mode === "analyzing"
+  );
+  if (entryItem) return assetId(entryItem.asset);
+  return assetId(PRECOMPUTED.assets[0].asset);
+}
+
+function renderOverview() {
+  const el = document.getElementById("overview");
+  const stillValid = selectedAssetId && PRECOMPUTED.assets.some((it) => assetId(it.asset) === selectedAssetId);
+  if (!stillValid) selectedAssetId = pickDefaultAssetId();
+
+  el.innerHTML = PRECOMPUTED.assets.map((item) => {
+    const id = assetId(item.asset);
+    let cls = "overview-card";
+    if (id === selectedAssetId) cls += " active";
+    if (item.error) {
+      return `<div class="${cls}" data-id="${id}">
+        <div class="ov-name">${item.asset.icon} ${item.asset.name}</div>
+        <div class="ov-badges"><span class="badge sig-error">Fehler</span></div>
+      </div>`;
+    }
+    const sig = item.sig;
+    if (sig.signal === "ENTRY") cls += " has-entry";
+    return `<div class="${cls}" data-id="${id}">
+      <div class="ov-name">${item.asset.icon} ${item.asset.name}</div>
+      <div class="ov-badges">
+        <span class="badge ${badgeClassBias(sig.bias)}">${biasArrow(sig.bias)} ${sig.bias.toUpperCase()}</span>
+        <span class="badge ${badgeClassSignal(sig.signal)}">${sig.signal.split(" (")[0]}</span>
+      </div>
+    </div>`;
+  }).join("");
+
+  el.querySelectorAll(".overview-card").forEach((card) => {
+    card.addEventListener("click", () => selectAsset(card.dataset.id));
+  });
+}
+
+function renderAssetContent(item) {
+  if (item.error) return;
+  renderInfoTable(item);
+  renderChart(item);
+  if (item.aiNote) {
+    const aiEl = document.getElementById("ai-" + assetId(item.asset));
+    if (aiEl) {
+      aiEl.innerHTML = `<div class="ai-note"><span class="ai-label">KI-Einschätzung (ergänzend, ersetzt nicht die Regel-Engine)</span>${item.aiNote}</div>`;
+    }
+  }
+}
+
+function selectAsset(id) {
+  selectedAssetId = id;
+  document.querySelectorAll(".overview-card").forEach((card) => {
+    card.classList.toggle("active", card.dataset.id === id);
+  });
+  document.querySelectorAll(".asset-section").forEach((sec) => {
+    sec.classList.toggle("active", sec.id === id);
+  });
+  if (charts[id]) {
+    // Chart wurde schon einmal gerendert (z.B. vorheriger Klick vor dem
+    // letzten Auto-Refresh) - Breite neu setzen, da sie waehrend
+    // display:none 0px war.
+    charts[id].chart.applyOptions({ width: charts[id].container.clientWidth });
+  } else {
+    const item = PRECOMPUTED.assets.find((it) => assetId(it.asset) === id);
+    if (item) renderAssetContent(item);
+  }
+  const sec = document.getElementById(id);
+  if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 // Draws the FVG/OrderBlock entry zone as an actual box (dashed border, translucent
@@ -1020,23 +1107,21 @@ function main() {
     newsEl.appendChild(box);
   }
 
-  renderAssetNav();
+  renderOverview();
 
   for (const item of PRECOMPUTED.assets) {
-    assetsEl.appendChild(renderAssetSection(item));
+    const section = renderAssetSection(item);
+    if (assetId(item.asset) === selectedAssetId) section.classList.add("active");
+    assetsEl.appendChild(section);
   }
 
-  for (const item of PRECOMPUTED.assets) {
-    if (item.error) continue;
-    renderInfoTable(item);
-    renderChart(item);
-    if (item.aiNote) {
-      const aiEl = document.getElementById("ai-" + assetId(item.asset));
-      if (aiEl) {
-        aiEl.innerHTML = `<div class="ai-note"><span class="ai-label">KI-Einschätzung (ergänzend, ersetzt nicht die Regel-Engine)</span>${item.aiNote}</div>`;
-      }
-    }
-  }
+  // Nur das aktuell ausgewaehlte Asset wird sofort gerendert (Chart +
+  // Details) - alle anderen bleiben leer/versteckt bis sie per Klick auf
+  // eine Uebersichts-Kachel ausgewaehlt werden (siehe selectAsset() oben).
+  // Das vermeidet auch das display:none-Breite-0px-Problem von
+  // Lightweight Charts fuer alle nicht sichtbaren Assets.
+  const selectedItem = PRECOMPUTED.assets.find((it) => assetId(it.asset) === selectedAssetId);
+  if (selectedItem) renderAssetContent(selectedItem);
 }
 
 function initSettings() {
