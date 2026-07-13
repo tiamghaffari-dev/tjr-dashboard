@@ -175,6 +175,15 @@
   .panel-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
   .panel-head h2 { font-size: 15px; margin: 0; font-family: -apple-system, sans-serif; font-weight: 700; color: #f2f3f8; letter-spacing: 0.2px; }
   .symbol { color: #6b7185; font-size: 11px; letter-spacing: 0.5px; }
+  /* Tiam, 2026-07-13: "ich will das der chart selber laeuft" - kostenlose
+     Live-Anbindung (Binance-WebSocket fuer Krypto) statt bezahltem FMP-
+     Upgrade. Dieses Badge zeigt sichtbar an, wann fuer ein Asset gerade
+     eine echte Live-Verbindung steht, statt nur der alten Batch-Daten. */
+  .live-feed-badge {
+    display: none; font-family: -apple-system, sans-serif; font-size: 10px;
+    font-weight: 700; color: #4fff9c; margin-left: 8px; letter-spacing: 0.3px;
+    animation: livePulse 2s ease-in-out infinite;
+  }
 
   .chart-container { width: 100%; height: 420px; }
 
@@ -599,6 +608,7 @@ function renderAssetContent(item) {
   if (item.error) return;
   renderInfoTable(item);
   renderChart(item);
+  connectBinanceLiveFeed(item);
   if (item.aiNote) {
     const aiEl = document.getElementById("ai-" + assetId(item.asset));
     if (aiEl) {
@@ -970,6 +980,78 @@ function drawSessionDividers(chart, ltf, candles) {
   }
 }
 
+// Tiam, 2026-07-13: "ich will das nicht kaufen [FMP-Upgrade]. kannst du es
+// selber nicht machen? [...] der chart soll selber laufen" - Phase 1 der
+// kostenlosen Live-Loesung: Binances oeffentliche WebSocket-Kline-Streams
+// (kein Account, kein API-Key, komplett kostenlos, Push alle ~250ms) fuer
+// die 3 Krypto-Assets. Aktualisiert NUR die Candlestick-Serie direkt via
+// series.update() (Lightweight Charts' vorgesehener Weg fuer Live-Ticks,
+// kein voller Re-Render noetig) - die TJR-Analyse-Overlays (Sweep/BOS/
+// Zonen/Equilibrium etc.) bleiben vorerst an die bestehende Batch-Analyse
+// gebunden (Phase 3: die Engine selbst live im Browser laufen zu lassen,
+// ist ein separater, groesserer Schritt). Forex/Gold/S&P500 folgen in
+// Phase 2 ueber Finnhub, sobald Tiam einen kostenlosen Account hat.
+const BINANCE_SYMBOL_MAP = { BTCUSD: "btcusdt", ETHUSD: "ethusdt", XRPUSD: "xrpusdt" };
+const liveFeeds = {};
+
+function closeLiveFeed(id) {
+  const feed = liveFeeds[id];
+  if (!feed) return;
+  clearTimeout(feed.reconnectTimer);
+  try { feed.ws.close(); } catch (e) { /* ignore */ }
+  delete liveFeeds[id];
+  const badge = document.getElementById("live-badge-" + id);
+  if (badge) badge.style.display = "none";
+}
+
+function connectBinanceLiveFeed(item) {
+  const binanceSymbol = BINANCE_SYMBOL_MAP[item.asset.symbol];
+  if (!binanceSymbol) return;
+  const id = assetId(item.asset);
+  closeLiveFeed(id); // falls fuer dieses Asset schon eine alte Verbindung offen ist
+
+  function connect() {
+    let ws;
+    try {
+      ws = new WebSocket(`wss://stream.binance.com:9443/ws/${binanceSymbol}@kline_15m`);
+    } catch (e) {
+      return; // z.B. WebSocket im Browser nicht verfuegbar - still aufgeben
+    }
+    liveFeeds[id] = { ws, reconnectTimer: null };
+
+    ws.addEventListener("open", () => {
+      const badge = document.getElementById("live-badge-" + id);
+      if (badge) badge.style.display = "inline";
+    });
+
+    ws.addEventListener("message", (event) => {
+      const chartEntry = charts[id];
+      if (!chartEntry || !chartEntry.series) return;
+      try {
+        const msg = JSON.parse(event.data);
+        const k = msg.k;
+        if (!k) return;
+        chartEntry.series.update({
+          time: Math.floor(k.t / 1000),
+          open: parseFloat(k.o), high: parseFloat(k.h),
+          low: parseFloat(k.l), close: parseFloat(k.c),
+        });
+      } catch (e) { /* einzelne kaputte Nachricht ignorieren, Verbindung bleibt offen */ }
+    });
+
+    ws.addEventListener("close", () => {
+      // Wurde die Verbindung absichtlich beendet (closeLiveFeed), existiert
+      // der Eintrag schon nicht mehr - dann NICHT neu verbinden.
+      if (!liveFeeds[id]) return;
+      const badge = document.getElementById("live-badge-" + id);
+      if (badge) badge.style.display = "none";
+      liveFeeds[id].reconnectTimer = setTimeout(connect, 3000);
+    });
+    ws.addEventListener("error", () => { try { ws.close(); } catch (e) { /* ignore */ } });
+  }
+  connect();
+}
+
 function renderChart(item) {
   const container = document.getElementById("chart-" + assetId(item.asset));
   if (!container || item.error || !item.ltf || !item.ltf.length) return;
@@ -1098,7 +1180,7 @@ function renderChart(item) {
   } else {
     chart.timeScale().fitContent();
   }
-  charts[assetId(item.asset)] = { chart, container };
+  charts[assetId(item.asset)] = { chart, container, series };
 }
 
 function renderAssetSection(item) {
@@ -1130,6 +1212,7 @@ function renderAssetSection(item) {
         <div class="panel-head">
           <h2>${item.asset.icon} ${item.asset.name}</h2>
           <span class="symbol">${item.asset.display}</span>
+          <span class="live-feed-badge" id="live-badge-${id}">● LIVE</span>
         </div>
         <div class="plain-headline ${headline.cls}"><span class="headline-emoji">${headline.emoji}</span>${headline.text}</div>
         <div class="badges">
@@ -1160,6 +1243,7 @@ function main() {
   for (const id in charts) {
     try { chartRanges[id] = charts[id].chart.timeScale().getVisibleRange(); } catch (e) { /* ignore */ }
     try { charts[id].chart.remove(); } catch (e) { /* ignore */ }
+    closeLiveFeed(id);
     delete charts[id];
   }
 
