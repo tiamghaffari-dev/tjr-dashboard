@@ -619,19 +619,31 @@ function renderAssetContent(item) {
 
 function selectAsset(id) {
   selectedAssetId = id;
+  // Nur EINE Live-Verbindung gleichzeitig offen halten: Finnhubs kostenloser
+  // Plan erlaubt nur eine gleichzeitige WebSocket-Verbindung pro API-Key -
+  // beim Wechsel zwischen z.B. GBP/USD und S&P500 wuerde sonst die neue
+  // Verbindung die alte (und ggf. sich selbst) killen. Binance hat dieses
+  // Limit zwar nicht, aber es ist ohnehin sinnlos, Live-Feeds fuer nicht
+  // sichtbare Assets offen zu halten - also beim Wechsel immer alle ausser
+  // dem neu gewaehlten schliessen.
+  for (const openId of Object.keys(liveFeeds)) {
+    if (openId !== id) closeLiveFeed(openId);
+  }
   document.querySelectorAll(".overview-card").forEach((card) => {
     card.classList.toggle("active", card.dataset.id === id);
   });
   document.querySelectorAll(".asset-section").forEach((sec) => {
     sec.classList.toggle("active", sec.id === id);
   });
+  const item = PRECOMPUTED.assets.find((it) => assetId(it.asset) === id);
   if (charts[id]) {
     // Chart wurde schon einmal gerendert (z.B. vorheriger Klick vor dem
     // letzten Auto-Refresh) - Breite neu setzen, da sie waehrend
-    // display:none 0px war.
+    // display:none 0px war. Live-Feed wurde beim Wegklicken oben bewusst
+    // geschlossen (Finnhub-Limit) - beim Zurueckklicken wieder verbinden.
     charts[id].chart.applyOptions({ width: charts[id].container.clientWidth });
+    if (item) connectLiveFeed(item);
   } else {
-    const item = PRECOMPUTED.assets.find((it) => assetId(it.asset) === id);
     if (item) renderAssetContent(item);
   }
   const sec = document.getElementById(id);
