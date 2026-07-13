@@ -403,7 +403,11 @@ function sessionMarkers(ltf) {
 // SESSIONS-Startzeiten abgeleitet (Ende = Start der naechsten Session im
 // Zyklus), damit es nur EINE Session-Zeit-Definition im gesamten Chart gibt
 // statt zweier widerspruechlicher.
-const SESSION_LEVEL_COLORS = { Asia: "#fbbf24", NY: "#fb7185" };
+// Tiam, 2026-07-13: Screenshot von TJRs High/Low-Linien-Tool geschickt -
+// EIN durchgezogener blauer Strich fuer alle Session-Highs/Lows (nicht
+// verschiedene gestrichelte Farben pro Session) - Unterscheidung laeuft
+// weiterhin ueber den Text-Marker ("Asia High" / "NY Low" etc.).
+const SESSION_LEVEL_COLORS = { Asia: "#3b82f6", NY: "#3b82f6" };
 const SESSION_RANGES = SESSIONS.map((s, i) => ({
   label: s.label,
   startHour: s.hour,
@@ -635,10 +639,15 @@ function selectAsset(id) {
 // the well-known Area-series trick — an Area series filled down to a fixed baseValue
 // price, fed only the data points inside the box's time range, renders as a flat
 // filled band exactly where data exists and nowhere else.
+// Tiam, 2026-07-13: Screenshot geschickt - TJR zeichnet Order Block UND
+// Breaker Block als DENSELBEN Tool-Typ (ein Swatch fuer beide): solide
+// dunkelblaue Box mit durchgezogenem (nicht gestricheltem) fast-schwarzen
+// Rand. FVG bleibt vorerst unveraendert (nicht Teil dieser Screenshot-
+// Runde) - eigene, hellere/transparentere Farbe zur Unterscheidung.
 const ZONE_STYLES = {
-  FVG: { fill: "rgba(255,107,157,0.16)", border: "rgba(255,107,157,0.65)", label: "FVG", pos: "aboveBar" },
-  OrderBlock: { fill: "rgba(79,255,190,0.16)", border: "rgba(79,255,190,0.65)", label: "OB", pos: "belowBar" },
-  BreakerBlock: { fill: "rgba(255,210,92,0.16)", border: "rgba(255,210,92,0.65)", label: "BB", pos: "belowBar" },
+  FVG: { fill: "rgba(255,107,157,0.16)", border: "rgba(255,107,157,0.65)", label: "FVG", pos: "aboveBar", lineStyle: "Dashed" },
+  OrderBlock: { fill: "rgba(30,55,90,0.55)", border: "rgba(10,10,16,0.95)", label: "OB", pos: "belowBar", lineStyle: "Solid" },
+  BreakerBlock: { fill: "rgba(30,55,90,0.55)", border: "rgba(10,10,16,0.95)", label: "BB", pos: "belowBar", lineStyle: "Solid" },
 };
 
 function drawZoneBox(chart, candles, ann, markers) {
@@ -677,7 +686,7 @@ function drawZoneBox(chart, candles, ann, markers) {
 
   const boxSeries = chart.addAreaSeries({
     topColor: fillColor, bottomColor: fillColor,
-    lineColor: borderColor, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed,
+    lineColor: borderColor, lineWidth: 1, lineStyle: LightweightCharts.LineStyle[style.lineStyle || "Dashed"],
     priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
   });
   boxSeries.applyOptions({ baseValue: { type: "price", price: bottom } });
@@ -716,7 +725,7 @@ function drawSessionLevels(chart, candles, levels, markers) {
       if (segData.length === 0) continue;
 
       const lineSeries = chart.addLineSeries({
-        color: lvl.color, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed,
+        color: lvl.color, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Solid,
         priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
       });
       lineSeries.setData(segData);
@@ -742,8 +751,13 @@ function drawSessionLevels(chart, candles, levels, markers) {
 // Tinting), gestrichelte Aussenkante an Target/Stop, durchgezogene Trennlinie
 // am Entry. Deckkraft deutlich erhoeht (0.18 -> 0.42) und Aussenlinie auf
 // gestrichelt umgestellt, um dem Vorbild optisch naeher zu kommen.
+// Tiam, 2026-07-13: "es sollte nicht grau sondern gruen sein wie auf
+// tradingview" - der vorherige Tuerkis-Ton (79,255,190) wirkte auf einer
+// grossen, dunklen Box zu blaustichig/entsaettigt ("grau"). Auf ein
+// eindeutigeres, saettigteres Gruen umgestellt (naeher an TradingViews
+// eigenem Gruenton) und die Deckkraft nochmal leicht erhoeht.
 const POSITION_BOX_COLORS = {
-  profit: { fill: "rgba(79,255,190,0.42)", line: "rgba(79,255,190,0.9)" },
+  profit: { fill: "rgba(34,220,110,0.48)", line: "rgba(34,220,110,0.95)" },
   risk: { fill: "rgba(255,107,157,0.42)", line: "rgba(255,107,157,0.9)" },
 };
 
@@ -751,7 +765,13 @@ function drawPositionBox(chart, candles, sig, startTs) {
   if (sig.entry === null || sig.stop === null || sig.target === null) return;
   const startIdx = candles.findIndex((c) => c.time >= startTs);
   if (startIdx === -1) return;
-  const segData = candles.slice(startIdx).map((c) => ({ time: c.time }));
+  // Tiam, 2026-07-13: "diese short position geht wieder ins unendliche" -
+  // im Gegensatz zur Zone-Box und den Analyse-Linien (#64/#65, beide auf
+  // ANALYSIS_LINE_MAX_BARS/MAX_ZONE_BARS begrenzt) lief diese Box bisher bis
+  // zur letzten geladenen Kerze durch - bei 10-20 Tagen Chart-Historie de
+  // facto endlos. Gleicher Cap wie ueberall sonst (~1 Tag).
+  const endIdx = Math.min(candles.length - 1, startIdx + ANALYSIS_LINE_MAX_BARS);
+  const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
   if (segData.length === 0) return;
 
   const profitSeries = chart.addAreaSeries({
@@ -861,6 +881,95 @@ function drawBoundedAnalysisLine(chart, candles, startTs, price, color, lineStyl
   }).setData(segData);
 }
 
+// Tiam, 2026-07-13: Screenshot von TJRs Fib-Retracement-Equilibrium-Tool
+// geschickt - gruene Box ueber die GESAMTE Swing-Spanne (0 bis 1), weisse
+// gestrichelte Raender oben/unten, hervorgehobene gruene 0.5-Linie (die
+// eigentliche Equilibrium). Ersetzt die bisherige einzelne graue Linie.
+// Nutzt ann.equilibriumRange = [legLow, legHigh] aus engine.js (rein
+// additiv dort ergaenzt, gleiche Werte die eh schon fuer ann.equilibrium
+// berechnet wurden) - faellt defensiv auf "nichts zeichnen" zurueck falls
+// aeltere gecachte Daten dieses Feld noch nicht haben.
+const EQUILIBRIUM_LINE_COLOR = "#4ade80";
+const EQUILIBRIUM_FILL_COLOR = "rgba(74,222,128,0.10)";
+const EQUILIBRIUM_EDGE_COLOR = "rgba(255,255,255,0.55)";
+
+function drawEquilibriumBox(chart, candles, ann, markers) {
+  if (!ann.sweep || !ann.equilibriumRange) return;
+  const [legLow, legHigh] = ann.equilibriumRange;
+  if (legLow == null || legHigh == null || !(legHigh > legLow)) return;
+
+  const startTs = Math.floor(ann.sweep.ts / 1000);
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+  const endIdx = Math.min(candles.length - 1, startIdx + ANALYSIS_LINE_MAX_BARS);
+  const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
+  if (segData.length === 0) return;
+
+  const fillSeries = chart.addAreaSeries({
+    topColor: EQUILIBRIUM_FILL_COLOR, bottomColor: EQUILIBRIUM_FILL_COLOR,
+    lineColor: EQUILIBRIUM_EDGE_COLOR, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  fillSeries.applyOptions({ baseValue: { type: "price", price: legLow } });
+  fillSeries.setData(segData.map((d) => ({ time: d.time, value: legHigh })));
+
+  const midSeries = chart.addLineSeries({
+    color: EQUILIBRIUM_LINE_COLOR, lineWidth: 2, lineStyle: LightweightCharts.LineStyle.Solid,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  midSeries.setData(segData.map((d) => ({ time: d.time, value: ann.equilibrium })));
+
+  markers.push({
+    time: startTs, position: "aboveBar",
+    color: EQUILIBRIUM_LINE_COLOR, shape: "circle", text: "EQ",
+  });
+}
+
+// Tiam, 2026-07-13: "der senkrechte strich ist fuer die verschiedenen
+// sessions" - zusaetzlich zu den bestehenden Text-Markern (sessionMarkers)
+// jetzt auch eine duenne gestrichelte weisse Vertikale an jedem Session-
+// Start, wie TJR es macht. Lightweight Charts hat kein natives
+// Vertikal-Linien-Primitive - Standard-Trick: eine Line-Series mit zwei
+// Punkten (knapp nacheinander in der Zeit) von einem sehr niedrigen zu
+// einem sehr hohen Preis, mit autoscaleInfoProvider:()=>null, damit diese
+// Series die eigentliche Y-Achsen-Skalierung nicht beeinflusst - dadurch
+// wird sie auf die tatsaechliche Kerzen-Hoehe geclippt und wirkt wie eine
+// echte Vertikale. Nur fuer die letzten paar Tage (nicht die gesamte
+// 10-20-Tage-Historie) gezeichnet, sonst Chart beim Zurueckscrollen mit
+// Dutzenden Linien zugepflastert - gleiche "nicht endlos zurueck"-Regel
+// wie bei Zone-Box/Analyse-Linien oben.
+const SESSION_DIVIDER_LOOKBACK_BARS = 2 * 96; // ~2 Tage
+
+function drawSessionDividers(chart, ltf, candles) {
+  if (!candles.length) return;
+  const cutoffIdx = Math.max(0, candles.length - SESSION_DIVIDER_LOOKBACK_BARS);
+  const cutoffTs = candles[cutoffIdx].time * 1000;
+  const seen = new Set();
+  for (const c of ltf) {
+    if (c.ts < cutoffTs) continue;
+    const d = new Date(c.ts);
+    const h = d.getUTCHours();
+    const m = d.getUTCMinutes();
+    if (m >= 15) continue;
+    for (const s of SESSIONS) {
+      if (h !== s.hour) continue;
+      const key = d.getUTCFullYear() + "-" + d.getUTCMonth() + "-" + d.getUTCDate() + "-" + s.label;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const t = Math.floor(c.ts / 1000);
+      const dividerSeries = chart.addLineSeries({
+        color: "rgba(255,255,255,0.35)", lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed,
+        priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+        autoscaleInfoProvider: () => null,
+      });
+      dividerSeries.setData([
+        { time: t, value: -1e9 },
+        { time: t + 60, value: 1e9 },
+      ]);
+    }
+  }
+}
+
 function renderChart(item) {
   const container = document.getElementById("chart-" + assetId(item.asset));
   if (!container || item.error || !item.ltf || !item.ltf.length) return;
@@ -892,6 +1001,7 @@ function renderChart(item) {
   const { ann, sig } = item;
   let markers = sessionMarkers(item.ltf);
   drawSessionLevels(chart, candles, computeSessionLevels(item.ltf), markers);
+  drawSessionDividers(chart, item.ltf, candles);
 
   if (ann.sweep) {
     drawBoundedAnalysisLine(chart, candles, ann.sweep.ts, ann.sweep.level, "#7dd3fc", LightweightCharts.LineStyle.Solid);
@@ -919,15 +1029,7 @@ function renderChart(item) {
     });
   }
   if (ann.equilibrium !== null && ann.sweep) {
-    // Equilibrium hatte bisher gar keinen Marker (nur die volle Achsen-Label-
-    // Linie) - jetzt bekommt sie einen kompakten "EQ"-Marker wie die anderen
-    // Analyse-Linien, verankert am selben Sweep-Zeitpunkt, aus dem sich die
-    // Equilibrium-Berechnung ableitet.
-    drawBoundedAnalysisLine(chart, candles, ann.sweep.ts, ann.equilibrium, "#9198ad", LightweightCharts.LineStyle.Solid);
-    markers.push({
-      time: Math.floor(ann.sweep.ts / 1000), position: "aboveBar",
-      color: "#9198ad", shape: "circle", text: "EQ",
-    });
+    drawEquilibriumBox(chart, candles, ann, markers);
   }
   if (ann.zoneRange && ann.zoneTs) {
     drawZoneBox(chart, candles, ann, markers);
