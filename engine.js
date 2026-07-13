@@ -378,6 +378,12 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
     legLow = sinceSweep.length ? Math.min(...sinceSweep.map((r) => r.low)) : recentSweep.level;
   }
   ann.equilibrium = (legLow + legHigh) / 2;
+  // Tiam, 2026-07-13: Screenshot von TJRs Fib-Retracement-Equilibrium-Tool
+  // geschickt (gruene Box von Swing-Low bis Swing-High, 0.5-Linie
+  // hervorgehoben) - der Chart braucht dafuer die volle Spanne, nicht nur
+  // den Mittelpunkt. Rein additiv, gleiche legLow/legHigh die eh schon fuer
+  // ann.equilibrium berechnet werden.
+  ann.equilibriumRange = [legLow, legHigh];
 
   const confirmingBos = ltfBos.filter((b) => b.ts > recentSweep.ts && b.dir === wantDir);
   const ifvgEvents = findIfvg(ltfDf, findFvgs(ltfDf));
