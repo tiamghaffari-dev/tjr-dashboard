@@ -608,7 +608,7 @@ function renderAssetContent(item) {
   if (item.error) return;
   renderInfoTable(item);
   renderChart(item);
-  connectBinanceLiveFeed(item);
+  connectLiveFeed(item);
   if (item.aiNote) {
     const aiEl = document.getElementById("ai-" + assetId(item.asset));
     if (aiEl) {
@@ -1050,6 +1050,92 @@ function connectBinanceLiveFeed(item) {
     ws.addEventListener("error", () => { try { ws.close(); } catch (e) { /* ignore */ } });
   }
   connect();
+}
+
+// --- Phase 2: Live-Forex/Gold/S&P500 ueber Finnhub (kostenloser Account, Tiam
+// hat den Key selbst erzeugt). Finnhub liefert KEINE fertigen Kerzen ueber
+// den WebSocket, sondern einzelne Trade-Ticks - die aktuelle 15-Min-Kerze
+// wird deshalb hier im Browser selbst aus den Ticks zusammengebaut (gleiches
+// Bucket-Raster wie die batch-generierten Kerzen: 900s ab Unix-Epoche,
+// dadurch automatisch auf :00/:15/:30/:45 UTC ausgerichtet).
+// S&P 500 hat keine kostenlose Live-Index-Quelle - SPY-ETF (folgt dem Index
+// fast 1:1) wird stattdessen live getickt, siehe Tiams Freigabe dazu.
+const FINNHUB_API_KEY = "d9al8j9r01qp4bhre490d9al8j9r01qp4bhre49g";
+const FINNHUB_SYMBOL_MAP = { GBPUSD: "OANDA:GBP_USD", GCUSD: "OANDA:XAU_USD", "^GSPC": "SPY" };
+const LIVE_BAR_SECONDS = 15 * 60;
+const finnhubBars = {}; // assetId -> aktuell laufende, noch nicht abgeschlossene Live-Kerze
+
+function bucketStart(tsSeconds) {
+  return Math.floor(tsSeconds / LIVE_BAR_SECONDS) * LIVE_BAR_SECONDS;
+}
+
+function connectFinnhubLiveFeed(item) {
+  const finnhubSymbol = FINNHUB_SYMBOL_MAP[item.asset.symbol];
+  if (!finnhubSymbol) return;
+  const id = assetId(item.asset);
+  closeLiveFeed(id);
+
+  const chartEntry = charts[id];
+  const existingData = chartEntry && chartEntry.series.data ? chartEntry.series.data() : [];
+  const lastCandle = existingData && existingData.length ? existingData[existingData.length - 1] : null;
+  finnhubBars[id] = lastCandle ? { ...lastCandle } : null;
+
+  function connect() {
+    let ws;
+    try {
+      ws = new WebSocket(`wss://ws.finnhub.io?token=${FINNHUB_API_KEY}`);
+    } catch (e) {
+      return; // WebSocket im Browser nicht verfuegbar - still aufgeben
+    }
+    liveFeeds[id] = { ws, reconnectTimer: null };
+
+    ws.addEventListener("open", () => {
+      ws.send(JSON.stringify({ type: "subscribe", symbol: finnhubSymbol }));
+      const badge = document.getElementById("live-badge-" + id);
+      if (badge) badge.style.display = "inline";
+    });
+
+    ws.addEventListener("message", (event) => {
+      const entry = charts[id];
+      if (!entry || !entry.series) return;
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.type !== "trade" || !msg.data) return;
+        for (const trade of msg.data) {
+          if (trade.s !== finnhubSymbol || typeof trade.p !== "number") continue;
+          const bucket = bucketStart(Math.floor(trade.t / 1000));
+          let bar = finnhubBars[id];
+          if (!bar || bar.time < bucket) {
+            bar = { time: bucket, open: trade.p, high: trade.p, low: trade.p, close: trade.p };
+          } else {
+            bar.high = Math.max(bar.high, trade.p);
+            bar.low = Math.min(bar.low, trade.p);
+            bar.close = trade.p;
+          }
+          finnhubBars[id] = bar;
+          entry.series.update(bar);
+        }
+      } catch (e) { /* einzelne kaputte Nachricht ignorieren, Verbindung bleibt offen */ }
+    });
+
+    ws.addEventListener("close", () => {
+      if (!liveFeeds[id]) return;
+      const badge = document.getElementById("live-badge-" + id);
+      if (badge) badge.style.display = "none";
+      liveFeeds[id].reconnectTimer = setTimeout(connect, 3000);
+    });
+    ws.addEventListener("error", () => { try { ws.close(); } catch (e) { /* ignore */ } });
+  }
+  connect();
+}
+
+// Dispatcher: waehlt je nach Asset die Binance- oder Finnhub-Live-Quelle.
+function connectLiveFeed(item) {
+  if (BINANCE_SYMBOL_MAP[item.asset.symbol]) {
+    connectBinanceLiveFeed(item);
+  } else if (FINNHUB_SYMBOL_MAP[item.asset.symbol]) {
+    connectFinnhubLiveFeed(item);
+  }
 }
 
 function renderChart(item) {
