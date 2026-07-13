@@ -1,1 +1,56 @@
-[]
+[
+  {
+    "date": "2026-07-13",
+    "closedAt": "2026-07-13T15:37:35.066Z",
+    "perAsset": [
+      {
+        "symbol": "BTCUSD",
+        "bias": "bearish",
+        "signal": "ENTRY",
+        "zoneKind": "BreakerBlock",
+        "sweepType": "buy_side_sweep",
+        "hasOpenTrade": false
+      },
+      {
+        "symbol": "ETHUSD",
+        "bias": "bearish",
+        "signal": "kein Setup",
+        "zoneKind": null,
+        "sweepType": null,
+        "hasOpenTrade": false
+      },
+      {
+        "symbol": "XRPUSD",
+        "bias": "bearish",
+        "signal": "kein Setup",
+        "zoneKind": null,
+        "sweepType": null,
+        "hasOpenTrade": false
+      },
+      {
+        "symbol": "GBPUSD",
+        "bias": "bullish",
+        "signal": "kein Setup",
+        "zoneKind": null,
+        "sweepType": null,
+        "hasOpenTrade": false
+      },
+      {
+        "symbol": "^GSPC",
+        "bias": "bullish",
+        "signal": "Watchlist (Sweep ohne Bestaetigung)",
+        "zoneKind": null,
+        "sweepType": "sell_side_sweep",
+        "hasOpenTrade": false
+      },
+      {
+        "symbol": "GCUSD",
+        "bias": "bearish",
+        "signal": "kein Setup",
+        "zoneKind": null,
+        "sweepType": null,
+        "hasOpenTrade": false
+      }
+    ]
+  }
+]
