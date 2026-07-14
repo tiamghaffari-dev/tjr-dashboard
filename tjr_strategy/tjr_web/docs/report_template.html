@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>TJR Live-Report // ICT-SMC</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(88, 101, 242, 0.16), transparent 42%),
+      radial-gradient(circle at 85% 8%, rgba(57, 255, 136, 0.10), transparent 40%),
+      #05060a;
+    color: #e8eaf0;
+    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  body { padding: 22px 24px 48px; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
+  /* Tiam, 2026-07-12: "es soll simple gross und einfach zu verstehen sein" -
+     Titel deutlich vergroessert (21px -> 36px) und das kryptische
+     "// ICT-SMC"-Suffix aus dem Titel selbst entfernt (steht jetzt als
+     kleines, dezentes Badge daneben statt im Haupttitel zu stehen). */
+  h1 {
+    font-size: 36px; margin: 0; letter-spacing: 0.3px; font-weight: 800;
+    background: linear-gradient(90deg, #7dd3fc, #a78bfa 45%, #39ff88 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tag {
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(122,140,255,0.35);
+    color: #9fb2ff; background: rgba(122,140,255,0.08);
+  }
+  .brand-badge {
+    font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(122,140,255,0.3);
+    color: #9fb2ff; background: rgba(122,140,255,0.08); white-space: nowrap;
+  }
+  .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .howto-link {
+    font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600;
+    padding: 5px 11px; border-radius: 6px; text-decoration: none;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
+    color: #9198ad; transition: all 0.15s ease;
+  }
+  .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .subtitle {
+    color: #a8afc2; font-size: 16px; line-height: 1.5; margin: 10px 0 16px 0;
+    font-family: -apple-system, sans-serif;
+  }
+  .status-line {
+    font-size: 13.5px; color: #8790a8; margin-bottom: 20px; padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06); line-height: 1.6;
+    font-family: -apple-system, sans-serif;
+  }
+
+  .news-box {
+    background: linear-gradient(135deg, rgba(255,196,0,0.08), rgba(255,196,0,0.02));
+    border: 1px solid rgba(255,196,0,0.28); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px;
+    font-family: -apple-system, sans-serif; animation: fadeUp 0.4s ease;
+  }
+  .news-box.empty { background: linear-gradient(135deg, rgba(57,255,136,0.07), rgba(57,255,136,0.01)); border-color: rgba(57,255,136,0.25); color: #9be8b8; }
+  .news-title { font-weight: 700; margin-bottom: 6px; color: #ffd25c; letter-spacing: 0.3px; }
+  .news-box.empty .news-title { color: #6be79a; }
+  .news-item { margin: 3px 0; color: #d8d2b8; }
+  .news-source { color: #565c70; font-size: 10.5px; margin-top: 6px; }
+
+  .settings-box {
+    background: linear-gradient(135deg, rgba(122,140,255,0.09), rgba(122,140,255,0.02));
+    border: 1px solid rgba(122,140,255,0.25); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 20px; font-size: 12px;
+    font-family: -apple-system, sans-serif;
+  }
+  .settings-body { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+  .settings-field { display: flex; align-items: center; gap: 6px; }
+  .settings-field label { color: #7c8399; }
+  .settings-field input {
+    width: 90px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px; color: #e8eaf0; padding: 4px 8px; font-family: inherit; font-size: 12px;
+  }
+  .settings-hint { color: #565c70; font-size: 10.5px; flex-basis: 100%; }
+  .risk-tier-btn {
+    font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer;
+    padding: 4px 9px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04); color: #9198ad; transition: all 0.15s ease;
+  }
+  .risk-tier-btn:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .risk-tier-btn.active { background: rgba(122,140,255,0.18); border-color: rgba(122,140,255,0.55); color: #d7dbe8; }
+  .settings-hint-inline { color: #7c8399; font-size: 10.5px; }
+
+  /* Tiam, 2026-07-12: "ich finde generell das Layout nicht cool" ->
+     komplette Struktur-Ueberarbeitung: statt einer langen Liste aller 6
+     Assets untereinander (viel Scrollen) jetzt eine kompakte
+     Uebersichts-Kachelreihe oben (Bias + Signal auf einen Blick), Klick auf
+     eine Kachel klappt darunter NUR das gewaehlte Asset auf (Chart +
+     Details). Andere Assets bleiben im DOM (fuer main()-Refresh-Logik),
+     sind aber ausgeblendet bis sie angeklickt werden - siehe
+     .asset-section / .asset-section.active weiter unten. */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 22px; }
+  .overview-card {
+    cursor: pointer; user-select: none; font-family: -apple-system, sans-serif;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; padding: 12px 14px; transition: all 0.15s ease;
+  }
+  .overview-card:hover { border-color: rgba(122,140,255,0.4); }
+  .overview-card.active {
+    border-color: rgba(122,140,255,0.6); background: rgba(122,140,255,0.09);
+    box-shadow: 0 0 0 1px rgba(122,140,255,0.25);
+  }
+  .overview-card.has-entry { border-color: rgba(57,255,136,0.55); box-shadow: 0 0 14px -4px rgba(57,255,136,0.4); }
+  .ov-name { font-weight: 700; font-size: 13px; color: #f2f3f8; margin-bottom: 8px; }
+  .ov-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+  .ov-badges .badge { font-size: 9.5px; padding: 3px 7px; }
+
+  .legend-wrap { margin: 4px 0 22px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 10.5px; color: #9198ad; font-family: -apple-system, sans-serif; margin-top: 10px; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .swatch { width: 12px; height: 3px; border-radius: 2px; display: inline-block; }
+
+  /* Tiam, 2026-07-12: "kannst du die gesamte Webseite noch etwas schoener
+     machen [...] simple fuer einen Webseitbesucher" - technisches
+     ICT-Fachvokabular (Sweep, BOS, FVG, Equilibrium...) steht jetzt
+     standardmaessig eingeklappt hinter <details>, damit ein Erstbesucher
+     zuerst eine einfache Alltagssprache-Zusammenfassung sieht statt einer
+     Fachbegriff-Wand. Tiam/Power-User koennen jederzeit aufklappen. */
+  details.collapsible > summary {
+    cursor: pointer; list-style: none; font-family: -apple-system, sans-serif;
+    font-weight: 700; color: #9fb2ff; font-size: 12.5px; letter-spacing: 0.3px;
+    padding: 4px 0; user-select: none;
+  }
+  details.collapsible > summary::-webkit-details-marker { display: none; }
+  details.collapsible > summary::before { content: "\25B8  "; color: #6b7185; }
+  details.collapsible[open] > summary::before { content: "\25BE  "; }
+  details.collapsible > summary:hover { color: #d7dbe8; }
+  .tech-details { margin-top: 10px; }
+
+  .plain-headline {
+    font-family: -apple-system, sans-serif; font-size: 14px; line-height: 1.5;
+    padding: 10px 14px; border-radius: 10px; margin-bottom: 12px;
+    background: rgba(255,255,255,0.03); border-left: 3px solid #565c70;
+    color: #d7dbe8;
+  }
+  .plain-headline .headline-emoji { margin-right: 6px; }
+  .plain-headline.headline-entry { border-left-color: #39ff88; background: rgba(57,255,136,0.06); }
+  .plain-headline.headline-watch { border-left-color: #ffd25c; background: rgba(255,196,0,0.06); }
+  .plain-headline.headline-monitor { border-left-color: #7dd3fc; background: rgba(125,211,252,0.06); }
+  .plain-headline.headline-none { border-left-color: #565c70; }
+  .plain-headline.headline-weekly { border-left-color: #b48cff; background: rgba(180,140,255,0.06); font-size: 0.92em; opacity: 0.9; }
+
+  .subtitle .inline-link { color: #9fb2ff; text-decoration: none; border-bottom: 1px dotted rgba(159,178,255,0.5); }
+  .subtitle .inline-link:hover { color: #d7dbe8; }
+
+  .asset-section { display: none; margin-bottom: 26px; scroll-margin-top: 16px; }
+  .asset-section.active { display: block; animation: fadeUp 0.4s ease both; }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(260px, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+    padding: 16px 18px 14px;
+  }
+  .panel.glow-entry { border-color: rgba(57,255,136,0.5); box-shadow: 0 0 0 1px rgba(57,255,136,0.15), 0 14px 34px -16px rgba(57,255,136,0.35); }
+  .panel.glow-error { border-color: rgba(255,90,90,0.4); }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .panel-head h2 { font-size: 15px; margin: 0; font-family: -apple-system, sans-serif; font-weight: 700; color: #f2f3f8; letter-spacing: 0.2px; }
+  .symbol { color: #6b7185; font-size: 11px; letter-spacing: 0.5px; }
+  /* Tiam, 2026-07-13: "ich will das der chart selber laeuft" - kostenlose
+     Live-Anbindung (Binance-WebSocket fuer Krypto) statt bezahltem FMP-
+     Upgrade. Dieses Badge zeigt sichtbar an, wann fuer ein Asset gerade
+     eine echte Live-Verbindung steht, statt nur der alten Batch-Daten. */
+  .live-feed-badge {
+    display: none; font-family: -apple-system, sans-serif; font-size: 10px;
+    font-weight: 700; color: #4fff9c; margin-left: 8px; letter-spacing: 0.3px;
+    animation: livePulse 2s ease-in-out infinite;
+  }
+
+  .chart-container { width: 100%; height: 420px; }
+
+  .badges { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+  .badge {
+    font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+    letter-spacing: 0.3px; font-family: -apple-system, sans-serif; border: 1px solid transparent;
+  }
+  .bias-bullish { background: rgba(57,255,136,0.12); color: #4fff9c; border-color: rgba(57,255,136,0.3); }
+  .bias-bearish { background: rgba(255,90,90,0.12); color: #ff6b6b; border-color: rgba(255,90,90,0.3); }
+  .bias-neutral { background: rgba(255,255,255,0.06); color: #9aa0b4; border-color: rgba(255,255,255,0.12); }
+  .sig-entry { background: linear-gradient(90deg, #17c96b, #39ff88); color: #041a0d; box-shadow: 0 0 14px rgba(57,255,136,0.45); }
+  .sig-watch { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
+  .sig-none { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
+  .sig-error { background: rgba(255,90,90,0.14); color: #ff6b6b; border-color: rgba(255,90,90,0.35); }
+  .badge-outside { background: rgba(255,255,255,0.05); color: #9198ad; border-color: rgba(255,255,255,0.15); }
+  .mode-analyzing { background: rgba(57,255,136,0.12); color: #4fff9c; border-color: rgba(57,255,136,0.3); }
+  .mode-monitoring { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
+  .mode-idle { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
+
+  .steps { font-size: 12px; font-family: -apple-system, sans-serif; margin: 6px 0 14px; }
+  .step { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: baseline; }
+  .step:last-child { border-bottom: none; }
+  .step-icon { flex-shrink: 0; width: 16px; text-align: center; }
+  .step-icon.ok { color: #4fff9c; }
+  .step-icon.pending { color: #4b5064; }
+  .step-label { color: #6b7185; min-width: 128px; }
+  .step-text { color: #d7dbe8; }
+
+  .info-table { font-size: 12px; margin-bottom: 4px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+  .info-table div { display: flex; justify-content: space-between; padding: 5px 10px; background: rgba(255,255,255,0.02); }
+  .info-table div:nth-child(even) { background: rgba(255,255,255,0.045); }
+  .info-table span:first-child { color: #6b7185; font-family: -apple-system, sans-serif; font-size: 11px; }
+  .info-table span:last-child { color: #e8eaf0; font-weight: 600; font-size: 11.5px; text-align: right; }
+  .info-table .row-entry span:last-child { color: #4fff9c; }
+  .info-table .row-stop span:last-child { color: #ff6b6b; }
+  .info-table .row-target span:last-child { color: #ffd25c; }
+  .info-table .row-size span:last-child { color: #7dd3fc; }
+
+  .ai-note {
+    font-size: 11.5px; line-height: 1.5; color: #d9d3ff; margin: 10px 0 0;
+    padding: 8px 10px; border-radius: 8px; font-family: -apple-system, sans-serif;
+    background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.25);
+  }
+  .ai-note .ai-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; color: #a78bfa; margin-bottom: 3px; text-transform: uppercase; }
+  .err { color: #ff8080; font-size: 12px; font-family: -apple-system, sans-serif; }
+  ::selection { background: rgba(122,140,255,0.35); }
+
+  .live-indicator {
+    color: #4fff9c; font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px;
+    animation: livePulse 2s ease-in-out infinite;
+  }
+  @keyframes livePulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+  .refresh-toast {
+    position: fixed; bottom: 18px; right: 18px; z-index: 999;
+    background: rgba(20,24,38,0.95); border: 1px solid rgba(57,255,136,0.4);
+    color: #9be8b8; font-family: -apple-system, sans-serif; font-size: 12px;
+    padding: 8px 14px; border-radius: 10px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6);
+    opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+  }
+  .refresh-toast.show { opacity: 1; transform: translateY(0); }
+  .refresh-countdown { color: #7c8399; font-size: 0.85em; margin-left: 6px; }
+</style>
+</head>
+<body>
+  <div id="refresh-toast" class="refresh-toast">🔄 Chart aktualisiert</div>
+  <div class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>TJR Live-Report</h1>
+      <span class="brand-badge">ICT / Smart Money</span>
+    </div>
+    <div class="topbar-right">
+      <a class="howto-link" href="how_it_works.html">ℹ️ Wie funktioniert das?</a>
+      <a class="howto-link" href="history.html">📊 Verlauf aller Assets</a>
+      <span class="tag">no auto-trades · analysis only</span>
+    </div>
+  </div>
+  <div class="subtitle">Automatische Live-Analyse von 6 Assets im Handelsstil von TJR — aktiv gehandelt wird nur 15–17 Uhr (Wien). <a class="inline-link" href="how_it_works.html">Wie funktioniert das genau?</a></div>
+  <div id="status" class="status-line"><span id="generated-at">__GENERATED_AT__</span> <span id="window-status"></span> <span id="live-indicator" class="live-indicator">● live</span> <span id="refresh-countdown" class="refresh-countdown"></span></div>
+
+  <details class="settings-box collapsible">
+    <summary>💰 Positionsgrößen-Rechner (optional)</summary>
+    <div class="settings-body">
+      <div class="settings-field">
+        <label for="acct-size">Kontogröße</label>
+        <input type="number" id="acct-size" min="0" step="100">
+      </div>
+      <div class="settings-field">
+        <label for="risk-pct">Risiko % / Trade</label>
+        <input type="number" id="risk-pct" min="0" step="0.1">
+      </div>
+      <div class="settings-field">
+        <span class="settings-hint-inline">TJR-Risiko-Stufen:</span>
+        <button type="button" class="risk-tier-btn" data-tier="derisk">Derisk 12.5%</button>
+        <button type="button" class="risk-tier-btn" data-tier="normal">Normal 25%</button>
+        <button type="button" class="risk-tier-btn" data-tier="confident">Confident 50%</button>
+      </div>
+      <div class="settings-hint">Wird nur lokal in deinem Browser gespeichert (localStorage), nirgendwo hochgeladen. Positionsgröße = (Kontogröße × Risiko%) ÷ Stop-Distanz. Bei Forex: 100.000 Einheiten = 1 Standard-Lot. Risiko-Stufen nach TJR (Bootcamp Day 39: "normal risk: 25, derisk: 12.5, confident: 50") — Einheit im Video nicht zweifelsfrei erkennbar, hier als % vom Konto umgesetzt. Keine Anlageberatung.</div>
+    </div>
+  </details>
+
+  <div id="news"></div>
+
+  <div id="overview" class="overview-grid"></div>
+  <details class="legend-wrap collapsible">
+    <summary>🎨 Farben im Chart erklärt</summary>
+    <div class="legend">
+      <span><i class="swatch" style="background:#7dd3fc"></i>Liquidity Sweep</span>
+      <span><i class="swatch" style="background:#a78bfa"></i>BOS</span>
+      <span><i class="swatch" style="background:#9198ad"></i>Equilibrium</span>
+      <span><i class="swatch" style="background:rgba(255,107,157,0.65)"></i>FVG-Zone</span>
+      <span><i class="swatch" style="background:rgba(79,255,190,0.65)"></i>Order-Block-Zone</span>
+      <span><i class="swatch" style="background:#4fff9c"></i>Entry</span>
+      <span><i class="swatch" style="background:#ff6b6b"></i>Stop</span>
+      <span><i class="swatch" style="background:#ffd25c"></i>Target</span>
+      <span><i class="swatch" style="background:#565c70"></i>Session-Start (Standard-ICT-Zeiten ET, nicht TJR-bestätigt)</span>
+      <span><i class="swatch" style="background:#4fff9c"></i>Vergangenes Signal: Win</span>
+      <span><i class="swatch" style="background:#ff6b6b"></i>Vergangenes Signal: Loss</span>
+      <span><i class="swatch" style="background:#ffd25c"></i>Vergangenes Signal: noch offen</span>
+      <span><i class="swatch" style="background:#7c8399"></i>Vergangenes Signal: abgelaufen (stale)</span>
+    </div>
+  </details>
+
+  <div id="assets"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+let PRECOMPUTED = __PRECOMPUTED_JSON__;
+const charts = {};
+const chartRanges = {};
+
+function fmtOrDash(x) { return (x === null || x === undefined) ? "–" : x; }
+function badgeClassBias(bias) {
+  if (bias === "bullish") return "bias-bullish";
+  if (bias === "bearish") return "bias-bearish";
+  return "bias-neutral";
+}
+function badgeClassSignal(sig) {
+  if (sig === "ENTRY") return "sig-entry";
+  if (sig && sig.startsWith("Watchlist")) return "sig-watch";
+  return "sig-none";
+}
+// Tiam, 2026-07-12: "die KI soll nur zwischen 15 und 17 Uhr analysieren [...]
+// nach 17-18 Uhr soll die KI nichts mehr machen ausser zu schauen ob der
+// gesetzte Trade in die richtige Richtung geht." - macht den aktuellen
+// Betriebsmodus pro Asset sichtbar statt es zu verstecken.
+function modeBadge(item) {
+  if (item.mode === "analyzing") return `<span class="badge mode-analyzing" title="Innerhalb 15-17 Wien - aktive Analyse mit allen TJR-Tools">🔎 Analysiere</span>`;
+  if (item.mode === "monitoring") return `<span class="badge mode-monitoring" title="Ausserhalb Handelsfenster - keine neuen Setups, nur die offene Position wird beobachtet">👁 Beobachte Position</span>`;
+  return `<span class="badge mode-idle" title="Ausserhalb Handelsfenster, kein offener Trade - pausiert bis 15 Uhr Wien">⏸ Pausiert</span>`;
+}
+function biasArrow(bias) {
+  if (bias === "bullish") return "▲";
+  if (bias === "bearish") return "▼";
+  return "●";
+}
+function sweepLabel(sweep) {
+  return sweep.type === "sell_side_sweep" ? "Sellside Liquidity" : "Buyside Liquidity";
+}
+function assetId(asset) {
+  return "asset-" + asset.symbol.replace(/[^a-zA-Z0-9]/g, "");
+}
+
+// --- Positionsgrößen-Rechner: rein clientseitig, nichts wird gesendet/gespeichert
+// ausser im eigenen Browser (localStorage). Kein Teil der rueckgetesteten
+// Regel-Engine - reine Anzeige-Hilfe fuer Risk-Management (bekannte Luecke,
+// TJR Bootcamp Day 39 "Calculating Lot Size").
+const ACCT_KEY = "tjr_acct_size";
+const RISK_KEY = "tjr_risk_pct";
+const RISK_TIERS = { derisk: 12.5, normal: 25, confident: 50 };
+function getAcctSize() { return parseFloat(localStorage.getItem(ACCT_KEY)) || 1000; }
+function getRiskPct() { return parseFloat(localStorage.getItem(RISK_KEY)) || 1; }
+function positionSizeText(asset, sig) {
+  if (sig.entry === null || sig.stop === null) return "–";
+  const acct = getAcctSize();
+  const riskPct = getRiskPct();
+  const riskAmount = acct * (riskPct / 100);
+  const stopDist = Math.abs(sig.entry - sig.stop);
+  if (!stopDist) return "–";
+  const qty = riskAmount / stopDist;
+  let text = `${qty.toLocaleString("de-AT", { maximumFractionDigits: qty < 1 ? 6 : 2 })} Einh.`;
+  if (asset.symbol === "GBPUSD") {
+    text += ` (≈ ${(qty / 100000).toFixed(3)} Lots)`;
+  }
+  return text;
+}
+
+// Standard-ICT-Kill-Zone-Startzeiten in US/Eastern (nicht direkt aus TJRs
+// Video bestätigt, da das Bootcamp-Review technisch blockiert ist — als
+// verbreitete Standard-Konvention markiert, siehe Legende/README).
+const SESSIONS = [
+  { hour: 20, label: "Asia" },
+  { hour: 2, label: "London" },
+  { hour: 7, label: "NY" },
+];
+function sessionMarkers(ltf) {
+  const out = [];
+  const seen = new Set();
+  for (const c of ltf) {
+    const d = new Date(c.ts);
+    const h = d.getUTCHours();
+    const m = d.getUTCMinutes();
+    if (m >= 15) continue;
+    for (const s of SESSIONS) {
+      if (h !== s.hour) continue;
+      const key = d.getUTCFullYear() + "-" + d.getUTCMonth() + "-" + d.getUTCDate() + "-" + s.label;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({
+        time: Math.floor(c.ts / 1000), position: "aboveBar",
+        color: "#565c70", shape: "square", text: s.label,
+      });
+    }
+  }
+  return out;
+}
+
+// Tiam, 2026-07-11 (Chart-Tools Schritt 2): "die oldtime highs der asian und
+// newyork time session so wie es tjr gemacht hat" - TJR markiert die jeweils
+// letzte ABGESCHLOSSENE Asia-/NY-Session als Liquiditaets-Level (High + Low),
+// beschriftet mit Text, bis der Level vom Preis genommen ("geswept") wird -
+// siehe project_tjr_visual_style Memory: "liquidity lines are labeled
+// directly with text". Session-Enden werden aus den bereits vorhandenen
+// SESSIONS-Startzeiten abgeleitet (Ende = Start der naechsten Session im
+// Zyklus), damit es nur EINE Session-Zeit-Definition im gesamten Chart gibt
+// statt zweier widerspruechlicher.
+// Tiam, 2026-07-13: Screenshot von TJRs High/Low-Linien-Tool geschickt -
+// EIN durchgezogener blauer Strich fuer alle Session-Highs/Lows (nicht
+// verschiedene gestrichelte Farben pro Session) - Unterscheidung laeuft
+// weiterhin ueber den Text-Marker ("Asia High" / "NY Low" etc.).
+const SESSION_LEVEL_COLORS = { Asia: "#3b82f6", NY: "#3b82f6" };
+const SESSION_RANGES = SESSIONS.map((s, i) => ({
+  label: s.label,
+  startHour: s.hour,
+  endHour: SESSIONS[(i + 1) % SESSIONS.length].hour,
+})).filter((s) => SESSION_LEVEL_COLORS[s.label]);
+
+function sessionInstanceKey(ts, s) {
+  const d = new Date(ts);
+  const h = d.getUTCHours();
+  const inSession = s.startHour < s.endHour
+    ? (h >= s.startHour && h < s.endHour)
+    : (h >= s.startHour || h < s.endHour);
+  if (!inSession) return null;
+  const instDate = new Date(d);
+  if (s.startHour > s.endHour && h < s.endHour) {
+    instDate.setUTCDate(instDate.getUTCDate() - 1);
+  }
+  return instDate.getUTCFullYear() + "-" + instDate.getUTCMonth() + "-" + instDate.getUTCDate();
+}
+
+function computeSessionLevels(ltf) {
+  if (!ltf.length) return [];
+  const buckets = new Map();
+  for (const c of ltf) {
+    for (const s of SESSION_RANGES) {
+      const key = sessionInstanceKey(c.ts, s);
+      if (key === null) continue;
+      const bucketKey = s.label + "|" + key;
+      if (!buckets.has(bucketKey)) {
+        buckets.set(bucketKey, {
+          label: s.label, color: SESSION_LEVEL_COLORS[s.label],
+          high: c.high, low: c.low, startTs: c.ts, endTs: c.ts,
+        });
+      } else {
+        const b = buckets.get(bucketKey);
+        b.high = Math.max(b.high, c.high);
+        b.low = Math.min(b.low, c.low);
+        b.startTs = Math.min(b.startTs, c.ts);
+        b.endTs = Math.max(b.endTs, c.ts);
+      }
+    }
+  }
+  const bySessionLabel = new Map();
+  for (const b of buckets.values()) {
+    if (!bySessionLabel.has(b.label)) bySessionLabel.set(b.label, []);
+    bySessionLabel.get(b.label).push(b);
+  }
+  const lastCandleTs = ltf[ltf.length - 1].ts;
+  const out = [];
+  for (const instances of bySessionLabel.values()) {
+    instances.sort((a, b) => a.startTs - b.startTs);
+    let chosen = instances[instances.length - 1];
+    // Die zuletzt gebaute Session koennte noch offen/laufend sein (endTs ==
+    // letzte Kerze im Chart, aber Session-Endstunde noch nicht erreicht) -
+    // dann zeigt TJR die davorliegende, fertig abgeschlossene Session als
+    // aktives Liquiditaets-Level.
+    if (chosen && chosen.endTs === lastCandleTs && instances.length > 1) {
+      chosen = instances[instances.length - 2];
+    }
+    if (chosen) out.push(chosen);
+  }
+  return out;
+}
+
+// Tiam, 2026-07-12: "simple fuer einen Webseitbesucher" - eine Zeile in
+// Alltagssprache statt "4H-Bias/Sweep/BOS/Entry-Zone"-Jargon, direkt sichtbar;
+// die Fachbegriffe bleiben verfuegbar, aber hinter einem <details>-Toggle.
+function biasPlain(bias) {
+  if (bias === "bullish") return "tendiert aktuell eher nach oben";
+  if (bias === "bearish") return "tendiert aktuell eher nach unten";
+  return "hat aktuell keine klare Richtung";
+}
+function findOpenRecord(item) {
+  return (item.signals || []).find((r) => r.status === "open");
+}
+function plainHeadline(item) {
+  const { sig, mode } = item;
+  const name = item.asset.name;
+  const biasText = biasPlain(sig.bias);
+  if (sig.signal === "ENTRY" && mode === "analyzing") {
+    const dir = sig.bias === "bullish" ? "Kaufsignal" : "Verkaufssignal";
+    return { emoji: "🟢", text: `${name} ${biasText}. ${dir} gerade aktiv!`, cls: "headline-entry" };
+  }
+  if (sig.signal === "ENTRY" && mode !== "analyzing") {
+    return { emoji: "🟡", text: `${name} ${biasText}. Setup gefunden, aber außerhalb der Handelszeit (15–17 Uhr Wien) — wird nicht ausgeführt.`, cls: "headline-watch" };
+  }
+  if (mode === "monitoring") {
+    const rec = findOpenRecord(item);
+    let progress = "";
+    if (rec && typeof rec.unrealizedR === "number") {
+      progress = rec.unrealizedR >= 0
+        ? ` Läuft aktuell ${rec.unrealizedR}R in die richtige Richtung.`
+        : ` Läuft aktuell ${Math.abs(rec.unrealizedR)}R gegen die Position.`;
+    }
+    return { emoji: "👁", text: `${name} ${biasText}. Offene Position wird beobachtet.${progress}`, cls: "headline-monitor" };
+  }
+  return { emoji: "⚪", text: `${name} ${biasText}. Kein Handelssignal gerade — wird weiter beobachtet.`, cls: "headline-none" };
+}
+
+// Tiam, 2026-07-14 (TJR Boot Camp Day 43 "Weekly Analysis"): TJR beginnt
+// seine Vorbereitung immer auf Wochen-/Monatschart-Ebene, bevor er auf
+// kleinere Timeframes runterzoomt - rein informativer Kontext, KEIN
+// Einfluss auf sig.signal/das eigentliche Entry-Gating (siehe build.js
+// computeWeeklyContext).
+function weeklyTrendPlain(wt) {
+  if (!wt) return "";
+  const dir = wt.bias === "bullish" ? "eher nach oben" : "eher nach unten";
+  return `Auf Wochensicht (letzte ${wt.weeksUsed} Wochen) tendiert der Kurs ${dir}.`;
+}
+
+function analysisSteps(sig, ann) {
+  const steps = [];
+  steps.push({
+    ok: ann.bias !== "neutral", label: "4H-Bias",
+    text: ann.bias.toUpperCase(),
+  });
+  steps.push({
+    ok: !!ann.sweep, label: "Liquidity Sweep",
+    text: ann.sweep ? `${sweepLabel(ann.sweep)} @ ${(+ann.sweep.level).toPrecision(6)}` : "noch nicht gefunden",
+  });
+  steps.push({
+    ok: !!ann.confirmation, label: "Bestätigung (BOS/iFVG)",
+    text: ann.confirmation
+      ? (ann.confirmation.kind === "BOS"
+          ? `BOS ${ann.confirmation.event.dir === "up" ? "↑" : "↓"} @ ${(+ann.confirmation.event.level).toPrecision(6)}`
+          : `iFVG-Bruch (${ann.confirmation.event.dir === "up" ? "↑" : "↓"})`)
+      : "noch nicht bestätigt",
+  });
+  steps.push({
+    ok: !!ann.zoneKind, label: "Entry-Zone (FVG/OB/Breaker)",
+    text: ann.zoneKind ? `${ann.zoneKind} [${ann.zoneRange[0].toPrecision(6)} - ${ann.zoneRange[1].toPrecision(6)}]` : "keine gültige Zone",
+  });
+  steps.push({
+    ok: sig.signal === "ENTRY", label: "Signal",
+    text: sig.signal,
+  });
+  return steps;
+}
+
+function renderInfoTable(item) {
+  const tableEl = document.getElementById("table-" + assetId(item.asset));
+  if (!tableEl || item.error) return;
+  const sig = item.sig;
+  tableEl.innerHTML = `
+    <div class="row-entry"><span>Entry</span><span>${fmtOrDash(sig.entry)}</span></div>
+    <div class="row-stop"><span>Stop</span><span>${fmtOrDash(sig.stop)}</span></div>
+    <div class="row-target"><span>Target</span><span>${fmtOrDash(sig.target)}</span></div>
+    <div><span>R:R</span><span>${sig.rr ? "1:" + sig.rr : "–"}</span></div>
+    <div class="row-size"><span>Positionsgröße</span><span>${positionSizeText(item.asset, sig)}</span></div>
+    <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>`;
+}
+
+// Tiam, 2026-07-12: Struktur-Ueberarbeitung - kompakte Uebersicht statt
+// langer Linkliste. selectedAssetId bleibt ein Modul-Level-Wert (nicht in
+// localStorage), damit die Auswahl innerhalb einer Sitzung stabil bleibt,
+// auch wenn main() beim Auto-Refresh alle 30s neu rendert (gleiches Muster
+// wie chartRanges oben).
+let selectedAssetId = null;
+
+function pickDefaultAssetId() {
+  const entryItem = PRECOMPUTED.assets.find(
+    (it) => !it.error && it.sig.signal === "ENTRY" && it.mode === "analyzing"
+  );
+  if (entryItem) return assetId(entryItem.asset);
+  return assetId(PRECOMPUTED.assets[0].asset);
+}
+
+function renderOverview() {
+  const el = document.getElementById("overview");
+  const stillValid = selectedAssetId && PRECOMPUTED.assets.some((it) => assetId(it.asset) === selectedAssetId);
+  if (!stillValid) selectedAssetId = pickDefaultAssetId();
+
+  el.innerHTML = PRECOMPUTED.assets.map((item) => {
+    const id = assetId(item.asset);
+    let cls = "overview-card";
+    if (id === selectedAssetId) cls += " active";
+    if (item.error) {
+      return `<div class="${cls}" data-id="${id}">
+        <div class="ov-name">${item.asset.icon} ${item.asset.name}</div>
+        <div class="ov-badges"><span class="badge sig-error">Fehler</span></div>
+      </div>`;
+    }
+    const sig = item.sig;
+    // Tiam, 2026-07-14: "ich bitte dich erst ab 15 uhr zu analysieren, die KI
+    // analysiert jetzt schon" - die Handelsfenster-Logik hat ausserhalb 15-17
+    // Wien nie wirklich "analysiert" (siehe plainHeadline: "wird nicht
+    // ausgefuehrt"), aber die Uebersichts-Kachel zeigte trotzdem den knall-
+    // gruenen "ENTRY"-Badge, sobald die mechanischen Kriterien zufaellig
+    // erfuellt waren - das sah fuer Tiam wie ein aktives Signal aus. Badge
+    // jetzt an item.mode gekoppelt: nur bei mode "analyzing" (= im Fenster)
+    // zeigt es den echten ENTRY-Badge, sonst einen neutralen Hinweis.
+    const isLiveEntry = sig.signal === "ENTRY" && item.mode === "analyzing";
+    if (isLiveEntry) cls += " has-entry";
+    const signalBadgeClass = isLiveEntry ? "sig-entry" : (sig.signal === "ENTRY" ? "sig-watch" : badgeClassSignal(sig.signal));
+    const signalBadgeText = isLiveEntry ? sig.signal.split(" (")[0] : (sig.signal === "ENTRY" ? "Setup (pausiert)" : sig.signal.split(" (")[0]);
+    return `<div class="${cls}" data-id="${id}">
+      <div class="ov-name">${item.asset.icon} ${item.asset.name}</div>
+      <div class="ov-badges">
+        <span class="badge ${badgeClassBias(sig.bias)}">${biasArrow(sig.bias)} ${sig.bias.toUpperCase()}</span>
+        <span class="badge ${signalBadgeClass}">${signalBadgeText}</span>
+      </div>
+    </div>`;
+  }).join("");
+
+  el.querySelectorAll(".overview-card").forEach((card) => {
+    card.addEventListener("click", () => selectAsset(card.dataset.id));
+  });
+}
+
+function renderAssetContent(item) {
+  if (item.error) return;
+  renderInfoTable(item);
+  renderChart(item);
+  connectLiveFeed(item);
+  if (item.aiNote) {
+    const aiEl = document.getElementById("ai-" + assetId(item.asset));
+    if (aiEl) {
+      aiEl.innerHTML = `<div class="ai-note"><span class="ai-label">KI-Einschätzung (ergänzend, ersetzt nicht die Regel-Engine)</span>${item.aiNote}</div>`;
+    }
+  }
+}
+
+function selectAsset(id) {
+  selectedAssetId = id;
+  // Nur EINE Live-Verbindung gleichzeitig offen halten: Finnhubs kostenloser
+  // Plan erlaubt nur eine gleichzeitige WebSocket-Verbindung pro API-Key -
+  // beim Wechsel zwischen z.B. GBP/USD und S&P500 wuerde sonst die neue
+  // Verbindung die alte (und ggf. sich selbst) killen. Binance hat dieses
+  // Limit zwar nicht, aber es ist ohnehin sinnlos, Live-Feeds fuer nicht
+  // sichtbare Assets offen zu halten - also beim Wechsel immer alle ausser
+  // dem neu gewaehlten schliessen.
+  for (const openId of Object.keys(liveFeeds)) {
+    if (openId !== id) closeLiveFeed(openId);
+  }
+  document.querySelectorAll(".overview-card").forEach((card) => {
+    card.classList.toggle("active", card.dataset.id === id);
+  });
+  document.querySelectorAll(".asset-section").forEach((sec) => {
+    sec.classList.toggle("active", sec.id === id);
+  });
+  const item = PRECOMPUTED.assets.find((it) => assetId(it.asset) === id);
+  if (charts[id]) {
+    // Chart wurde schon einmal gerendert (z.B. vorheriger Klick vor dem
+    // letzten Auto-Refresh) - Breite neu setzen, da sie waehrend
+    // display:none 0px war. Live-Feed wurde beim Wegklicken oben bewusst
+    // geschlossen (Finnhub-Limit) - beim Zurueckklicken wieder verbinden.
+    charts[id].chart.applyOptions({ width: charts[id].container.clientWidth });
+    if (item) connectLiveFeed(item);
+  } else {
+    if (item) renderAssetContent(item);
+  }
+  const sec = document.getElementById(id);
+  if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// Draws the FVG/OrderBlock entry zone as an actual box (dashed border, translucent
+// fill), the way TJR draws it by hand on his own charts — not as two full-width
+// horizontal lines. Confirmed from real footage (see memory project_tjr_visual_style):
+// he uses the Rectangle tool, dashed border, semi-transparent fill, boxed tightly
+// around the origin candle(s), not spanning the whole chart. Colors vary a bit in
+// his own videos (pink/red, green/teal, gray all seen) — picked one fixed, distinct
+// color per zone type here for visual consistency rather than chasing one "true" hue.
+// Implementation: Lightweight Charts has no native rectangle primitive, so this uses
+// the well-known Area-series trick — an Area series filled down to a fixed baseValue
+// price, fed only the data points inside the box's time range, renders as a flat
+// filled band exactly where data exists and nowhere else.
+// Tiam, 2026-07-13: Screenshot geschickt - TJR zeichnet Order Block UND
+// Breaker Block als DENSELBEN Tool-Typ (ein Swatch fuer beide): solide
+// dunkelblaue Box mit durchgezogenem (nicht gestricheltem) fast-schwarzen
+// Rand. FVG bleibt vorerst unveraendert (nicht Teil dieser Screenshot-
+// Runde) - eigene, hellere/transparentere Farbe zur Unterscheidung.
+const ZONE_STYLES = {
+  FVG: { fill: "rgba(255,107,157,0.16)", border: "rgba(255,107,157,0.65)", label: "FVG", pos: "aboveBar", lineStyle: "Dashed" },
+  OrderBlock: { fill: "rgba(30,55,90,0.55)", border: "rgba(10,10,16,0.95)", label: "OB", pos: "belowBar", lineStyle: "Solid" },
+  BreakerBlock: { fill: "rgba(30,55,90,0.55)", border: "rgba(10,10,16,0.95)", label: "BB", pos: "belowBar", lineStyle: "Solid" },
+};
+
+function drawZoneBox(chart, candles, ann, markers) {
+  const style = ZONE_STYLES[ann.zoneKind] || ZONE_STYLES.OrderBlock;
+  const top = ann.zoneRange[1];
+  const bottom = ann.zoneRange[0];
+  const fillColor = style.fill;
+  const borderColor = style.border;
+
+  const startTs = Math.floor(ann.zoneTs / 1000);
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+
+  // Extend the box until the zone is actually mitigated (a candle CLOSES through
+  // the far/invalidating side) — but cap the growth at MAX_ZONE_BARS even if still
+  // unmitigated. Tiam, 2026-07-11: "Order Blocks sollen nicht unendlich lange Boxen
+  // sein sondern angepasst" — a zone that survives ~3 Handelstage without being hit
+  // is stale/no longer the structure TJR would actually be tracking live; letting it
+  // stretch across the full 20-Tage chart history made it look "endless" instead of
+  // fitted. Bullish zone (support) invalidated by a close below its bottom; bearish
+  // zone (resistance) invalidated by a close above its top.
+  // Tiam, 2026-07-12: "sie koennen durchaus lang sein aber nicht zu lang dass
+  // die weiteren Analysen danach davon gestoert werden" - von 3 Tagen auf 1
+  // Tag verkuerzt, damit eine einzelne Zone nicht fast die ganze
+  // Standardansicht (3 Tage) dominiert und spaetere Struktur ueberlagert.
+  const MAX_ZONE_BARS = 96; // ~1 Tag bei 15-Min-Kerzen
+  const maxEndIdx = Math.min(candles.length - 1, startIdx + MAX_ZONE_BARS);
+  let endIdx = maxEndIdx;
+  for (let i = startIdx + 1; i <= maxEndIdx; i++) {
+    const c = candles[i];
+    const invalidated = ann.bias === "bullish" ? c.close < bottom : c.close > top;
+    if (invalidated) { endIdx = i; break; }
+  }
+  const zoneData = candles.slice(startIdx, endIdx + 1);
+  if (zoneData.length === 0) return;
+
+  const boxSeries = chart.addAreaSeries({
+    topColor: fillColor, bottomColor: fillColor,
+    lineColor: borderColor, lineWidth: 1, lineStyle: LightweightCharts.LineStyle[style.lineStyle || "Dashed"],
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  boxSeries.applyOptions({ baseValue: { type: "price", price: bottom } });
+  boxSeries.setData(zoneData.map((c) => ({ time: c.time, value: top })));
+
+  markers.push({
+    time: zoneData[0].time, position: style.pos,
+    color: borderColor, shape: "square", text: style.label,
+  });
+}
+
+// Zeichnet Session-High/Low als beschriftete, BEGRENZTE horizontale Segmente
+// (nicht chart-breite Linien) - beginnt am Start der jeweils letzten
+// abgeschlossenen Asia-/NY-Session und laeuft bis zum Sweep (eine Kerze
+// durchbricht den Level) oder bis zur aktuellsten Kerze, je nachdem was
+// zuerst eintritt. Gleiche Area-Series-Technik wie drawZoneBox, nur ohne
+// Fuellung (Linie statt Box).
+function drawSessionLevels(chart, candles, levels, markers) {
+  for (const lvl of levels) {
+    const sides = [
+      { price: lvl.high, dir: "high", suffix: "High" },
+      { price: lvl.low, dir: "low", suffix: "Low" },
+    ];
+    for (const side of sides) {
+      const startTs = Math.floor(lvl.startTs / 1000);
+      const startIdx = candles.findIndex((c) => c.time >= startTs);
+      if (startIdx === -1) continue;
+
+      let endIdx = candles.length - 1;
+      for (let i = startIdx + 1; i < candles.length; i++) {
+        const c = candles[i];
+        const swept = side.dir === "high" ? c.high > side.price : c.low < side.price;
+        if (swept) { endIdx = i; break; }
+      }
+      const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time, value: side.price }));
+      if (segData.length === 0) continue;
+
+      const lineSeries = chart.addLineSeries({
+        color: lvl.color, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Solid,
+        priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+      });
+      lineSeries.setData(segData);
+
+      markers.push({
+        time: segData[0].time, position: side.dir === "high" ? "aboveBar" : "belowBar",
+        color: lvl.color, shape: "circle", text: `${lvl.label} ${side.suffix}`,
+      });
+    }
+  }
+}
+
+// Tiam, 2026-07-11 (Chart-Tools Schritt 3): "die long position skala verwendet
+// wo es so gruen und rot ist" - TJR benutzt TradingViews natives Long/Short-
+// Position-Tool (siehe project_tjr_visual_style Memory), das zwei Boxen um
+// den Entry-Preis zeichnet. Hier per zwei Area-Series nachgebaut: gruene Box
+// zwischen Entry und Target (Gewinnzone), rote Box zwischen Entry und Stop
+// (Risikozone) - funktioniert automatisch fuer LONG und SHORT, weil die
+// Area-Series einfach zwischen baseValue (Entry) und dem Zielwert fuellt,
+// unabhaengig davon ob dieser darueber oder darunter liegt.
+// Tiam, 2026-07-12: Screenshot von TradingViews echtem Long-Position-Tool
+// geschickt ("das meine ich ja") - solide Fuellung (kein duennes/transparentes
+// Tinting), gestrichelte Aussenkante an Target/Stop, durchgezogene Trennlinie
+// am Entry. Deckkraft deutlich erhoeht (0.18 -> 0.42) und Aussenlinie auf
+// gestrichelt umgestellt, um dem Vorbild optisch naeher zu kommen.
+// Tiam, 2026-07-13: "es sollte nicht grau sondern gruen sein wie auf
+// tradingview" - der vorherige Tuerkis-Ton (79,255,190) wirkte auf einer
+// grossen, dunklen Box zu blaustichig/entsaettigt ("grau"). Auf ein
+// eindeutigeres, saettigteres Gruen umgestellt (naeher an TradingViews
+// eigenem Gruenton) und die Deckkraft nochmal leicht erhoeht.
+const POSITION_BOX_COLORS = {
+  profit: { fill: "rgba(34,220,110,0.48)", line: "rgba(34,220,110,0.95)" },
+  risk: { fill: "rgba(255,107,157,0.42)", line: "rgba(255,107,157,0.9)" },
+};
+
+function drawPositionBox(chart, candles, sig, startTs) {
+  if (sig.entry === null || sig.stop === null || sig.target === null) return;
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+  // Tiam, 2026-07-13: "diese short position geht wieder ins unendliche" -
+  // im Gegensatz zur Zone-Box und den Analyse-Linien (#64/#65, beide auf
+  // ANALYSIS_LINE_MAX_BARS/MAX_ZONE_BARS begrenzt) lief diese Box bisher bis
+  // zur letzten geladenen Kerze durch - bei 10-20 Tagen Chart-Historie de
+  // facto endlos. Gleicher Cap wie ueberall sonst (~1 Tag).
+  const endIdx = Math.min(candles.length - 1, startIdx + ANALYSIS_LINE_MAX_BARS);
+  const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
+  if (segData.length === 0) return;
+
+  const profitSeries = chart.addAreaSeries({
+    topColor: POSITION_BOX_COLORS.profit.fill, bottomColor: POSITION_BOX_COLORS.profit.fill,
+    lineColor: POSITION_BOX_COLORS.profit.line, lineWidth: 2,
+    lineStyle: LightweightCharts.LineStyle.Dashed,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  profitSeries.applyOptions({ baseValue: { type: "price", price: sig.entry } });
+  profitSeries.setData(segData.map((d) => ({ time: d.time, value: sig.target })));
+
+  const riskSeries = chart.addAreaSeries({
+    topColor: POSITION_BOX_COLORS.risk.fill, bottomColor: POSITION_BOX_COLORS.risk.fill,
+    lineColor: POSITION_BOX_COLORS.risk.line, lineWidth: 2,
+    lineStyle: LightweightCharts.LineStyle.Dashed,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  riskSeries.applyOptions({ baseValue: { type: "price", price: sig.entry } });
+  riskSeries.setData(segData.map((d) => ({ time: d.time, value: sig.stop })));
+
+  // Duenne durchgezogene Trennlinie am Entry-Preis (wie die weisse Linie im
+  // Referenz-Screenshot, die die gruene von der roten Zone trennt).
+  const entrySplitSeries = chart.addLineSeries({
+    color: "rgba(255,255,255,0.85)", lineWidth: 1,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  entrySplitSeries.setData(segData.map((d) => ({ time: d.time, value: sig.entry })));
+}
+
+// Tiam, 2026-07-12: "lass die aelteren Analysen auf dem Chart... damit man
+// immer auf die Backtest zugreifen kann. aber so dass es die neue Analyse
+// nicht stoert bzw unuebersichtlich macht" - jeder abgeschlossene Paper-
+// Trade (win/loss/stale) bekommt die gleiche gruen/rot-Box wie der aktuell
+// laufende, aber deutlich gedaempfter (niedrige Deckkraft, duennere Linie)
+// und STRIKT auf seinen eigenen Zeitraum begrenzt (Entry bis Resolved) -
+// dadurch ueberlappt sie nie mit der aktuellen, live/vollfarbig gezeichneten
+// Box (die immer an ann.zoneTs bzw. dem offenen Trade haengt) und stapelt
+// sich nicht ueber die Zeit, weil jede alte Box exakt in ihrem eigenen
+// vergangenen Zeitfenster sitzt statt bis "jetzt" zu reichen.
+const HISTORICAL_BOX_COLORS = {
+  profit: { fill: "rgba(79,255,190,0.12)", line: "rgba(79,255,190,0.3)" },
+  risk: { fill: "rgba(255,107,157,0.12)", line: "rgba(255,107,157,0.3)" },
+};
+const STALE_BOX_FALLBACK_BARS = 40; // ~10h bei 15-Min-Kerzen, falls kein resolvedTs vorliegt
+
+function drawHistoricalPositionBox(chart, candles, rec) {
+  if (rec.status === "open") return; // die laufende Position zeigt bereits drawPositionBox()
+  if (rec.entry == null || rec.stop == null || rec.target == null) return;
+  const startTs = Math.floor(rec.entryTs / 1000);
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+
+  let endIdx;
+  if (rec.resolvedTs) {
+    const endTs = Math.floor(rec.resolvedTs / 1000);
+    endIdx = candles.findIndex((c) => c.time >= endTs);
+    if (endIdx === -1) endIdx = candles.length - 1;
+  } else {
+    endIdx = Math.min(candles.length - 1, startIdx + STALE_BOX_FALLBACK_BARS);
+  }
+  if (endIdx < startIdx) endIdx = startIdx;
+
+  const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
+  if (segData.length === 0) return;
+
+  const profitSeries = chart.addAreaSeries({
+    topColor: HISTORICAL_BOX_COLORS.profit.fill, bottomColor: HISTORICAL_BOX_COLORS.profit.fill,
+    lineColor: HISTORICAL_BOX_COLORS.profit.line, lineWidth: 1,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  profitSeries.applyOptions({ baseValue: { type: "price", price: rec.entry } });
+  profitSeries.setData(segData.map((d) => ({ time: d.time, value: rec.target })));
+
+  const riskSeries = chart.addAreaSeries({
+    topColor: HISTORICAL_BOX_COLORS.risk.fill, bottomColor: HISTORICAL_BOX_COLORS.risk.fill,
+    lineColor: HISTORICAL_BOX_COLORS.risk.line, lineWidth: 1,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  riskSeries.applyOptions({ baseValue: { type: "price", price: rec.entry } });
+  riskSeries.setData(segData.map((d) => ({ time: d.time, value: rec.stop })));
+}
+
+// Tiam, 2026-07-12: Screenshot geschickt - zu viele volle-Chart-Breite-Linien
+// (Sweep/BOS/Equilibrium/iFVG) mit axisLabelVisible stapeln ihre farbigen
+// Preis-Achsen-Labels uebereinander, sobald die Werte nah beieinander liegen
+// (was bei einem einzelnen Setup fast immer der Fall ist) - Ergebnis: eine
+// Wand aus Farbkaesten am rechten Rand. Fix: diese "Analyse"-Linien (wie
+// entstand das Signal) bekommen KEIN Achsen-Label mehr und werden auf ein
+// begrenztes Zeitfenster (gleich wie die Zone-Box) statt volle Chart-Breite
+// gezeichnet - Identifikation laeuft stattdessen ueber die ohnehin schon
+// vorhandenen kompakten Marker (Sweep-Kreis, BOS-Pfeil, etc.). Nur die drei
+// wirklich handlungsrelevanten Linien (Entry/Stop/Target) behalten ihr
+// Achsen-Label, das reduziert den Stapel von 7 auf 3 Eintraege.
+// Tiam, 2026-07-12: gleiche Verkuerzung wie bei MAX_ZONE_BARS (1 Tag statt 3) -
+// "nicht zu lang dass die weiteren Analysen danach davon gestoert werden".
+const ANALYSIS_LINE_MAX_BARS = 96; // ~1 Tag bei 15-Min-Kerzen
+
+function drawBoundedAnalysisLine(chart, candles, startTs, price, color, lineStyle) {
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+  const endIdx = Math.min(candles.length - 1, startIdx + ANALYSIS_LINE_MAX_BARS);
+  const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time, value: price }));
+  if (segData.length === 0) return;
+  chart.addLineSeries({
+    color, lineWidth: 1, lineStyle,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  }).setData(segData);
+}
+
+// Tiam, 2026-07-13: Screenshot von TJRs Fib-Retracement-Equilibrium-Tool
+// geschickt - gruene Box ueber die GESAMTE Swing-Spanne (0 bis 1), weisse
+// gestrichelte Raender oben/unten, hervorgehobene gruene 0.5-Linie (die
+// eigentliche Equilibrium). Ersetzt die bisherige einzelne graue Linie.
+// Nutzt ann.equilibriumRange = [legLow, legHigh] aus engine.js (rein
+// additiv dort ergaenzt, gleiche Werte die eh schon fuer ann.equilibrium
+// berechnet wurden) - faellt defensiv auf "nichts zeichnen" zurueck falls
+// aeltere gecachte Daten dieses Feld noch nicht haben.
+const EQUILIBRIUM_LINE_COLOR = "#4ade80";
+const EQUILIBRIUM_FILL_COLOR = "rgba(74,222,128,0.10)";
+const EQUILIBRIUM_EDGE_COLOR = "rgba(255,255,255,0.55)";
+
+function drawEquilibriumBox(chart, candles, ann, markers) {
+  if (!ann.sweep || !ann.equilibriumRange) return;
+  const [legLow, legHigh] = ann.equilibriumRange;
+  if (legLow == null || legHigh == null || !(legHigh > legLow)) return;
+
+  const startTs = Math.floor(ann.sweep.ts / 1000);
+  const startIdx = candles.findIndex((c) => c.time >= startTs);
+  if (startIdx === -1) return;
+  const endIdx = Math.min(candles.length - 1, startIdx + ANALYSIS_LINE_MAX_BARS);
+  const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
+  if (segData.length === 0) return;
+
+  const fillSeries = chart.addAreaSeries({
+    topColor: EQUILIBRIUM_FILL_COLOR, bottomColor: EQUILIBRIUM_FILL_COLOR,
+    lineColor: EQUILIBRIUM_EDGE_COLOR, lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  fillSeries.applyOptions({ baseValue: { type: "price", price: legLow } });
+  fillSeries.setData(segData.map((d) => ({ time: d.time, value: legHigh })));
+
+  const midSeries = chart.addLineSeries({
+    color: EQUILIBRIUM_LINE_COLOR, lineWidth: 2, lineStyle: LightweightCharts.LineStyle.Solid,
+    priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  midSeries.setData(segData.map((d) => ({ time: d.time, value: ann.equilibrium })));
+
+  markers.push({
+    time: startTs, position: "aboveBar",
+    color: EQUILIBRIUM_LINE_COLOR, shape: "circle", text: "EQ",
+  });
+}
+
+// Tiam, 2026-07-13: "der senkrechte strich ist fuer die verschiedenen
+// sessions" - zusaetzlich zu den bestehenden Text-Markern (sessionMarkers)
+// jetzt auch eine duenne gestrichelte weisse Vertikale an jedem Session-
+// Start, wie TJR es macht. Lightweight Charts hat kein natives
+// Vertikal-Linien-Primitive - Standard-Trick: eine Line-Series mit zwei
+// Punkten (knapp nacheinander in der Zeit) von einem sehr niedrigen zu
+// einem sehr hohen Preis, mit autoscaleInfoProvider:()=>null, damit diese
+// Series die eigentliche Y-Achsen-Skalierung nicht beeinflusst - dadurch
+// wird sie auf die tatsaechliche Kerzen-Hoehe geclippt und wirkt wie eine
+// echte Vertikale. Nur fuer die letzten paar Tage (nicht die gesamte
+// 10-20-Tage-Historie) gezeichnet, sonst Chart beim Zurueckscrollen mit
+// Dutzenden Linien zugepflastert - gleiche "nicht endlos zurueck"-Regel
+// wie bei Zone-Box/Analyse-Linien oben.
+const SESSION_DIVIDER_LOOKBACK_BARS = 2 * 96; // ~2 Tage
+
+function drawSessionDividers(chart, ltf, candles) {
+  if (!candles.length) return;
+  const cutoffIdx = Math.max(0, candles.length - SESSION_DIVIDER_LOOKBACK_BARS);
+  const cutoffTs = candles[cutoffIdx].time * 1000;
+  const seen = new Set();
+  for (const c of ltf) {
+    if (c.ts < cutoffTs) continue;
+    const d = new Date(c.ts);
+    const h = d.getUTCHours();
+    const m = d.getUTCMinutes();
+    if (m >= 15) continue;
+    for (const s of SESSIONS) {
+      if (h !== s.hour) continue;
+      const key = d.getUTCFullYear() + "-" + d.getUTCMonth() + "-" + d.getUTCDate() + "-" + s.label;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const t = Math.floor(c.ts / 1000);
+      const dividerSeries = chart.addLineSeries({
+        color: "rgba(255,255,255,0.35)", lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed,
+        priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+        autoscaleInfoProvider: () => null,
+      });
+      dividerSeries.setData([
+        { time: t, value: -1e9 },
+        { time: t + 60, value: 1e9 },
+      ]);
+    }
+  }
+}
+
+// Tiam, 2026-07-13: "ich will das nicht kaufen [FMP-Upgrade]. kannst du es
+// selber nicht machen? [...] der chart soll selber laufen" - Phase 1 der
+// kostenlosen Live-Loesung: Binances oeffentliche WebSocket-Kline-Streams
+// (kein Account, kein API-Key, komplett kostenlos, Push alle ~250ms) fuer
+// die 3 Krypto-Assets. Aktualisiert NUR die Candlestick-Serie direkt via
+// series.update() (Lightweight Charts' vorgesehener Weg fuer Live-Ticks,
+// kein voller Re-Render noetig) - die TJR-Analyse-Overlays (Sweep/BOS/
+// Zonen/Equilibrium etc.) bleiben vorerst an die bestehende Batch-Analyse
+// gebunden (Phase 3: die Engine selbst live im Browser laufen zu lassen,
+// ist ein separater, groesserer Schritt). Forex/Gold/S&P500 folgen in
+// Phase 2 ueber Finnhub, sobald Tiam einen kostenlosen Account hat.
+const BINANCE_SYMBOL_MAP = { BTCUSD: "btcusdt", ETHUSD: "ethusdt", XRPUSD: "xrpusdt" };
+const liveFeeds = {};
+
+// Tiam, 2026-07-14: die historischen Kerzen (build.js) kodieren "ET-Wanduhrzeit
+// als UTC" (siehe etPseudoDateStr in build.js - Altlast von der frueheren FMP-
+// Anbindung, siehe engine.js parseTs()). Die Live-Ticks hier kommen aber von
+// Binance/Finnhub als ECHTE UTC-Timestamps. Ohne Umrechnung landen Live-Kerzen
+// auf einem um 4-5h (DST-abhaengig) verschobenen Zeitraster als die Historie -
+// das erzeugte genau den "Chart springt/haengt fest"-Bug, den Tiam gemeldet hat.
+// Diese Funktion macht exakt dieselbe Umrechnung wie build.js, nur client-seitig
+// und direkt in Sekunden (fuer Lightweight Charts' time-Feld).
+function etPseudoEpochSeconds(utcMs) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
+  }).formatToParts(new Date(utcMs));
+  const get = (t) => parts.find((p) => p.type === t).value;
+  let hh = get("hour");
+  if (hh === "24") hh = "00";
+  return Date.UTC(Number(get("year")), Number(get("month")) - 1, Number(get("day")),
+    Number(hh), Number(get("minute")), Number(get("second"))) / 1000;
+}
+
+function closeLiveFeed(id) {
+  const feed = liveFeeds[id];
+  if (!feed) return;
+  clearTimeout(feed.reconnectTimer);
+  try { feed.ws.close(); } catch (e) { /* ignore */ }
+  delete liveFeeds[id];
+  const badge = document.getElementById("live-badge-" + id);
+  if (badge) badge.style.display = "none";
+}
+
+function connectBinanceLiveFeed(item) {
+  const binanceSymbol = BINANCE_SYMBOL_MAP[item.asset.symbol];
+  if (!binanceSymbol) return;
+  const id = assetId(item.asset);
+  closeLiveFeed(id); // falls fuer dieses Asset schon eine alte Verbindung offen ist
+
+  function connect() {
+    let ws;
+    try {
+      ws = new WebSocket(`wss://stream.binance.com:9443/ws/${binanceSymbol}@kline_15m`);
+    } catch (e) {
+      return; // z.B. WebSocket im Browser nicht verfuegbar - still aufgeben
+    }
+    liveFeeds[id] = { ws, reconnectTimer: null };
+
+    ws.addEventListener("open", () => {
+      const badge = document.getElementById("live-badge-" + id);
+      if (badge) badge.style.display = "inline";
+    });
+
+    ws.addEventListener("message", (event) => {
+      const chartEntry = charts[id];
+      if (!chartEntry || !chartEntry.series) return;
+      try {
+        const msg = JSON.parse(event.data);
+        const k = msg.k;
+        if (!k) return;
+        chartEntry.series.update({
+          time: etPseudoEpochSeconds(k.t),
+          open: parseFloat(k.o), high: parseFloat(k.h),
+          low: parseFloat(k.l), close: parseFloat(k.c),
+        });
+      } catch (e) { /* einzelne kaputte Nachricht ignorieren, Verbindung bleibt offen */ }
+    });
+
+    ws.addEventListener("close", () => {
+      // Wurde die Verbindung absichtlich beendet (closeLiveFeed), existiert
+      // der Eintrag schon nicht mehr - dann NICHT neu verbinden.
+      if (!liveFeeds[id]) return;
+      const badge = document.getElementById("live-badge-" + id);
+      if (badge) badge.style.display = "none";
+      liveFeeds[id].reconnectTimer = setTimeout(connect, 3000);
+    });
+    ws.addEventListener("error", () => { try { ws.close(); } catch (e) { /* ignore */ } });
+  }
+  connect();
+}
+
+// --- Phase 2: Live-Forex/Gold/S&P500 ueber Finnhub (kostenloser Account, Tiam
+// hat den Key selbst erzeugt). Finnhub liefert KEINE fertigen Kerzen ueber
+// den WebSocket, sondern einzelne Trade-Ticks - die aktuelle 15-Min-Kerze
+// wird deshalb hier im Browser selbst aus den Ticks zusammengebaut (gleiches
+// Bucket-Raster wie die batch-generierten Kerzen: 900s ab Unix-Epoche,
+// dadurch automatisch auf :00/:15/:30/:45 UTC ausgerichtet).
+// S&P 500 hat keine kostenlose Live-Index-Quelle - SPY-ETF (folgt dem Index
+// fast 1:1) wird stattdessen live getickt, siehe Tiams Freigabe dazu.
+const FINNHUB_API_KEY = "d9al8j9r01qp4bhre490d9al8j9r01qp4bhre49g";
+const FINNHUB_SYMBOL_MAP = { GBPUSD: "OANDA:GBP_USD", GCUSD: "OANDA:XAU_USD", "^GSPC": "SPY" };
+const LIVE_BAR_SECONDS = 15 * 60;
+const finnhubBars = {}; // assetId -> aktuell laufende, noch nicht abgeschlossene Live-Kerze
+
+function bucketStart(tsSeconds) {
+  return Math.floor(tsSeconds / LIVE_BAR_SECONDS) * LIVE_BAR_SECONDS;
+}
+
+function connectFinnhubLiveFeed(item) {
+  const finnhubSymbol = FINNHUB_SYMBOL_MAP[item.asset.symbol];
+  if (!finnhubSymbol) return;
+  const id = assetId(item.asset);
+  closeLiveFeed(id);
+
+  const chartEntry = charts[id];
+  const existingData = chartEntry && chartEntry.series.data ? chartEntry.series.data() : [];
+  const lastCandle = existingData && existingData.length ? existingData[existingData.length - 1] : null;
+  finnhubBars[id] = lastCandle ? { ...lastCandle } : null;
+
+  function connect() {
+    let ws;
+    try {
+      ws = new WebSocket(`wss://ws.finnhub.io?token=${FINNHUB_API_KEY}`);
+    } catch (e) {
+      return; // WebSocket im Browser nicht verfuegbar - still aufgeben
+    }
+    liveFeeds[id] = { ws, reconnectTimer: null };
+
+    ws.addEventListener("open", () => {
+      ws.send(JSON.stringify({ type: "subscribe", symbol: finnhubSymbol }));
+      const badge = document.getElementById("live-badge-" + id);
+      if (badge) badge.style.display = "inline";
+    });
+
+    ws.addEventListener("message", (event) => {
+      const entry = charts[id];
+      if (!entry || !entry.series) return;
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.type !== "trade" || !msg.data) return;
+        for (const trade of msg.data) {
+          if (trade.s !== finnhubSymbol || typeof trade.p !== "number") continue;
+          const bucket = bucketStart(etPseudoEpochSeconds(trade.t));
+          let bar = finnhubBars[id];
+          if (!bar || bar.time < bucket) {
+            bar = { time: bucket, open: trade.p, high: trade.p, low: trade.p, close: trade.p };
+          } else {
+            bar.high = Math.max(bar.high, trade.p);
+            bar.low = Math.min(bar.low, trade.p);
+            bar.close = trade.p;
+          }
+          finnhubBars[id] = bar;
+          entry.series.update(bar);
+        }
+      } catch (e) { /* einzelne kaputte Nachricht ignorieren, Verbindung bleibt offen */ }
+    });
+
+    ws.addEventListener("close", () => {
+      if (!liveFeeds[id]) return;
+      const badge = document.getElementById("live-badge-" + id);
+      if (badge) badge.style.display = "none";
+      liveFeeds[id].reconnectTimer = setTimeout(connect, 3000);
+    });
+    ws.addEventListener("error", () => { try { ws.close(); } catch (e) { /* ignore */ } });
+  }
+  connect();
+}
+
+// Dispatcher: waehlt je nach Asset die Binance- oder Finnhub-Live-Quelle.
+function connectLiveFeed(item) {
+  if (BINANCE_SYMBOL_MAP[item.asset.symbol]) {
+    connectBinanceLiveFeed(item);
+  } else if (FINNHUB_SYMBOL_MAP[item.asset.symbol]) {
+    connectFinnhubLiveFeed(item);
+  }
+}
+
+// Tiam, 2026-07-14: "kannst du die timezone auf vienna zeit umstellen" - die
+// Kerzen-Zeitstempel (ts) sind intern "ET-Wanduhrzeit als UTC verkleidet"
+// (siehe etPseudoDateStr in build.js) - das MUSS so bleiben, weil Sessions/
+// Bias-Logik in engine.js darauf aufbauen. Was hier gefixt wird, ist NUR die
+// ANZEIGE: der Browser hat diese Pseudo-UTC-Zeit bisher einfach nochmal in
+// die lokale Browser-Zeitzone umgerechnet (+2h Wien-Sommerzeit obendrauf),
+// wodurch die Chart-Achse ca. 4h zu frueh anzeigte. Diese Funktion rechnet
+// die Pseudo-Zeit zurueck auf die ECHTE UTC-Zeit und formatiert sie dann
+// korrekt in Wien-Zeit - nur fuers Anzeigen, die Rohdaten/Analyse bleiben
+// unveraendert.
+function pseudoEtToRealUtcMs(epochSeconds) {
+  const d = new Date(epochSeconds * 1000);
+  const y = d.getUTCFullYear(), mo = d.getUTCMonth(), day = d.getUTCDate();
+  const h = d.getUTCHours(), mi = d.getUTCMinutes(), s = d.getUTCSeconds();
+  const target = Date.UTC(y, mo, day, h, mi, s);
+  let guess = target;
+  for (let i = 0; i < 2; i += 1) {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
+    }).formatToParts(new Date(guess));
+    const get = (t) => parts.find((p) => p.type === t).value;
+    let hh = get("hour");
+    if (hh === "24") hh = "00";
+    const got = Date.UTC(Number(get("year")), Number(get("month")) - 1, Number(get("day")),
+      Number(hh), Number(get("minute")), Number(get("second")));
+    guess += target - got;
+  }
+  return guess;
+}
+function viennaTickLabel(epochSeconds, tickMarkType) {
+  const realMs = pseudoEtToRealUtcMs(epochSeconds);
+  const opts = { timeZone: "Europe/Vienna" };
+  if (tickMarkType === LightweightCharts.TickMarkType.Year) {
+    opts.year = "numeric";
+  } else if (tickMarkType === LightweightCharts.TickMarkType.Month) {
+    opts.month = "short";
+  } else if (tickMarkType === LightweightCharts.TickMarkType.DayOfMonth) {
+    opts.day = "numeric";
+  } else {
+    opts.hour = "2-digit";
+    opts.minute = "2-digit";
+  }
+  return new Intl.DateTimeFormat("de-AT", opts).format(new Date(realMs));
+}
+
+function renderChart(item) {
+  const container = document.getElementById("chart-" + assetId(item.asset));
+  if (!container || item.error || !item.ltf || !item.ltf.length) return;
+
+  const chart = LightweightCharts.createChart(container, {
+    width: container.clientWidth,
+    height: 420,
+    layout: { background: { color: "transparent" }, textColor: "#9198ad" },
+    grid: {
+      vertLines: { color: "rgba(255,255,255,0.05)" },
+      horzLines: { color: "rgba(255,255,255,0.05)" },
+    },
+    timeScale: {
+      timeVisible: true, secondsVisible: false, borderColor: "rgba(255,255,255,0.1)",
+      tickMarkFormatter: (time, tickMarkType) => viennaTickLabel(time, tickMarkType),
+    },
+    rightPriceScale: { borderColor: "rgba(255,255,255,0.1)" },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+    localization: {
+      timeFormatter: (time) => viennaTickLabel(time, LightweightCharts.TickMarkType.Time),
+    },
+  });
+
+  // Tiam, 2026-07-14: "kannst du bei gbpusd auch so den genauen wert mit
+  // mehreren nachkommastellen einstellen. und die skala rechts soll auch
+  // mehr sein als nur 2 nachkommastellen" - Lightweight Charts formatiert
+  // Preise standardmaessig mit nur 2 Nachkommastellen (passt fuer Krypto/
+  // Gold/SPY), aber Forex-Paare wie GBP/USD brauchen 5 Nachkommastellen
+  // (Pip/Pipette-Genauigkeit, z.B. 1.33808) - sonst rundet die Achse UND
+  // der rote Live-Preis-Kasten auf z.B. "1.34".
+  const PRICE_PRECISION_MAP = { GBPUSD: 5 };
+  const precision = PRICE_PRECISION_MAP[item.asset.symbol];
+  const seriesOptions = {
+    upColor: "#4fff9c", downColor: "#ff6b6b", borderVisible: false,
+    wickUpColor: "#4fff9c", wickDownColor: "#ff6b6b",
+  };
+  if (precision) {
+    seriesOptions.priceFormat = { type: "price", precision, minMove: Math.pow(10, -precision) };
+  }
+  const series = chart.addCandlestickSeries(seriesOptions);
+
+  const candles = item.ltf.map((c) => ({
+    time: Math.floor(c.ts / 1000), open: c.open, high: c.high, low: c.low, close: c.close,
+  }));
+  series.setData(candles);
+  const DEFAULT_VIEW_CANDLES = 3 * 96; // ~3 Tage bei 15-Min-Kerzen als Erstansicht
+
+  const { ann, sig } = item;
+  let markers = sessionMarkers(item.ltf);
+  drawSessionLevels(chart, candles, computeSessionLevels(item.ltf), markers);
+  drawSessionDividers(chart, item.ltf, candles);
+
+  if (ann.sweep) {
+    drawBoundedAnalysisLine(chart, candles, ann.sweep.ts, ann.sweep.level, "#7dd3fc", LightweightCharts.LineStyle.Solid);
+    markers.push({
+      time: Math.floor(ann.sweep.ts / 1000), position: "belowBar",
+      color: "#7dd3fc", shape: "circle", text: "Sweep",
+    });
+  }
+  if (ann.bos) {
+    drawBoundedAnalysisLine(chart, candles, ann.bos.ts, ann.bos.level, "#a78bfa", LightweightCharts.LineStyle.Solid);
+    markers.push({
+      time: Math.floor(ann.bos.ts / 1000),
+      position: ann.bos.dir === "up" ? "belowBar" : "aboveBar",
+      color: "#a78bfa", shape: ann.bos.dir === "up" ? "arrowUp" : "arrowDown", text: "BOS",
+    });
+  }
+  if (ann.confirmation && ann.confirmation.kind === "iFVG") {
+    const e = ann.confirmation.event;
+    const ifvgPrice = e.dir === "up" ? e.top : e.bottom;
+    drawBoundedAnalysisLine(chart, candles, e.ts, ifvgPrice, "#f0abfc", LightweightCharts.LineStyle.Dotted);
+    markers.push({
+      time: Math.floor(e.ts / 1000),
+      position: e.dir === "up" ? "belowBar" : "aboveBar",
+      color: "#f0abfc", shape: e.dir === "up" ? "arrowUp" : "arrowDown", text: "iFVG",
+    });
+  }
+  if (ann.equilibrium !== null && ann.sweep) {
+    drawEquilibriumBox(chart, candles, ann, markers);
+  }
+  if (ann.zoneRange && ann.zoneTs) {
+    drawZoneBox(chart, candles, ann, markers);
+  }
+  if (sig.entry !== null) {
+    // Box zuerst zeichnen (liegt hinter den duennen Preis-Linien) - Startpunkt
+    // ist der tatsaechliche Einstiegszeitpunkt bei einer offenen Position; ist
+    // die Position noch nicht ausgeloest (Watchlist), wird die Box stattdessen
+    // am Ursprung der Entry-Zone (ann.zoneTs, gleicher Ankerpunkt wie die OB/
+    // FVG-Box) verankert statt an einem knappen 20-Kerzen-Rueckblick - sonst
+    // ist die Box bei einer mehrtaegigen Chart-Ansicht kaum sichtbar (nur ein
+    // paar Stunden breit).
+    // Tiam, 2026-07-12: "horizontale Linien sollen nicht unendlich lang sein" -
+    // Lightweight Charts' createPriceLine() zeichnet IMMER ueber die volle
+    // Chart-Breite (kein Zeitfenster-Limit moeglich, anders als bei den
+    // Area/Line-Series-basierten Boxen/Linien oben). Die separaten Entry/
+    // Stop/Target-Achsen-Label-Linien wurden deshalb entfernt - die Box
+    // selbst (bereits zeitlich begrenzt) markiert diese drei Level schon
+    // ueber ihre gestrichelte Kante (Target/Stop) und die weisse Trennlinie
+    // (Entry); die exakten Zahlen stehen zusaetzlich in der "Details"-Tabelle
+    // rechts neben dem Chart.
+    const openRec = (item.signals || []).find((r) => r.status === "open");
+    const boxStartTs = openRec
+      ? Math.floor(openRec.entryTs / 1000)
+      : (ann.zoneTs ? Math.floor(ann.zoneTs / 1000) : candles[Math.max(0, candles.length - 21)].time);
+    drawPositionBox(chart, candles, sig, boxStartTs);
+  }
+
+  const SIGNAL_OUTCOME_STYLE = {
+    win: { color: "#4fff9c", text: "WIN" },
+    loss: { color: "#ff6b6b", text: "LOSS" },
+    open: { color: "#ffd25c", text: "OFFEN" },
+    stale: { color: "#7c8399", text: "ABGELAUFEN" },
+  };
+  for (const rec of (item.signals || [])) {
+    drawHistoricalPositionBox(chart, candles, rec);
+    const style = SIGNAL_OUTCOME_STYLE[rec.status] || SIGNAL_OUTCOME_STYLE.open;
+    const isLong = rec.direction === "LONG";
+    // Tiam, 2026-07-12: "schaut ob der Trade wirklich in die richtige
+    // Richtung geht" - bei noch offenen Trades den unrealisierten
+    // R-Fortschritt statt eines bloßen "OFFEN" anzeigen.
+    let text = style.text;
+    if (rec.status === "open" && typeof rec.unrealizedR === "number") {
+      const sign = rec.unrealizedR >= 0 ? "+" : "";
+      text = `OFFEN ${sign}${rec.unrealizedR}R`;
+    }
+    markers.push({
+      time: Math.floor(rec.entryTs / 1000),
+      position: isLong ? "belowBar" : "aboveBar",
+      color: style.color, shape: isLong ? "arrowUp" : "arrowDown", text,
+    });
+  }
+
+  markers.sort((a, b) => a.time - b.time);
+  if (markers.length) series.setMarkers(markers);
+
+  const savedRange = chartRanges[assetId(item.asset)];
+  if (savedRange) {
+    try { chart.timeScale().setVisibleRange(savedRange); }
+    catch (e) { chart.timeScale().fitContent(); }
+  } else if (candles.length > DEFAULT_VIEW_CANDLES) {
+    chart.timeScale().setVisibleRange({
+      from: candles[candles.length - DEFAULT_VIEW_CANDLES].time,
+      to: candles[candles.length - 1].time,
+    });
+  } else {
+    chart.timeScale().fitContent();
+  }
+  charts[assetId(item.asset)] = { chart, container, series };
+}
+
+function renderAssetSection(item) {
+  const id = assetId(item.asset);
+  const section = document.createElement("div");
+  section.className = "asset-section";
+  section.id = id;
+
+  if (item.error) {
+    section.innerHTML = `
+      <div class="panel glow-error">
+        <div class="panel-head"><h2>${item.asset.icon} ${item.asset.name}</h2><span class="symbol">${item.asset.display}</span></div>
+        <div class="badges"><span class="badge sig-error">FEHLER</span></div>
+        <div class="err">${item.error}</div>
+      </div>`;
+    return section;
+  }
+
+  const { sig, ann } = item;
+  const glow = sig.signal === "ENTRY" ? " glow-entry" : "";
+  const outsideBadge = (sig.signal === "ENTRY" && !PRECOMPUTED.inTradingWindow)
+    ? `<span class="badge badge-outside" title="TJR tradet nur 15-17 Uhr Wien — dieses Signal liegt ausserhalb und wird nicht als Paper-Trade geloggt">außerhalb Handelszeit (15–17 Wien)</span>`
+    : "";
+  const headline = plainHeadline(item);
+
+  section.innerHTML = `
+    <div class="layout">
+      <div class="panel${glow}">
+        <div class="panel-head">
+          <h2>${item.asset.icon} ${item.asset.name}</h2>
+          <span class="symbol">${item.asset.display}</span>
+          <span class="live-feed-badge" id="live-badge-${id}">● LIVE</span>
+        </div>
+        <div class="plain-headline ${headline.cls}"><span class="headline-emoji">${headline.emoji}</span>${headline.text}</div>
+        ${item.weeklyTrend ? `<div class="plain-headline headline-weekly"><span class="headline-emoji">🗓</span>${weeklyTrendPlain(item.weeklyTrend)}</div>` : ""}
+        <div class="badges">
+          <span class="badge ${badgeClassBias(sig.bias)}">${biasArrow(sig.bias)} 4H ${sig.bias.toUpperCase()}</span>
+          <span class="badge ${badgeClassSignal(sig.signal)}">${sig.signal.split(" (")[0]}</span>
+          ${modeBadge(item)}
+          ${outsideBadge}
+        </div>
+        <div class="chart-container" id="chart-${id}"></div>
+      </div>
+      <div class="panel${glow}">
+        <div class="panel-head"><h2>Details</h2></div>
+        <div class="info-table" id="table-${id}"></div>
+        <div id="ai-${id}"></div>
+        <details class="tech-details collapsible">
+          <summary>🔍 Technische Details (ICT-Fachbegriffe)</summary>
+          <div class="steps">${analysisSteps(sig, ann).map((s) => (
+            `<div class="step"><span class="step-icon ${s.ok ? "ok" : "pending"}">${s.ok ? "✓" : "…"}</span>
+              <span class="step-label">${s.label}</span><span class="step-text">${s.text}</span></div>`
+          )).join("")}${item.weeklyTrend ? `<div class="step"><span class="step-icon ${item.weeklyTrend.bias === "bullish" ? "ok" : "pending"}">${item.weeklyTrend.bias === "bullish" ? "↑" : "↓"}</span>
+              <span class="step-label">Wochen-Equilibrium (Monats-/Wochenchart)</span><span class="step-text">${item.weeklyTrend.bias.toUpperCase()} — EQ ${item.weeklyTrend.equilibrium.toPrecision(6)} (H ${item.weeklyTrend.high.toPrecision(6)} / T ${item.weeklyTrend.low.toPrecision(6)}, ${item.weeklyTrend.weeksUsed}W)</span></div>` : ""}</div>
+        </details>
+      </div>
+    </div>`;
+  return section;
+}
+
+function main() {
+  for (const id in charts) {
+    try { chartRanges[id] = charts[id].chart.timeScale().getVisibleRange(); } catch (e) { /* ignore */ }
+    try { charts[id].chart.remove(); } catch (e) { /* ignore */ }
+    closeLiveFeed(id);
+    delete charts[id];
+  }
+
+  const assetsEl = document.getElementById("assets");
+  const newsEl = document.getElementById("news");
+  assetsEl.innerHTML = "";
+  newsEl.innerHTML = "";
+
+  // Tiam, 2026-07-12: "es soll simple gross und einfach zu verstehen sein" -
+  // ein rohes ISO-Zeitformat ("2026-07-12T17:34:40.575Z") ist fuer einen
+  // Besucher nicht lesbar; hier stattdessen als Wiener Ortszeit formatiert.
+  // Die Handelsfenster-Zeit (15-17 Wien) steht schon im Untertitel, wird hier
+  // deshalb nicht mehr wiederholt - kuerzere, klarere Statuszeile.
+  const genEl = document.getElementById("generated-at");
+  if (genEl) {
+    const d = new Date(PRECOMPUTED.generatedAt);
+    const formatted = d.toLocaleString("de-AT", {
+      timeZone: "Europe/Vienna", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+    });
+    genEl.textContent = "Aktualisiert: " + formatted + " Uhr";
+  }
+
+  const winEl = document.getElementById("window-status");
+  if (winEl) {
+    const anyOpenTrade = PRECOMPUTED.assets.some((a) => !a.error && a.hasOpenTrade);
+    if (PRECOMPUTED.inTradingWindow) {
+      winEl.textContent = "· ✓ analysiert gerade aktiv";
+    } else if (anyOpenTrade) {
+      winEl.textContent = "· pausiert — beobachtet offene Position(en)";
+    } else {
+      winEl.textContent = "· pausiert bis 15 Uhr";
+    }
+  }
+
+  if (PRECOMPUTED.news.length > 0) {
+    const box = document.createElement("div");
+    box.className = "news-box";
+    box.innerHTML = `<div class="news-title">⚠ High-Impact News heute (USD/GBP)</div>` +
+      PRECOMPUTED.news.map(ev => `<div class="news-item">${ev.date.slice(11,16)} ET — ${ev.event} (${ev.currency})</div>`).join("") +
+      `<div class="news-source">Quelle: ForexFactory-Kalender</div>`;
+    newsEl.appendChild(box);
+  } else {
+    const box = document.createElement("div");
+    box.className = "news-box empty";
+    box.innerHTML = `<div class="news-title">✓ Keine High-Impact News (USD/GBP) heute</div>
+      <div class="news-source">Quelle: ForexFactory-Kalender</div>`;
+    newsEl.appendChild(box);
+  }
+
+  renderOverview();
+
+  for (const item of PRECOMPUTED.assets) {
+    const section = renderAssetSection(item);
+    if (assetId(item.asset) === selectedAssetId) section.classList.add("active");
+    assetsEl.appendChild(section);
+  }
+
+  // Nur das aktuell ausgewaehlte Asset wird sofort gerendert (Chart +
+  // Details) - alle anderen bleiben leer/versteckt bis sie per Klick auf
+  // eine Uebersichts-Kachel ausgewaehlt werden (siehe selectAsset() oben).
+  // Das vermeidet auch das display:none-Breite-0px-Problem von
+  // Lightweight Charts fuer alle nicht sichtbaren Assets.
+  const selectedItem = PRECOMPUTED.assets.find((it) => assetId(it.asset) === selectedAssetId);
+  if (selectedItem) renderAssetContent(selectedItem);
+}
+
+function initSettings() {
+  const acctEl = document.getElementById("acct-size");
+  const riskEl = document.getElementById("risk-pct");
+  acctEl.value = getAcctSize();
+  riskEl.value = getRiskPct();
+  acctEl.addEventListener("input", () => {
+    localStorage.setItem(ACCT_KEY, acctEl.value || "0");
+    for (const item of PRECOMPUTED.assets) renderInfoTable(item);
+  });
+  riskEl.addEventListener("input", () => {
+    localStorage.setItem(RISK_KEY, riskEl.value || "0");
+    updateTierButtons();
+    for (const item of PRECOMPUTED.assets) renderInfoTable(item);
+  });
+
+  document.querySelectorAll(".risk-tier-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const pct = RISK_TIERS[btn.dataset.tier];
+      riskEl.value = pct;
+      localStorage.setItem(RISK_KEY, String(pct));
+      updateTierButtons();
+      for (const item of PRECOMPUTED.assets) renderInfoTable(item);
+    });
+  });
+  updateTierButtons();
+}
+
+// Highlights whichever tier button (if any) matches the current risk% value —
+// TJR's own on-chart note (Bootcamp Day 39): "1: normal risk: 25. 2: derisk:
+// 12.5. 3: confident: 50." — three conviction-based risk levels instead of one
+// flat %. Unit (percent vs. fixed $) wasn't 100% confirmed from the video
+// frames sampled; implemented here as percent of account per Tiam's call.
+function updateTierButtons() {
+  const current = getRiskPct();
+  document.querySelectorAll(".risk-tier-btn").forEach((btn) => {
+    btn.classList.toggle("active", RISK_TIERS[btn.dataset.tier] === current);
+  });
+}
+
+window.addEventListener("resize", () => {
+  for (const id in charts) {
+    const { chart, container } = charts[id];
+    chart.applyOptions({ width: container.clientWidth });
+  }
+});
+
+// Auto-Refresh: die Webseite wird von GitHub Actions alle 5-15 Minuten neu
+// gebaut (siehe .github/workflows/update.yml), aber ohne diesen Poller
+// musste man die Seite manuell neu laden, um die neuen Daten/Chart zu sehen
+// (Tiam, 2026-07-11: "ich muss immer die Webseite neu starten damit ich den
+// neuen Chart sehe"). Holt periodisch dieselbe Seite frisch vom Server (nicht
+// aus dem Cache), liest das eingebettete PRECOMPUTED-JSON neu aus und
+// rendert Charts/Tabellen neu, sobald sich generatedAt geaendert hat - ohne
+// Seiten-Neuladen, Zoom/Pan-Stand pro Chart bleibt dabei erhalten (siehe
+// chartRanges in renderChart/main oben).
+const REFRESH_INTERVAL_MS = 30000;
+
+function showRefreshToast() {
+  const toast = document.getElementById("refresh-toast");
+  if (!toast) return;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2600);
+}
+async function pollForUpdate() {
+  try {
+    const res = await fetch(location.pathname + "?_=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) return;
+    const html = await res.text();
+    const match = html.match(/let PRECOMPUTED = ([\s\S]*?);\nconst charts = \{\};/);
+    if (!match) return;
+    const fresh = JSON.parse(match[1]);
+    if (fresh.generatedAt === PRECOMPUTED.generatedAt) return;
+    PRECOMPUTED = fresh;
+    main();
+    showRefreshToast();
+  } catch (e) {
+    console.error("Auto-Refresh fehlgeschlagen:", e);
+  }
+}
+let secondsUntilRefresh = REFRESH_INTERVAL_MS / 1000;
+function tickCountdown() {
+  const el = document.getElementById("refresh-countdown");
+  secondsUntilRefresh -= 1;
+  if (secondsUntilRefresh <= 0) {
+    if (el) el.textContent = "\u00b7 aktualisiere...";
+    pollForUpdate().finally(() => {
+      secondsUntilRefresh = REFRESH_INTERVAL_MS / 1000;
+    });
+  } else if (el) {
+    el.textContent = `\u00b7 n\u00e4chstes Update in ${secondsUntilRefresh}s`;
+  }
+}
+setInterval(tickCountdown, 1000);
+
+initSettings();
+main();
+</script>
+</body>
+</html>
