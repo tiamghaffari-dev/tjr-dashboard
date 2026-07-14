@@ -80,33 +80,14 @@ function etPseudoDateStr(utcMs) {
   return `${get("year")}-${get("month")}-${get("day")} ${hh}:${get("minute")}:${get("second")}`;
 }
 
-// Kostenlose, kein-Key-noetige Binance-REST-Kerzen (oeffentliche API, gleiche
-// Domain wie der Live-WebSocket-Feed im Dashboard). Binance liefert max. 1000
-// Kerzen pro Aufruf - bei 5-Minuten-Kerzen ueber ~25 Tage sind das mehrere
-// Tausend, daher Pagination ueber startTime.
-async function fetchBinanceKlines(binanceSymbol, interval, sinceMs, untilMs) {
-  const LIMIT = 1000;
-  const intervalMs = interval === "1h" ? 3600000 : 300000;
-  let cursor = sinceMs;
-  const rows = [];
-  let guard = 0;
-  while (cursor < untilMs && guard < 30) {
-    guard += 1;
-    const url = `https://api.binance.com/api/v3/klines?symbol=${binanceSymbol}&interval=${interval}&startTime=${cursor}&endTime=${untilMs}&limit=${LIMIT}`;
-    const batch = await fetchJson(url, `${binanceSymbol} binance ${interval}`);
-    if (!Array.isArray(batch) || batch.length === 0) break;
-    for (const k of batch) {
-      rows.push({ date: etPseudoDateStr(k[0]), open: k[1], high: k[2], low: k[3], close: k[4], volume: k[5] });
-    }
-    if (batch.length < LIMIT) break;
-    cursor = batch[batch.length - 1][0] + intervalMs;
-  }
-  return rows;
-}
-
 // Kostenlose, kein-Key-noetige Yahoo-Finance-Chart-API (dieselbe Quelle, die
-// z.B. die verbreitete 'yfinance'-Bibliothek nutzt) fuer Forex/Gold/S&P500.
-// Liefert die gewuenschte Zeitspanne in EINEM Aufruf (kein Paging noetig).
+// z.B. die verbreitete 'yfinance'-Bibliothek nutzt) - fuer ALLE 6 Assets,
+// auch Krypto. Binance's REST-API (urspruenglich fuer Krypto genutzt) blockt
+// GitHub Actions' IP-Bereiche geografisch (HTTP 451 "restricted location") -
+// das betrifft nur den Server-seitigen Datenabruf hier, NICHT den Live-Tick-
+// WebSocket im Dashboard (der laeuft im Browser des Nutzers, andere IP/Netz,
+// funktioniert weiterhin). Liefert die gewuenschte Zeitspanne in EINEM
+// Aufruf (kein Paging noetig).
 async function fetchYahooChart(yahooSymbol, interval, rangeDays) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=${interval}&range=${rangeDays}d`;
   const data = await fetchJson(url, `${yahooSymbol} yahoo ${interval}`, {
@@ -131,24 +112,21 @@ async function fetchYahooChart(yahooSymbol, interval, rangeDays) {
   return rows;
 }
 
-const BINANCE_SYMBOL_MAP = { BTCUSD: "BTCUSDT", ETHUSD: "ETHUSDT", XRPUSD: "XRPUSDT" };
 // S&P500 hat keine kostenlose Echtzeit-Index-Quelle - SPY-ETF folgt dem Index
-// fast 1:1 (Tiams Freigabe, siehe [[project_tjr_live_data]] Memory). Gold als
-// XAUUSD=X (Spot-Konvention, passend zum Live-Feed via Finnhub OANDA:XAU_USD).
-const YAHOO_SYMBOL_MAP = { GBPUSD: "GBPUSD=X", GCUSD: "XAUUSD=X", "^GSPC": "SPY" };
+// fast 1:1 (Tiams Freigabe). Gold als GC=F (COMEX-Future - Yahoos tatsaechlich
+// funktionierender Gold-Ticker, "XAUUSD=X" existiert dort nicht/404).
+const YAHOO_SYMBOL_MAP = {
+  BTCUSD: "BTC-USD", ETHUSD: "ETH-USD", XRPUSD: "XRP-USD",
+  GBPUSD: "GBPUSD=X", GCUSD: "GC=F", "^GSPC": "SPY",
+};
 
 async function fetchCandles(asset, interval, from, to) {
-  const binanceSymbol = BINANCE_SYMBOL_MAP[asset.symbol];
   const yahooSymbol = YAHOO_SYMBOL_MAP[asset.symbol];
-  let raw;
-  if (binanceSymbol) {
-    raw = await fetchBinanceKlines(binanceSymbol, interval === "1hour" ? "1h" : "5m", from.getTime(), to.getTime());
-  } else if (yahooSymbol) {
-    const rangeDays = Math.ceil((to.getTime() - from.getTime()) / 86400000) + 2;
-    raw = await fetchYahooChart(yahooSymbol, interval === "1hour" ? "1h" : "5m", rangeDays);
-  } else {
+  if (!yahooSymbol) {
     throw new Error(`${asset.symbol}: keine kostenlose Datenquelle konfiguriert`);
   }
+  const rangeDays = Math.ceil((to.getTime() - from.getTime()) / 86400000) + 2;
+  const raw = await fetchYahooChart(yahooSymbol, interval === "1hour" ? "1h" : "5m", rangeDays);
   if (!Array.isArray(raw) || raw.length === 0) {
     throw new Error(`${asset.symbol} ${interval}: keine Kerzen erhalten`);
   }
