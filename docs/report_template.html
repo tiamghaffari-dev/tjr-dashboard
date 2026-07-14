@@ -1006,6 +1006,27 @@ function drawSessionDividers(chart, ltf, candles) {
 const BINANCE_SYMBOL_MAP = { BTCUSD: "btcusdt", ETHUSD: "ethusdt", XRPUSD: "xrpusdt" };
 const liveFeeds = {};
 
+// Tiam, 2026-07-14: die historischen Kerzen (build.js) kodieren "ET-Wanduhrzeit
+// als UTC" (siehe etPseudoDateStr in build.js - Altlast von der frueheren FMP-
+// Anbindung, siehe engine.js parseTs()). Die Live-Ticks hier kommen aber von
+// Binance/Finnhub als ECHTE UTC-Timestamps. Ohne Umrechnung landen Live-Kerzen
+// auf einem um 4-5h (DST-abhaengig) verschobenen Zeitraster als die Historie -
+// das erzeugte genau den "Chart springt/haengt fest"-Bug, den Tiam gemeldet hat.
+// Diese Funktion macht exakt dieselbe Umrechnung wie build.js, nur client-seitig
+// und direkt in Sekunden (fuer Lightweight Charts' time-Feld).
+function etPseudoEpochSeconds(utcMs) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
+  }).formatToParts(new Date(utcMs));
+  const get = (t) => parts.find((p) => p.type === t).value;
+  let hh = get("hour");
+  if (hh === "24") hh = "00";
+  return Date.UTC(Number(get("year")), Number(get("month")) - 1, Number(get("day")),
+    Number(hh), Number(get("minute")), Number(get("second"))) / 1000;
+}
+
 function closeLiveFeed(id) {
   const feed = liveFeeds[id];
   if (!feed) return;
@@ -1044,7 +1065,7 @@ function connectBinanceLiveFeed(item) {
         const k = msg.k;
         if (!k) return;
         chartEntry.series.update({
-          time: Math.floor(k.t / 1000),
+          time: etPseudoEpochSeconds(k.t),
           open: parseFloat(k.o), high: parseFloat(k.h),
           low: parseFloat(k.l), close: parseFloat(k.c),
         });
@@ -1115,7 +1136,7 @@ function connectFinnhubLiveFeed(item) {
         if (msg.type !== "trade" || !msg.data) return;
         for (const trade of msg.data) {
           if (trade.s !== finnhubSymbol || typeof trade.p !== "number") continue;
-          const bucket = bucketStart(Math.floor(trade.t / 1000));
+          const bucket = bucketStart(etPseudoEpochSeconds(trade.t));
           let bar = finnhubBars[id];
           if (!bar || bar.time < bucket) {
             bar = { time: bucket, open: trade.p, high: trade.p, low: trade.p, close: trade.p };
@@ -1471,7 +1492,6 @@ function showRefreshToast() {
   toast.classList.add("show");
   setTimeout(() => toast.classList.remove("show"), 2600);
 }
-
 async function pollForUpdate() {
   try {
     const res = await fetch(location.pathname + "?_=" + Date.now(), { cache: "no-store" });
