@@ -1065,7 +1065,20 @@ function drawEquilibriumBox(chart, candles, ann, markers, series) {
   const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
   if (segData.length === 0) return;
 
-  drawBox(chart, series, segData, legHigh, legLow, {
+  // Tiam, 2026-07-14: "bring der KI weiter das anwenden von Tools bei wie
+  // TJR es in den Videos zeigt" - bisher wurde die GANZE Spanne (legLow bis
+  // legHigh) eingefaerbt. TJRs echtes Fib-Retracement-Tool (mehrfach in
+  // echten Chart-Beispielen gesehen: Bootcamp Tag 28 Equilibrium, Tag 33
+  // Execution, Tag 38 Stop-Losses - siehe project_tjr_visual_style Memory)
+  // faerbt nur die HANDLUNGSRELEVANTE Haelfte ein: bei bullischer Bias nur
+  // den Discount-Bereich (unterhalb Equilibrium, "billig kaufen"), bei
+  // baerischer Bias nur den Premium-Bereich (oberhalb Equilibrium, "teuer
+  // verkaufen") - die andere Haelfte bleibt ungefuellt/transparent. Das
+  // deckt sich auch mit der bestehenden Strategie-Logik (premium_discount_zone),
+  // die exakt diese Haelfte als gueltige Entry-Zone verwendet.
+  const eqBoxTop = ann.bias === "bullish" ? ann.equilibrium : legHigh;
+  const eqBoxBottom = ann.bias === "bullish" ? legLow : ann.equilibrium;
+  drawBox(chart, series, segData, eqBoxTop, eqBoxBottom, {
     fillColor: EQUILIBRIUM_FILL_COLOR, borderColor: EQUILIBRIUM_EDGE_COLOR, borderWidth: 1, borderDash: [4, 3],
   });
 
