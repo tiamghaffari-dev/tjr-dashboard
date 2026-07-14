@@ -1252,10 +1252,23 @@ function renderChart(item) {
     },
   });
 
-  const series = chart.addCandlestickSeries({
+  // Tiam, 2026-07-14: "kannst du bei gbpusd auch so den genauen wert mit
+  // mehreren nachkommastellen einstellen. und die skala rechts soll auch
+  // mehr sein als nur 2 nachkommastellen" - Lightweight Charts formatiert
+  // Preise standardmaessig mit nur 2 Nachkommastellen (passt fuer Krypto/
+  // Gold/SPY), aber Forex-Paare wie GBP/USD brauchen 5 Nachkommastellen
+  // (Pip/Pipette-Genauigkeit, z.B. 1.33808) - sonst rundet die Achse UND
+  // der rote Live-Preis-Kasten auf z.B. "1.34".
+  const PRICE_PRECISION_MAP = { GBPUSD: 5 };
+  const precision = PRICE_PRECISION_MAP[item.asset.symbol];
+  const seriesOptions = {
     upColor: "#4fff9c", downColor: "#ff6b6b", borderVisible: false,
     wickUpColor: "#4fff9c", wickDownColor: "#ff6b6b",
-  });
+  };
+  if (precision) {
+    seriesOptions.priceFormat = { type: "price", precision, minMove: Math.pow(10, -precision) };
+  }
+  const series = chart.addCandlestickSeries(seriesOptions);
 
   const candles = item.ltf.map((c) => ({
     time: Math.floor(c.ts / 1000), open: c.open, high: c.high, low: c.low, close: c.close,
