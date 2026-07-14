@@ -10,16 +10,10 @@ const {
   parseTs, loadCandles, resample, buildSignal, buildAnnotations,
 } = require("./engine.js");
 
-const API_KEY = process.env.FMP_API_KEY;
-if (!API_KEY) {
-  console.error("FEHLER: Umgebungsvariable FMP_API_KEY ist nicht gesetzt.");
-  process.exit(1);
-}
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || null;
 const ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
 const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 
-const BASE = "https://financialmodelingprep.com/stable";
 const STATE_PATH = path.join(__dirname, "state.json");
 const SIGNALS_LOG_PATH = path.join(__dirname, "signals_log.json");
 // Tiam, 2026-07-12: "die KI soll nur zwischen 15 und 17 Uhr analysieren [...]
@@ -66,11 +60,97 @@ async function fetchJson(url, label, opts) {
   return res.json();
 }
 
-async function fetchCandles(symbol, interval, from, to) {
-  const url = `${BASE}/historical-chart/${interval}?symbol=${encodeURIComponent(symbol)}&from=${fmtDate(from)}&to=${fmtDate(to)}&apikey=${API_KEY}`;
-  const raw = await fetchJson(url, `${symbol} ${interval}`);
-  if (!Array.isArray(raw)) {
-    throw new Error(`${symbol} ${interval}: unerwartetes Antwortformat (kein Array) — ${JSON.stringify(raw).slice(0, 200)}`);
+// ts-Konvention beibehalten: der gesamte Rest des Systems (Session-Marker in
+// report_template.html, Chart-Anzeige etc.) geht davon aus, dass `ts` eine
+// naive ET-Uhrzeit ist, die ALS UTC interpretiert wird (siehe engine.js
+// parseTs-Kommentar - so hat FMP die Daten geliefert, und alles baut darauf
+// auf). Binance/Yahoo liefern echte UTC-Zeitstempel - diese Funktion wandelt
+// sie in dieselbe "ET-Uhrzeit-als-UTC-verkleidet"-Konvention um, damit KEIN
+// anderer Teil des Codes (Session-Fenster, Chart-Achsen etc.) angepasst
+// werden muss.
+function etPseudoDateStr(utcMs) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
+  }).formatToParts(new Date(utcMs));
+  const get = (t) => parts.find((p) => p.type === t).value;
+  let hh = get("hour");
+  if (hh === "24") hh = "00"; // Intl-Eigenheit: Mitternacht kann als "24" kommen
+  return `${get("year")}-${get("month")}-${get("day")} ${hh}:${get("minute")}:${get("second")}`;
+}
+
+// Kostenlose, kein-Key-noetige Binance-REST-Kerzen (oeffentliche API, gleiche
+// Domain wie der Live-WebSocket-Feed im Dashboard). Binance liefert max. 1000
+// Kerzen pro Aufruf - bei 5-Minuten-Kerzen ueber ~25 Tage sind das mehrere
+// Tausend, daher Pagination ueber startTime.
+async function fetchBinanceKlines(binanceSymbol, interval, sinceMs, untilMs) {
+  const LIMIT = 1000;
+  const intervalMs = interval === "1h" ? 3600000 : 300000;
+  let cursor = sinceMs;
+  const rows = [];
+  let guard = 0;
+  while (cursor < untilMs && guard < 30) {
+    guard += 1;
+    const url = `https://api.binance.com/api/v3/klines?symbol=${binanceSymbol}&interval=${interval}&startTime=${cursor}&endTime=${untilMs}&limit=${LIMIT}`;
+    const batch = await fetchJson(url, `${binanceSymbol} binance ${interval}`);
+    if (!Array.isArray(batch) || batch.length === 0) break;
+    for (const k of batch) {
+      rows.push({ date: etPseudoDateStr(k[0]), open: k[1], high: k[2], low: k[3], close: k[4], volume: k[5] });
+    }
+    if (batch.length < LIMIT) break;
+    cursor = batch[batch.length - 1][0] + intervalMs;
+  }
+  return rows;
+}
+
+// Kostenlose, kein-Key-noetige Yahoo-Finance-Chart-API (dieselbe Quelle, die
+// z.B. die verbreitete 'yfinance'-Bibliothek nutzt) fuer Forex/Gold/S&P500.
+// Liefert die gewuenschte Zeitspanne in EINEM Aufruf (kein Paging noetig).
+async function fetchYahooChart(yahooSymbol, interval, rangeDays) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yahooSymbol)}?interval=${interval}&range=${rangeDays}d`;
+  const data = await fetchJson(url, `${yahooSymbol} yahoo ${interval}`, {
+    headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
+  });
+  const result = data && data.chart && data.chart.result && data.chart.result[0];
+  if (!result) {
+    const err = data && data.chart && data.chart.error;
+    throw new Error(`${yahooSymbol} yahoo ${interval}: kein Ergebnis (${err ? JSON.stringify(err) : "leer"})`);
+  }
+  const ts = result.timestamp || [];
+  const quote = result.indicators && result.indicators.quote && result.indicators.quote[0];
+  if (!quote) throw new Error(`${yahooSymbol} yahoo ${interval}: keine Kursdaten im Ergebnis`);
+  const rows = [];
+  for (let i = 0; i < ts.length; i += 1) {
+    const o = quote.open[i]; const h = quote.high[i]; const l = quote.low[i]; const c = quote.close[i];
+    if (o == null || h == null || l == null || c == null) continue; // Handelsluecke
+    rows.push({
+      date: etPseudoDateStr(ts[i] * 1000), open: o, high: h, low: l, close: c, volume: (quote.volume && quote.volume[i]) || 0,
+    });
+  }
+  return rows;
+}
+
+const BINANCE_SYMBOL_MAP = { BTCUSD: "BTCUSDT", ETHUSD: "ETHUSDT", XRPUSD: "XRPUSDT" };
+// S&P500 hat keine kostenlose Echtzeit-Index-Quelle - SPY-ETF folgt dem Index
+// fast 1:1 (Tiams Freigabe, siehe [[project_tjr_live_data]] Memory). Gold als
+// XAUUSD=X (Spot-Konvention, passend zum Live-Feed via Finnhub OANDA:XAU_USD).
+const YAHOO_SYMBOL_MAP = { GBPUSD: "GBPUSD=X", GCUSD: "XAUUSD=X", "^GSPC": "SPY" };
+
+async function fetchCandles(asset, interval, from, to) {
+  const binanceSymbol = BINANCE_SYMBOL_MAP[asset.symbol];
+  const yahooSymbol = YAHOO_SYMBOL_MAP[asset.symbol];
+  let raw;
+  if (binanceSymbol) {
+    raw = await fetchBinanceKlines(binanceSymbol, interval === "1hour" ? "1h" : "5m", from.getTime(), to.getTime());
+  } else if (yahooSymbol) {
+    const rangeDays = Math.ceil((to.getTime() - from.getTime()) / 86400000) + 2;
+    raw = await fetchYahooChart(yahooSymbol, interval === "1hour" ? "1h" : "5m", rangeDays);
+  } else {
+    throw new Error(`${asset.symbol}: keine kostenlose Datenquelle konfiguriert`);
+  }
+  if (!Array.isArray(raw) || raw.length === 0) {
+    throw new Error(`${asset.symbol} ${interval}: keine Kerzen erhalten`);
   }
   return loadCandles(raw);
 }
@@ -79,8 +159,8 @@ async function analyzeAsset(asset) {
   const today = new Date();
   const from1h = new Date(today); from1h.setDate(from1h.getDate() - 30);
   const from5m = new Date(today); from5m.setDate(from5m.getDate() - (CHART_HISTORY_DAYS + FETCH_BUFFER_DAYS));
-  const df1h = await fetchCandles(asset.symbol, "1hour", from1h, today);
-  const df5m = await fetchCandles(asset.symbol, "5min", from5m, today);
+  const df1h = await fetchCandles(asset, "1hour", from1h, today);
+  const df5m = await fetchCandles(asset, "5min", from5m, today);
   const htf = resample(df1h, 240);
   const ltf = resample(df5m, 15);
   const sig = buildSignal(htf, ltf);
