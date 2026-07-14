@@ -689,64 +689,91 @@ function selectAsset(id) {
 // dunkelblaue Box mit durchgezogenem (nicht gestricheltem) fast-schwarzen
 // Rand. FVG bleibt vorerst unveraendert (nicht Teil dieser Screenshot-
 // Runde) - eigene, hellere/transparentere Farbe zur Unterscheidung.
-// Tiam, 2026-07-14: "die short position ist noch immer im unendliche" -
-// Root-Cause endlich gefunden (nicht die Zeitachse wie bei den bisherigen
-// Fixes, sondern die PREISACHSE): Lightweight Charts' Area-Series fuellt
-// IMMER von "value" nach UNTEN bis zum unteren Rand der sichtbaren
-// Preisskala - "baseValue" wird dabei NICHT als harte Untergrenze
-// respektiert (nur fuer Gradient-Berechnung gedacht, nicht fuers Clipping).
-// Empirisch verifiziert per Pixel-Sampling (chart.takeScreenshot() +
-// getImageData) direkt im Live-Chart: eine Test-Area-Series mit
-// value=63500/baseValue=63000 fuellte trotzdem bis 61000 durch. Das war die
-// ganze Zeit die Ursache jeder "Box geht ins Unendliche"-Meldung - nur eben
-// auf der Preis-, nicht der Zeitachse, deshalb ist es bei den bisherigen
-// Zeit-Fixes (MAX_ZONE_BARS, ANALYSIS_LINE_MAX_BARS, Equilibrium-Anker)
-// nie aufgefallen. Fix: nach jeder "Box"-Series zusaetzlich eine
-// Mask-Series in der Hintergrundfarbe an der eigentlich gewuenschten
-// Untergrenze zeichnen, die den ueberschuessigen Fuellbereich optisch
-// abschneidet.
-const CHART_BG_MASK_COLOR = "#05060a";
-function addBoxFloorMask(chart, segData, floorPrice) {
-  const mask = chart.addAreaSeries({
-    topColor: CHART_BG_MASK_COLOR, bottomColor: CHART_BG_MASK_COLOR, lineColor: CHART_BG_MASK_COLOR,
-    lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
-  });
-  mask.setData(segData.map((d) => ({ time: d.time, value: floorPrice })));
-  return mask;
-}
-
-// Tiam, 2026-07-14, Nachtrag: der Mask-Fix oben hatte einen zweiten Bug, den
-// erst ein Live-Test mit einer echten SHORT-Position (Gewinn- + Risiko-Box
-// im selben Chart) aufgedeckt hat - wenn ZWEI Boxen denselben oder
-// ueberlappenden Zeitbereich nutzen, loescht die Mask der SPAETER
-// gezeichneten Box auch den bereits korrekt gefuellten Bereich der FRUEHER
-// gezeichneten Box, weil auch die Mask-Series (wie jede Area-Series)
-// unbegrenzt nach unten durchfuellt - im Test verschwand dadurch die
-// gruene Gewinn-Box komplett unter der Mask der roten Risiko-Box. Fix:
-// alle Boxen eines Charts werden nicht mehr sofort gezeichnet, sondern in
-// eine Queue gesammelt und erst am Ende GEMEINSAM verarbeitet, absteigend
-// nach ihrem oberen Preis sortiert - so faengt jede tiefer liegende Box
-// ihre eigene Fuellung/Mask immer erst dort an, wo die naechsthoehere Box
-// bereits fertig UND maskiert ist, und ueberschreibt nie mehr etwas
-// oberhalb ihres eigenen Top-Preises.
-function queueBox(boxQueue, segData, top, bottom, fillColor, lineColor, lineWidth, lineStyle) {
-  if (!segData.length) return;
-  boxQueue.push({ segData, top, bottom, fillColor, lineColor, lineWidth, lineStyle });
-}
-
-function flushBoxQueue(chart, boxQueue) {
-  const sorted = [...boxQueue].sort((a, b) => b.top - a.top);
-  for (const box of sorted) {
-    const series = chart.addAreaSeries({
-      topColor: box.fillColor, bottomColor: box.fillColor,
-      lineColor: box.lineColor, lineWidth: box.lineWidth || 1,
-      lineStyle: box.lineStyle !== undefined ? box.lineStyle : LightweightCharts.LineStyle.Solid,
-      priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
-    });
-    series.applyOptions({ baseValue: { type: "price", price: box.bottom } });
-    series.setData(box.segData.map((d) => ({ time: d.time, value: box.top })));
-    addBoxFloorMask(chart, box.segData, box.bottom);
+// Tiam, 2026-07-14: "das ist nicht besser geworden jetzt ist es unten nur
+// schwarz" - der Area-Series+Mask-Ansatz (siehe Git-Historie/Memory fuer
+// die zwei vorherigen Anlaeufe) war grundsaetzlich der falsche Werkzeug:
+// die Mask-Series ist selbst nur eine opake Flaeche, die alles darunter
+// (inklusive Grid-Linien und andere Boxen) mit einem soliden Rechteck
+// uebermalt statt sich wie ein echter transparenter Kasten in den Chart
+// einzufuegen - deshalb sahen die Boxen "kaputt"/blockartig aus statt wie
+// TJRs eigene TradingView-Rechteck-Boxen (halbtransparente Fuellung,
+// gestrichelter Rand, Grid/Kerzen darunter weiterhin sichtbar).
+//
+// Echte Loesung: Lightweight Charts v4.1+ (hier v4.2.3, per
+// series.attachPrimitive() bestaetigt) hat eine Plugin/Primitive-API, mit
+// der man direkt auf den Chart-Canvas zeichnen kann - kein Area-Series-Trick
+// mehr noetig. Eine BoxPrimitive zeichnet ein ECHTES, in Zeit UND Preis
+// exakt begrenztes Rechteck (ctx.fillRect/strokeRect mit alpha-transparenter
+// Fuellfarbe), genau wie TJRs eigenes Rectangle-Tool. Live im Browser
+// getestet und per Screenshot verifiziert: Box ist exakt so gross wie
+// angegeben, Kerzen und Grid-Linien bleiben durch die Transparenz sichtbar,
+// mehrere Boxen ueberlagern sich normal per Alpha-Blending statt sich
+// gegenseitig zu loeschen (behebt automatisch auch den Mask-Overlap-Bug
+// vom vorherigen Fix, da es gar keine Masks mehr gibt).
+class BoxPaneView {
+  constructor(source) {
+    this._source = source;
+    this._x1 = null; this._x2 = null; this._y1 = null; this._y2 = null;
   }
+  update() {
+    const o = this._source.opts;
+    const ts = this._source.chart.timeScale();
+    this._x1 = ts.timeToCoordinate(o.time1);
+    this._x2 = ts.timeToCoordinate(o.time2);
+    this._y1 = this._source.series.priceToCoordinate(o.price1);
+    this._y2 = this._source.series.priceToCoordinate(o.price2);
+  }
+  renderer() {
+    const self = this;
+    return {
+      draw(target) {
+        target.useBitmapCoordinateSpace((scope) => {
+          if (self._x1 == null || self._x2 == null || self._y1 == null || self._y2 == null) return;
+          const o = self._source.opts;
+          const ctx = scope.context;
+          const hr = scope.horizontalPixelRatio, vr = scope.verticalPixelRatio;
+          const left = Math.min(self._x1, self._x2) * hr;
+          const right = Math.max(self._x1, self._x2) * hr;
+          const top = Math.min(self._y1, self._y2) * vr;
+          const bottom = Math.max(self._y1, self._y2) * vr;
+          ctx.save();
+          if (o.fillColor) {
+            ctx.fillStyle = o.fillColor;
+            ctx.fillRect(left, top, right - left, bottom - top);
+          }
+          if (o.borderColor) {
+            ctx.strokeStyle = o.borderColor;
+            ctx.lineWidth = (o.borderWidth || 1) * hr;
+            if (o.borderDash) ctx.setLineDash(o.borderDash.map((d) => d * hr));
+            ctx.strokeRect(left, top, right - left, bottom - top);
+          }
+          ctx.restore();
+        });
+      },
+    };
+  }
+}
+
+class BoxPrimitive {
+  constructor(chart, series, opts) {
+    this.chart = chart;
+    this.series = series;
+    this.opts = opts;
+    this._pv = new BoxPaneView(this);
+  }
+  updateAllViews() { this._pv.update(); }
+  paneViews() { return [this._pv]; }
+}
+
+// segData: Array von {time} (oder vollen Kerzen-Objekten), verwendet nur
+// das erste und letzte Element als linke/rechte Kante der Box.
+function drawBox(chart, series, segData, top, bottom, opts) {
+  if (!segData.length) return;
+  const time1 = segData[0].time;
+  const time2 = segData[segData.length - 1].time;
+  const prim = new BoxPrimitive(chart, series, { time1, time2, price1: top, price2: bottom, ...opts });
+  series.attachPrimitive(prim);
+  return prim;
 }
 
 const ZONE_STYLES = {
@@ -755,7 +782,7 @@ const ZONE_STYLES = {
   BreakerBlock: { fill: "rgba(30,55,90,0.55)", border: "rgba(10,10,16,0.95)", label: "BB", pos: "belowBar", lineStyle: "Solid" },
 };
 
-function drawZoneBox(chart, candles, ann, markers, boxQueue) {
+function drawZoneBox(chart, candles, ann, markers, series) {
   const style = ZONE_STYLES[ann.zoneKind] || ZONE_STYLES.OrderBlock;
   const top = ann.zoneRange[1];
   const bottom = ann.zoneRange[0];
@@ -795,7 +822,10 @@ function drawZoneBox(chart, candles, ann, markers, boxQueue) {
   const zoneData = candles.slice(startIdx, endIdx + 1);
   if (zoneData.length === 0) return;
 
-  queueBox(boxQueue, zoneData, top, bottom, fillColor, borderColor, 1, LightweightCharts.LineStyle[style.lineStyle || "Dashed"]);
+  drawBox(chart, series, zoneData, top, bottom, {
+    fillColor, borderColor, borderWidth: 1,
+    borderDash: (style.lineStyle || "Dashed") === "Dashed" ? [4, 3] : null,
+  });
 
   markers.push({
     time: zoneData[0].time, position: style.pos,
@@ -866,7 +896,7 @@ const POSITION_BOX_COLORS = {
   risk: { fill: "rgba(255,107,157,0.42)", line: "rgba(255,107,157,0.9)" },
 };
 
-function drawPositionBox(chart, candles, sig, startTs, boxQueue) {
+function drawPositionBox(chart, candles, sig, startTs, series) {
   if (sig.entry === null || sig.stop === null || sig.target === null) return;
   const startIdx = candles.findIndex((c) => c.time >= startTs);
   if (startIdx === -1) return;
@@ -880,18 +910,20 @@ function drawPositionBox(chart, candles, sig, startTs, boxQueue) {
   if (segData.length === 0) return;
 
   // Tiam, 2026-07-14: fuer eine SHORT-Position liegt sig.target UNTER
-  // sig.entry - da die Area-Series immer von "value" nach unten fuellt
-  // (siehe addBoxFloorMask-Kommentar oben), muss "value" IMMER der hoehere
-  // der beiden Preise sein, sonst wird bei SHORT ueberhaupt nicht die
-  // richtige Box gezeichnet, nur der Ueberlauf darunter. Math.max/min
-  // macht das fuer LONG und SHORT gleichermassen korrekt.
+  // sig.entry (umgekehrt bei LONG) - Math.max/min bestimmt Ober-/Unterkante
+  // der Box unabhaengig von der Richtung, statt eines der beiden Felder
+  // direkt als "oben" anzunehmen.
   const profitTop = Math.max(sig.entry, sig.target);
   const profitBottom = Math.min(sig.entry, sig.target);
-  queueBox(boxQueue, segData, profitTop, profitBottom, POSITION_BOX_COLORS.profit.fill, POSITION_BOX_COLORS.profit.line, 2, LightweightCharts.LineStyle.Dashed);
+  drawBox(chart, series, segData, profitTop, profitBottom, {
+    fillColor: POSITION_BOX_COLORS.profit.fill, borderColor: POSITION_BOX_COLORS.profit.line, borderWidth: 2, borderDash: [4, 3],
+  });
 
   const riskTop = Math.max(sig.entry, sig.stop);
   const riskBottom = Math.min(sig.entry, sig.stop);
-  queueBox(boxQueue, segData, riskTop, riskBottom, POSITION_BOX_COLORS.risk.fill, POSITION_BOX_COLORS.risk.line, 2, LightweightCharts.LineStyle.Dashed);
+  drawBox(chart, series, segData, riskTop, riskBottom, {
+    fillColor: POSITION_BOX_COLORS.risk.fill, borderColor: POSITION_BOX_COLORS.risk.line, borderWidth: 2, borderDash: [4, 3],
+  });
 
   // Duenne durchgezogene Trennlinie am Entry-Preis (wie die weisse Linie im
   // Referenz-Screenshot, die die gruene von der roten Zone trennt).
@@ -918,7 +950,7 @@ const HISTORICAL_BOX_COLORS = {
 };
 const STALE_BOX_FALLBACK_BARS = 40; // ~10h bei 15-Min-Kerzen, falls kein resolvedTs vorliegt
 
-function drawHistoricalPositionBox(chart, candles, rec, boxQueue) {
+function drawHistoricalPositionBox(chart, candles, rec, series) {
   if (rec.status === "open") return; // die laufende Position zeigt bereits drawPositionBox()
   if (rec.entry == null || rec.stop == null || rec.target == null) return;
   const startTs = Math.floor(rec.entryTs / 1000);
@@ -940,11 +972,15 @@ function drawHistoricalPositionBox(chart, candles, rec, boxQueue) {
 
   const histProfitTop = Math.max(rec.entry, rec.target);
   const histProfitBottom = Math.min(rec.entry, rec.target);
-  queueBox(boxQueue, segData, histProfitTop, histProfitBottom, HISTORICAL_BOX_COLORS.profit.fill, HISTORICAL_BOX_COLORS.profit.line, 1, LightweightCharts.LineStyle.Solid);
+  drawBox(chart, series, segData, histProfitTop, histProfitBottom, {
+    fillColor: HISTORICAL_BOX_COLORS.profit.fill, borderColor: HISTORICAL_BOX_COLORS.profit.line, borderWidth: 1, borderDash: null,
+  });
 
   const histRiskTop = Math.max(rec.entry, rec.stop);
   const histRiskBottom = Math.min(rec.entry, rec.stop);
-  queueBox(boxQueue, segData, histRiskTop, histRiskBottom, HISTORICAL_BOX_COLORS.risk.fill, HISTORICAL_BOX_COLORS.risk.line, 1, LightweightCharts.LineStyle.Solid);
+  drawBox(chart, series, segData, histRiskTop, histRiskBottom, {
+    fillColor: HISTORICAL_BOX_COLORS.risk.fill, borderColor: HISTORICAL_BOX_COLORS.risk.line, borderWidth: 1, borderDash: null,
+  });
 }
 
 // Tiam, 2026-07-12: Screenshot geschickt - zu viele volle-Chart-Breite-Linien
@@ -999,7 +1035,7 @@ const EQUILIBRIUM_EDGE_COLOR = "rgba(255,255,255,0.55)";
 // ann.equilibriumRange, da das server-seitig aus ltfDf stammt und leicht
 // von den hier gerenderten candles abweichen kann) - robust per eigenem
 // Max/Min-Scan innerhalb des ANALYSIS_LINE_MAX_BARS-Sicherheitsdeckels.
-function drawEquilibriumBox(chart, candles, ann, markers, boxQueue) {
+function drawEquilibriumBox(chart, candles, ann, markers, series) {
   if (!ann.sweep || !ann.equilibriumRange) return;
   const [legLow, legHigh] = ann.equilibriumRange;
   if (legLow == null || legHigh == null || !(legHigh > legLow)) return;
@@ -1029,7 +1065,9 @@ function drawEquilibriumBox(chart, candles, ann, markers, boxQueue) {
   const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
   if (segData.length === 0) return;
 
-  queueBox(boxQueue, segData, legHigh, legLow, EQUILIBRIUM_FILL_COLOR, EQUILIBRIUM_EDGE_COLOR, 1, LightweightCharts.LineStyle.Dashed);
+  drawBox(chart, series, segData, legHigh, legLow, {
+    fillColor: EQUILIBRIUM_FILL_COLOR, borderColor: EQUILIBRIUM_EDGE_COLOR, borderWidth: 1, borderDash: [4, 3],
+  });
 
   const midSeries = chart.addLineSeries({
     color: EQUILIBRIUM_LINE_COLOR, lineWidth: 2, lineStyle: LightweightCharts.LineStyle.Solid,
@@ -1381,7 +1419,6 @@ function renderChart(item) {
 
   const { ann, sig } = item;
   let markers = sessionMarkers(item.ltf);
-  const boxQueue = [];
   drawSessionLevels(chart, candles, computeSessionLevels(item.ltf), markers);
   drawSessionDividers(chart, item.ltf, candles);
 
@@ -1411,10 +1448,10 @@ function renderChart(item) {
     });
   }
   if (ann.equilibrium !== null && ann.sweep) {
-    drawEquilibriumBox(chart, candles, ann, markers, boxQueue);
+    drawEquilibriumBox(chart, candles, ann, markers, series);
   }
   if (ann.zoneRange && ann.zoneTs) {
-    drawZoneBox(chart, candles, ann, markers, boxQueue);
+    drawZoneBox(chart, candles, ann, markers, series);
   }
   if (sig.entry !== null) {
     // Box zuerst zeichnen (liegt hinter den duennen Preis-Linien) - Startpunkt
@@ -1437,7 +1474,7 @@ function renderChart(item) {
     const boxStartTs = openRec
       ? Math.floor(openRec.entryTs / 1000)
       : (ann.zoneTs ? Math.floor(ann.zoneTs / 1000) : candles[Math.max(0, candles.length - 21)].time);
-    drawPositionBox(chart, candles, sig, boxStartTs, boxQueue);
+    drawPositionBox(chart, candles, sig, boxStartTs, series);
   }
 
   const SIGNAL_OUTCOME_STYLE = {
@@ -1447,7 +1484,7 @@ function renderChart(item) {
     stale: { color: "#7c8399", text: "ABGELAUFEN" },
   };
   for (const rec of (item.signals || [])) {
-    drawHistoricalPositionBox(chart, candles, rec, boxQueue);
+    drawHistoricalPositionBox(chart, candles, rec, series);
     const style = SIGNAL_OUTCOME_STYLE[rec.status] || SIGNAL_OUTCOME_STYLE.open;
     const isLong = rec.direction === "LONG";
     // Tiam, 2026-07-12: "schaut ob der Trade wirklich in die richtige
@@ -1464,8 +1501,6 @@ function renderChart(item) {
       color: style.color, shape: isLong ? "arrowUp" : "arrowDown", text,
     });
   }
-
-  flushBoxQueue(chart, boxQueue);
 
   markers.sort((a, b) => a.time - b.time);
   if (markers.length) series.setMarkers(markers);
