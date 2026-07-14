@@ -1171,6 +1171,53 @@ function connectLiveFeed(item) {
   }
 }
 
+// Tiam, 2026-07-14: "kannst du die timezone auf vienna zeit umstellen" - die
+// Kerzen-Zeitstempel (ts) sind intern "ET-Wanduhrzeit als UTC verkleidet"
+// (siehe etPseudoDateStr in build.js) - das MUSS so bleiben, weil Sessions/
+// Bias-Logik in engine.js darauf aufbauen. Was hier gefixt wird, ist NUR die
+// ANZEIGE: der Browser hat diese Pseudo-UTC-Zeit bisher einfach nochmal in
+// die lokale Browser-Zeitzone umgerechnet (+2h Wien-Sommerzeit obendrauf),
+// wodurch die Chart-Achse ca. 4h zu frueh anzeigte. Diese Funktion rechnet
+// die Pseudo-Zeit zurueck auf die ECHTE UTC-Zeit und formatiert sie dann
+// korrekt in Wien-Zeit - nur fuers Anzeigen, die Rohdaten/Analyse bleiben
+// unveraendert.
+function pseudoEtToRealUtcMs(epochSeconds) {
+  const d = new Date(epochSeconds * 1000);
+  const y = d.getUTCFullYear(), mo = d.getUTCMonth(), day = d.getUTCDate();
+  const h = d.getUTCHours(), mi = d.getUTCMinutes(), s = d.getUTCSeconds();
+  const target = Date.UTC(y, mo, day, h, mi, s);
+  let guess = target;
+  for (let i = 0; i < 2; i += 1) {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
+    }).formatToParts(new Date(guess));
+    const get = (t) => parts.find((p) => p.type === t).value;
+    let hh = get("hour");
+    if (hh === "24") hh = "00";
+    const got = Date.UTC(Number(get("year")), Number(get("month")) - 1, Number(get("day")),
+      Number(hh), Number(get("minute")), Number(get("second")));
+    guess += target - got;
+  }
+  return guess;
+}
+function viennaTickLabel(epochSeconds, tickMarkType) {
+  const realMs = pseudoEtToRealUtcMs(epochSeconds);
+  const opts = { timeZone: "Europe/Vienna" };
+  if (tickMarkType === LightweightCharts.TickMarkType.Year) {
+    opts.year = "numeric";
+  } else if (tickMarkType === LightweightCharts.TickMarkType.Month) {
+    opts.month = "short";
+  } else if (tickMarkType === LightweightCharts.TickMarkType.DayOfMonth) {
+    opts.day = "numeric";
+  } else {
+    opts.hour = "2-digit";
+    opts.minute = "2-digit";
+  }
+  return new Intl.DateTimeFormat("de-AT", opts).format(new Date(realMs));
+}
+
 function renderChart(item) {
   const container = document.getElementById("chart-" + assetId(item.asset));
   if (!container || item.error || !item.ltf || !item.ltf.length) return;
@@ -1183,9 +1230,15 @@ function renderChart(item) {
       vertLines: { color: "rgba(255,255,255,0.05)" },
       horzLines: { color: "rgba(255,255,255,0.05)" },
     },
-    timeScale: { timeVisible: true, secondsVisible: false, borderColor: "rgba(255,255,255,0.1)" },
+    timeScale: {
+      timeVisible: true, secondsVisible: false, borderColor: "rgba(255,255,255,0.1)",
+      tickMarkFormatter: (time, tickMarkType) => viennaTickLabel(time, tickMarkType),
+    },
     rightPriceScale: { borderColor: "rgba(255,255,255,0.1)" },
     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+    localization: {
+      timeFormatter: (time) => viennaTickLabel(time, LightweightCharts.TickMarkType.Time),
+    },
   });
 
   const series = chart.addCandlestickSeries({
