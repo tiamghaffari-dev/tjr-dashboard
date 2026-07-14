@@ -191,6 +191,13 @@ async function analyzeAsset(asset) {
   }
   return {
     sig, ann, ltf: ltf.slice(-CHART_HISTORY_CANDLES), ltfFull: ltf, weeklyTrend,
+    // Tiam, 2026-07-14: "die KI kann auch manchmal selber denken und schauen ob
+    // es vllt doch ein entry gibt [...] da es ja auch auf dem gesamten Markt
+    // zugreifen kann" - getAiAssessment() bekam bisher nur die letzten 20
+    // LTF-Kerzen (15min). Damit die KI wirklich das GROESSERE Bild sieht (nicht
+    // nur einen kleinen Ausschnitt), wird hier zusaetzlich ein HTF (4H)
+    // Kontext mitgegeben - genug fuer ein paar Handelstage Trendverlauf.
+    htfRecent: htf.slice(-30),
   };
 }
 
@@ -219,28 +226,62 @@ async function loadNews() {
 }
 
 // Supplementary, non-authoritative AI read on top of the mechanical engine.
-// Never overrides sig.signal — purely an extra text note shown alongside it.
-async function getAiAssessment(asset, sig, ltf, newsEvents) {
+// Never overrides sig.signal, never gets logged to signals_log.json / paper-
+// traded — purely an extra text note shown alongside the mechanical result.
+//
+// Tiam, 2026-07-14: "die KI kann auch manchmal selber denken und schauen ob
+// es vllt doch ein entry gibt oder nicht da es ja auch auf dem gesamten Markt
+// zugreifen kann um zu sehen ob es steigt oder sinken wurde" - previously this
+// only sanity-checked whether the MECHANICAL signal fit the picture (and was
+// explicitly told never to give a buy/sell read). Widened per Tiam's explicit
+// choice ("nur als sichtbare Einschaetzung", see AskUserQuestion 2026-07-14):
+// the AI now also gives its OWN independent opinion on whether it sees a
+// possible long/short case, even when the mechanical engine says "kein
+// Setup" - using more context than before (adds 4H trend + weekly bias, not
+// just the last 20 15min candles). This stays informational only: it is
+// deliberately kept OUT of signals_log.json / the paper-trading pipeline, so
+// the mechanical, backtested rule engine (see [[feedback_tjr_no_forced_signals]] -
+// "kein Setup" must stay a valid, non-stretched outcome) remains untouched and
+// auditable. Not real financial advice; Tiam himself won't trade real money
+// until this is properly backtested (see [[project_tjr_backtest_plan]]).
+async function getAiAssessment(asset, sig, ltf, newsEvents, htfRecent, weeklyTrend) {
   if (!ANTHROPIC_API_KEY) return null;
 
   const recent = ltf.slice(-20).map((c) => (
     `${new Date(c.ts).toISOString().slice(5, 16)} O:${c.open} H:${c.high} L:${c.low} C:${c.close}`
   )).join("\n");
+  const htfText = (htfRecent || []).slice(-15).map((c) => (
+    `${new Date(c.ts).toISOString().slice(5, 16)} O:${c.open} H:${c.high} L:${c.low} C:${c.close}`
+  )).join("\n");
+  const weeklyText = weeklyTrend
+    ? `Wochentrend (letzte ${weeklyTrend.weeksUsed} Wochen): ${weeklyTrend.bias}, EQ ${weeklyTrend.equilibrium}, aktuell ${weeklyTrend.current}`
+    : "keine Wochendaten verfuegbar";
   const newsText = newsEvents.length
     ? newsEvents.map((e) => `${e.date} ${e.event} (${e.currency})`).join("; ")
     : "keine";
 
   const prompt = `Asset: ${asset.name} (${asset.display})
-Mechanische Regel-Engine sagt: Bias=${sig.bias}, Signal=${sig.signal}.
+Mechanische Regel-Engine (streng nach TJRs ICT/SMC-Regeln, sweep+bestaetigung+praezise Zone) sagt: Bias=${sig.bias}, Signal=${sig.signal}.
+${sig.detail || ""}
+
+4H-Kerzen der letzten Tage (UTC, groesseres Bild):
+${htfText || "nicht verfuegbar"}
+
 Letzte 20 15-Minuten-Kerzen (UTC):
 ${recent}
+
+${weeklyText}
 Heutige High-Impact-News (USD/GBP): ${newsText}
 
 Du bist ein erfahrener Daytrader im ICT/Smart-Money-Stil (wie TJR). Gib eine
-sehr knappe Einschätzung (max. 2 Sätze, Deutsch): passt das mechanische
-Signal gerade zum breiteren Marktbild und den News, oder ist Vorsicht
-angebracht? Keine Kauf-/Verkaufsempfehlung, nur eine kurze fachliche
-Einordnung.`;
+knappe, eigenstaendige Einschaetzung (max. 3 Saetze, Deutsch): Basierend auf
+diesem GESAMTEN Bild (4H-Trend, 15min-Struktur, Wochentrend, News) - wuerdest
+du hier unabhaengig von der mechanischen Regel eine Long- oder Short-Chance
+sehen, oder eher nicht? Wenn ja, kurz warum (welche Struktur/welcher Kontext).
+Wenn die mechanische Regel bereits ein Signal zeigt, sag auch ob das zum
+Gesamtbild passt. Das ist eine fachliche Einordnung fuer ein Paper-Trading-
+Experiment, keine Anlageberatung und wird nicht automatisch gehandelt oder
+geloggt.`;
 
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -426,10 +467,10 @@ async function main() {
   for (const asset of ASSETS) {
     try {
       const {
-        sig, ann, ltf, ltfFull, weeklyTrend,
+        sig, ann, ltf, ltfFull, weeklyTrend, htfRecent,
       } = await analyzeAsset(asset);
       assets.push({
-        asset, sig, ann, ltf, error: null, aiNote: null, weeklyTrend,
+        asset, sig, ann, ltf, error: null, aiNote: null, weeklyTrend, htfRecent,
       });
       ltfFullBySymbol[asset.symbol] = ltfFull;
       console.log(`OK   ${asset.name}: bias=${sig.bias} signal=${sig.signal}`);
@@ -451,7 +492,7 @@ async function main() {
   if (ANTHROPIC_API_KEY) {
     for (const item of assets) {
       if (item.error) continue;
-      item.aiNote = await getAiAssessment(item.asset, item.sig, item.ltf, news);
+      item.aiNote = await getAiAssessment(item.asset, item.sig, item.ltf, news, item.htfRecent, item.weeklyTrend);
       console.log(`KI   ${item.asset.name}: ${item.aiNote ? "ok" : "keine Antwort"}`);
     }
   } else {

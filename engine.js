@@ -294,9 +294,23 @@ function buildSignal(htfDf, ltfDf, assetClass, rrTarget = 2.0, sweepLookbackBars
   }
 
   if (candidates.length === 0) {
-    result.signal = `Watchlist (${conf.kind} bestaetigt, keine Entry-Zone im Discount/Premium)`;
-    result.detail = `Sweep+${conf.kind} am ${new Date(conf.ts).toISOString()} bestaetigt Bias ${biasLabel}, aber keine FVG/OB/Breaker im ${wantedZone}.`;
-    return result;
+    // Tiam, 2026-07-14: "wende einfach alles an was tjr angewendet hat" - TJRs
+    // eigenes, live getipptes Framework (Bootcamp Day 30 / "Beginners Guide"
+    // Glossar) listet "eq" (Equilibrium) gleichrangig neben fvg/ob/bb als
+    // vierten Continuation-Zonentyp: "continuation: fvgs, ob, bb, eq". Bisher
+    // wurde Equilibrium nur als Premium/Discount-FILTER fuer die anderen drei
+    // Zonentypen benutzt, nie selbst als eigenstaendige Entry-Zone - dieser
+    // Fall fuehrte bisher zu "Watchlist, keine Entry-Zone" obwohl Sweep+
+    // Bestaetigung schon vorlagen. Fix: wenn KEINE FVG/OB/Breaker-Zone im
+    // Discount/Premium existiert, zaehlt die GANZE Discount/Premium-Haelfte
+    // selbst als (breitere, weniger praezise) Entry-Zone - als Fallback,
+    // NICHT als Ersatz fuer die praeziseren Zonen (die bleiben durch die
+    // bestehende candidates.sort()-Naeherungslogik immer bevorzugt, wenn
+    // vorhanden - kein Video zeigt je einen Trade auf Equilibrium ALLEIN
+    // ohne FVG/OB/BB, deshalb bewusst als schwaechste/letzte Option).
+    const eqTop = wantDir === "up" ? mid : legHigh;
+    const eqBottom = wantDir === "up" ? legLow : mid;
+    candidates.push({ kind: "Equilibrium", top: eqTop, bottom: eqBottom });
   }
 
   candidates.sort((a, b) => {
@@ -426,6 +440,19 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
     const midBb = (bb.top + bb.bottom) / 2;
     const { zone: z } = premiumDiscountZone(legLow, legHigh, midBb);
     if (z === wantedZone) candidates.push({ kind: "BreakerBlock", top: bb.top, bottom: bb.bottom, ts: bb.ts });
+  }
+  if (candidates.length === 0) {
+    // Mirrors the same Equilibrium-fallback added to buildSignal() above, so the
+    // chart's zone box matches what the actual signal decision used. ts is set to
+    // recentSweep.ts (same as the other candidate kinds need for drawZoneBox's
+    // startIdx lookup) even though drawZoneBox's call site in report_template.html
+    // deliberately SKIPS drawing a separate box when zoneKind === "Equilibrium" —
+    // drawEquilibriumBox already renders this exact same discount/premium half with
+    // its own dedicated styling, so a second box would just be a redundant,
+    // mislabeled duplicate (ZONE_STYLES has no "Equilibrium" entry).
+    const eqTop = wantDir === "up" ? ann.equilibrium : legHigh;
+    const eqBottom = wantDir === "up" ? legLow : ann.equilibrium;
+    candidates.push({ kind: "Equilibrium", top: eqTop, bottom: eqBottom, ts: recentSweep.ts });
   }
   if (candidates.length) {
     const currentPrice = ltfDf[ltfDf.length - 1].close;
