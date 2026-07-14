@@ -689,6 +689,32 @@ function selectAsset(id) {
 // dunkelblaue Box mit durchgezogenem (nicht gestricheltem) fast-schwarzen
 // Rand. FVG bleibt vorerst unveraendert (nicht Teil dieser Screenshot-
 // Runde) - eigene, hellere/transparentere Farbe zur Unterscheidung.
+// Tiam, 2026-07-14: "die short position ist noch immer im unendliche" -
+// Root-Cause endlich gefunden (nicht die Zeitachse wie bei den bisherigen
+// Fixes, sondern die PREISACHSE): Lightweight Charts' Area-Series fuellt
+// IMMER von "value" nach UNTEN bis zum unteren Rand der sichtbaren
+// Preisskala - "baseValue" wird dabei NICHT als harte Untergrenze
+// respektiert (nur fuer Gradient-Berechnung gedacht, nicht fuers Clipping).
+// Empirisch verifiziert per Pixel-Sampling (chart.takeScreenshot() +
+// getImageData) direkt im Live-Chart: eine Test-Area-Series mit
+// value=63500/baseValue=63000 fuellte trotzdem bis 61000 durch. Das war die
+// ganze Zeit die Ursache jeder "Box geht ins Unendliche"-Meldung - nur eben
+// auf der Preis-, nicht der Zeitachse, deshalb ist es bei den bisherigen
+// Zeit-Fixes (MAX_ZONE_BARS, ANALYSIS_LINE_MAX_BARS, Equilibrium-Anker)
+// nie aufgefallen. Fix: nach jeder "Box"-Series zusaetzlich eine
+// Mask-Series in der Hintergrundfarbe an der eigentlich gewuenschten
+// Untergrenze zeichnen, die den ueberschuessigen Fuellbereich optisch
+// abschneidet.
+const CHART_BG_MASK_COLOR = "#05060a";
+function addBoxFloorMask(chart, segData, floorPrice) {
+  const mask = chart.addAreaSeries({
+    topColor: CHART_BG_MASK_COLOR, bottomColor: CHART_BG_MASK_COLOR, lineColor: CHART_BG_MASK_COLOR,
+    lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+  });
+  mask.setData(segData.map((d) => ({ time: d.time, value: floorPrice })));
+  return mask;
+}
+
 const ZONE_STYLES = {
   FVG: { fill: "rgba(255,107,157,0.16)", border: "rgba(255,107,157,0.65)", label: "FVG", pos: "aboveBar", lineStyle: "Dashed" },
   OrderBlock: { fill: "rgba(30,55,90,0.55)", border: "rgba(10,10,16,0.95)", label: "OB", pos: "belowBar", lineStyle: "Solid" },
@@ -742,6 +768,7 @@ function drawZoneBox(chart, candles, ann, markers) {
   });
   boxSeries.applyOptions({ baseValue: { type: "price", price: bottom } });
   boxSeries.setData(zoneData.map((c) => ({ time: c.time, value: top })));
+  addBoxFloorMask(chart, zoneData, bottom);
 
   markers.push({
     time: zoneData[0].time, position: style.pos,
@@ -825,23 +852,35 @@ function drawPositionBox(chart, candles, sig, startTs) {
   const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
   if (segData.length === 0) return;
 
+  // Tiam, 2026-07-14: fuer eine SHORT-Position liegt sig.target UNTER
+  // sig.entry - da die Area-Series immer von "value" nach unten fuellt
+  // (siehe addBoxFloorMask-Kommentar oben), muss "value" IMMER der hoehere
+  // der beiden Preise sein, sonst wird bei SHORT ueberhaupt nicht die
+  // richtige Box gezeichnet, nur der Ueberlauf darunter. Math.max/min
+  // macht das fuer LONG und SHORT gleichermassen korrekt.
+  const profitTop = Math.max(sig.entry, sig.target);
+  const profitBottom = Math.min(sig.entry, sig.target);
   const profitSeries = chart.addAreaSeries({
     topColor: POSITION_BOX_COLORS.profit.fill, bottomColor: POSITION_BOX_COLORS.profit.fill,
     lineColor: POSITION_BOX_COLORS.profit.line, lineWidth: 2,
     lineStyle: LightweightCharts.LineStyle.Dashed,
     priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
   });
-  profitSeries.applyOptions({ baseValue: { type: "price", price: sig.entry } });
-  profitSeries.setData(segData.map((d) => ({ time: d.time, value: sig.target })));
+  profitSeries.applyOptions({ baseValue: { type: "price", price: profitBottom } });
+  profitSeries.setData(segData.map((d) => ({ time: d.time, value: profitTop })));
+  addBoxFloorMask(chart, segData, profitBottom);
 
+  const riskTop = Math.max(sig.entry, sig.stop);
+  const riskBottom = Math.min(sig.entry, sig.stop);
   const riskSeries = chart.addAreaSeries({
     topColor: POSITION_BOX_COLORS.risk.fill, bottomColor: POSITION_BOX_COLORS.risk.fill,
     lineColor: POSITION_BOX_COLORS.risk.line, lineWidth: 2,
     lineStyle: LightweightCharts.LineStyle.Dashed,
     priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
   });
-  riskSeries.applyOptions({ baseValue: { type: "price", price: sig.entry } });
-  riskSeries.setData(segData.map((d) => ({ time: d.time, value: sig.stop })));
+  riskSeries.applyOptions({ baseValue: { type: "price", price: riskBottom } });
+  riskSeries.setData(segData.map((d) => ({ time: d.time, value: riskTop })));
+  addBoxFloorMask(chart, segData, riskBottom);
 
   // Duenne durchgezogene Trennlinie am Entry-Preis (wie die weisse Linie im
   // Referenz-Screenshot, die die gruene von der roten Zone trennt).
@@ -888,21 +927,27 @@ function drawHistoricalPositionBox(chart, candles, rec) {
   const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
   if (segData.length === 0) return;
 
+  const histProfitTop = Math.max(rec.entry, rec.target);
+  const histProfitBottom = Math.min(rec.entry, rec.target);
   const profitSeries = chart.addAreaSeries({
     topColor: HISTORICAL_BOX_COLORS.profit.fill, bottomColor: HISTORICAL_BOX_COLORS.profit.fill,
     lineColor: HISTORICAL_BOX_COLORS.profit.line, lineWidth: 1,
     priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
   });
-  profitSeries.applyOptions({ baseValue: { type: "price", price: rec.entry } });
-  profitSeries.setData(segData.map((d) => ({ time: d.time, value: rec.target })));
+  profitSeries.applyOptions({ baseValue: { type: "price", price: histProfitBottom } });
+  profitSeries.setData(segData.map((d) => ({ time: d.time, value: histProfitTop })));
+  addBoxFloorMask(chart, segData, histProfitBottom);
 
+  const histRiskTop = Math.max(rec.entry, rec.stop);
+  const histRiskBottom = Math.min(rec.entry, rec.stop);
   const riskSeries = chart.addAreaSeries({
     topColor: HISTORICAL_BOX_COLORS.risk.fill, bottomColor: HISTORICAL_BOX_COLORS.risk.fill,
     lineColor: HISTORICAL_BOX_COLORS.risk.line, lineWidth: 1,
     priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
   });
-  riskSeries.applyOptions({ baseValue: { type: "price", price: rec.entry } });
-  riskSeries.setData(segData.map((d) => ({ time: d.time, value: rec.stop })));
+  riskSeries.applyOptions({ baseValue: { type: "price", price: histRiskBottom } });
+  riskSeries.setData(segData.map((d) => ({ time: d.time, value: histRiskTop })));
+  addBoxFloorMask(chart, segData, histRiskBottom);
 }
 
 // Tiam, 2026-07-12: Screenshot geschickt - zu viele volle-Chart-Breite-Linien
@@ -994,6 +1039,7 @@ function drawEquilibriumBox(chart, candles, ann, markers) {
   });
   fillSeries.applyOptions({ baseValue: { type: "price", price: legLow } });
   fillSeries.setData(segData.map((d) => ({ time: d.time, value: legHigh })));
+  addBoxFloorMask(chart, segData, legLow);
 
   const midSeries = chart.addLineSeries({
     color: EQUILIBRIUM_LINE_COLOR, lineWidth: 2, lineStyle: LightweightCharts.LineStyle.Solid,
