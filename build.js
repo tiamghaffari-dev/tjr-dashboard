@@ -1,17 +1,15 @@
-// build.js — fetches live FMP data, runs the TJR engine, optionally adds a
-// supplementary AI assessment via the Anthropic API, sends a push notification
+// build.js — fetches live FMP data, runs the TJR engine, adds a supplementary
+// (rule-based, no external API) market-context read, sends a push notification
 // on new ENTRY signals via ntfy.sh, and renders docs/index.html + docs/chart.html.
-// Run via: FMP_API_KEY=xxx ANTHROPIC_API_KEY=yyy NTFY_TOPIC=zzz node build.js
-// (ANTHROPIC_API_KEY and NTFY_TOPIC are both optional — without them those
-// features are skipped, the mechanical engine keeps working on its own.)
+// Run via: FMP_API_KEY=xxx NTFY_TOPIC=zzz node build.js
+// (NTFY_TOPIC is optional — without it that one feature is skipped, everything
+// else keeps working on its own, no paid API key needed anywhere in this file.)
 const fs = require("fs");
 const path = require("path");
 const {
   parseTs, loadCandles, resample, buildSignal, buildAnnotations,
 } = require("./engine.js");
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || null;
-const ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
 const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 
 const STATE_PATH = path.join(__dirname, "state.json");
@@ -225,90 +223,95 @@ async function loadNews() {
     }));
 }
 
-// Supplementary, non-authoritative AI read on top of the mechanical engine.
-// Never overrides sig.signal, never gets logged to signals_log.json / paper-
-// traded — purely an extra text note shown alongside the mechanical result.
+// Supplementary, non-authoritative market-context read on top of the
+// mechanical engine. Never overrides sig.signal, never gets logged to
+// signals_log.json / paper-traded — purely an extra text note shown alongside
+// the mechanical result.
 //
 // Tiam, 2026-07-14: "die KI kann auch manchmal selber denken und schauen ob
 // es vllt doch ein entry gibt oder nicht da es ja auch auf dem gesamten Markt
-// zugreifen kann um zu sehen ob es steigt oder sinken wurde" - previously this
-// only sanity-checked whether the MECHANICAL signal fit the picture (and was
-// explicitly told never to give a buy/sell read). Widened per Tiam's explicit
-// choice ("nur als sichtbare Einschaetzung", see AskUserQuestion 2026-07-14):
-// the AI now also gives its OWN independent opinion on whether it sees a
-// possible long/short case, even when the mechanical engine says "kein
-// Setup" - using more context than before (adds 4H trend + weekly bias, not
-// just the last 20 15min candles). This stays informational only: it is
-// deliberately kept OUT of signals_log.json / the paper-trading pipeline, so
-// the mechanical, backtested rule engine (see [[feedback_tjr_no_forced_signals]] -
-// "kein Setup" must stay a valid, non-stretched outcome) remains untouched and
-// auditable. Not real financial advice; Tiam himself won't trade real money
-// until this is properly backtested (see [[project_tjr_backtest_plan]]).
-async function getAiAssessment(asset, sig, ltf, newsEvents, htfRecent, weeklyTrend) {
-  if (!ANTHROPIC_API_KEY) return null;
+// zugreifen kann um zu sehen ob es steigt oder sinken wurde" - first version
+// of this used the Anthropic API (see git branch backup-ai-llm-2026-07-14 for
+// that version, kept as a reference/fallback). Tiam then hit "credit balance
+// too low" on his fresh Anthropic account and said (same day): "ich dachte
+// die gratis dings ist momentan ausreichend fuer eine weile [...] kannst du
+// es nicht anders machen? also komplett unabhaengig von solchen sachen und
+// die Webseite arbeitet von alleine" - any hosted LLM API needs paid credits
+// once a free quota is used/unavailable, that's not something buildable
+// around. Explicit choice via follow-up: try a version with NO external
+// provider at all first, keep the LLM version backed up in case he wants to
+// pay for it later. This function is the result: a fully synchronous,
+// deterministic, zero-cost heuristic that reads the SAME broader-market
+// inputs (4H trend momentum, weekly bias, 15min momentum, distance from the
+// recent range, today's high-impact news) an LLM prompt would have been
+// given, and combines them into a short German read - no network call, no
+// API key, no billing dependency, runs identically forever.
+function pctChange(a, b) {
+  if (!a) return 0;
+  return (b - a) / Math.abs(a);
+}
 
-  const recent = ltf.slice(-20).map((c) => (
-    `${new Date(c.ts).toISOString().slice(5, 16)} O:${c.open} H:${c.high} L:${c.low} C:${c.close}`
-  )).join("\n");
-  const htfText = (htfRecent || []).slice(-15).map((c) => (
-    `${new Date(c.ts).toISOString().slice(5, 16)} O:${c.open} H:${c.high} L:${c.low} C:${c.close}`
-  )).join("\n");
-  const weeklyText = weeklyTrend
-    ? `Wochentrend (letzte ${weeklyTrend.weeksUsed} Wochen): ${weeklyTrend.bias}, EQ ${weeklyTrend.equilibrium}, aktuell ${weeklyTrend.current}`
-    : "keine Wochendaten verfuegbar";
-  const newsText = newsEvents.length
-    ? newsEvents.map((e) => `${e.date} ${e.event} (${e.currency})`).join("; ")
-    : "keine";
-
-  const prompt = `Asset: ${asset.name} (${asset.display})
-Mechanische Regel-Engine (streng nach TJRs ICT/SMC-Regeln, sweep+bestaetigung+praezise Zone) sagt: Bias=${sig.bias}, Signal=${sig.signal}.
-${sig.detail || ""}
-
-4H-Kerzen der letzten Tage (UTC, groesseres Bild):
-${htfText || "nicht verfuegbar"}
-
-Letzte 20 15-Minuten-Kerzen (UTC):
-${recent}
-
-${weeklyText}
-Heutige High-Impact-News (USD/GBP): ${newsText}
-
-Du bist ein erfahrener Daytrader im ICT/Smart-Money-Stil (wie TJR). Gib eine
-knappe, eigenstaendige Einschaetzung (max. 3 Saetze, Deutsch): Basierend auf
-diesem GESAMTEN Bild (4H-Trend, 15min-Struktur, Wochentrend, News) - wuerdest
-du hier unabhaengig von der mechanischen Regel eine Long- oder Short-Chance
-sehen, oder eher nicht? Wenn ja, kurz warum (welche Struktur/welcher Kontext).
-Wenn die mechanische Regel bereits ein Signal zeigt, sag auch ob das zum
-Gesamtbild passt. Das ist eine fachliche Einordnung fuer ein Paper-Trading-
-Experiment, keine Anlageberatung und wird nicht automatisch gehandelt oder
-geloggt.`;
-
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      signal: AbortSignal.timeout(30000),
-      headers: {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: 200,
-        messages: [{ role: "user", content: prompt }],
-      }),
-    });
-    if (!res.ok) {
-      const body = await res.text().catch(() => "");
-      throw new Error(`Anthropic HTTP ${res.status} ${body.slice(0, 200)}`);
-    }
-    const data = await res.json();
-    const text = (data.content || []).map((b) => b.text || "").join("").trim();
-    return text || null;
-  } catch (e) {
-    console.error(`KI-Einschaetzung fehlgeschlagen fuer ${asset.name}:`, e.message || e);
-    return null;
+function computeMarketContextOpinion(asset, sig, ltf, htfRecent, weeklyTrend, newsEvents) {
+  const mechDir = sig.bias === "bullish" ? 1 : sig.bias === "bearish" ? -1 : 0;
+  if (mechDir === 0) {
+    return "Noch kein klarer 4H-Bias vorhanden - fuer eine Kontext-Einschaetzung fehlt aktuell die Grundlage.";
   }
+
+  // Weekly bias agreement (already computed elsewhere, see computeWeeklyContext).
+  const weeklyDir = weeklyTrend ? (weeklyTrend.bias === "bullish" ? 1 : weeklyTrend.bias === "bearish" ? -1 : 0) : 0;
+
+  // 4H momentum: majority direction of the last 8 HTF candles (~1-2 Handelstage).
+  const htfSample = (htfRecent || []).slice(-8);
+  const htfGreens = htfSample.filter((c) => c.close >= c.open).length;
+  const htfMomentumDir = htfSample.length ? (htfGreens > htfSample.length / 2 ? 1 : htfGreens < htfSample.length / 2 ? -1 : 0) : 0;
+
+  // 15min momentum: net direction over the last 20 LTF candles.
+  const ltfSample = ltf.slice(-20);
+  const ltfNetDir = ltfSample.length >= 2
+    ? Math.sign(pctChange(ltfSample[0].close, ltfSample[ltfSample.length - 1].close))
+    : 0;
+
+  // Exhaustion check: where does the current price sit within the recent 4H range?
+  // Very close to the top of the range on a bullish bias (or bottom on bearish)
+  // suggests the move may already be extended - worth flagging as caution, not
+  // as a reason to change the mechanical signal.
+  let exhaustionNote = "";
+  if (htfSample.length >= 5) {
+    const highs = htfSample.map((c) => c.high);
+    const lows = htfSample.map((c) => c.low);
+    const rangeHigh = Math.max(...highs);
+    const rangeLow = Math.min(...lows);
+    const range = rangeHigh - rangeLow;
+    if (range > 0) {
+      const pos = (sig.currentPrice - rangeLow) / range; // 0 = am Tief, 1 = am Hoch
+      if (mechDir === 1 && pos > 0.85) exhaustionNote = " Kurs steht nahe am oberen Rand der juengsten 4H-Range - moeglicherweise schon weit gelaufen.";
+      if (mechDir === -1 && pos < 0.15) exhaustionNote = " Kurs steht nahe am unteren Rand der juengsten 4H-Range - moeglicherweise schon weit gelaufen.";
+    }
+  }
+
+  const newsNote = (newsEvents && newsEvents.length) ? " Heute High-Impact-News angekuendigt - kann kurzfristig fuer Ausschlaege sorgen." : "";
+
+  const signals = [
+    { label: "Wochentrend", dir: weeklyDir },
+    { label: "4H-Momentum", dir: htfMomentumDir },
+    { label: "15min-Momentum", dir: ltfNetDir },
+  ].filter((s) => s.dir !== 0);
+  const agreeing = signals.filter((s) => s.dir === mechDir);
+  const disagreeing = signals.filter((s) => s.dir !== mechDir);
+
+  const dirLabel = mechDir === 1 ? "long" : "short";
+  let lead;
+  if (signals.length === 0) {
+    lead = `Kein zusaetzlicher Kontext (Woche/4H/15min) verfuegbar, um den ${dirLabel}-Bias zu stuetzen oder zu widerlegen.`;
+  } else if (agreeing.length === signals.length) {
+    lead = `Gesamtbild stuetzt den ${dirLabel}-Bias: ${agreeing.map((s) => s.label).join(", ")} zeigen in dieselbe Richtung.`;
+  } else if (agreeing.length === 0) {
+    lead = `Gesamtbild widerspricht dem ${dirLabel}-Bias: ${disagreeing.map((s) => s.label).join(", ")} zeigen in die Gegenrichtung - Vorsicht.`;
+  } else {
+    lead = `Gemischtes Bild: ${agreeing.map((s) => s.label).join(", ")} stuetzen den ${dirLabel}-Bias, ${disagreeing.map((s) => s.label).join(", ")} nicht.`;
+  }
+
+  return `${lead}${exhaustionNote}${newsNote}`;
 }
 
 function loadPrevState() {
@@ -489,15 +492,11 @@ async function main() {
     console.error("News-Abruf fehlgeschlagen (wird ignoriert):", e.message || e);
   }
 
-  if (ANTHROPIC_API_KEY) {
-    for (const item of assets) {
-      if (item.error) continue;
-      item.aiNote = await getAiAssessment(item.asset, item.sig, item.ltf, news, item.htfRecent, item.weeklyTrend);
-      console.log(`KI   ${item.asset.name}: ${item.aiNote ? "ok" : "keine Antwort"}`);
-    }
-  } else {
-    console.log("ANTHROPIC_API_KEY nicht gesetzt — KI-Einschaetzung wird uebersprungen.");
+  for (const item of assets) {
+    if (item.error) continue;
+    item.aiNote = computeMarketContextOpinion(item.asset, item.sig, item.ltf, item.htfRecent, item.weeklyTrend, news);
   }
+  console.log(`Kontext-Einschaetzung (regelbasiert, kein API-Call): ${assets.filter((a) => a.aiNote).length}/${assets.length} Assets.`);
 
   // State (welches Asset zuletzt ENTRY war) wird immer geschrieben, damit
   // git add state.json nie auf eine fehlende Datei trifft. Nur das SENDEN
@@ -593,7 +592,7 @@ async function main() {
     generatedAt: new Date().toISOString(),
     assets,
     news,
-    aiEnabled: !!ANTHROPIC_API_KEY,
+    aiEnabled: true,
     alertsEnabled: !!NTFY_TOPIC,
     inTradingWindow: inWindow,
   };
