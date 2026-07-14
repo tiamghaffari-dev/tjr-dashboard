@@ -133,6 +133,40 @@ async function fetchCandles(asset, interval, from, to) {
   return loadCandles(raw);
 }
 
+// Tiam, 2026-07-14 (nach TJR Boot Camp Day 43 "Weekly Analysis"): TJR startet
+// seine Wochenvorbereitung immer auf Monats-/Wochenchart-Ebene und wendet
+// dort dasselbe Equilibrium-Tool (Mittelpunkt zwischen Hoch/Tief, TJRs
+// 0/0.5/1-Fib) an, das er auch auf 4H/15min nutzt, BEVOR er auf Daily/15min
+// runterzoomt. Rein informativer Kontext ("wo stehen wir im groesseren
+// Bild") - fliesst bewusst NICHT in buildSignal()/die Entry-Gating-Logik
+// ein, aus derselben Vorsicht wie bei SMT Divergence/Equilibrium-als-Entry-
+// Trigger (siehe Memory project_tjr_strategy - beide warten noch auf Tiams
+// Bestaetigung, bevor sie den Trigger selbst beeinflussen duerfen).
+const WEEKLY_LOOKBACK_WEEKS = 12;
+
+async function fetchWeeklyCandles(asset) {
+  const yahooSymbol = YAHOO_SYMBOL_MAP[asset.symbol];
+  if (!yahooSymbol) return [];
+  const raw = await fetchYahooChart(yahooSymbol, "1wk", 400);
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  return loadCandles(raw);
+}
+
+// bias: liegt der aktuelle Wochenschlusskurs ueber oder unter dem
+// Equilibrium der letzten WEEKLY_LOOKBACK_WEEKS Wochen.
+function computeWeeklyContext(weeklyCandles) {
+  if (!weeklyCandles || weeklyCandles.length < 2) return null;
+  const recent = weeklyCandles.slice(-WEEKLY_LOOKBACK_WEEKS);
+  const high = Math.max(...recent.map((c) => c.high));
+  const low = Math.min(...recent.map((c) => c.low));
+  const equilibrium = (high + low) / 2;
+  const current = recent[recent.length - 1].close;
+  const bias = current >= equilibrium ? "bullish" : "bearish";
+  return {
+    bias, equilibrium, high, low, current, weeksUsed: recent.length,
+  };
+}
+
 async function analyzeAsset(asset) {
   const today = new Date();
   const from1h = new Date(today); from1h.setDate(from1h.getDate() - 30);
@@ -148,7 +182,16 @@ async function analyzeAsset(asset) {
   // zu sehen (siehe CHART_HISTORY_DAYS oben). ltfFull (volle Rohreihe inkl.
   // FETCH_BUFFER_DAYS) wird separat zurueckgegeben fuer resolveSignals()
   // weiter unten, die auch aeltere offene Paper-Trades noch aufloesen muss.
-  return { sig, ann, ltf: ltf.slice(-CHART_HISTORY_CANDLES), ltfFull: ltf };
+  let weeklyTrend = null;
+  try {
+    const weeklyCandles = await fetchWeeklyCandles(asset);
+    weeklyTrend = computeWeeklyContext(weeklyCandles);
+  } catch (e) {
+    console.error(`Wochentrend-Abruf fehlgeschlagen fuer ${asset.name} (wird ignoriert):`, e.message || e);
+  }
+  return {
+    sig, ann, ltf: ltf.slice(-CHART_HISTORY_CANDLES), ltfFull: ltf, weeklyTrend,
+  };
 }
 
 // Nutzt ForexFactory's oeffentlichen Kalender-Feed (via nfs.faireconomy.media,
@@ -382,9 +425,11 @@ async function main() {
   const ltfFullBySymbol = {};
   for (const asset of ASSETS) {
     try {
-      const { sig, ann, ltf, ltfFull } = await analyzeAsset(asset);
+      const {
+        sig, ann, ltf, ltfFull, weeklyTrend,
+      } = await analyzeAsset(asset);
       assets.push({
-        asset, sig, ann, ltf, error: null, aiNote: null,
+        asset, sig, ann, ltf, error: null, aiNote: null, weeklyTrend,
       });
       ltfFullBySymbol[asset.symbol] = ltfFull;
       console.log(`OK   ${asset.name}: bias=${sig.bias} signal=${sig.signal}`);
