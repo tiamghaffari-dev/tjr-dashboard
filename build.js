@@ -300,15 +300,19 @@ function computeMarketContextOpinion(asset, sig, ltf, htfRecent, weeklyTrend, ne
   const disagreeing = signals.filter((s) => s.dir !== mechDir);
 
   const dirLabel = mechDir === 1 ? "long" : "short";
+  const plural = (arr) => arr.length > 1;
   let lead;
   if (signals.length === 0) {
     lead = `Kein zusaetzlicher Kontext (Woche/4H/15min) verfuegbar, um den ${dirLabel}-Bias zu stuetzen oder zu widerlegen.`;
   } else if (agreeing.length === signals.length) {
-    lead = `Gesamtbild stuetzt den ${dirLabel}-Bias: ${agreeing.map((s) => s.label).join(", ")} zeigen in dieselbe Richtung.`;
+    const verb = plural(agreeing) ? "zeigen" : "zeigt";
+    lead = `Gesamtbild stuetzt den ${dirLabel}-Bias: ${agreeing.map((s) => s.label).join(", ")} ${verb} in dieselbe Richtung.`;
   } else if (agreeing.length === 0) {
-    lead = `Gesamtbild widerspricht dem ${dirLabel}-Bias: ${disagreeing.map((s) => s.label).join(", ")} zeigen in die Gegenrichtung - Vorsicht.`;
+    const verb = plural(disagreeing) ? "zeigen" : "zeigt";
+    lead = `Gesamtbild widerspricht dem ${dirLabel}-Bias: ${disagreeing.map((s) => s.label).join(", ")} ${verb} in die Gegenrichtung - Vorsicht.`;
   } else {
-    lead = `Gemischtes Bild: ${agreeing.map((s) => s.label).join(", ")} stuetzen den ${dirLabel}-Bias, ${disagreeing.map((s) => s.label).join(", ")} nicht.`;
+    const verb1 = plural(agreeing) ? "stuetzen" : "stuetzt";
+    lead = `Gemischtes Bild: ${agreeing.map((s) => s.label).join(", ")} ${verb1} den ${dirLabel}-Bias, ${disagreeing.map((s) => s.label).join(", ")} nicht.`;
   }
 
   return `${lead}${exhaustionNote}${newsNote}`;
