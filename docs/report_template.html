@@ -718,7 +718,13 @@ function drawZoneBox(chart, candles, ann, markers) {
   // die weiteren Analysen danach davon gestoert werden" - von 3 Tagen auf 1
   // Tag verkuerzt, damit eine einzelne Zone nicht fast die ganze
   // Standardansicht (3 Tage) dominiert und spaetere Struktur ueberlagert.
-  const MAX_ZONE_BARS = 96; // ~1 Tag bei 15-Min-Kerzen
+  // Tiam, 2026-07-14: reicht immer noch nicht - Screenshot zeigt die Box
+  // weiterhin bis zum rechten Chartrand laufend ("unendlich"). Nochmal auf
+  // die Haelfte verkuerzt (12h statt 24h); das "bis Mitigation"-Verhalten
+  // bleibt (Box endet weiterhin frueher, sobald eine Kerze durch die Zone
+  // schliesst), nur der worst-case bei einer frischen/unmitigierten Zone
+  // ist jetzt spuerbar kuerzer.
+  const MAX_ZONE_BARS = 48; // ~12h bei 15-Min-Kerzen
   const maxEndIdx = Math.min(candles.length - 1, startIdx + MAX_ZONE_BARS);
   let endIdx = maxEndIdx;
   for (let i = startIdx + 1; i <= maxEndIdx; i++) {
@@ -938,6 +944,19 @@ const EQUILIBRIUM_LINE_COLOR = "#4ade80";
 const EQUILIBRIUM_FILL_COLOR = "rgba(74,222,128,0.10)";
 const EQUILIBRIUM_EDGE_COLOR = "rgba(255,255,255,0.55)";
 
+// Tiam, 2026-07-14: Screenshot geschickt - die Box laeuft "ins unendliche"
+// (beruehrt den rechten Chartrand). Ursache: endIdx war bisher
+// min(now, sweepStart+96Bars) - bei einem frischen Sweep ist "jetzt" fast
+// immer NAEHER als die 96-Bar-Grenze, die Box hat sich also bei jedem
+// Live-Refresh automatisch bis zur aktuellsten Kerze mitgezogen, was auf
+// einem nicht-14-Stunden-Zoom wie "endlos" aussieht. Echtes Fix: die Box
+// wird jetzt exakt wie TradingViews eigenes Fib-Retracement-Tool verankert -
+// Anker 1 = Sweep-Kerze, Anker 2 = die tatsaechliche Swing-Extremkerze
+// (die Kerze, die legHigh/legLow erzeugt hat), NICHT "jetzt". Dazu wird
+// dieselbe Kerze client-seitig gesucht (nicht per Wertevergleich mit
+// ann.equilibriumRange, da das server-seitig aus ltfDf stammt und leicht
+// von den hier gerenderten candles abweichen kann) - robust per eigenem
+// Max/Min-Scan innerhalb des ANALYSIS_LINE_MAX_BARS-Sicherheitsdeckels.
 function drawEquilibriumBox(chart, candles, ann, markers) {
   if (!ann.sweep || !ann.equilibriumRange) return;
   const [legLow, legHigh] = ann.equilibriumRange;
@@ -946,7 +965,25 @@ function drawEquilibriumBox(chart, candles, ann, markers) {
   const startTs = Math.floor(ann.sweep.ts / 1000);
   const startIdx = candles.findIndex((c) => c.time >= startTs);
   if (startIdx === -1) return;
-  const endIdx = Math.min(candles.length - 1, startIdx + ANALYSIS_LINE_MAX_BARS);
+  const capIdx = Math.min(candles.length - 1, startIdx + ANALYSIS_LINE_MAX_BARS);
+
+  // Echte Swing-Extremkerze innerhalb des Sicherheitsfensters suchen (bullisch:
+  // hoechstes High seit dem Sweep; baerisch: tiefstes Low) statt bis "jetzt"
+  // zu ziehen. +2 Kerzen Puffer, damit die Extremkerze selbst sichtbar in der
+  // Box liegt statt exakt am Rand abgeschnitten zu werden.
+  let extremeIdx = startIdx;
+  if (ann.bias === "bullish") {
+    let bestHigh = candles[startIdx].high;
+    for (let i = startIdx; i <= capIdx; i++) {
+      if (candles[i].high >= bestHigh) { bestHigh = candles[i].high; extremeIdx = i; }
+    }
+  } else {
+    let bestLow = candles[startIdx].low;
+    for (let i = startIdx; i <= capIdx; i++) {
+      if (candles[i].low <= bestLow) { bestLow = candles[i].low; extremeIdx = i; }
+    }
+  }
+  const endIdx = Math.min(capIdx, extremeIdx + 2);
   const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
   if (segData.length === 0) return;
 
