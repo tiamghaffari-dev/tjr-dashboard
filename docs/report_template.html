@@ -589,12 +589,23 @@ function renderOverview() {
       </div>`;
     }
     const sig = item.sig;
-    if (sig.signal === "ENTRY") cls += " has-entry";
+    // Tiam, 2026-07-14: "ich bitte dich erst ab 15 uhr zu analysieren, die KI
+    // analysiert jetzt schon" - die Handelsfenster-Logik hat ausserhalb 15-17
+    // Wien nie wirklich "analysiert" (siehe plainHeadline: "wird nicht
+    // ausgefuehrt"), aber die Uebersichts-Kachel zeigte trotzdem den knall-
+    // gruenen "ENTRY"-Badge, sobald die mechanischen Kriterien zufaellig
+    // erfuellt waren - das sah fuer Tiam wie ein aktives Signal aus. Badge
+    // jetzt an item.mode gekoppelt: nur bei mode "analyzing" (= im Fenster)
+    // zeigt es den echten ENTRY-Badge, sonst einen neutralen Hinweis.
+    const isLiveEntry = sig.signal === "ENTRY" && item.mode === "analyzing";
+    if (isLiveEntry) cls += " has-entry";
+    const signalBadgeClass = isLiveEntry ? "sig-entry" : (sig.signal === "ENTRY" ? "sig-watch" : badgeClassSignal(sig.signal));
+    const signalBadgeText = isLiveEntry ? sig.signal.split(" (")[0] : (sig.signal === "ENTRY" ? "Setup (pausiert)" : sig.signal.split(" (")[0]);
     return `<div class="${cls}" data-id="${id}">
       <div class="ov-name">${item.asset.icon} ${item.asset.name}</div>
       <div class="ov-badges">
         <span class="badge ${badgeClassBias(sig.bias)}">${biasArrow(sig.bias)} ${sig.bias.toUpperCase()}</span>
-        <span class="badge ${badgeClassSignal(sig.signal)}">${sig.signal.split(" (")[0]}</span>
+        <span class="badge ${signalBadgeClass}">${signalBadgeText}</span>
       </div>
     </div>`;
   }).join("");
