@@ -547,7 +547,7 @@ function analysisSteps(sig, ann) {
       : "noch nicht bestätigt",
   });
   steps.push({
-    ok: !!ann.zoneKind, label: "Entry-Zone (FVG/OB/Breaker)",
+    ok: !!ann.zoneKind, label: "Entry-Zone (FVG/OB/Breaker/Equilibrium)",
     text: ann.zoneKind ? `${ann.zoneKind} [${ann.zoneRange[0].toPrecision(6)} - ${ann.zoneRange[1].toPrecision(6)}]` : "keine gültige Zone",
   });
   steps.push({
@@ -1463,7 +1463,12 @@ function renderChart(item) {
   if (ann.equilibrium !== null && ann.sweep) {
     drawEquilibriumBox(chart, candles, ann, markers, series);
   }
-  if (ann.zoneRange && ann.zoneTs) {
+  if (ann.zoneRange && ann.zoneTs && ann.zoneKind !== "Equilibrium") {
+    // zoneKind "Equilibrium" is skipped here on purpose - drawEquilibriumBox above
+    // already renders this exact discount/premium half with its own dedicated
+    // styling (EQUILIBRIUM_FILL_COLOR/dashed border). ZONE_STYLES has no
+    // "Equilibrium" entry, so without this guard drawZoneBox would fall back to
+    // ZONE_STYLES.OrderBlock and draw a redundant, mislabeled duplicate box.
     drawZoneBox(chart, candles, ann, markers, series);
   }
   if (sig.entry !== null) {
