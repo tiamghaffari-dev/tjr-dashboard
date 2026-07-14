@@ -1306,12 +1306,30 @@ function viennaTickLabel(epochSeconds, tickMarkType) {
   } else if (tickMarkType === LightweightCharts.TickMarkType.Month) {
     opts.month = "short";
   } else if (tickMarkType === LightweightCharts.TickMarkType.DayOfMonth) {
-    opts.day = "numeric";
+    // Tiam, 2026-07-14: "kannst du dort wo die Zeitskala ist auch das datum
+    // hinschreiben damit man sich auskennt" - bisher stand am Tageswechsel
+    // nur eine nackte Tageszahl ("12", "13", "14"), ohne Monat war bei
+    // einer mehrtaegigen Chart-Ansicht nicht klar, welcher Monat/wie weit
+    // zurueck man gerade schaut. Jetzt TT.MM. statt nur TT.
+    opts.day = "2-digit";
+    opts.month = "2-digit";
   } else {
     opts.hour = "2-digit";
     opts.minute = "2-digit";
   }
   return new Intl.DateTimeFormat("de-AT", opts).format(new Date(realMs));
+}
+
+// Tiam, 2026-07-14: gleiche Anforderung wie oben, aber fuer das Datum/Zeit-
+// Tooltip, das beim Ueberfahren einer Kerze mit der Maus (Crosshair) am
+// linken Rand der Zeitachse erscheint - zeigt jetzt immer Datum UND Uhrzeit
+// (TT.MM. SS:MM), nicht nur die Uhrzeit wie die normalen Achsen-Ticks
+// zwischen zwei Tageswechseln.
+function viennaCrosshairLabel(epochSeconds) {
+  const realMs = pseudoEtToRealUtcMs(epochSeconds);
+  return new Intl.DateTimeFormat("de-AT", {
+    timeZone: "Europe/Vienna", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+  }).format(new Date(realMs));
 }
 
 function renderChart(item) {
@@ -1333,7 +1351,7 @@ function renderChart(item) {
     rightPriceScale: { borderColor: "rgba(255,255,255,0.1)" },
     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
     localization: {
-      timeFormatter: (time) => viennaTickLabel(time, LightweightCharts.TickMarkType.Time),
+      timeFormatter: (time) => viennaCrosshairLabel(time),
     },
   });
 
