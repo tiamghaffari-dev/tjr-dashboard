@@ -32,5 +32,39 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "^GSPC-1784122708678",
+    "asset": "^GSPC",
+    "direction": "LONG",
+    "entryTs": 1784122708678,
+    "entry": 753.644989,
+    "stop": 750.642365,
+    "target": 759.650238,
+    "rr": 2,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1784122708678",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1784122708678,
+    "entry": 4064.599976,
+    "stop": 4073.300751,
+    "target": 4047.198425,
+    "rr": 2,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
