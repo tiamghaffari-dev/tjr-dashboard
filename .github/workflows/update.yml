@@ -2,9 +2,15 @@ name: Update TJR Report
 
 on:
   schedule:
-    # 08:00-14:59 Vienna (CEST/UTC+2): alle 15 Minuten
-    - cron: "*/15 6-12 * * 1-5"
-    # 15:00-16:59 Vienna: dichter getaktet, alle 5 Minuten (Kill-Zone / Fokusfenster)
+    # 08:00-08:59 Vienna (CEST/UTC+2): alle 15 Minuten
+    - cron: "*/15 6 * * 1-5"
+    # 09:00-09:59 Vienna: dichter getaktet, alle 5 Minuten (London-Session-
+    # Fokusfenster - TJRs eigenes Checklist: "london session 3am-4am" ET,
+    # siehe project_tjr_strategy Memory "Update 2026-07-15")
+    - cron: "*/5 7 * * 1-5"
+    # 10:00-14:59 Vienna: wieder alle 15 Minuten
+    - cron: "*/15 8-12 * * 1-5"
+    # 15:00-16:59 Vienna: dichter getaktet, alle 5 Minuten (NY-Session Kill-Zone / Fokusfenster)
     - cron: "*/5 13-14 * * 1-5"
     # 17:00-23:59 Vienna: wieder alle 15 Minuten
     - cron: "*/15 15-21 * * 1-5"
