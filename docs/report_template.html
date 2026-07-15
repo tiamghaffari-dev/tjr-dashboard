@@ -811,7 +811,13 @@ function drawZoneBox(chart, candles, ann, markers, series) {
   // bleibt (Box endet weiterhin frueher, sobald eine Kerze durch die Zone
   // schliesst), nur der worst-case bei einer frischen/unmitigierten Zone
   // ist jetzt spuerbar kuerzer.
-  const MAX_ZONE_BARS = 48; // ~12h bei 15-Min-Kerzen
+  // Tiam, 2026-07-15: dieser Wert war seit der 5min-Kaskade-Umstellung
+  // (siehe engine.js/build.js, project_tjr_strategy Memory) auf Kerzen-
+  // ANZAHL kalibriert, nicht auf Zeit - 48 Kerzen waren bei 15-Min-Kerzen
+  // ~12h, sind aber bei den jetzt genutzten 5-Min-Kerzen nur noch ~4h. Auf
+  // 144 korrigiert, damit das tatsaechliche Zeitfenster (~12h) das gleiche
+  // bleibt wie von Tiam ueber mehrere Runden explizit eingestellt.
+  const MAX_ZONE_BARS = 144; // ~12h bei 5-Min-Kerzen
   const maxEndIdx = Math.min(candles.length - 1, startIdx + MAX_ZONE_BARS);
   let endIdx = maxEndIdx;
   for (let i = startIdx + 1; i <= maxEndIdx; i++) {
@@ -948,7 +954,7 @@ const HISTORICAL_BOX_COLORS = {
   profit: { fill: "rgba(79,255,190,0.12)", line: "rgba(79,255,190,0.3)" },
   risk: { fill: "rgba(255,107,157,0.12)", line: "rgba(255,107,157,0.3)" },
 };
-const STALE_BOX_FALLBACK_BARS = 40; // ~10h bei 15-Min-Kerzen, falls kein resolvedTs vorliegt
+const STALE_BOX_FALLBACK_BARS = 120; // ~10h bei 5-Min-Kerzen, falls kein resolvedTs vorliegt (seit 2026-07-15 Kerzen-Umstellung korrigiert)
 
 function drawHistoricalPositionBox(chart, candles, rec, series) {
   if (rec.status === "open") return; // die laufende Position zeigt bereits drawPositionBox()
@@ -996,7 +1002,7 @@ function drawHistoricalPositionBox(chart, candles, rec, series) {
 // Achsen-Label, das reduziert den Stapel von 7 auf 3 Eintraege.
 // Tiam, 2026-07-12: gleiche Verkuerzung wie bei MAX_ZONE_BARS (1 Tag statt 3) -
 // "nicht zu lang dass die weiteren Analysen danach davon gestoert werden".
-const ANALYSIS_LINE_MAX_BARS = 96; // ~1 Tag bei 15-Min-Kerzen
+const ANALYSIS_LINE_MAX_BARS = 288; // ~1 Tag bei 5-Min-Kerzen (seit 2026-07-15 Kerzen-Umstellung korrigiert)
 
 function drawBoundedAnalysisLine(chart, candles, startTs, price, color, lineStyle) {
   const startIdx = candles.findIndex((c) => c.time >= startTs);
@@ -1107,7 +1113,7 @@ function drawEquilibriumBox(chart, candles, ann, markers, series) {
 // 10-20-Tage-Historie) gezeichnet, sonst Chart beim Zurueckscrollen mit
 // Dutzenden Linien zugepflastert - gleiche "nicht endlos zurueck"-Regel
 // wie bei Zone-Box/Analyse-Linien oben.
-const SESSION_DIVIDER_LOOKBACK_BARS = 2 * 96; // ~2 Tage
+const SESSION_DIVIDER_LOOKBACK_BARS = 2 * 288; // ~2 Tage bei 5-Min-Kerzen (seit 2026-07-15 Kerzen-Umstellung korrigiert)
 
 function drawSessionDividers(chart, ltf, candles) {
   if (!candles.length) return;
@@ -1400,6 +1406,13 @@ function renderChart(item) {
     timeScale: {
       timeVisible: true, secondsVisible: false, borderColor: "rgba(255,255,255,0.1)",
       tickMarkFormatter: (time, tickMarkType) => viennaTickLabel(time, tickMarkType),
+      // Tiam, 2026-07-15: Screenshot zeigte eine frische FVG-Box + Label direkt
+      // am rechten Chartrand, ueberlappend mit dem Live-Preis-Kasten - "das ist
+      // einfach irgendwas". Ursache: die letzte Kerze sass exakt an der
+      // Kante ohne Puffer (siehe setVisibleRange unten, das denselben Puffer
+      // fuer die Standardansicht braucht). rightOffset sorgt fuer etwas Platz
+      // rechts der letzten Kerze, wie auf echten TradingView-Charts ueblich.
+      rightOffset: 8,
     },
     rightPriceScale: { borderColor: "rgba(255,255,255,0.1)" },
     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
@@ -1430,7 +1443,7 @@ function renderChart(item) {
     time: Math.floor(c.ts / 1000), open: c.open, high: c.high, low: c.low, close: c.close,
   }));
   series.setData(candles);
-  const DEFAULT_VIEW_CANDLES = 3 * 96; // ~3 Tage bei 15-Min-Kerzen als Erstansicht
+  const DEFAULT_VIEW_CANDLES = 3 * 288; // ~3 Tage bei 5-Min-Kerzen als Erstansicht (seit 2026-07-15 Kerzen-Umstellung korrigiert)
 
   const { ann, sig } = item;
   let markers = sessionMarkers(item.ltf);
@@ -1530,9 +1543,15 @@ function renderChart(item) {
     try { chart.timeScale().setVisibleRange(savedRange); }
     catch (e) { chart.timeScale().fitContent(); }
   } else if (candles.length > DEFAULT_VIEW_CANDLES) {
+    // Tiam, 2026-07-15: siehe rightOffset-Kommentar oben - explizites
+    // setVisibleRange ueberschreibt rightOffset, deshalb hier den gleichen
+    // Rand-Puffer nochmal per Hand dazurechnen (ein paar Kerzen Platz rechts
+    // der letzten Kerze), sonst kollidiert eine gerade erst entstandene Zone
+    // wieder mit dem Live-Preis-Kasten am Rand.
+    const barIntervalSec = candles.length > 1 ? candles[1].time - candles[0].time : 300;
     chart.timeScale().setVisibleRange({
       from: candles[candles.length - DEFAULT_VIEW_CANDLES].time,
-      to: candles[candles.length - 1].time,
+      to: candles[candles.length - 1].time + barIntervalSec * 8,
     });
   } else {
     chart.timeScale().fitContent();
@@ -1753,12 +1772,12 @@ function tickCountdown() {
   const el = document.getElementById("refresh-countdown");
   secondsUntilRefresh -= 1;
   if (secondsUntilRefresh <= 0) {
-    if (el) el.textContent = "\u00b7 aktualisiere...";
+    if (el) el.textContent = "· aktualisiere...";
     pollForUpdate().finally(() => {
       secondsUntilRefresh = REFRESH_INTERVAL_MS / 1000;
     });
   } else if (el) {
-    el.textContent = `\u00b7 n\u00e4chstes Update in ${secondsUntilRefresh}s`;
+    el.textContent = `· nächstes Update in ${secondsUntilRefresh}s`;
   }
 }
 setInterval(tickCountdown, 1000);
