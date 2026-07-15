@@ -597,7 +597,19 @@ async function main() {
     // geht"), "idle" (ausserhalb, nichts offen - komplett pausiert).
     const openRec = signalsLog.find((r) => r.asset === item.asset.symbol && r.status === "open");
     item.hasOpenTrade = !!openRec;
-    item.mode = inWindow ? "analyzing" : (openRec ? "monitoring" : "idle");
+    // Tiam, 2026-07-15: "wieso nimmt er immer ein entry weg? wenn er ein
+    // entry hat und ganz sicher ist das es passt soll er es ja laufen
+    // lassen" - vorher gewann "inWindow" IMMER, auch wenn ein echter offener
+    // Paper-Trade lief: sobald die frische mechanische Neuberechnung (z.B.
+    // weil der Sweep aus dem sweepLookbackBars-Fenster faellt) kein ENTRY
+    // mehr bestaetigte, fiel die Anzeige innerhalb des Handelsfensters direkt
+    // auf "kein Signal" zurueck statt die laufende offene Position zu zeigen
+    // - obwohl der Trade selbst (siehe resolveSignals oben) unveraendert
+    // offen und gueltig war. offener Trade hat jetzt IMMER Vorrang vor dem
+    // reinen Fenster-Status - "wird beobachtet" bleibt sichtbar, bis
+    // resolveSignals ihn tatsaechlich per Stop/Target aufloest, nicht bis
+    // die Sweep-Erkennung zufaellig aus dem Lookback-Fenster laeuft.
+    item.mode = openRec ? "monitoring" : (inWindow ? "analyzing" : "idle");
     if (isEntry && !wasEntry && NTFY_TOPIC && inWindow) {
       await sendNtfy(item.asset, item.sig);
     } else if (isEntry && !wasEntry && NTFY_TOPIC && !inWindow) {
