@@ -3,8 +3,8 @@
   "ETHUSD": false,
   "XRPUSD": false,
   "GBPUSD": false,
-  "^GSPC": true,
-  "GCUSD": false,
+  "^GSPC": false,
+  "GCUSD": true,
   "_meta": {
     "windowOpen": false,
     "lastSessionLogDate": "2026-07-15"
