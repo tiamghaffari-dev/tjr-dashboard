@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "id": "ETHUSD-1784120729469",
+    "asset": "ETHUSD",
+    "direction": "LONG",
+    "entryTs": 1784120729469,
+    "entry": 1898.780029,
+    "stop": 1873.136026,
+    "target": 1950.068035,
+    "rr": 2,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GBPUSD-1784120729469",
+    "asset": "GBPUSD",
+    "direction": "LONG",
+    "entryTs": 1784120729469,
+    "entry": 1.341031,
+    "stop": 1.337128,
+    "target": 1.348838,
+    "rr": 2,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  }
+]
