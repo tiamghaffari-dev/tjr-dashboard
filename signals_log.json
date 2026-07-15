@@ -29,9 +29,9 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1784121000000,
+    "rMultiple": 2
   },
   {
     "id": "^GSPC-1784122708678",
