@@ -63,8 +63,8 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1784123100000,
+    "rMultiple": -1
   }
 ]
