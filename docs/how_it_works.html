@@ -136,7 +136,15 @@
     <h2><span class="num">1</span>Wann wird analysiert</h2>
     <div class="card">
       <div class="schedule-row">
-        <span class="time">Mo–Fr, 08:00–15:00 Wien</span>
+        <span class="time">Mo–Fr, 08:00–09:00 Wien</span>
+        <span class="freq">alle 15 Minuten</span>
+      </div>
+      <div class="schedule-row focus">
+        <span class="time">Mo–Fr, 09:00–10:00 Wien <span class="badge-focus">Fokusfenster</span></span>
+        <span class="freq">alle 5 Minuten</span>
+      </div>
+      <div class="schedule-row">
+        <span class="time">Mo–Fr, 10:00–15:00 Wien</span>
         <span class="freq">alle 15 Minuten</span>
       </div>
       <div class="schedule-row focus">
@@ -152,7 +160,7 @@
         <span class="freq">pausiert (kein Lauf)</span>
       </div>
     </div>
-    <p style="margin-top:10px">Zwischen 15 und 17 Uhr Wiener Zeit läuft alles dichter, weil das laut TJR die eigentliche Handelszeit ist. Läuft komplett automatisch über GitHub Actions in der Cloud — unabhängig davon, ob dein Laptop an ist. Die Zeitzone wird DST-sicher berechnet (Sommer-/Winterzeit-Wechsel wird automatisch berücksichtigt).</p>
+    <p style="margin-top:10px">Zwei Fokusfenster laufen dichter, weil das laut TJRs eigenem Handels-Checklist die beiden echten Handelszeiten sind: die London-Session (9–10 Uhr Wien) und die NY-Session (15–17 Uhr Wien). Läuft komplett automatisch über GitHub Actions in der Cloud — unabhängig davon, ob dein Laptop an ist. Die Zeitzone wird DST-sicher berechnet (Sommer-/Winterzeit-Wechsel wird automatisch berücksichtigt).</p>
   </section>
 
   <section>
@@ -220,7 +228,7 @@ Heutige High-Impact-News (USD/GBP): {ForexFactory-Kalender oder "keine"}
       <ul>
         <li><strong>Kursdaten</strong> — Financial Modeling Prep (1-Stunden- und 5-Minuten-Kerzen, live).</li>
         <li><strong>News</strong> — ForexFactory-Kalender (High-Impact USD/GBP-Termine für den aktuellen Tag).</li>
-        <li><strong>Push-Alerts</strong> — optional über ntfy.sh, nur bei neuem ENTRY-Signal und nur innerhalb des 15–17-Uhr-Fokusfensters.</li>
+        <li><strong>Push-Alerts</strong> — optional über ntfy.sh, nur bei neuem ENTRY-Signal und nur innerhalb der 9–10- oder 15–17-Uhr-Fokusfenster.</li>
       </ul>
     </div>
   </section>

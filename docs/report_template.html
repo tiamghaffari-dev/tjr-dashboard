@@ -264,7 +264,7 @@
       <span class="tag">no auto-trades · analysis only</span>
     </div>
   </div>
-  <div class="subtitle">Automatische Live-Analyse von 6 Assets im Handelsstil von TJR — aktiv gehandelt wird nur 15–17 Uhr (Wien). <a class="inline-link" href="how_it_works.html">Wie funktioniert das genau?</a></div>
+  <div class="subtitle">Automatische Live-Analyse von 6 Assets im Handelsstil von TJR — aktiv gehandelt wird nur 9–10 und 15–17 Uhr (Wien). <a class="inline-link" href="how_it_works.html">Wie funktioniert das genau?</a></div>
   <div id="status" class="status-line"><span id="generated-at">__GENERATED_AT__</span> <span id="window-status"></span> <span id="live-indicator" class="live-indicator">● live</span> <span id="refresh-countdown" class="refresh-countdown"></span></div>
 
   <details class="settings-box collapsible">
@@ -334,9 +334,9 @@ function badgeClassSignal(sig) {
 // gesetzte Trade in die richtige Richtung geht." - macht den aktuellen
 // Betriebsmodus pro Asset sichtbar statt es zu verstecken.
 function modeBadge(item) {
-  if (item.mode === "analyzing") return `<span class="badge mode-analyzing" title="Innerhalb 15-17 Wien - aktive Analyse mit allen TJR-Tools">🔎 Analysiere</span>`;
+  if (item.mode === "analyzing") return `<span class="badge mode-analyzing" title="Innerhalb 9-10 oder 15-17 Wien - aktive Analyse mit allen TJR-Tools">🔎 Analysiere</span>`;
   if (item.mode === "monitoring") return `<span class="badge mode-monitoring" title="Ausserhalb Handelsfenster - keine neuen Setups, nur die offene Position wird beobachtet">👁 Beobachte Position</span>`;
-  return `<span class="badge mode-idle" title="Ausserhalb Handelsfenster, kein offener Trade - pausiert bis 15 Uhr Wien">⏸ Pausiert</span>`;
+  return `<span class="badge mode-idle" title="Ausserhalb Handelsfenster, kein offener Trade - pausiert bis zur naechsten Session (9 oder 15 Uhr Wien)">⏸ Pausiert</span>`;
 }
 function biasArrow(bias) {
   if (bias === "bullish") return "▲";
@@ -502,7 +502,7 @@ function plainHeadline(item) {
     return { emoji: "🟢", text: `${name} ${biasText}. ${dir} gerade aktiv!`, cls: "headline-entry" };
   }
   if (sig.signal === "ENTRY" && mode !== "analyzing") {
-    return { emoji: "🟡", text: `${name} ${biasText}. Setup gefunden, aber außerhalb der Handelszeit (15–17 Uhr Wien) — wird nicht ausgeführt.`, cls: "headline-watch" };
+    return { emoji: "🟡", text: `${name} ${biasText}. Setup gefunden, aber außerhalb der Handelszeit (9–10 oder 15–17 Uhr Wien) — wird nicht ausgeführt.`, cls: "headline-watch" };
   }
   if (mode === "monitoring") {
     const rec = findOpenRecord(item);
@@ -1193,7 +1193,7 @@ function connectBinanceLiveFeed(item) {
   function connect() {
     let ws;
     try {
-      ws = new WebSocket(`wss://stream.binance.com:9443/ws/${binanceSymbol}@kline_15m`);
+      ws = new WebSocket(`wss://stream.binance.com:9443/ws/${binanceSymbol}@kline_5m`);
     } catch (e) {
       return; // z.B. WebSocket im Browser nicht verfuegbar - still aufgeben
     }
@@ -1234,15 +1234,17 @@ function connectBinanceLiveFeed(item) {
 
 // --- Phase 2: Live-Forex/Gold/S&P500 ueber Finnhub (kostenloser Account, Tiam
 // hat den Key selbst erzeugt). Finnhub liefert KEINE fertigen Kerzen ueber
-// den WebSocket, sondern einzelne Trade-Ticks - die aktuelle 15-Min-Kerze
-// wird deshalb hier im Browser selbst aus den Ticks zusammengebaut (gleiches
-// Bucket-Raster wie die batch-generierten Kerzen: 900s ab Unix-Epoche,
-// dadurch automatisch auf :00/:15/:30/:45 UTC ausgerichtet).
+// den WebSocket, sondern einzelne Trade-Ticks - die aktuelle 5-Min-Kerze
+// (seit 2026-07-15, vorher 15-Min - siehe engine.js/build.js "TJRs Execution-
+// Checklist" Update in project_tjr_strategy Memory) wird deshalb hier im
+// Browser selbst aus den Ticks zusammengebaut (gleiches Bucket-Raster wie
+// die batch-generierten Kerzen: 300s ab Unix-Epoche, dadurch automatisch auf
+// :00/:05/:10/... UTC ausgerichtet).
 // S&P 500 hat keine kostenlose Live-Index-Quelle - SPY-ETF (folgt dem Index
 // fast 1:1) wird stattdessen live getickt, siehe Tiams Freigabe dazu.
 const FINNHUB_API_KEY = "d9al8j9r01qp4bhre490d9al8j9r01qp4bhre49g";
 const FINNHUB_SYMBOL_MAP = { GBPUSD: "OANDA:GBP_USD", GCUSD: "OANDA:XAU_USD", "^GSPC": "SPY" };
-const LIVE_BAR_SECONDS = 15 * 60;
+const LIVE_BAR_SECONDS = 5 * 60;
 const finnhubBars = {}; // assetId -> aktuell laufende, noch nicht abgeschlossene Live-Kerze
 
 function bucketStart(tsSeconds) {
@@ -1557,7 +1559,7 @@ function renderAssetSection(item) {
   const { sig, ann } = item;
   const glow = sig.signal === "ENTRY" ? " glow-entry" : "";
   const outsideBadge = (sig.signal === "ENTRY" && !PRECOMPUTED.inTradingWindow)
-    ? `<span class="badge badge-outside" title="TJR tradet nur 15-17 Uhr Wien — dieses Signal liegt ausserhalb und wird nicht als Paper-Trade geloggt">außerhalb Handelszeit (15–17 Wien)</span>`
+    ? `<span class="badge badge-outside" title="TJR tradet nur 9-10 und 15-17 Uhr Wien — dieses Signal liegt ausserhalb und wird nicht als Paper-Trade geloggt">außerhalb Handelszeit (9–10 / 15–17 Wien)</span>`
     : "";
   const headline = plainHeadline(item);
 
