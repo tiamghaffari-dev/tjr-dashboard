@@ -197,7 +197,37 @@ function findBreakerBlock(df, bosEvents, sweepTs, direction) {
   return { ts: oldOb.ts, type: `breaker_${direction}`, top: oldOb.top, bottom: oldOb.bottom };
 }
 
-function buildSignal(htfDf, ltfDf, assetClass, rrTarget = 2.0, sweepLookbackBars = 40) {
+// TJRs eigenes Execution-Checklist (5h "Beginners Guide"-Video, gefunden
+// 2026-07-15): nach der 5min-Continuation-Zone braucht es NOCH eine eigene
+// "1 min confirmation (bos,ifvg)" bevor tatsaechlich eingestiegen wird - ein
+// zusaetzliches, feineres Gate, das bisher fehlte (die Engine ist bis hierhin
+// direkt von der 5min-Zone auf ENTRY gesprungen, sobald der Preis drin war).
+// Ablauf: (1) finde die erste 1min-Kerze seit "sinceTs" (dem 5min-
+// Bestaetigungszeitpunkt), die die Zone ueberhaupt beruehrt (touch) - (2) ab
+// dieser Kerze, suche einen 1min-BOS oder -iFVG in Richtung wantDir
+// (confirmed). Degradiert absichtlich sauber, wenn keine m1-Daten da sind
+// (m1Df leer/undefined) - der Aufrufer entscheidet dann, ob er ohne dieses
+// Gate weiterarbeitet (siehe buildSignal()), damit ein Datenausfall nicht
+// automatisch jedes Signal blockiert.
+function find1minConfirmation(m1Df, zoneBottom, zoneTop, wantDir, sinceTs) {
+  if (!m1Df || m1Df.length === 0) return { touched: false, confirmed: false, touchTs: null, event: null };
+  const relevant = m1Df.filter((r) => r.ts >= sinceTs);
+  const touchCandle = relevant.find((r) => r.low <= zoneTop && r.high >= zoneBottom);
+  if (!touchCandle) return { touched: false, confirmed: false, touchTs: null, event: null };
+  const afterTouch = relevant.filter((r) => r.ts >= touchCandle.ts);
+  const { bosEvents: m1Bos } = computeTrendAndBos(afterTouch);
+  const confirmingBos1m = m1Bos.filter((b) => b.dir === wantDir);
+  const ifvgEvents1m = findIfvg(afterTouch, findFvgs(afterTouch));
+  const confirmingIfvg1m = ifvgEvents1m.filter((e) => e.dir === wantDir);
+  const cands = [];
+  if (confirmingBos1m.length) cands.push({ kind: "BOS", ts: confirmingBos1m[0].ts, event: confirmingBos1m[0] });
+  if (confirmingIfvg1m.length) cands.push({ kind: "iFVG", ts: confirmingIfvg1m[0].ts, event: confirmingIfvg1m[0] });
+  cands.sort((a, b) => a.ts - b.ts);
+  if (cands.length === 0) return { touched: true, confirmed: false, touchTs: touchCandle.ts, event: null };
+  return { touched: true, confirmed: true, touchTs: touchCandle.ts, event: cands[0] };
+}
+
+function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookbackBars = 40) {
   const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
   const bias = htfDf.length ? htfTrend : 0;
   const biasLabel = { 1: "bullish", "-1": "bearish", 0: "neutral" }[bias];
@@ -334,18 +364,44 @@ function buildSignal(htfDf, ltfDf, assetClass, rrTarget = 2.0, sweepLookbackBars
 
   const inZoneNow = cand.bottom <= currentPrice && currentPrice <= cand.top;
 
+  // TJRs eigenes Checklist verlangt NACH der 5min-Zone noch eine eigene
+  // 1min-Bestaetigung (BOS/iFVG), bevor tatsaechlich eingestiegen wird - ohne
+  // m1-Daten (Fetch fehlgeschlagen etc.) degradiert das sauber auf die alte
+  // "Preis ist in der Zone" Logik, damit ein Datenausfall nie automatisch
+  // jedes Signal blockiert.
+  const hasM1Data = !!(m1Df && m1Df.length > 0);
+  const m1 = hasM1Data
+    ? find1minConfirmation(m1Df, cand.bottom, cand.top, wantDir, conf.ts)
+    : { touched: inZoneNow, confirmed: inZoneNow, touchTs: null, event: null };
+  const zoneTouched = hasM1Data ? m1.touched : inZoneNow;
+
+  let signal;
+  if (!zoneTouched) {
+    signal = "Watchlist (auf Retracement in Zone warten)";
+  } else if (hasM1Data && !m1.confirmed) {
+    signal = "Watchlist (in Zone, warte auf 1min-Bestaetigung)";
+  } else {
+    signal = "ENTRY";
+  }
+
   const confDesc = conf.kind === "BOS"
     ? `BOS ${conf.event.dir} am ${new Date(conf.ts).toISOString()}`
     : `iFVG-Bruch (Richtung ${conf.event.dir}) am ${new Date(conf.ts).toISOString()}`;
+  const m1Desc = !hasM1Data
+    ? " (keine 1min-Daten - 1min-Gate uebersprungen)"
+    : m1.confirmed
+      ? `, 1min-Bestaetigung: ${m1.event.kind} am ${new Date(m1.event.ts).toISOString()}`
+      : zoneTouched ? ", wartet noch auf 1min-Bestaetigung" : "";
 
   Object.assign(result, {
-    signal: inZoneNow ? "ENTRY" : "Watchlist (auf Retracement in Zone warten)",
+    signal,
     detail: `Sweep ${recentSweep.type} @ ${recentSweep.level.toPrecision(6)} am ${new Date(recentSweep.ts).toISOString()}, `
-      + `${confDesc}, Entry-Zone: ${cand.kind} [${cand.bottom.toPrecision(6)} - ${cand.top.toPrecision(6)}] (${zone}).`,
+      + `${confDesc}, Entry-Zone: ${cand.kind} [${cand.bottom.toPrecision(6)} - ${cand.top.toPrecision(6)}] (${zone})${m1Desc}.`,
     entry: round6(entry), stop: round6(stop), target: round6(target), rr: rrTarget,
     sweep: recentSweep, bos: bosEvent, confirmation: conf,
     zoneKind: cand.kind, zoneRange: [cand.bottom, cand.top],
     currentPrice,
+    m1Gate: hasM1Data, m1Confirmation: m1.confirmed ? m1.event : null, zoneTouchTs: m1.touchTs,
   });
   return result;
 }
@@ -475,7 +531,7 @@ if (typeof module !== "undefined") {
   module.exports = {
     parseTs, loadCandles, resample, findSwings, computeTrendAndBos,
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
-    findIfvg, findBreakerBlock,
+    findIfvg, findBreakerBlock, find1minConfirmation,
     premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }

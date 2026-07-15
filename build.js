@@ -1,7 +1,8 @@
-// build.js — fetches live FMP data, runs the TJR engine, adds a supplementary
-// (rule-based, no external API) market-context read, sends a push notification
-// on new ENTRY signals via ntfy.sh, and renders docs/index.html + docs/chart.html.
-// Run via: FMP_API_KEY=xxx NTFY_TOPIC=zzz node build.js
+// build.js — fetches live candles from Yahoo Finance (free, no API key), runs
+// the TJR engine, adds a supplementary (rule-based, no external API) market-
+// context read, sends a push notification on new ENTRY signals via ntfy.sh,
+// and renders docs/index.html + docs/chart.html + docs/history.html.
+// Run via: NTFY_TOPIC=zzz node build.js
 // (NTFY_TOPIC is optional — without it that one feature is skipped, everything
 // else keeps working on its own, no paid API key needed anywhere in this file.)
 const fs = require("fs");
@@ -31,8 +32,8 @@ const SESSION_LOG_PATH = path.join(__dirname, "session_log.json");
 // Tage mit Kerzen uebrig bleiben.
 const CHART_HISTORY_DAYS = 20;
 const FETCH_BUFFER_DAYS = 5;
-const CANDLES_PER_DAY_15M = 96; // 24h * 60min / 15min
-const CHART_HISTORY_CANDLES = CHART_HISTORY_DAYS * CANDLES_PER_DAY_15M;
+const CANDLES_PER_DAY_5M = 288; // 24h * 60min / 5min
+const CHART_HISTORY_CANDLES = CHART_HISTORY_DAYS * CANDLES_PER_DAY_5M;
 
 const ASSETS = [
   { name: "Bitcoin", symbol: "BTCUSD", display: "BTCUSD", icon: "₿" },
@@ -118,13 +119,16 @@ const YAHOO_SYMBOL_MAP = {
   GBPUSD: "GBPUSD=X", GCUSD: "GC=F", "^GSPC": "SPY",
 };
 
+const YAHOO_INTERVAL_MAP = { "1hour": "1h", "5min": "5m", "1min": "1m" };
+
 async function fetchCandles(asset, interval, from, to) {
   const yahooSymbol = YAHOO_SYMBOL_MAP[asset.symbol];
   if (!yahooSymbol) {
     throw new Error(`${asset.symbol}: keine kostenlose Datenquelle konfiguriert`);
   }
+  const yahooInterval = YAHOO_INTERVAL_MAP[interval] || "5m";
   const rangeDays = Math.ceil((to.getTime() - from.getTime()) / 86400000) + 2;
-  const raw = await fetchYahooChart(yahooSymbol, interval === "1hour" ? "1h" : "5m", rangeDays);
+  const raw = await fetchYahooChart(yahooSymbol, yahooInterval, rangeDays);
   if (!Array.isArray(raw) || raw.length === 0) {
     throw new Error(`${asset.symbol} ${interval}: keine Kerzen erhalten`);
   }
@@ -169,11 +173,32 @@ async function analyzeAsset(asset) {
   const today = new Date();
   const from1h = new Date(today); from1h.setDate(from1h.getDate() - 30);
   const from5m = new Date(today); from5m.setDate(from5m.getDate() - (CHART_HISTORY_DAYS + FETCH_BUFFER_DAYS));
+  // Yahoo begrenzt interval=1m auf ca. 7 Tage Lookback - mehr braucht die
+  // 1min-Bestaetigungsstufe (siehe engine.js find1minConfirmation()) ohnehin
+  // nicht, die schaut immer nur ab dem juengsten 5min-Bestaetigungszeitpunkt
+  // nach vorne (typischerweise Minuten bis wenige Stunden zurueck).
+  const from1m = new Date(today); from1m.setDate(from1m.getDate() - 5);
   const df1h = await fetchCandles(asset, "1hour", from1h, today);
   const df5m = await fetchCandles(asset, "5min", from5m, today);
+  // Tiam, 2026-07-15 (nach TJRs eigenem Execution-Checklist im 5h "Beginners
+  // Guide"-Video): "scale to 5 min timeframe, wait for confirmation
+  // (bos,ifvg,smt) ... wait for 5 min continuation (fvg,ob,bb,eq)" - ltf war
+  // bisher auf 15min resampelt, jetzt bewusst die rohen 5min-Kerzen direkt
+  // (kein resample mehr), sowohl fuer die Signal-Logik als auch fuer die
+  // Chart-Anzeige (dieselbe Serie - siehe CANDLES_PER_DAY_5M unten), damit
+  // Annotation-Zeitstempel (buildAnnotations' zoneTs etc.) IMMER exakt auf
+  // eine echte Kerze der angezeigten Chart-Serie treffen (ein Mismatch
+  // zwischen einer 5min-basierten Zone und einem 15min-Chart wuerde
+  // drawZoneBox()s Kerzen-Lookup in report_template.html sonst brechen).
+  let df1m = [];
+  try {
+    df1m = await fetchCandles(asset, "1min", from1m, today);
+  } catch (e) {
+    console.error(`1min-Kerzen-Abruf fehlgeschlagen fuer ${asset.name} (1min-Bestaetigungs-Gate wird uebersprungen):`, e.message || e);
+  }
   const htf = resample(df1h, 240);
-  const ltf = resample(df5m, 15);
-  const sig = buildSignal(htf, ltf);
+  const ltf = df5m;
+  const sig = buildSignal(htf, ltf, df1m);
   const ann = buildAnnotations(htf, ltf);
   // CHART_HISTORY_CANDLES (~20 Tage) werden an den Client geschickt, damit man
   // im Chart weit genug zurueckscrollen kann, um vergangene Analysen/Signale
@@ -242,7 +267,7 @@ async function loadNews() {
 // provider at all first, keep the LLM version backed up in case he wants to
 // pay for it later. This function is the result: a fully synchronous,
 // deterministic, zero-cost heuristic that reads the SAME broader-market
-// inputs (4H trend momentum, weekly bias, 15min momentum, distance from the
+// inputs (4H trend momentum, weekly bias, 5min momentum, distance from the
 // recent range, today's high-impact news) an LLM prompt would have been
 // given, and combines them into a short German read - no network call, no
 // API key, no billing dependency, runs identically forever.
@@ -265,8 +290,10 @@ function computeMarketContextOpinion(asset, sig, ltf, htfRecent, weeklyTrend, ne
   const htfGreens = htfSample.filter((c) => c.close >= c.open).length;
   const htfMomentumDir = htfSample.length ? (htfGreens > htfSample.length / 2 ? 1 : htfGreens < htfSample.length / 2 ? -1 : 0) : 0;
 
-  // 15min momentum: net direction over the last 20 LTF candles.
-  const ltfSample = ltf.slice(-20);
+  // Kurzfrist-Momentum: Nettobewegung ueber die letzten 60 LTF-Kerzen (5min
+  // seit 2026-07-15, vorher 15min - Fensterbreite bewusst verdreifacht, damit
+  // dieselbe ~5h-Zeitspanne wie zuvor abgedeckt bleibt, nicht nur ~100min).
+  const ltfSample = ltf.slice(-60);
   const ltfNetDir = ltfSample.length >= 2
     ? Math.sign(pctChange(ltfSample[0].close, ltfSample[ltfSample.length - 1].close))
     : 0;
@@ -294,7 +321,7 @@ function computeMarketContextOpinion(asset, sig, ltf, htfRecent, weeklyTrend, ne
   const signals = [
     { label: "Wochentrend", dir: weeklyDir },
     { label: "4H-Momentum", dir: htfMomentumDir },
-    { label: "15min-Momentum", dir: ltfNetDir },
+    { label: "5min-Momentum", dir: ltfNetDir },
   ].filter((s) => s.dir !== 0);
   const agreeing = signals.filter((s) => s.dir === mechDir);
   const disagreeing = signals.filter((s) => s.dir !== mechDir);
@@ -303,7 +330,7 @@ function computeMarketContextOpinion(asset, sig, ltf, htfRecent, weeklyTrend, ne
   const plural = (arr) => arr.length > 1;
   let lead;
   if (signals.length === 0) {
-    lead = `Kein zusaetzlicher Kontext (Woche/4H/15min) verfuegbar, um den ${dirLabel}-Bias zu stuetzen oder zu widerlegen.`;
+    lead = `Kein zusaetzlicher Kontext (Woche/4H/5min) verfuegbar, um den ${dirLabel}-Bias zu stuetzen oder zu widerlegen.`;
   } else if (agreeing.length === signals.length) {
     const verb = plural(agreeing) ? "zeigen" : "zeigt";
     lead = `Gesamtbild stuetzt den ${dirLabel}-Bias: ${agreeing.map((s) => s.label).join(", ")} ${verb} in dieselbe Richtung.`;
@@ -414,7 +441,18 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs) {
   });
 }
 
-// Tiam tradet nur 15:00-17:00 Wiener Zeit (siehe README/Cron-Kommentar).
+// Tiam tradet 15:00-17:00 Wiener Zeit (NY-Session, siehe README/Cron-
+// Kommentar) UND seit 2026-07-15 zusaetzlich 09:00-10:00 Wiener Zeit
+// (London-Session). Quelle: TJRs eigenes verbatim Execution-Checklist im
+// 5h "Beginners Guide"-Video ("2: times to trade: ny session 9:50-10:30
+// (forex 8:00am-10:00am) london session 3am-4am", sein Chart lief auf
+// (UTC-5) New York = ET). ET->Wien ist ganzjaehrig ~+6h (beide Zonen haben
+// DST, die Umstellungstermine liegen nur wenige Tage auseinander, siehe
+// [[project_tjr_live_data]]): NY-Futures 9:50-10:30 ET ~ 15:50-16:30 Wien
+// (liegt schon im bestehenden Fenster), Forex-NY 8-10am ET ~ 14-16 Wien
+// (ueberlappt das bestehende Fenster, kein neues Fenster noetig), London
+// 3-4am ET ~ 9-10 Wien (KOMPLETT NEU, bisher nicht ueberwacht - siehe
+// project_tjr_strategy Memory "Update 2026-07-15").
 // Nutzt Intl mit timeZone "Europe/Vienna" statt eines festen UTC-Offsets,
 // damit der Sommer-/Winterzeit-Wechsel automatisch mitgeht (im Sommer ist
 // Wien UTC+2, im Winter UTC+1 — ein fixer Offset waere im Winter falsch).
@@ -425,7 +463,24 @@ function isViennaTradingWindow(date = new Date()) {
   const hour = Number(parts.find((p) => p.type === "hour").value);
   const minute = Number(parts.find((p) => p.type === "minute").value);
   const mins = hour * 60 + minute;
-  return mins >= 15 * 60 && mins < 17 * 60; // 15:00-16:59 Wien
+  const inLondonWindow = mins >= 9 * 60 && mins < 10 * 60; // 09:00-09:59 Wien
+  const inNyWindow = mins >= 15 * 60 && mins < 17 * 60; // 15:00-16:59 Wien
+  return inLondonWindow || inNyWindow;
+}
+
+// Fuer die Dashboard-Anzeige: welche der beiden Sessions ist gerade aktiv
+// (oder keine). Getrennt von isViennaTradingWindow(), damit die Alert-/
+// Log-Logik unangetastet bleibt und nur die Anzeige das Label bekommt.
+function activeTradingSessionLabel(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Europe/Vienna", hour: "2-digit", minute: "2-digit", hour12: false,
+  }).formatToParts(date);
+  const hour = Number(parts.find((p) => p.type === "hour").value);
+  const minute = Number(parts.find((p) => p.type === "minute").value);
+  const mins = hour * 60 + minute;
+  if (mins >= 9 * 60 && mins < 10 * 60) return "London";
+  if (mins >= 15 * 60 && mins < 17 * 60) return "NY";
+  return null;
 }
 
 // Kalendertag in Wiener Zeit als YYYY-MM-DD (fuer session_log.json - ein
@@ -505,7 +560,7 @@ async function main() {
   // State (welches Asset zuletzt ENTRY war) wird immer geschrieben, damit
   // git add state.json nie auf eine fehlende Datei trifft. Nur das SENDEN
   // der Push-Benachrichtigung haengt am optionalen NTFY_TOPIC UND am
-  // Handelsfenster (Tiam tradet nur 15-17 Uhr Wien wie TJR selbst — ein
+  // Handelsfenster (Tiam tradet nur 9-10 + 15-17 Uhr Wien wie TJR selbst — ein
   // ENTRY ausserhalb dieses Fensters wird trotzdem angezeigt, aber nicht
   // per Push gemeldet, um Alert-Spam ausserhalb der eigentlichen Handelszeit
   // zu vermeiden).
@@ -519,8 +574,10 @@ async function main() {
     const isEntry = item.sig.signal === "ENTRY";
     newState[item.asset.symbol] = isEntry;
     const wasEntry = !!prevState[item.asset.symbol];
-    // Tiam, 2026-07-12: neue Trades werden jetzt NUR innerhalb 15-17 Wien
-    // geloggt ("die KI soll nur zwischen 15 und 17 Uhr analysieren") - vorher
+    // Tiam, 2026-07-12: neue Trades werden jetzt NUR innerhalb des
+    // Handelsfensters geloggt ("die KI soll nur zwischen 15 und 17 Uhr
+    // analysieren") - seit 2026-07-15 zusaetzlich 9-10 Uhr Wien (London-
+    // Session, siehe isViennaTradingWindow()). Vorher
     // wurde ein mechanisches ENTRY ausserhalb des Fensters trotzdem als
     // Paper-Trade erfasst (nur der Push-Alert war gesperrt). Jetzt: ausserhalb
     // des Fensters wird ein erkanntes Setup zwar noch angezeigt (siehe
@@ -544,7 +601,7 @@ async function main() {
     if (isEntry && !wasEntry && NTFY_TOPIC && inWindow) {
       await sendNtfy(item.asset, item.sig);
     } else if (isEntry && !wasEntry && NTFY_TOPIC && !inWindow) {
-      console.log(`ALERT uebersprungen (ausserhalb 15-17 Wien): ${item.asset.name}`);
+      console.log(`ALERT uebersprungen (ausserhalb Handelsfenster 9-10/15-17 Wien): ${item.asset.name}`);
     }
   }
   const meta = prevState._meta || {};
@@ -582,6 +639,7 @@ async function main() {
   // Vergangene Paper-Trade-Signale (win/loss/open/stale) der letzten
   // CHART_HISTORY_DAYS pro Asset anhaengen, damit report_template.html sie
   // direkt im Chart als Marker einzeichnen kann (Tiam, 2026-07-11).
+
   const chartHistoryCutoff = Date.now() - CHART_HISTORY_DAYS * 86400000;
   for (const item of assets) {
     if (item.error) continue;
