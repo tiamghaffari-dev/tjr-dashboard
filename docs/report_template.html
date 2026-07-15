@@ -118,6 +118,7 @@
     box-shadow: 0 0 0 1px rgba(122,140,255,0.25);
   }
   .overview-card.has-entry { border-color: rgba(57,255,136,0.55); box-shadow: 0 0 14px -4px rgba(57,255,136,0.4); }
+  .overview-card.has-open-trade { border-color: rgba(64,156,255,0.55); box-shadow: 0 0 14px -4px rgba(64,156,255,0.4); }
   .ov-name { font-weight: 700; font-size: 13px; color: #f2f3f8; margin-bottom: 8px; }
   .ov-badges { display: flex; gap: 4px; flex-wrap: wrap; }
   .ov-badges .badge { font-size: 9.5px; padding: 3px 7px; }
@@ -198,6 +199,7 @@
   .bias-neutral { background: rgba(255,255,255,0.06); color: #9aa0b4; border-color: rgba(255,255,255,0.12); }
   .sig-entry { background: linear-gradient(90deg, #17c96b, #39ff88); color: #041a0d; box-shadow: 0 0 14px rgba(57,255,136,0.45); }
   .sig-watch { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
+  .sig-open { background: rgba(64,156,255,0.16); color: #7ec4ff; border-color: rgba(64,156,255,0.4); }
   .sig-none { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
   .sig-error { background: rgba(255,90,90,0.14); color: #ff6b6b; border-color: rgba(255,90,90,0.35); }
   .badge-outside { background: rgba(255,255,255,0.05); color: #9198ad; border-color: rgba(255,255,255,0.15); }
@@ -560,7 +562,16 @@ function analysisSteps(sig, ann) {
 function renderInfoTable(item) {
   const tableEl = document.getElementById("table-" + assetId(item.asset));
   if (!tableEl || item.error) return;
-  const sig = item.sig;
+  // Tiam, 2026-07-15: siehe Kommentar bei drawPositionBox oben - gleiches
+  // Problem hier, die Tabelle blendete Entry/Stop/Target auf "–" um, sobald
+  // die frische Neuberechnung kein ENTRY mehr bestaetigte, obwohl der Trade
+  // noch offen war. Bei offenem Trade zeigt die Tabelle jetzt dessen
+  // stabile, urspruenglich geloggte Werte (currentPrice bleibt trotzdem
+  // live aus sig, das ist einfach der aktuelle Marktpreis, kein Signal-Wert).
+  const openRec = (item.signals || []).find((r) => r.status === "open");
+  const sig = openRec
+    ? { entry: openRec.entry, stop: openRec.stop, target: openRec.target, rr: openRec.rr, currentPrice: item.sig.currentPrice }
+    : item.sig;
   tableEl.innerHTML = `
     <div class="row-entry"><span>Entry</span><span>${fmtOrDash(sig.entry)}</span></div>
     <div class="row-stop"><span>Stop</span><span>${fmtOrDash(sig.stop)}</span></div>
@@ -611,8 +622,29 @@ function renderOverview() {
     // zeigt es den echten ENTRY-Badge, sonst einen neutralen Hinweis.
     const isLiveEntry = sig.signal === "ENTRY" && item.mode === "analyzing";
     if (isLiveEntry) cls += " has-entry";
-    const signalBadgeClass = isLiveEntry ? "sig-entry" : (sig.signal === "ENTRY" ? "sig-watch" : badgeClassSignal(sig.signal));
-    const signalBadgeText = isLiveEntry ? sig.signal.split(" (")[0] : (sig.signal === "ENTRY" ? "Setup (pausiert)" : sig.signal.split(" (")[0]);
+    // Tiam, 2026-07-15: "wieso nimmt er immer ein entry weg? wenn er ein
+    // entry hat und ganz sicher ist das es passt soll er es ja laufen
+    // lassen" - sobald ein Trade offen ist (item.hasOpenTrade / mode
+    // "monitoring", siehe build.js), zeigt die Kachel jetzt IMMER einen
+    // stabilen "Trade offen"-Badge, unabhaengig davon was die frische
+    // mechanische Neuberechnung von sig.signal gerade sagt (die kann z.B.
+    // nach Ablauf von sweepLookbackBars wieder auf "kein Setup" zurueck-
+    // fallen, obwohl der geloggte Trade nach wie vor offen ist).
+    if (item.hasOpenTrade) cls += " has-open-trade";
+    let signalBadgeClass, signalBadgeText;
+    if (item.hasOpenTrade) {
+      signalBadgeClass = "sig-open";
+      signalBadgeText = "Trade offen";
+    } else if (isLiveEntry) {
+      signalBadgeClass = "sig-entry";
+      signalBadgeText = sig.signal.split(" (")[0];
+    } else if (sig.signal === "ENTRY") {
+      signalBadgeClass = "sig-watch";
+      signalBadgeText = "Setup (pausiert)";
+    } else {
+      signalBadgeClass = badgeClassSignal(sig.signal);
+      signalBadgeText = sig.signal.split(" (")[0];
+    }
     return `<div class="${cls}" data-id="${id}">
       <div class="ov-name">${item.asset.icon} ${item.asset.name}</div>
       <div class="ov-badges">
@@ -1486,7 +1518,24 @@ function renderChart(item) {
     // ZONE_STYLES.OrderBlock and draw a redundant, mislabeled duplicate box.
     drawZoneBox(chart, candles, ann, markers, series);
   }
-  if (sig.entry !== null) {
+  // Tiam, 2026-07-15: "wieso nimmt er immer ein entry weg... soll er es ja
+  // laufen lassen und nicht direkt wieder entfernen" - diese Box (und die
+  // Details-Tabelle unten) haengten bisher direkt an sig.entry/stop/target,
+  // die bei jedem Rebuild FRISCH neu berechnet werden. Sobald die frische
+  // Neuberechnung kein ENTRY mehr bestaetigt (z.B. weil der urspruengliche
+  // Sweep aus dem sweepLookbackBars-Fenster faellt), wurde sig.entry wieder
+  // null - die Box verschwand komplett, obwohl der Trade selbst (siehe
+  // hasOpenTrade/signals_log, per resolveSignals() in build.js weiterhin
+  // korrekt gegen Stop/Target geprueft) unveraendert offen war. Fix: bei
+  // einem offenen Trade IMMER dessen stabile, urspruenglich geloggte Werte
+  // nehmen statt der potenziell zurueckgesetzten frischen sig-Werte - die
+  // Box bleibt so sichtbar, bis der Trade selbst per Stop/Target aufgeloest
+  // wird, nicht bis die Sweep-Erkennung zufaellig aus dem Lookback laeuft.
+  const openRec = (item.signals || []).find((r) => r.status === "open");
+  const boxSig = openRec
+    ? { entry: openRec.entry, stop: openRec.stop, target: openRec.target }
+    : sig;
+  if (boxSig.entry !== null) {
     // Box zuerst zeichnen (liegt hinter den duennen Preis-Linien) - Startpunkt
     // ist der tatsaechliche Einstiegszeitpunkt bei einer offenen Position; ist
     // die Position noch nicht ausgeloest (Watchlist), wird die Box stattdessen
@@ -1503,11 +1552,10 @@ function renderChart(item) {
     // ueber ihre gestrichelte Kante (Target/Stop) und die weisse Trennlinie
     // (Entry); die exakten Zahlen stehen zusaetzlich in der "Details"-Tabelle
     // rechts neben dem Chart.
-    const openRec = (item.signals || []).find((r) => r.status === "open");
     const boxStartTs = openRec
       ? Math.floor(openRec.entryTs / 1000)
       : (ann.zoneTs ? Math.floor(ann.zoneTs / 1000) : candles[Math.max(0, candles.length - 21)].time);
-    drawPositionBox(chart, candles, sig, boxStartTs, series);
+    drawPositionBox(chart, candles, boxSig, boxStartTs, series);
   }
 
   const SIGNAL_OUTCOME_STYLE = {
