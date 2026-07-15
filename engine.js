@@ -242,6 +242,38 @@ function find1minConfirmation(m1Df, zoneBottom, zoneTop, wantDir, sinceTs) {
 // direkt neben dem Entry ist kein echtes Ziel).
 const MIN_KEY_LEVEL_RR = 1.0;
 
+// Tiam, 2026-07-15 (Folgefrage direkt danach): "jetzt nimmt er nur den
+// letzten high er soll ja den gesamten chart so anschauen und was so
+// ungefaehre praktische highs waeren die makiert er und verwenden die als
+// referenz fuer take profit". Der urspruengliche Ansatz oben nutzte
+// computeTrendAndBos()s swingsSorted (findSwings()'s 2-Kerzen-Richtungs-
+// wechsel-Logik) als Kandidatenliste - die ist fuer Trend/BOS genau richtig
+// (jeder noch so kleine Richtungswechsel zaehlt), aber fuer "was wuerde TJR
+// als echtes Key-Level markieren, wenn er ueber den GANZEN Chart schaut"
+// viel zu empfindlich: fast jede kleine Gegenbewegung erzeugt einen
+// "Swing", und "naechster ungeswepter Swing" landet dadurch oft auf einem
+// belanglosen kleinen Zwischenhoch direkt neben dem Entry statt auf einem
+// wirklich sichtbaren High/Low. Separater, groeberer Pivot-Filter NUR fuer
+// die Target-Suche (Bias/BOS/Sweep-Logik bleibt unveraendert, die braucht
+// weiterhin die feine Swing-Erkennung): ein High/Low zaehlt nur, wenn es
+// das tatsaechliche Extremum in einem WEITEN Fenster um sich herum ist
+// (Standard-"Fraktal"-Pivot: hoechster/niedrigster Punkt unter den +/-N
+// Nachbarkerzen), nicht nur verglichen mit der direkten Nachbarkerze.
+const PROMINENT_SWING_WINDOW_BARS = 6; // 4H-Kerzen: +/-6 Kerzen = +/-24h um jeden Kandidaten
+
+function findProminentHtfSwingLevels(htfDf, windowBars = PROMINENT_SWING_WINDOW_BARS) {
+  const levels = [];
+  for (let i = windowBars; i < htfDf.length - windowBars; i++) {
+    const windowSlice = htfDf.slice(i - windowBars, i + windowBars + 1);
+    const c = htfDf[i];
+    const windowHigh = Math.max(...windowSlice.map((r) => r.high));
+    const windowLow = Math.min(...windowSlice.map((r) => r.low));
+    if (c.high === windowHigh) levels.push({ ts: c.ts, price: c.high, type: "H" });
+    if (c.low === windowLow) levels.push({ ts: c.ts, price: c.low, type: "L" });
+  }
+  return levels;
+}
+
 function findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk) {
   if (!risk || risk <= 0) return null;
   const wantType = wantDir === "up" ? "H" : "L";
@@ -264,7 +296,10 @@ function findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk) {
 }
 
 function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookbackBars = 40) {
-  const { trend: htfTrend, bosEvents: htfBos, swingsSorted: htfSwings } = computeTrendAndBos(htfDf);
+  const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
+  // Grobe, "wuerde ein Mensch das beim Ueberfliegen des Charts markieren"
+  // Kandidatenliste fuers Target - siehe Kommentar bei findProminentHtfSwingLevels.
+  const htfKeyLevels = findProminentHtfSwingLevels(htfDf);
   const bias = htfDf.length ? htfTrend : 0;
   const biasLabel = { 1: "bullish", "-1": "bearish", 0: "neutral" }[bias];
 
@@ -391,13 +426,13 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   if (wantDir === "up") {
     stop = Math.min(cand.bottom, recentSweep.level) * 0.9985;
     const risk = entry - stop;
-    const keyLevel = findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk);
+    const keyLevel = findKeyLevelTarget(htfKeyLevels, htfDf, wantDir, entry, risk);
     if (keyLevel !== null) { target = keyLevel; targetSource = "key-level"; }
     else { target = entry + risk * rrTarget; targetSource = "fixed-rr-fallback"; }
   } else {
     stop = Math.max(cand.top, recentSweep.level) * 1.0015;
     const risk = stop - entry;
-    const keyLevel = findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk);
+    const keyLevel = findKeyLevelTarget(htfKeyLevels, htfDf, wantDir, entry, risk);
     if (keyLevel !== null) { target = keyLevel; targetSource = "key-level"; }
     else { target = entry - risk * rrTarget; targetSource = "fixed-rr-fallback"; }
   }
@@ -577,6 +612,7 @@ if (typeof module !== "undefined") {
     parseTs, loadCandles, resample, findSwings, computeTrendAndBos,
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
     findIfvg, findBreakerBlock, find1minConfirmation, findKeyLevelTarget,
+    findProminentHtfSwingLevels,
     premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }
