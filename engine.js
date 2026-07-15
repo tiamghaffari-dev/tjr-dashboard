@@ -227,8 +227,44 @@ function find1minConfirmation(m1Df, zoneBottom, zoneTop, wantDir, sinceTs) {
   return { touched: true, confirmed: true, touchTs: touchCandle.ts, event: cands[0] };
 }
 
+// Tiam, 2026-07-15: Screenshot zeigte eine riesige Position-Box - "die KI
+// nimmt viel zu grosse trades... tjr sagt immer markier die oldtime highs
+// oder lows als target". Bisher war target = entry +/- risk*rrTarget, ein
+// rein rechnerisches 2:1-Projektionsziel OHNE jeden Bezug zu echter Struktur
+// - genau das widerspricht TJRs eigenem, bereits dokumentiertem Schritt "g)
+// take profit at other key levels" (siehe project_tjr_strategy Memory,
+// Checklist-Schritt 1: "key levels: 1hr, 4hr liq and session highs/lows").
+// Ersetzt den fixen Multiple-Ansatz durch: naechster NOCH NICHT geswepter
+// 4H-Swing (Schritt 1's "4hr liq") in Trade-Richtung. Tiam hat sich per
+// Rueckfrage explizit fuer HTF-Swing (statt Session-High/Low oder beides)
+// entschieden, mit Fallback aufs alte fixe Ziel, falls kein Level in
+// sinnvoller Naehe existiert (sonst waere RR zu klein/negativ - ein "target"
+// direkt neben dem Entry ist kein echtes Ziel).
+const MIN_KEY_LEVEL_RR = 1.0;
+
+function findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk) {
+  if (!risk || risk <= 0) return null;
+  const wantType = wantDir === "up" ? "H" : "L";
+  const inDirection = htfSwings.filter((s) => (
+    s.type === wantType && (wantType === "H" ? s.price > entry : s.price < entry)
+  ));
+  // "Noch nicht geswept" = keine spaetere HTF-Kerze hat den Level bereits
+  // durchbrochen (High >= Swing-High bzw. Low <= Swing-Low) - sonst ist es
+  // keine echte, noch offene Liquiditaet mehr, sondern schon abgearbeitet.
+  const untouched = inDirection.filter((s) => {
+    const after = htfDf.filter((r) => r.ts > s.ts);
+    return wantType === "H" ? !after.some((r) => r.high >= s.price) : !after.some((r) => r.low <= s.price);
+  });
+  untouched.sort((a, b) => Math.abs(a.price - entry) - Math.abs(b.price - entry));
+  for (const cand of untouched) {
+    const reward = Math.abs(cand.price - entry);
+    if (reward / risk >= MIN_KEY_LEVEL_RR) return cand.price;
+  }
+  return null;
+}
+
 function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookbackBars = 40) {
-  const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
+  const { trend: htfTrend, bosEvents: htfBos, swingsSorted: htfSwings } = computeTrendAndBos(htfDf);
   const bias = htfDf.length ? htfTrend : 0;
   const biasLabel = { 1: "bullish", "-1": "bearish", 0: "neutral" }[bias];
 
@@ -351,16 +387,22 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   const cand = candidates[0];
   const entry = (cand.top + cand.bottom) / 2;
 
-  let stop, target;
+  let stop, target, targetSource;
   if (wantDir === "up") {
     stop = Math.min(cand.bottom, recentSweep.level) * 0.9985;
     const risk = entry - stop;
-    target = entry + risk * rrTarget;
+    const keyLevel = findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk);
+    if (keyLevel !== null) { target = keyLevel; targetSource = "key-level"; }
+    else { target = entry + risk * rrTarget; targetSource = "fixed-rr-fallback"; }
   } else {
     stop = Math.max(cand.top, recentSweep.level) * 1.0015;
     const risk = stop - entry;
-    target = entry - risk * rrTarget;
+    const keyLevel = findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk);
+    if (keyLevel !== null) { target = keyLevel; targetSource = "key-level"; }
+    else { target = entry - risk * rrTarget; targetSource = "fixed-rr-fallback"; }
   }
+  const riskDist = Math.abs(entry - stop);
+  const rrActual = riskDist > 0 ? Math.round((Math.abs(target - entry) / riskDist) * 100) / 100 : rrTarget;
 
   const inZoneNow = cand.bottom <= currentPrice && currentPrice <= cand.top;
 
@@ -392,15 +434,18 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
     : m1.confirmed
       ? `, 1min-Bestaetigung: ${m1.event.kind} am ${new Date(m1.event.ts).toISOString()}`
       : zoneTouched ? ", wartet noch auf 1min-Bestaetigung" : "";
+  const targetDesc = targetSource === "key-level"
+    ? `Target: naechstes offenes 4H-Key-Level @ ${target.toPrecision(6)} (RR ${rrActual})`
+    : `Target: kein 4H-Key-Level in sinnvoller Naehe - fixes ${rrTarget}:1-Ziel @ ${target.toPrecision(6)}`;
 
   Object.assign(result, {
     signal,
     detail: `Sweep ${recentSweep.type} @ ${recentSweep.level.toPrecision(6)} am ${new Date(recentSweep.ts).toISOString()}, `
-      + `${confDesc}, Entry-Zone: ${cand.kind} [${cand.bottom.toPrecision(6)} - ${cand.top.toPrecision(6)}] (${zone})${m1Desc}.`,
-    entry: round6(entry), stop: round6(stop), target: round6(target), rr: rrTarget,
+      + `${confDesc}, Entry-Zone: ${cand.kind} [${cand.bottom.toPrecision(6)} - ${cand.top.toPrecision(6)}] (${zone})${m1Desc}. ${targetDesc}.`,
+    entry: round6(entry), stop: round6(stop), target: round6(target), rr: rrActual,
     sweep: recentSweep, bos: bosEvent, confirmation: conf,
     zoneKind: cand.kind, zoneRange: [cand.bottom, cand.top],
-    currentPrice,
+    currentPrice, targetSource,
     m1Gate: hasM1Data, m1Confirmation: m1.confirmed ? m1.event : null, zoneTouchTs: m1.touchTs,
   });
   return result;
@@ -531,7 +576,7 @@ if (typeof module !== "undefined") {
   module.exports = {
     parseTs, loadCandles, resample, findSwings, computeTrendAndBos,
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
-    findIfvg, findBreakerBlock, find1minConfirmation,
+    findIfvg, findBreakerBlock, find1minConfirmation, findKeyLevelTarget,
     premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }
