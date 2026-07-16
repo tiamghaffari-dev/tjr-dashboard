@@ -46,9 +46,9 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1784210700000,
+    "rMultiple": -1
   },
   {
     "id": "GCUSD-1784122708678",
