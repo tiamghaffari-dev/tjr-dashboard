@@ -100,5 +100,22 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "ETHUSD-1784213507795",
+    "asset": "ETHUSD",
+    "direction": "SHORT",
+    "entryTs": 1784213507795,
+    "entry": 1884.640015,
+    "stop": 1887.727374,
+    "target": 1749.099976,
+    "rr": 43.9,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
