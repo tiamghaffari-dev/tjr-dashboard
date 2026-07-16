@@ -12,9 +12,9 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1784190900000,
+    "rMultiple": -1
   },
   {
     "id": "GBPUSD-1784120729469",
@@ -66,5 +66,39 @@
     "status": "loss",
     "resolvedTs": 1784123100000,
     "rMultiple": -1
+  },
+  {
+    "id": "GBPUSD-1784208531058",
+    "asset": "GBPUSD",
+    "direction": "LONG",
+    "entryTs": 1784208531058,
+    "entry": 1.350831,
+    "stop": 1.348359,
+    "target": 1.355776,
+    "rr": 2,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1784208531058",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1784208531058,
+    "entry": 4016.25,
+    "stop": 4041.252751,
+    "target": 3973,
+    "rr": 1.73,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
