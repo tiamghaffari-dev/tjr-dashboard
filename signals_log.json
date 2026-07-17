@@ -97,9 +97,9 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1784277600000,
+    "rMultiple": 1.73
   },
   {
     "id": "ETHUSD-1784213507795",
