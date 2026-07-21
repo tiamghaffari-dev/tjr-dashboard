@@ -117,5 +117,39 @@
     "status": "loss",
     "resolvedTs": 1784491800000,
     "rMultiple": -1
+  },
+  {
+    "id": "BTCUSD-1784645615661",
+    "asset": "BTCUSD",
+    "direction": "LONG",
+    "entryTs": 1784645615661,
+    "entry": 66741.214844,
+    "stop": 66524.812875,
+    "target": 67174.018781,
+    "rr": 2,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "OrderBlock",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "^GSPC-1784645615661",
+    "asset": "^GSPC",
+    "direction": "LONG",
+    "entryTs": 1784645615661,
+    "entry": 745.82251,
+    "stop": 743.832587,
+    "target": 755.580017,
+    "rr": 4.9,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "OrderBlock",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
