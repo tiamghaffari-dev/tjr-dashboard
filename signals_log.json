@@ -131,9 +131,9 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "OrderBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1784645700000,
+    "rMultiple": -1
   },
   {
     "id": "^GSPC-1784645615661",
