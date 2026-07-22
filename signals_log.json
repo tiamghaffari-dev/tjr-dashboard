@@ -30,7 +30,7 @@
     "confirmationKind": "iFVG",
     "zoneKind": "FVG",
     "status": "win",
-    "resolvedTs": 1784121000000,
+    "resolvedTs": 1784115000000,
     "rMultiple": 2
   },
   {
@@ -47,7 +47,7 @@
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
     "status": "loss",
-    "resolvedTs": 1784210700000,
+    "resolvedTs": 1784118000000,
     "rMultiple": -1
   },
   {
@@ -63,9 +63,9 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
-    "status": "loss",
-    "resolvedTs": 1784123100000,
-    "rMultiple": -1
+    "status": "win",
+    "resolvedTs": 1784114400000,
+    "rMultiple": 2
   },
   {
     "id": "GBPUSD-1784208531058",
@@ -81,7 +81,7 @@
     "confirmationKind": "iFVG",
     "zoneKind": "FVG",
     "status": "loss",
-    "resolvedTs": 1784208600000,
+    "resolvedTs": 1784199600000,
     "rMultiple": -1
   },
   {
@@ -115,7 +115,7 @@
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
     "status": "loss",
-    "resolvedTs": 1784491800000,
+    "resolvedTs": 1784201100000,
     "rMultiple": -1
   },
   {
@@ -132,7 +132,7 @@
     "confirmationKind": "iFVG",
     "zoneKind": "OrderBlock",
     "status": "loss",
-    "resolvedTs": 1784645700000,
+    "resolvedTs": 1784633400000,
     "rMultiple": -1
   },
   {
