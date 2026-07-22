@@ -383,11 +383,28 @@ function loadSessionLog() {
 // (wiederkehrende Fehlermuster erkennen) passiert separat beim periodischen
 // Review dieser Datei, siehe Memory project_tjr_trade_journal.
 const STALE_DAYS = 10;
+// Tiam, 2026-07-22 (Korrektheits-Audit auf eigenen Wunsch: "arbeite weiter an
+// der KI [...] das sie wirklich alles korrekt macht"): entryTs ist ein
+// echter UTC-Zeitstempel (Date.now() beim Loggen), aber jede Kerze in
+// ltfFull.ts liegt in der Pseudo-Zeit-Domain (siehe engine.js parseTs-
+// Kommentar / etPseudoDateStr oben - dieselbe Domain-Mischung, die schon den
+// Chart-Deep-Link-Bug verursacht hat, hier aber in der eigentlichen
+// Trade-Aufloesung selbst). rec.entryTs >= ... direkt zu vergleichen bedeutet
+// effektiv, dass die ersten ~4-5 echten Stunden (ET/UTC-Offset, DST-
+// abhaengig) nach JEDEM Entry komplett uebersprungen wurden - die real
+// resolvedTs-Werte in signals_log.json landen dadurch immer exakt auf dem
+// naechsten 5min-Pseudo-Zeit-Raster-Punkt >= entryTs, unabhaengig davon, was
+// der Kurs in den echten Stunden dazwischen tatsaechlich gemacht hat (durch
+// echte Kerzendaten verifiziert: alle bisherigen "1-7 Minuten"-Verluste sind
+// dieses Artefakt, keine echten sofortigen Reversals). Fix: entryTs erst
+// durch dieselbe real->pseudo-Pipeline schicken wie die Kerzen selbst, bevor
+// verglichen wird.
 function resolveSignals(signalsLog, asset, ltfFull) {
   const oldestTs = ltfFull.length ? ltfFull[0].ts : null;
   for (const rec of signalsLog) {
     if (rec.asset !== asset.symbol || rec.status !== "open") continue;
-    const candles = ltfFull.filter((c) => c.ts >= rec.entryTs);
+    const entryPseudoTs = parseTs(etPseudoDateStr(rec.entryTs));
+    const candles = ltfFull.filter((c) => c.ts >= entryPseudoTs);
     for (const c of candles) {
       const hitStop = rec.direction === "LONG" ? c.low <= rec.stop : c.high >= rec.stop;
       const hitTarget = rec.direction === "LONG" ? c.high >= rec.target : c.low <= rec.target;
@@ -400,7 +417,7 @@ function resolveSignals(signalsLog, asset, ltfFull) {
         break;
       }
     }
-    if (rec.status === "open" && oldestTs !== null && rec.entryTs < oldestTs) {
+    if (rec.status === "open" && oldestTs !== null && entryPseudoTs < oldestTs) {
       const ageDays = (Date.now() - rec.entryTs) / 86400000;
       if (ageDays > STALE_DAYS) rec.status = "stale";
     }

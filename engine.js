@@ -209,16 +209,25 @@ function findBreakerBlock(df, bosEvents, sweepTs, direction) {
 // (m1Df leer/undefined) - der Aufrufer entscheidet dann, ob er ohne dieses
 // Gate weiterarbeitet (siehe buildSignal()), damit ein Datenausfall nicht
 // automatisch jedes Signal blockiert.
+// Fix, 2026-07-22 (Korrektheits-Audit): computeTrendAndBos/findIfvg wurden
+// bisher nur auf "afterTouch" (die auf den Touch-Zeitpunkt gekuerzte Slice)
+// aufgerufen - das kappt jede Schwing-/Level-Historie von VOR dem Touch weg,
+// wodurch das Modell fuer einen 1min-BOS immer erst einen komplett NEUEN
+// Schwingpunkt NACH dem Touch bilden musste, statt (wie ueberall sonst im
+// Code - siehe ltfBos/htfBos: volle Historie berechnen, dann per Zeitstempel
+// filtern) einen bereits bestehenden, kurz vor dem Touch entstandenen Level
+// brechen zu duerfen. Das ist der weitaus haeufigere echte Fall und wurde
+// bisher systematisch verpasst. Fix: dieselbe "volle Historie -> nach
+// Zeitstempel filtern"-Konvention wie ueberall sonst.
 function find1minConfirmation(m1Df, zoneBottom, zoneTop, wantDir, sinceTs) {
   if (!m1Df || m1Df.length === 0) return { touched: false, confirmed: false, touchTs: null, event: null };
   const relevant = m1Df.filter((r) => r.ts >= sinceTs);
   const touchCandle = relevant.find((r) => r.low <= zoneTop && r.high >= zoneBottom);
   if (!touchCandle) return { touched: false, confirmed: false, touchTs: null, event: null };
-  const afterTouch = relevant.filter((r) => r.ts >= touchCandle.ts);
-  const { bosEvents: m1Bos } = computeTrendAndBos(afterTouch);
-  const confirmingBos1m = m1Bos.filter((b) => b.dir === wantDir);
-  const ifvgEvents1m = findIfvg(afterTouch, findFvgs(afterTouch));
-  const confirmingIfvg1m = ifvgEvents1m.filter((e) => e.dir === wantDir);
+  const { bosEvents: m1Bos } = computeTrendAndBos(m1Df);
+  const confirmingBos1m = m1Bos.filter((b) => b.ts >= touchCandle.ts && b.dir === wantDir);
+  const ifvgEvents1m = findIfvg(m1Df, findFvgs(m1Df));
+  const confirmingIfvg1m = ifvgEvents1m.filter((e) => e.ts >= touchCandle.ts && e.dir === wantDir);
   const cands = [];
   if (confirmingBos1m.length) cands.push({ kind: "BOS", ts: confirmingBos1m[0].ts, event: confirmingBos1m[0] });
   if (confirmingIfvg1m.length) cands.push({ kind: "iFVG", ts: confirmingIfvg1m[0].ts, event: confirmingIfvg1m[0] });
