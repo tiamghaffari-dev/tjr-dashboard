@@ -165,9 +165,9 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1784718000000,
+    "rMultiple": 2
   },
   {
     "id": "XRPUSD-1784730077266",
