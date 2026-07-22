@@ -988,10 +988,14 @@ const HISTORICAL_BOX_COLORS = {
 };
 const STALE_BOX_FALLBACK_BARS = 120; // ~10h bei 5-Min-Kerzen, falls kein resolvedTs vorliegt (seit 2026-07-15 Kerzen-Umstellung korrigiert)
 
-function drawHistoricalPositionBox(chart, candles, rec, series) {
+function drawHistoricalPositionBox(chart, candles, rec, series, pseudoOffsetSec) {
   if (rec.status === "open") return; // die laufende Position zeigt bereits drawPositionBox()
   if (rec.entry == null || rec.stop == null || rec.target == null) return;
-  const startTs = Math.floor(rec.entryTs / 1000);
+  // Tiam, 2026-07-22: entryTs kommt aus signals_log.json als ECHTE UTC-Zeit
+  // (Date.now() beim Build) - siehe pseudoOffsetSec-Kommentar in renderChart()
+  // weiter unten fuer die volle Erklaerung. resolvedTs (fuer endTs) ist davon
+  // NICHT betroffen, das kommt schon direkt aus einer Kerze.
+  const startTs = Math.floor(rec.entryTs / 1000) - (pseudoOffsetSec || 0);
   const startIdx = candles.findIndex((c) => c.time >= startTs);
   if (startIdx === -1) return;
 
@@ -1477,6 +1481,28 @@ function renderChart(item) {
   series.setData(candles);
   const DEFAULT_VIEW_CANDLES = 3 * 288; // ~3 Tage bei 5-Min-Kerzen als Erstansicht (seit 2026-07-15 Kerzen-Umstellung korrigiert)
 
+  // Tiam, 2026-07-22 (beim Bauen des "Klick im Verlauf -> Chart springt zum
+  // Trade-Zeitpunkt"-Features gefunden): entryTs in signals_log.json ist eine
+  // ECHTE UTC-Zeit (Date.now() im Moment des Builds, siehe build.js
+  // logNewSignal), die Kerzen-Zeitstempel liegen dagegen in der "ET-Uhrzeit-
+  // als-UTC-verkleidet"-Pseudo-Konvention (siehe etPseudoDateStr in build.js).
+  // Unkonvertiert war jede Stelle, die rec.entryTs direkt als Chart-Zeit nutzt
+  // (Positions-Box, Marker), um die ET-UTC-Zeitzonendifferenz daneben (~4h im
+  // Sommer, ~5h im Winter) - fiel bisher kaum auf, weil die Box/der Marker
+  // dadurch nur ein paar Stunden verschoben war statt komplett zu fehlen.
+  // pseudoOffsetSec wird hier LAUFEND aus echten Daten berechnet (generatedAt
+  // in echter UTC minus letzte Kerze in Pseudo-Zeit), nicht hart codiert,
+  // damit die Sommer-/Winterzeit-Umstellung automatisch mitgeht. rec.resolvedTs
+  // ist NICHT betroffen - das kommt in build.js' resolveSignals() schon
+  // direkt aus einer Kerze (rec.resolvedTs = c.ts) und ist bereits im
+  // Pseudo-Zeitraum.
+  const pseudoOffsetSec = candles.length
+    ? Math.floor(new Date(PRECOMPUTED.generatedAt).getTime() / 1000) - candles[candles.length - 1].time
+    : 0;
+  function entryChartSec(entryTsMs) {
+    return Math.floor(entryTsMs / 1000) - pseudoOffsetSec;
+  }
+
   const { ann, sig } = item;
   let markers = sessionMarkers(item.ltf);
   drawSessionLevels(chart, candles, computeSessionLevels(item.ltf), markers);
@@ -1553,7 +1579,7 @@ function renderChart(item) {
     // (Entry); die exakten Zahlen stehen zusaetzlich in der "Details"-Tabelle
     // rechts neben dem Chart.
     const boxStartTs = openRec
-      ? Math.floor(openRec.entryTs / 1000)
+      ? entryChartSec(openRec.entryTs)
       : (ann.zoneTs ? Math.floor(ann.zoneTs / 1000) : candles[Math.max(0, candles.length - 21)].time);
     drawPositionBox(chart, candles, boxSig, boxStartTs, series);
   }
@@ -1565,7 +1591,7 @@ function renderChart(item) {
     stale: { color: "#7c8399", text: "ABGELAUFEN" },
   };
   for (const rec of (item.signals || [])) {
-    drawHistoricalPositionBox(chart, candles, rec, series);
+    drawHistoricalPositionBox(chart, candles, rec, series, pseudoOffsetSec);
     const style = SIGNAL_OUTCOME_STYLE[rec.status] || SIGNAL_OUTCOME_STYLE.open;
     const isLong = rec.direction === "LONG";
     // Tiam, 2026-07-12: "schaut ob der Trade wirklich in die richtige
@@ -1577,7 +1603,7 @@ function renderChart(item) {
       text = `OFFEN ${sign}${rec.unrealizedR}R`;
     }
     markers.push({
-      time: Math.floor(rec.entryTs / 1000),
+      time: entryChartSec(rec.entryTs),
       position: isLong ? "belowBar" : "aboveBar",
       color: style.color, shape: isLong ? "arrowUp" : "arrowDown", text,
     });
@@ -1850,9 +1876,16 @@ setInterval(tickCountdown, 1000);
     if (item) {
       const id = assetId(item.asset);
       selectedAssetId = id;
-      if (tsParam) {
-        const centerSec = Math.floor(Number(tsParam) / 1000);
-        if (!Number.isNaN(centerSec)) {
+      if (tsParam && item.ltf && item.ltf.length) {
+        const entrySec = Math.floor(Number(tsParam) / 1000);
+        if (!Number.isNaN(entrySec)) {
+          // Gleiche entryTs(echte UTC) -> Kerzen-Pseudo-Zeit-Umrechnung wie in
+          // renderChart()s pseudoOffsetSec (siehe dortiger Kommentar) - sonst
+          // landet der Sprung ein paar Stunden neben der tatsaechlichen Kerze.
+          const lastCandleSec = Math.floor(item.ltf[item.ltf.length - 1].ts / 1000);
+          const generatedSec = Math.floor(new Date(PRECOMPUTED.generatedAt).getTime() / 1000);
+          const pseudoOffsetSec = generatedSec - lastCandleSec;
+          const centerSec = entrySec - pseudoOffsetSec;
           const HALF_WINDOW_SEC = 3 * 3600; // +/- 3h Kontext um den Entry-Zeitpunkt
           chartRanges[id] = { from: centerSec - HALF_WINDOW_SEC, to: centerSec + HALF_WINDOW_SEC };
         }
