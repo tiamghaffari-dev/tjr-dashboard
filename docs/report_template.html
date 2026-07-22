@@ -1830,6 +1830,40 @@ function tickCountdown() {
 }
 setInterval(tickCountdown, 1000);
 
+// Tiam, 2026-07-22: "wenn ich auf einer dieser positions [im Verlauf] klicke
+// das ich zum gewaehlten asset komme und zu dem Zeitpunkt im chart geschickt
+// werde wo dieser Trade stattgefunden hat bzw begonnen hat" - history.html
+// verlinkt jede Zeile hierher mit ?asset=<symbol>&ts=<entryTs-ms>. Vor dem
+// ersten main()-Lauf: gewaehltes Asset als selectedAssetId setzen (renderOverview
+// respektiert eine bereits gueltige selectedAssetId statt pickDefaultAssetId()
+// aufzurufen) und den Chart-Zoom fuer dieses Asset auf ein Fenster um den
+// Entry-Zeitpunkt vorbelegen (renderChart nutzt chartRanges[id], falls gesetzt,
+// noch vor der Default-Ansicht). Gleiche entryTs/1000-Zeitkonvention wie bei den
+// bestehenden Signal-Markern (drawHistoricalPositionBox weiter oben), damit der
+// Sprung exakt auf dieselbe Kerze trifft, an der der WIN/LOSS/OFFEN-Marker sitzt.
+(function applyDeepLinkFromHistory() {
+  const params = new URLSearchParams(location.search);
+  const assetParam = params.get("asset");
+  const tsParam = params.get("ts");
+  if (assetParam) {
+    const item = PRECOMPUTED.assets.find((it) => !it.error && it.asset.symbol === assetParam);
+    if (item) {
+      const id = assetId(item.asset);
+      selectedAssetId = id;
+      if (tsParam) {
+        const centerSec = Math.floor(Number(tsParam) / 1000);
+        if (!Number.isNaN(centerSec)) {
+          const HALF_WINDOW_SEC = 3 * 3600; // +/- 3h Kontext um den Entry-Zeitpunkt
+          chartRanges[id] = { from: centerSec - HALF_WINDOW_SEC, to: centerSec + HALF_WINDOW_SEC };
+        }
+      }
+    }
+  }
+  // URL wieder saeubern, damit ein spaeteres manuelles Neuladen (F5) nicht bei
+  // jedem Aufruf wieder auf denselben alten Trade-Zeitpunkt zurueckspringt.
+  if (assetParam) history.replaceState(null, "", location.pathname);
+})();
+
 initSettings();
 main();
 </script>

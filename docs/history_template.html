@@ -69,6 +69,8 @@
   }
   tbody td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
   tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody tr.tr-link { cursor: pointer; }
+  tbody tr.tr-link:hover { background: rgba(122,140,255,0.08); }
   .badge {
     display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px;
     font-weight: 700; letter-spacing: 0.3px; border: 1px solid transparent;
@@ -221,7 +223,7 @@ function renderTable() {
             ergebnis = `${sign}${r.unrealizedR}R (unrealisiert)`;
           }
           return `
-          <tr>
+          <tr class="tr-link" data-asset="${r.asset}" data-ts="${r.entryTs}" title="Zum Chart zu diesem Zeitpunkt springen">
             <td>${fmtDate(r.entryTs)}</td>
             <td>${meta.icon} ${meta.display || meta.name}</td>
             <td class="${r.direction === "LONG" ? "dir-long" : "dir-short"}">${r.direction}</td>
@@ -236,6 +238,21 @@ function renderTable() {
         }).join("")}
       </tbody>
     </table>`;
+
+  // Tiam, 2026-07-22: "wenn ich auf einer dieser positions klicke das ich zum
+  // gewaehlten asset komme und zu dem Zeitpunkt im chart geschickt werde wo
+  // dieser Trade stattgefunden hat" - jede Zeile verlinkt auf das Haupt-
+  // Dashboard mit Asset-Symbol + Entry-Zeitstempel als Query-Params; dort
+  // springt main() beim Laden direkt zu diesem Asset und zoomt den Chart auf
+  // den Zeitraum um den Entry-Zeitpunkt (siehe applyDeepLinkFromHistory in
+  // report_template.html).
+  wrap.querySelectorAll("tbody tr.tr-link").forEach((tr) => {
+    tr.addEventListener("click", () => {
+      const asset = tr.getAttribute("data-asset");
+      const ts = tr.getAttribute("data-ts");
+      window.location.href = `index.html?asset=${encodeURIComponent(asset)}&ts=${encodeURIComponent(ts)}`;
+    });
+  });
 }
 
 document.getElementById("statusFilter").addEventListener("change", (e) => {
