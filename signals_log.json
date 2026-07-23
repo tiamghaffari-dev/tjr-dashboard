@@ -148,9 +148,9 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "OrderBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1784799000000,
+    "rMultiple": -1
   },
   {
     "id": "ETHUSD-1784730077266",
@@ -219,5 +219,22 @@
     "status": "loss",
     "resolvedTs": 1784743200000,
     "rMultiple": -1
+  },
+  {
+    "id": "GCUSD-1784816971056",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1784816971056,
+    "entry": 4082.449951,
+    "stop": 4094.232248,
+    "target": 3963,
+    "rr": 10.14,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
