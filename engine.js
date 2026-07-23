@@ -98,11 +98,21 @@ function findLiquiditySweeps(df, swingsSorted) {
       if (s.type === "H") activeHigh = s.price; else activeLow = s.price;
       swingPtr++;
     }
+    // `level` = the old resting-liquidity swing price that got swept (for
+    // reference/labeling). `extreme` = the actual wick low/high the sweep
+    // candle reached, which is by definition BEYOND `level` (that's what
+    // makes it a sweep) - this is the real invalidation point TJR means by
+    // "stop loss above liq sweep" (Bootcamp Day 38), not the pre-sweep
+    // level itself. Added 2026-07-22 correctness/stop-placement pass.
     if (activeLow !== null && row.low < activeLow && row.close > activeLow) {
-      sweeps.push({ ts: row.ts, type: "sell_side_sweep", level: activeLow, pos });
+      sweeps.push({
+        ts: row.ts, type: "sell_side_sweep", level: activeLow, extreme: row.low, pos,
+      });
     }
     if (activeHigh !== null && row.high > activeHigh && row.close < activeHigh) {
-      sweeps.push({ ts: row.ts, type: "buy_side_sweep", level: activeHigh, pos });
+      sweeps.push({
+        ts: row.ts, type: "buy_side_sweep", level: activeHigh, extreme: row.high, pos,
+      });
     }
   }
   return sweeps;
@@ -431,15 +441,30 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   const cand = candidates[0];
   const entry = (cand.top + cand.bottom) / 2;
 
+  // Tiam, 2026-07-22: "er soll auch geschickter die Stop loss setzen [...]
+  // es soll passen und auch ned zu klein sein" - TJRs eigene Regel aus
+  // Bootcamp Day 38 ("Stop-Losses"): "stop loss above liq sweep" (analog
+  // darunter fuer Longs) - der Stop gehoert jenseits des tatsaechlichen
+  // Sweep-Dochts (dem Punkt, wo der Preis wirklich hinlief, BEVOR er
+  // zurueckdrehte), nicht nur jenseits des ALTEN, VOR dem Sweep liegenden
+  // Swing-Levels. `recentSweep.level` ist per Definition WENIGER extrem als
+  // `recentSweep.extreme` (genau das macht es ja zu einem Sweep - der Preis
+  // ging drueber hinaus), also war der Stop bisher zu nah dran: ein
+  // normaler Retest bis knapp an den alten Level haette schon ausgestoppt,
+  // obwohl die eigentliche Sweep-These (Preis nimmt NICHT nochmal den
+  // wirklichen Extrempunkt) noch gar nicht widerlegt war. `sweepAnchor`
+  // faellt auf `.level` zurueck, falls `.extreme` aus irgendeinem Grund
+  // fehlt (sollte nach diesem Fix nicht mehr vorkommen, reine Absicherung).
+  const sweepAnchor = recentSweep.extreme ?? recentSweep.level;
   let stop, target, targetSource;
   if (wantDir === "up") {
-    stop = Math.min(cand.bottom, recentSweep.level) * 0.9985;
+    stop = Math.min(cand.bottom, sweepAnchor) * 0.9985;
     const risk = entry - stop;
     const keyLevel = findKeyLevelTarget(htfKeyLevels, htfDf, wantDir, entry, risk);
     if (keyLevel !== null) { target = keyLevel; targetSource = "key-level"; }
     else { target = entry + risk * rrTarget; targetSource = "fixed-rr-fallback"; }
   } else {
-    stop = Math.max(cand.top, recentSweep.level) * 1.0015;
+    stop = Math.max(cand.top, sweepAnchor) * 1.0015;
     const risk = stop - entry;
     const keyLevel = findKeyLevelTarget(htfKeyLevels, htfDf, wantDir, entry, risk);
     if (keyLevel !== null) { target = keyLevel; targetSource = "key-level"; }
