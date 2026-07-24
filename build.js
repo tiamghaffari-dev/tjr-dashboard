@@ -135,6 +135,27 @@ async function fetchCandles(asset, interval, from, to) {
   return loadCandles(raw);
 }
 
+// Tiam, 2026-07-24: "mehr Daten von irgendwo, die Analyse verbessern" - TJRs
+// eigenes Framework listet SMT ("smt") gleichrangig neben BOS/iFVG als
+// Bestaetigungssignal (siehe engine.js findSmtDivergence-Kommentar), war
+// bisher immer zurueckgestellt weil der Nasdaq (fuer den S&P-500-Vergleich)
+// auf dem alten FMP-Plan blockiert war. Ueber Yahoo ist ^NDX kostenlos
+// erreichbar - nur fuer ^GSPC konfiguriert, da TJR SMT selbst nur "on
+// indexes" beschreibt und Crypto/Forex/Gold keinen offensichtlichen
+// Divergenz-Partner unter Tiams 6 Assets haben (siehe project_tjr_strategy
+// Memory).
+const SMT_CORRELATED_YAHOO_SYMBOL = { "^GSPC": "^NDX" };
+
+async function fetchCorrelatedCandles(asset, interval, from, to) {
+  const yahooSymbol = SMT_CORRELATED_YAHOO_SYMBOL[asset.symbol];
+  if (!yahooSymbol) return [];
+  const yahooInterval = YAHOO_INTERVAL_MAP[interval] || "5m";
+  const rangeDays = Math.ceil((to.getTime() - from.getTime()) / 86400000) + 2;
+  const raw = await fetchYahooChart(yahooSymbol, yahooInterval, rangeDays);
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  return loadCandles(raw);
+}
+
 // Tiam, 2026-07-14 (nach TJR Boot Camp Day 43 "Weekly Analysis"): TJR startet
 // seine Wochenvorbereitung immer auf Monats-/Wochenchart-Ebene und wendet
 // dort dasselbe Equilibrium-Tool (Mittelpunkt zwischen Hoch/Tief, TJRs
@@ -196,10 +217,16 @@ async function analyzeAsset(asset) {
   } catch (e) {
     console.error(`1min-Kerzen-Abruf fehlgeschlagen fuer ${asset.name} (1min-Bestaetigungs-Gate wird uebersprungen):`, e.message || e);
   }
+  let correlatedLtf = [];
+  try {
+    correlatedLtf = await fetchCorrelatedCandles(asset, "5min", from5m, today);
+  } catch (e) {
+    console.error(`SMT-Vergleichsindex-Abruf fehlgeschlagen fuer ${asset.name} (SMT-Bestaetigung wird uebersprungen):`, e.message || e);
+  }
   const htf = resample(df1h, 240);
   const ltf = df5m;
-  const sig = buildSignal(htf, ltf, df1m);
-  const ann = buildAnnotations(htf, ltf);
+  const sig = buildSignal(htf, ltf, df1m, undefined, undefined, undefined, correlatedLtf);
+  const ann = buildAnnotations(htf, ltf, undefined, correlatedLtf);
   // CHART_HISTORY_CANDLES (~20 Tage) werden an den Client geschickt, damit man
   // im Chart weit genug zurueckscrollen kann, um vergangene Analysen/Signale
   // zu sehen (siehe CHART_HISTORY_DAYS oben). ltfFull (volle Rohreihe inkl.

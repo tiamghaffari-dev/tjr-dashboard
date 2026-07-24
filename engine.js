@@ -347,7 +347,47 @@ function findMultipleKeyLevelTargets(htfSwings, htfDf, wantDir, entry, risk, max
   return hits;
 }
 
-function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookbackBars = 40) {
+// Tiam, 2026-07-24: "generell, webseite verbessern, die analyse verbessern
+// also mehr daten von irgendwo besseres nachdenken etc" - TJRs eigenes
+// Framework listet SMT ("smt") als drittes Bestaetigungssignal gleichrangig
+// neben BOS/iFVG ("confirmation: bos, ifvg, smt"), war aber nie gebaut, weil
+// der Nasdaq (fuer den S&P-500-SMT-Vergleich) auf dem alten FMP-Plan blockiert
+// war (siehe project_tjr_strategy Memory, "SMT Divergence explizit
+// zurueckgestellt"). Seit dem Umstieg auf Yahoo Finance ist ^NDX kostenlos
+// erreichbar - dieser Blocker ist weg.
+//
+// TJRs eigene Worte (Bootcamp-Glossar): "when one index makes a higher high
+// [and the other doesn't], and when one index makes a lower low and the
+// other makes a higher low" - klassische Index-Divergenz. Praktisch: das
+// Hauptinstrument (z.B. ^GSPC) macht am Sweep ein neues Extrem (das IST
+// per Definition der Sweep), das Vergleichsinstrument (^NDX) tut das NICHT -
+// zeigt relative Staerke/Schwaeche und bestaetigt, dass der Reversal echt ist.
+//
+// wantSwingType: "L" fuer bullische Setups (sell_side_sweep - Hauptinstrument
+// macht ein tieferes Tief), "H" fuer bearische Setups (buy_side_sweep).
+// sweepTs/sweepLevel kommen direkt vom bereits gefundenen recentSweep.
+function findSmtDivergence(correlatedSwingsSorted, correlatedDf, wantSwingType, sweepTs, sweepLevel) {
+  if (!correlatedDf || correlatedDf.length === 0) return null;
+  // Naehester vorheriger Swing DESSELBEN Typs auf dem Vergleichsinstrument -
+  // das analoge Level, das dort (noch) nicht gebrochen sein darf, damit eine
+  // Divergenz vorliegt.
+  const priorSwings = correlatedSwingsSorted.filter((s) => s.type === wantSwingType && s.ts < sweepTs);
+  if (priorSwings.length === 0) return null;
+  const corrSwing = priorSwings[priorSwings.length - 1];
+
+  const afterCorrSwing = correlatedDf.filter((r) => r.ts > corrSwing.ts && r.ts <= sweepTs);
+  const correlatedBroke = wantSwingType === "L"
+    ? afterCorrSwing.some((r) => r.low <= corrSwing.price)
+    : afterCorrSwing.some((r) => r.high >= corrSwing.price);
+
+  if (correlatedBroke) return { confirmed: false }; // beide Instrumente bewegten sich gleich - keine Divergenz
+  return {
+    confirmed: true, ts: sweepTs, mainLevel: sweepLevel,
+    correlatedLevel: corrSwing.price, correlatedSwingTs: corrSwing.ts,
+  };
+}
+
+function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookbackBars = 40, correlatedLtfDf = null) {
   const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
   // Grobe, "wuerde ein Mensch das beim Ueberfliegen des Charts markieren"
   // Kandidatenliste fuers Target - siehe Kommentar bei findProminentHtfSwingLevels.
@@ -388,21 +428,32 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   const confirmingBos = ltfBos.filter(b => b.ts > recentSweep.ts && b.dir === wantDir);
 
   // TJR's own framework (Bootcamp Day 30 / "Beginners Guide" glossary): confirmation =
-  // bos, ifvg, smt. SMT (needs a second correlated data feed) is separate, not implemented.
+  // bos, ifvg, smt. SMT jetzt implementiert (siehe findSmtDivergence oben) - nur aktiv,
+  // wenn ein Vergleichsinstrument uebergeben wurde (aktuell nur ^GSPC<->^NDX).
   const ifvgEvents = findIfvg(ltfDf, findFvgs(ltfDf));
   const confirmingIfvg = ifvgEvents.filter(e => e.ts > recentSweep.ts && e.dir === wantDir);
 
-  if (confirmingBos.length === 0 && confirmingIfvg.length === 0) {
-    result.detail = `Liquidity Sweep am ${new Date(recentSweep.ts).toISOString()} gefunden, aber noch kein bestaetigender BOS oder iFVG auf LTF.`;
-    result.signal = "Watchlist (Sweep ohne Bestaetigung)";
-    return result;
+  let smtResult = null;
+  if (correlatedLtfDf && correlatedLtfDf.length) {
+    const { swingsSorted: corrSwings } = computeTrendAndBos(correlatedLtfDf);
+    const wantSwingType = bias === 1 ? "L" : "H";
+    smtResult = findSmtDivergence(corrSwings, correlatedLtfDf, wantSwingType, recentSweep.ts, recentSweep.level);
   }
 
-  // Confirmation can be BOS OR iFVG — take whichever happened first after the sweep.
+  // Confirmation can be BOS, iFVG OR SMT — take whichever happened first after the sweep
+  // (SMT is confirmed AT the sweep timestamp itself, since the divergence is visible the
+  // moment the main instrument sweeps and the correlated one doesn't).
   const confCandidates = [];
   if (confirmingBos.length) confCandidates.push({ kind: "BOS", ts: confirmingBos[0].ts, event: confirmingBos[0] });
   if (confirmingIfvg.length) confCandidates.push({ kind: "iFVG", ts: confirmingIfvg[0].ts, event: confirmingIfvg[0] });
+  if (smtResult && smtResult.confirmed) confCandidates.push({ kind: "SMT", ts: smtResult.ts, event: smtResult });
   confCandidates.sort((a, b) => a.ts - b.ts);
+
+  if (confCandidates.length === 0) {
+    result.detail = `Liquidity Sweep am ${new Date(recentSweep.ts).toISOString()} gefunden, aber noch kein bestaetigender BOS, iFVG oder SMT auf LTF.`;
+    result.signal = "Watchlist (Sweep ohne Bestaetigung)";
+    return result;
+  }
   const conf = confCandidates[0];
 
   const bosEvent = confirmingBos.length ? confirmingBos[0] : null;
@@ -551,7 +602,9 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
 
   const confDesc = conf.kind === "BOS"
     ? `BOS ${conf.event.dir} am ${new Date(conf.ts).toISOString()}`
-    : `iFVG-Bruch (Richtung ${conf.event.dir}) am ${new Date(conf.ts).toISOString()}`;
+    : conf.kind === "iFVG"
+      ? `iFVG-Bruch (Richtung ${conf.event.dir}) am ${new Date(conf.ts).toISOString()}`
+      : `SMT-Divergenz (Vergleichsindex bestaetigt Sweep nicht) am ${new Date(conf.ts).toISOString()}`;
   const m1Desc = !hasM1Data
     ? " (keine 1min-Daten - 1min-Gate uebersprungen)"
     : m1.confirmed
@@ -584,7 +637,7 @@ function round6(x) { return Math.round(x * 1e6) / 1e6; }
 // whatever partial structure was found (sweep without BOS, BOS without a
 // valid zone, etc.), so a chart can show "this is what's been analyzed so
 // far" even when the mechanical signal is still "kein Setup"/"Watchlist".
-function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
+function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40, correlatedLtfDf = null) {
   const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
   const bias = htfDf.length ? htfTrend : 0;
   const biasLabel = { 1: "bullish", "-1": "bearish", 0: "neutral" }[bias];
@@ -629,11 +682,19 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40) {
   const confirmingBos = ltfBos.filter((b) => b.ts > recentSweep.ts && b.dir === wantDir);
   const ifvgEvents = findIfvg(ltfDf, findFvgs(ltfDf));
   const confirmingIfvg = ifvgEvents.filter((e) => e.ts > recentSweep.ts && e.dir === wantDir);
-  if (confirmingBos.length === 0 && confirmingIfvg.length === 0) return ann;
+
+  let smtResult = null;
+  if (correlatedLtfDf && correlatedLtfDf.length) {
+    const { swingsSorted: corrSwings } = computeTrendAndBos(correlatedLtfDf);
+    const wantSwingType = bias === 1 ? "L" : "H";
+    smtResult = findSmtDivergence(corrSwings, correlatedLtfDf, wantSwingType, recentSweep.ts, recentSweep.level);
+  }
 
   const confCandidates = [];
   if (confirmingBos.length) confCandidates.push({ kind: "BOS", ts: confirmingBos[0].ts, event: confirmingBos[0] });
   if (confirmingIfvg.length) confCandidates.push({ kind: "iFVG", ts: confirmingIfvg[0].ts, event: confirmingIfvg[0] });
+  if (smtResult && smtResult.confirmed) confCandidates.push({ kind: "SMT", ts: smtResult.ts, event: smtResult });
+  if (confCandidates.length === 0) return ann;
   confCandidates.sort((a, b) => a.ts - b.ts);
   const conf = confCandidates[0];
   ann.confirmation = conf;
@@ -703,7 +764,7 @@ if (typeof module !== "undefined") {
     parseTs, loadCandles, resample, findSwings, computeTrendAndBos,
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
     findIfvg, findBreakerBlock, find1minConfirmation, findKeyLevelTarget,
-    findProminentHtfSwingLevels,
+    findProminentHtfSwingLevels, findSmtDivergence,
     premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }
