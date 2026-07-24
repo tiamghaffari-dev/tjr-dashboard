@@ -233,10 +233,10 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "trailStop": 4094.232248
+    "status": "win",
+    "resolvedTs": 1784820600000,
+    "rMultiple": 2.51,
+    "trailStop": 4052.8702489013676
   },
   {
     "id": "ETHUSD-1784818769073",
@@ -251,10 +251,10 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "BreakerBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "trailStop": 1908.798851
+    "status": "win",
+    "resolvedTs": 1784807400000,
+    "rMultiple": 1.12,
+    "trailStop": 1895.4789746704103
   },
   {
     "id": "XRPUSD-1784818769073",
@@ -286,10 +286,10 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "OrderBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "trailStop": 1.335796
+    "status": "loss",
+    "resolvedTs": 1784862300000,
+    "rMultiple": -0.12,
+    "trailStop": 1.3330581940412523
   },
   {
     "id": "^GSPC-1784818769073",
@@ -304,10 +304,10 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "trailStop": 749.592676
+    "status": "win",
+    "resolvedTs": 1784808600000,
+    "rMultiple": 1.14,
+    "trailStop": 738.766463104248
   },
   {
     "id": "GCUSD-1784899508344",
