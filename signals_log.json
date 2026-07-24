@@ -267,9 +267,9 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1784862000000,
+    "rMultiple": -1
   },
   {
     "id": "GBPUSD-1784818769073",
