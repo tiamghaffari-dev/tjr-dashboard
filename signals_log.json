@@ -304,5 +304,22 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1784899508344",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1784899508344,
+    "entry": 4058.400024,
+    "stop": 4070.196248,
+    "target": 3963,
+    "rr": 8.09,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "BreakerBlock",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
