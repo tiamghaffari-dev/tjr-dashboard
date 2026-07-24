@@ -235,7 +235,8 @@
     "zoneKind": "FVG",
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "trailStop": 4094.232248
   },
   {
     "id": "ETHUSD-1784818769073",
@@ -252,7 +253,8 @@
     "zoneKind": "BreakerBlock",
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "trailStop": 1908.798851
   },
   {
     "id": "XRPUSD-1784818769073",
@@ -286,7 +288,8 @@
     "zoneKind": "OrderBlock",
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "trailStop": 1.335796
   },
   {
     "id": "^GSPC-1784818769073",
@@ -303,7 +306,8 @@
     "zoneKind": "FVG",
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "trailStop": 749.592676
   },
   {
     "id": "GCUSD-1784899508344",
@@ -320,6 +324,7 @@
     "zoneKind": "BreakerBlock",
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "trailStop": 4070.196248
   }
 ]
