@@ -8,7 +8,7 @@
 const fs = require("fs");
 const path = require("path");
 const {
-  parseTs, loadCandles, resample, buildSignal, buildAnnotations,
+  parseTs, loadCandles, resample, buildSignal, buildAnnotations, computeTrendAndBos,
 } = require("./engine.js");
 
 const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
@@ -419,8 +419,32 @@ const STALE_DAYS = 10;
 // von vor diesem Feature ohne die neuen Felder) durchlaufen weiterhin exakt
 // die alte Einzel-Target-Logik unveraendert - trailStop faellt dafuer via
 // Default auf rec.stop zurueck.
+// Tiam, 2026-07-24 (Folgefrage nach der TP1/TP2-Einfuehrung, Screenshot mit
+// "OFFEN +7.66R" bei unveraendertem, weit entferntem Stop): "hier sehe ich
+// zwei oldtime lows und der waere ausgetaggt und koennte der naechste stop
+// lose sein also er soll von sich selber lernen" - der Stop blieb bisher bis
+// TP1 KOMPLETT fix, selbst wenn TP1 (ein 4H-Level) weit weg liegt und die
+// Position laengst tief im Gewinn laeuft, ungeschuetzt. Per AskUserQuestion
+// mit Tiam bestaetigt: Nachziehen soll (a) auf derselben feinen 5min-
+// Marktstruktur laufen, die eh schon fuer BOS/Sweep benutzt wird (nicht auf
+// den groeberen Session-Highs/Lows), und (b) schon AB ENTRY greifen, nicht
+// erst ab TP1. Mechanik: jeder neue, bestaetigte Swing in Trade-Richtung
+// (Swing-Low bei LONG, Swing-High bei SHORT) auf ltfFull zieht den Stop
+// nach - aber NUR wenn das den Stop enger macht (nie lockerer), also
+// monoton in Richtung Entry/Gewinn. Laeuft unabhaengig vom TP1/TP2-
+// Teilausstieg weiter (composes damit: sobald TP1 erreicht ist, kann die
+// Struktur den nachgezogenen Stop nur noch WEITER Richtung TP2 verbessern,
+// nie unter den TP1-Preis zurueckfallen).
+function realizedR(rec, price) {
+  const riskDist = Math.abs(rec.entry - rec.stop); // urspruengliches Risiko bleibt fester Nenner
+  if (!riskDist) return 0;
+  const moveDist = rec.direction === "LONG" ? price - rec.entry : rec.entry - price;
+  return Math.round((moveDist / riskDist) * 100) / 100;
+}
+
 function resolveSignals(signalsLog, asset, ltfFull) {
   const oldestTs = ltfFull.length ? ltfFull[0].ts : null;
+  const { swingsSorted } = computeTrendAndBos(ltfFull);
   for (const rec of signalsLog) {
     if (rec.asset !== asset.symbol) continue;
     if (rec.status !== "open" && rec.status !== "partial") continue;
@@ -431,12 +455,40 @@ function resolveSignals(signalsLog, asset, ltfFull) {
       : parseTs(etPseudoDateStr(rec.entryTs));
     const candles = ltfFull.filter((c) => c.ts >= scanFromTs);
 
+    // Alle bestaetigten Swings in Trade-Richtung SEIT Entry (nicht erst seit
+    // scanFromTs, damit ein resumtes "partial"-Record beim naechsten Build-
+    // Lauf dieselben Swings deterministisch nochmal durchlaeuft - laenger
+    // schon angewendete tighten() den Stop dann einfach nicht nochmal,
+    // reine Absicherung/idempotent).
+    const entryPseudoTs = parseTs(etPseudoDateStr(rec.entryTs));
+    const favSwingType = rec.direction === "LONG" ? "L" : "H";
+    const favSwings = swingsSorted
+      .filter((s) => s.type === favSwingType && s.ts > entryPseudoTs)
+      .sort((a, b) => a.ts - b.ts);
+    let swingPtr = 0;
+
     for (const c of candles) {
+      // Struktur-Nachzug zuerst (mit Daten bis inkl. dieser Kerze bekannt),
+      // dann erst pruefen ob Stop/TP diese Kerze beruehrt - sonst waere die
+      // Reihenfolge kausal falsch (Stop muesste VOR der Kerze schon stehen).
+      while (swingPtr < favSwings.length && favSwings[swingPtr].ts <= c.ts) {
+        const sw = favSwings[swingPtr];
+        const candidateStop = rec.direction === "LONG" ? sw.price * 0.9985 : sw.price * 1.0015;
+        const tightens = rec.direction === "LONG" ? candidateStop > rec.trailStop : candidateStop < rec.trailStop;
+        if (tightens) rec.trailStop = candidateStop;
+        swingPtr++;
+      }
+
       if (rec.status === "open") {
         const hitStop = rec.direction === "LONG" ? c.low <= rec.trailStop : c.high >= rec.trailStop;
         const hitTp1 = rec.direction === "LONG" ? c.high >= rec.target : c.low <= rec.target;
         if (hitStop) {
-          rec.status = "loss"; rec.resolvedTs = c.ts; rec.rMultiple = -1.0;
+          // Der nachgezogene Stop kann durch Struktur-Trailing laengst besser
+          // als der urspruengliche sein - "Stop getroffen" ist dann kein
+          // klassischer -1R-Verlust mehr, sondern realisiert genau das, was
+          // die Struktur bis hierhin gesichert hat (kann 0 oder positiv sein).
+          rec.status = "loss"; rec.resolvedTs = c.ts; rec.rMultiple = realizedR(rec, rec.trailStop);
+          if (rec.rMultiple >= 0) rec.status = "win";
           break;
         }
         if (hitTp1) {
@@ -446,7 +498,7 @@ function resolveSignals(signalsLog, asset, ltfFull) {
           }
           rec.status = "partial";
           rec.tp1HitTs = c.ts;
-          rec.trailStop = rec.target; // Stop wird auf den (bereits erreichten) TP1-Preis nachgezogen
+          if (rec.rr > realizedR(rec, rec.trailStop)) rec.trailStop = rec.target; // Stop mindestens auf TP1 nachziehen, aber nie zuruecksetzen falls Struktur schon weiter war
           continue; // im selben Durchlauf weiterscannen (jetzt als "partial")
         }
       } else {
@@ -454,7 +506,10 @@ function resolveSignals(signalsLog, asset, ltfFull) {
         const hitTrail = rec.direction === "LONG" ? c.low <= rec.trailStop : c.high >= rec.trailStop;
         const hitTp2 = rec.direction === "LONG" ? c.high >= rec.target2 : c.low <= rec.target2;
         if (hitTrail) {
-          rec.status = "win"; rec.resolvedTs = c.ts; rec.rMultiple = rec.rr; // beide Haelften am TP1-Preis
+          // zweite Haelfte realisiert, was der (ggf. durch Struktur ueber TP1
+          // hinaus verbesserte) nachgezogene Stop tatsaechlich hergibt.
+          rec.status = "win"; rec.resolvedTs = c.ts;
+          rec.rMultiple = Math.round((0.5 * rec.rr + 0.5 * realizedR(rec, rec.trailStop)) * 100) / 100;
           break;
         }
         if (hitTp2) {
