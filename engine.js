@@ -314,6 +314,39 @@ function findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk) {
   return null;
 }
 
+// Tiam, 2026-07-24: "manche take profits sollen ja oldtime highs oder lows
+// sein [...] und auch mehrere take profits setzen weil es kann sein das es
+// ueber ein oldtime high geht und auch vllt noch ueber ein anderes aber dann
+// waere das erste oldtime high ja der stop loss" - TJRs eigener Checklist-
+// Schritt g) "take profit AT OTHER key levels" (Plural) wurde bisher nur mit
+// EINEM Level umgesetzt (findKeyLevelTarget oben). Diese Funktion sammelt bis
+// zu `maxCount` Level (statt nur das naechste), sortiert nach Distanz vom
+// Entry - identische "noch nicht geswept" + Mindest-RR-Filterung wie oben,
+// nur dass hier weitergesammelt statt beim ersten Treffer abgebrochen wird.
+// AskUserQuestion mit Tiam ergab: 2 Level (TP1/TP2), TP1 = Teilausstieg 50%
+// + Stop wird auf TP1 nachgezogen (siehe buildSignal()/resolveSignals()).
+function findMultipleKeyLevelTargets(htfSwings, htfDf, wantDir, entry, risk, maxCount = 2) {
+  if (!risk || risk <= 0) return [];
+  const wantType = wantDir === "up" ? "H" : "L";
+  const inDirection = htfSwings.filter((s) => (
+    s.type === wantType && (wantType === "H" ? s.price > entry : s.price < entry)
+  ));
+  const untouched = inDirection.filter((s) => {
+    const after = htfDf.filter((r) => r.ts > s.ts);
+    return wantType === "H" ? !after.some((r) => r.high >= s.price) : !after.some((r) => r.low <= s.price);
+  });
+  untouched.sort((a, b) => Math.abs(a.price - entry) - Math.abs(b.price - entry));
+  const hits = [];
+  for (const cand of untouched) {
+    const reward = Math.abs(cand.price - entry);
+    if (reward / risk >= MIN_KEY_LEVEL_RR) {
+      hits.push(cand.price);
+      if (hits.length >= maxCount) break;
+    }
+  }
+  return hits;
+}
+
 function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookbackBars = 40) {
   const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
   // Grobe, "wuerde ein Mensch das beim Ueberfliegen des Charts markieren"
@@ -332,6 +365,7 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
     signal: "kein Setup",
     detail: "",
     entry: null, stop: null, target: null, rr: null, zone: null,
+    target2: null, rr2: null, partialExit: false,
   };
 
   if (bias === 0 || sweeps.length === 0) {
@@ -456,22 +490,42 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   // faellt auf `.level` zurueck, falls `.extreme` aus irgendeinem Grund
   // fehlt (sollte nach diesem Fix nicht mehr vorkommen, reine Absicherung).
   const sweepAnchor = recentSweep.extreme ?? recentSweep.level;
-  let stop, target, targetSource;
+  // Tiam, 2026-07-24: "mehrere take profits [...] es kann sein das es ueber
+  // ein oldtime high geht und auch vllt noch ueber ein anderes aber dann
+  // waere das erste oldtime high ja der stop loss" - bis zu 2 Key-Level als
+  // TP1/TP2 statt nur einem (siehe findMultipleKeyLevelTargets()). TP1 =
+  // Teilausstieg 50%, Stop wird danach auf TP1 nachgezogen fuer den Rest
+  // Richtung TP2 (per AskUserQuestion mit Tiam bestaetigt) - die eigentliche
+  // Nachzieh-/Teilausstiegs-Mechanik lebt in build.js' resolveSignals(),
+  // hier wird nur berechnet, WELCHE Level ueberhaupt in Frage kommen.
+  let stop, target, target2, targetSource;
   if (wantDir === "up") {
     stop = Math.min(cand.bottom, sweepAnchor) * 0.9985;
     const risk = entry - stop;
-    const keyLevel = findKeyLevelTarget(htfKeyLevels, htfDf, wantDir, entry, risk);
-    if (keyLevel !== null) { target = keyLevel; targetSource = "key-level"; }
-    else { target = entry + risk * rrTarget; targetSource = "fixed-rr-fallback"; }
+    const keyLevels = findMultipleKeyLevelTargets(htfKeyLevels, htfDf, wantDir, entry, risk, 2);
+    if (keyLevels.length > 0) {
+      target = keyLevels[0];
+      target2 = keyLevels.length > 1 ? keyLevels[1] : null;
+      targetSource = "key-level";
+    } else {
+      target = entry + risk * rrTarget; target2 = null; targetSource = "fixed-rr-fallback";
+    }
   } else {
     stop = Math.max(cand.top, sweepAnchor) * 1.0015;
     const risk = stop - entry;
-    const keyLevel = findKeyLevelTarget(htfKeyLevels, htfDf, wantDir, entry, risk);
-    if (keyLevel !== null) { target = keyLevel; targetSource = "key-level"; }
-    else { target = entry - risk * rrTarget; targetSource = "fixed-rr-fallback"; }
+    const keyLevels = findMultipleKeyLevelTargets(htfKeyLevels, htfDf, wantDir, entry, risk, 2);
+    if (keyLevels.length > 0) {
+      target = keyLevels[0];
+      target2 = keyLevels.length > 1 ? keyLevels[1] : null;
+      targetSource = "key-level";
+    } else {
+      target = entry - risk * rrTarget; target2 = null; targetSource = "fixed-rr-fallback";
+    }
   }
+  const partialExit = target2 !== null;
   const riskDist = Math.abs(entry - stop);
   const rrActual = riskDist > 0 ? Math.round((Math.abs(target - entry) / riskDist) * 100) / 100 : rrTarget;
+  const rr2Actual = (partialExit && riskDist > 0) ? Math.round((Math.abs(target2 - entry) / riskDist) * 100) / 100 : null;
 
   const inZoneNow = cand.bottom <= currentPrice && currentPrice <= cand.top;
 
@@ -504,7 +558,9 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
       ? `, 1min-Bestaetigung: ${m1.event.kind} am ${new Date(m1.event.ts).toISOString()}`
       : zoneTouched ? ", wartet noch auf 1min-Bestaetigung" : "";
   const targetDesc = targetSource === "key-level"
-    ? `Target: naechstes offenes 4H-Key-Level @ ${target.toPrecision(6)} (RR ${rrActual})`
+    ? (partialExit
+      ? `TP1: naechstes offenes 4H-Key-Level @ ${target.toPrecision(6)} (RR ${rrActual}, 50% Teilausstieg + Stop-Nachzug), TP2: ${target2.toPrecision(6)} (RR ${rr2Actual})`
+      : `Target: naechstes offenes 4H-Key-Level @ ${target.toPrecision(6)} (RR ${rrActual})`)
     : `Target: kein 4H-Key-Level in sinnvoller Naehe - fixes ${rrTarget}:1-Ziel @ ${target.toPrecision(6)}`;
 
   Object.assign(result, {
@@ -512,6 +568,7 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
     detail: `Sweep ${recentSweep.type} @ ${recentSweep.level.toPrecision(6)} am ${new Date(recentSweep.ts).toISOString()}, `
       + `${confDesc}, Entry-Zone: ${cand.kind} [${cand.bottom.toPrecision(6)} - ${cand.top.toPrecision(6)}] (${zone})${m1Desc}. ${targetDesc}.`,
     entry: round6(entry), stop: round6(stop), target: round6(target), rr: rrActual,
+    target2: target2 !== null ? round6(target2) : null, rr2: rr2Actual, partialExit,
     sweep: recentSweep, bos: bosEvent, confirmation: conf,
     zoneKind: cand.kind, zoneRange: [cand.bottom, cand.top],
     currentPrice, targetSource,

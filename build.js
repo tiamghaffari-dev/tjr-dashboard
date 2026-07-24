@@ -399,25 +399,71 @@ const STALE_DAYS = 10;
 // dieses Artefakt, keine echten sofortigen Reversals). Fix: entryTs erst
 // durch dieselbe real->pseudo-Pipeline schicken wie die Kerzen selbst, bevor
 // verglichen wird.
+// Tiam, 2026-07-24: "mehrere take profits [...] es kann sein das es ueber
+// ein oldtime high geht und auch vllt noch ueber ein anderes aber dann waere
+// das erste oldtime high ja der stop loss" - wenn buildSignal() ein zweites
+// Key-Level (TP2) gefunden hat (rec.partialExit), laeuft die Aufloesung jetzt
+// zweistufig statt einstufig:
+//   "open"    -> Stop (rec.trailStop, startet = rec.stop) oder TP1 (rec.target)
+//                wird zuerst beruehrt. TP1 zuerst (nur wenn partialExit) heisst
+//                NICHT sofort "win" - 50% der Position gilt als am TP1-Preis
+//                gesichert, der Stop wird auf TP1 nachgezogen (rec.trailStop =
+//                rec.target), Status wird "partial", Aufloesung geht weiter.
+//   "partial" -> Rest der Position: nachgezogener Stop (jetzt = altes TP1)
+//                oder TP2 (rec.target2). Bei Stop-Treffer realisiert die
+//                zweite Haelfte trotzdem rec.rr (TP1-Preis), macht also KEINEN
+//                Verlust - Gesamt-rMultiple = rec.rr (beide Haelften am
+//                TP1-Preis). Bei TP2-Treffer realisiert die zweite Haelfte
+//                rec.rr2 - Gesamt-rMultiple = 0.5*rec.rr + 0.5*rec.rr2.
+// Records ohne partialExit (kein zweites Level gefunden, oder alte Eintraege
+// von vor diesem Feature ohne die neuen Felder) durchlaufen weiterhin exakt
+// die alte Einzel-Target-Logik unveraendert - trailStop faellt dafuer via
+// Default auf rec.stop zurueck.
 function resolveSignals(signalsLog, asset, ltfFull) {
   const oldestTs = ltfFull.length ? ltfFull[0].ts : null;
   for (const rec of signalsLog) {
-    if (rec.asset !== asset.symbol || rec.status !== "open") continue;
-    const entryPseudoTs = parseTs(etPseudoDateStr(rec.entryTs));
-    const candles = ltfFull.filter((c) => c.ts >= entryPseudoTs);
+    if (rec.asset !== asset.symbol) continue;
+    if (rec.status !== "open" && rec.status !== "partial") continue;
+    if (rec.trailStop === undefined || rec.trailStop === null) rec.trailStop = rec.stop;
+
+    const scanFromTs = rec.status === "partial" && rec.tp1HitTs
+      ? parseTs(etPseudoDateStr(rec.tp1HitTs))
+      : parseTs(etPseudoDateStr(rec.entryTs));
+    const candles = ltfFull.filter((c) => c.ts >= scanFromTs);
+
     for (const c of candles) {
-      const hitStop = rec.direction === "LONG" ? c.low <= rec.stop : c.high >= rec.stop;
-      const hitTarget = rec.direction === "LONG" ? c.high >= rec.target : c.low <= rec.target;
-      if (hitStop) {
-        rec.status = "loss"; rec.resolvedTs = c.ts; rec.rMultiple = -1.0;
-        break;
-      }
-      if (hitTarget) {
-        rec.status = "win"; rec.resolvedTs = c.ts; rec.rMultiple = rec.rr;
-        break;
+      if (rec.status === "open") {
+        const hitStop = rec.direction === "LONG" ? c.low <= rec.trailStop : c.high >= rec.trailStop;
+        const hitTp1 = rec.direction === "LONG" ? c.high >= rec.target : c.low <= rec.target;
+        if (hitStop) {
+          rec.status = "loss"; rec.resolvedTs = c.ts; rec.rMultiple = -1.0;
+          break;
+        }
+        if (hitTp1) {
+          if (!rec.partialExit) {
+            rec.status = "win"; rec.resolvedTs = c.ts; rec.rMultiple = rec.rr;
+            break;
+          }
+          rec.status = "partial";
+          rec.tp1HitTs = c.ts;
+          rec.trailStop = rec.target; // Stop wird auf den (bereits erreichten) TP1-Preis nachgezogen
+          continue; // im selben Durchlauf weiterscannen (jetzt als "partial")
+        }
+      } else {
+        // status === "partial": Rest der Position gegen nachgezogenen Stop / TP2
+        const hitTrail = rec.direction === "LONG" ? c.low <= rec.trailStop : c.high >= rec.trailStop;
+        const hitTp2 = rec.direction === "LONG" ? c.high >= rec.target2 : c.low <= rec.target2;
+        if (hitTrail) {
+          rec.status = "win"; rec.resolvedTs = c.ts; rec.rMultiple = rec.rr; // beide Haelften am TP1-Preis
+          break;
+        }
+        if (hitTp2) {
+          rec.status = "win"; rec.resolvedTs = c.ts; rec.rMultiple = Math.round((0.5 * rec.rr + 0.5 * rec.rr2) * 100) / 100;
+          break;
+        }
       }
     }
-    if (rec.status === "open" && oldestTs !== null && entryPseudoTs < oldestTs) {
+    if ((rec.status === "open" || rec.status === "partial") && oldestTs !== null && scanFromTs < oldestTs) {
       const ageDays = (Date.now() - rec.entryTs) / 86400000;
       if (ageDays > STALE_DAYS) rec.status = "stale";
     }
@@ -432,7 +478,7 @@ function resolveSignals(signalsLog, asset, ltfFull) {
 // relativ zur Distanz Entry->Stop, Richtung beruecksichtigt): positiv =
 // Richtung Target, negativ = Richtung Stop.
 function unrealizedR(rec, currentPrice) {
-  if (rec.status !== "open" || currentPrice == null) return null;
+  if ((rec.status !== "open" && rec.status !== "partial") || currentPrice == null) return null;
   const riskDist = Math.abs(rec.entry - rec.stop);
   if (!riskDist) return null;
   const moveDist = rec.direction === "LONG" ? currentPrice - rec.entry : rec.entry - currentPrice;
@@ -450,6 +496,8 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs) {
     direction: sig.bias === "bullish" ? "LONG" : "SHORT",
     entryTs: firedAtTs,
     entry: sig.entry, stop: sig.stop, target: sig.target, rr: sig.rr,
+    target2: sig.target2 ?? null, rr2: sig.rr2 ?? null, partialExit: !!sig.partialExit,
+    trailStop: sig.stop, tp1HitTs: null,
     bias: sig.bias,
     sweepType: ann.sweep ? ann.sweep.type : null,
     confirmationKind: ann.confirmation ? ann.confirmation.kind : null,
@@ -612,7 +660,7 @@ async function main() {
     // "monitoring" (ausserhalb, aber ein offener Paper-Trade laeuft noch -
     // "nichts machen ausser schauen ob der Trade in die richtige Richtung
     // geht"), "idle" (ausserhalb, nichts offen - komplett pausiert).
-    const openRec = signalsLog.find((r) => r.asset === item.asset.symbol && r.status === "open");
+    const openRec = signalsLog.find((r) => r.asset === item.asset.symbol && (r.status === "open" || r.status === "partial"));
     item.hasOpenTrade = !!openRec;
     // Tiam, 2026-07-15: "wieso nimmt er immer ein entry weg? wenn er ein
     // entry hat und ganz sicher ist das es passt soll er es ja laufen
@@ -660,7 +708,7 @@ async function main() {
   fs.writeFileSync(SIGNALS_LOG_PATH, JSON.stringify(signalsLog, null, 2), "utf8");
   const closedSignals = signalsLog.filter((r) => r.status === "win" || r.status === "loss");
   const wins = closedSignals.filter((r) => r.status === "win").length;
-  console.log(`Paper-Trades: ${signalsLog.length} gesamt, ${closedSignals.length} abgeschlossen (${wins} Gewinn), ${signalsLog.filter((r) => r.status === "open").length} offen.`);
+  console.log(`Paper-Trades: ${signalsLog.length} gesamt, ${closedSignals.length} abgeschlossen (${wins} Gewinn), ${signalsLog.filter((r) => r.status === "open" || r.status === "partial").length} offen.`);
   if (!NTFY_TOPIC) {
     console.log("NTFY_TOPIC nicht gesetzt — Push-Benachrichtigungen werden uebersprungen.");
   }
@@ -674,7 +722,7 @@ async function main() {
     if (item.error) continue;
     item.signals = signalsLog
       .filter((r) => r.asset === item.asset.symbol && r.entryTs >= chartHistoryCutoff)
-      .map((r) => (r.status === "open"
+      .map((r) => ((r.status === "open" || r.status === "partial")
         ? { ...r, unrealizedR: unrealizedR(r, item.sig.currentPrice) }
         : r));
   }
@@ -703,7 +751,7 @@ async function main() {
       symbol: a.symbol, name: a.name, display: a.display, icon: a.icon,
     })),
     signals: signalsLog.map((r) => {
-      if (r.status !== "open") return r;
+      if (r.status !== "open" && r.status !== "partial") return r;
       const item = assets.find((a) => !a.error && a.asset.symbol === r.asset);
       const currentPrice = item ? item.sig.currentPrice : null;
       return { ...r, unrealizedR: unrealizedR(r, currentPrice) };
