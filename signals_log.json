@@ -322,9 +322,31 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "BreakerBlock",
+    "status": "loss",
+    "resolvedTs": 1784886900000,
+    "rMultiple": -1,
+    "trailStop": 4070.196248
+  },
+  {
+    "id": "GBPUSD-1784904133350",
+    "asset": "GBPUSD",
+    "direction": "SHORT",
+    "entryTs": 1784904133350,
+    "entry": 1.332578,
+    "stop": 1.334675,
+    "target": 1.330159,
+    "rr": 1.15,
+    "target2": 1.321405,
+    "rr2": 5.33,
+    "partialExit": true,
+    "trailStop": 1.334675,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "OrderBlock",
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null,
-    "trailStop": 4070.196248
+    "rMultiple": null
   }
 ]
