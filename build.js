@@ -660,12 +660,28 @@ async function sendNtfy(asset, sig) {
   }
 }
 
+// Tiam, 2026-07-24 ("Live-Analyse im Browser (Phase 3)"): engine.js ist ein
+// reines CommonJS-Modul (kein require() drinnen, kein "use strict", nur
+// top-level function-Deklarationen + ein `if (typeof module !== "undefined")`-
+// gewaechter Export-Block), laesst sich deshalb unveraendert als normales
+// <script>-Tag im Browser einbetten - der Export-Block wird dort einfach
+// uebersprungen (module ist im Browser undefined), alle Funktionen landen
+// im globalen Scope. So kann report_template.html dieselbe Signal-Logik
+// (buildSignal/buildAnnotations/etc.) live auf dem eh schon per Binance/
+// Finnhub-WebSocket ankommenden Tick-Buffer laufen lassen, statt auf den
+// naechsten 5-15-Minuten-Cron-Lauf zu warten - EIN Code-Pfad fuer Server
+// und Client statt einer zweiten, potenziell abweichenden JS-Kopie.
+function readEngineJsSource() {
+  return fs.readFileSync(path.join(__dirname, "engine.js"), "utf8");
+}
+
 function renderFromTemplate(templateFile, outFile, payload) {
   const templatePath = path.join(__dirname, "docs", templateFile);
   const tpl = fs.readFileSync(templatePath, "utf8");
   const out = tpl
     .replace("__PRECOMPUTED_JSON__", JSON.stringify(payload))
-    .replace("__GENERATED_AT__", `Zuletzt aktualisiert: ${payload.generatedAt}`);
+    .replace("__GENERATED_AT__", `Zuletzt aktualisiert: ${payload.generatedAt}`)
+    .replace("__ENGINE_JS_SOURCE__", () => readEngineJsSource());
   fs.writeFileSync(path.join(__dirname, "docs", outFile), out, "utf8");
   console.log(`docs/${outFile} geschrieben.`);
 }
