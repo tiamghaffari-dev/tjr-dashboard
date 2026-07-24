@@ -316,6 +316,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4/dist/lightweight-charts.standalone.production.js"></script>
 <script>
+// Tiam, 2026-07-24 ("Live-Analyse im Browser (Phase 3)"): engine.js roh
+// eingebettet (siehe build.js readEngineJsSource-Kommentar) - buildSignal/
+// buildAnnotations/computeTrendAndBos/etc. sind ab hier im globalen Scope
+// verfuegbar, derselbe Code wie serverseitig in build.js, kein zweiter
+// JS-Pfad zum Pflegen.
+__ENGINE_JS_SOURCE__
+</script>
+<script>
 let PRECOMPUTED = __PRECOMPUTED_JSON__;
 const charts = {};
 const chartRanges = {};
@@ -578,7 +586,12 @@ function renderInfoTable(item) {
         trailStop: openRec.trailStop ?? openRec.stop, tp1HitTs: openRec.tp1HitTs ?? null,
         currentPrice: item.sig.currentPrice,
       }
-    : { ...item.sig, trailStop: item.sig.stop, tp1HitTs: null };
+    // Tiam, 2026-07-24 (Phase 3): kein offener signals_log-Trade -> zeigt
+    // liveSig (client-seitig neu berechnet, siehe maybeRecomputeLive), falls
+    // vorhanden, sonst die letzte Server-Batch-sig. currentPrice bleibt immer
+    // von der Server-sig (liveSig hat kein eigenes currentPrice-Feld dieser
+    // Art), damit der "Preis"-Wert unten in der Tabelle nie fehlt.
+    : { ...(item.liveSig || item.sig), currentPrice: item.sig.currentPrice, trailStop: (item.liveSig || item.sig).stop, tp1HitTs: null };
   // Tiam, 2026-07-24: "mehrere take profits [...] das erste oldtime high
   // waere dann der stop loss" - bei partialExit-Trades zeigt die Tabelle jetzt
   // TP1 (mit "50% + Trail"-Hinweis) und TP2 statt eines einzelnen "Target",
@@ -683,6 +696,7 @@ function renderAssetContent(item) {
   if (item.error) return;
   renderInfoTable(item);
   renderChart(item);
+  seedLiveBuffer(item);
   connectLiveFeed(item);
   if (item.aiNote) {
     const aiEl = document.getElementById("ai-" + assetId(item.asset));
@@ -717,7 +731,7 @@ function selectAsset(id) {
     // display:none 0px war. Live-Feed wurde beim Wegklicken oben bewusst
     // geschlossen (Finnhub-Limit) - beim Zurueckklicken wieder verbinden.
     charts[id].chart.applyOptions({ width: charts[id].container.clientWidth });
-    if (item) connectLiveFeed(item);
+    if (item) { seedLiveBuffer(item); connectLiveFeed(item); }
   } else {
     if (item) renderAssetContent(item);
   }
@@ -1256,6 +1270,56 @@ function etPseudoEpochSeconds(utcMs) {
     Number(hh), Number(get("minute")), Number(get("second"))) / 1000;
 }
 
+// Tiam, 2026-07-24: "Live-Analyse im Browser (Phase 3)" - die Live-Ticks
+// (Binance/Finnhub) aktualisierten bisher NUR die Candlestick-Anzeige direkt
+// (series.update()); die TJR-Analyse (Entry/Stop/Target/Signal) blieb an den
+// letzten 5-15-Minuten-Server-Build gebunden. Jetzt wird zusaetzlich ein
+// eigener, live mitwachsender Kerzen-Puffer pro Asset gepflegt (gleiches
+// {ts, open, high, low, close}-Format wie item.ltf vom Server), auf dem
+// buildSignal() (jetzt auch im Browser eingebettet, siehe engine.js-Script-Tag
+// oben) throttled neu laeuft - die Detail-Tabelle zeigt dadurch reaktionsschnellere
+// Entry/Stop/Target/Signal-Werte, OHNE den signals_log-Paper-Trading-Pfad
+// anzufassen: der bleibt komplett server-seitig autoritativ (renderInfoTable
+// bevorzugt weiterhin IMMER den offenen signals_log-Datensatz, falls einer
+// existiert - liveSig wird nur als Fallback fuer den "kein offener Trade"-Fall
+// benutzt, siehe renderInfoTable weiter oben). Bewusst nur fuer das aktuell
+// sichtbare Asset aktiv (liveFeeds erlaubt eh nur eine gleichzeitige
+// Verbindung), daher kein spuerbarer Perf-Impact.
+const liveLtfBuffers = {};
+const lastLiveRecompute = {};
+const LIVE_RECOMPUTE_THROTTLE_MS = 8000;
+
+function seedLiveBuffer(item) {
+  const id = assetId(item.asset);
+  liveLtfBuffers[id] = (item.ltf || []).map((c) => ({ ts: c.ts, open: c.open, high: c.high, low: c.low, close: c.close }));
+}
+
+function updateLiveBuffer(id, barTimeSec, o, h, l, c) {
+  const buf = liveLtfBuffers[id];
+  if (!buf) return;
+  const ts = barTimeSec * 1000;
+  const last = buf[buf.length - 1];
+  if (last && last.ts === ts) {
+    last.open = o; last.high = h; last.low = l; last.close = c;
+  } else if (!last || ts > last.ts) {
+    buf.push({ ts, open: o, high: h, low: l, close: c });
+  }
+}
+
+function maybeRecomputeLive(item) {
+  const id = assetId(item.asset);
+  const now = Date.now();
+  if (lastLiveRecompute[id] && now - lastLiveRecompute[id] < LIVE_RECOMPUTE_THROTTLE_MS) return;
+  lastLiveRecompute[id] = now;
+  const buf = liveLtfBuffers[id];
+  if (!buf || buf.length < 10 || typeof buildSignal !== "function") return;
+  try {
+    const htf = item.htfRecent || [];
+    item.liveSig = buildSignal(htf, buf, [], undefined, undefined, undefined, []);
+    renderInfoTable(item);
+  } catch (e) { /* Live-Neuberechnung ist best-effort - darf die Seite nie kaputt machen */ }
+}
+
 function closeLiveFeed(id) {
   const feed = liveFeeds[id];
   if (!feed) return;
@@ -1293,11 +1357,11 @@ function connectBinanceLiveFeed(item) {
         const msg = JSON.parse(event.data);
         const k = msg.k;
         if (!k) return;
-        chartEntry.series.update({
-          time: etPseudoEpochSeconds(k.t),
-          open: parseFloat(k.o), high: parseFloat(k.h),
-          low: parseFloat(k.l), close: parseFloat(k.c),
-        });
+        const barTime = etPseudoEpochSeconds(k.t);
+        const o = parseFloat(k.o), h = parseFloat(k.h), l = parseFloat(k.l), c = parseFloat(k.c);
+        chartEntry.series.update({ time: barTime, open: o, high: h, low: l, close: c });
+        updateLiveBuffer(id, barTime, o, h, l, c);
+        maybeRecomputeLive(item);
       } catch (e) { /* einzelne kaputte Nachricht ignorieren, Verbindung bleibt offen */ }
     });
 
@@ -1378,7 +1442,9 @@ function connectFinnhubLiveFeed(item) {
           }
           finnhubBars[id] = bar;
           entry.series.update(bar);
+          updateLiveBuffer(id, bar.time, bar.open, bar.high, bar.low, bar.close);
         }
+        maybeRecomputeLive(item);
       } catch (e) { /* einzelne kaputte Nachricht ignorieren, Verbindung bleibt offen */ }
     });
 
