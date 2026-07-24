@@ -541,11 +541,13 @@ function analysisSteps(sig, ann) {
     text: ann.sweep ? `${sweepLabel(ann.sweep)} @ ${(+ann.sweep.level).toPrecision(6)}` : "noch nicht gefunden",
   });
   steps.push({
-    ok: !!ann.confirmation, label: "Bestätigung (BOS/iFVG)",
+    ok: !!ann.confirmation, label: "Bestätigung (BOS/iFVG/SMT)",
     text: ann.confirmation
       ? (ann.confirmation.kind === "BOS"
           ? `BOS ${ann.confirmation.event.dir === "up" ? "↑" : "↓"} @ ${(+ann.confirmation.event.level).toPrecision(6)}`
-          : `iFVG-Bruch (${ann.confirmation.event.dir === "up" ? "↑" : "↓"})`)
+          : ann.confirmation.kind === "iFVG"
+            ? `iFVG-Bruch (${ann.confirmation.event.dir === "up" ? "↑" : "↓"})`
+            : `SMT-Divergenz (Vergleichsindex bestätigt nicht)`)
       : "noch nicht bestätigt",
   });
   steps.push({
