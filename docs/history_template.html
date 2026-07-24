@@ -109,6 +109,7 @@
       <option value="win">Nur Win</option>
       <option value="loss">Nur Loss</option>
       <option value="open">Nur Offen</option>
+      <option value="partial">Nur TP1 erreicht</option>
       <option value="stale">Nur Abgelaufen</option>
     </select>
     <span class="reset-link" id="resetFilter">Asset-Filter zurücksetzen</span>
@@ -123,10 +124,11 @@ let activeAsset = null;
 let activeStatus = "all";
 
 const STATUS_META = {
-  win:   { label: "WIN",        cls: "badge-win" },
-  loss:  { label: "LOSS",       cls: "badge-loss" },
-  open:  { label: "OFFEN",      cls: "badge-open" },
-  stale: { label: "ABGELAUFEN", cls: "badge-stale" },
+  win:     { label: "WIN",          cls: "badge-win" },
+  loss:    { label: "LOSS",         cls: "badge-loss" },
+  open:    { label: "OFFEN",        cls: "badge-open" },
+  partial: { label: "TP1 ERREICHT", cls: "badge-open" },
+  stale:   { label: "ABGELAUFEN",   cls: "badge-stale" },
 };
 
 function assetMeta(symbol) {
@@ -144,7 +146,7 @@ function computeStats(signals) {
   const closed = signals.filter((r) => r.status === "win" || r.status === "loss");
   const wins = signals.filter((r) => r.status === "win").length;
   const losses = signals.filter((r) => r.status === "loss").length;
-  const open = signals.filter((r) => r.status === "open").length;
+  const open = signals.filter((r) => r.status === "open" || r.status === "partial").length;
   const stale = signals.filter((r) => r.status === "stale").length;
   const winRate = closed.length ? Math.round((wins / closed.length) * 100) : null;
   return { total: signals.length, wins, losses, open, stale, closed: closed.length, winRate };
@@ -218,18 +220,24 @@ function renderTable() {
           if (r.status === "win" || r.status === "loss") {
             const sign = r.rMultiple >= 0 ? "+" : "";
             ergebnis = `${sign}${r.rMultiple}R`;
-          } else if (r.status === "open" && typeof r.unrealizedR === "number") {
+          } else if ((r.status === "open" || r.status === "partial") && typeof r.unrealizedR === "number") {
             const sign = r.unrealizedR >= 0 ? "+" : "";
             ergebnis = `${sign}${r.unrealizedR}R (unrealisiert)`;
           }
+          // Tiam, 2026-07-24: bei partialExit-Trades (2 Key-Level statt
+          // einem) zeigt die Target-Spalte "TP1 / TP2" statt eines Werts.
+          const targetCell = r.partialExit && r.target2 != null
+            ? `${r.target ?? "–"} / ${r.target2}`
+            : (r.target ?? "–");
+          const currentStop = r.status === "partial" || r.tp1HitTs ? (r.trailStop ?? r.stop) : r.stop;
           return `
           <tr class="tr-link" data-asset="${r.asset}" data-ts="${r.entryTs}" title="Zum Chart zu diesem Zeitpunkt springen">
             <td>${fmtDate(r.entryTs)}</td>
             <td>${meta.icon} ${meta.display || meta.name}</td>
             <td class="${r.direction === "LONG" ? "dir-long" : "dir-short"}">${r.direction}</td>
             <td>${r.entry ?? "–"}</td>
-            <td>${r.stop ?? "–"}</td>
-            <td>${r.target ?? "–"}</td>
+            <td>${currentStop ?? "–"}</td>
+            <td>${targetCell}</td>
             <td>${r.rr ? "1:" + r.rr : "–"}</td>
             <td>${r.zoneKind || "–"}</td>
             <td><span class="badge ${statusMeta.cls}">${statusMeta.label}</span></td>

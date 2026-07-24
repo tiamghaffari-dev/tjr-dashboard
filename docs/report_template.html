@@ -493,7 +493,7 @@ function biasPlain(bias) {
   return "hat aktuell keine klare Richtung";
 }
 function findOpenRecord(item) {
-  return (item.signals || []).find((r) => r.status === "open");
+  return (item.signals || []).find((r) => r.status === "open" || r.status === "partial");
 }
 function plainHeadline(item) {
   const { sig, mode } = item;
@@ -568,15 +568,33 @@ function renderInfoTable(item) {
   // noch offen war. Bei offenem Trade zeigt die Tabelle jetzt dessen
   // stabile, urspruenglich geloggte Werte (currentPrice bleibt trotzdem
   // live aus sig, das ist einfach der aktuelle Marktpreis, kein Signal-Wert).
-  const openRec = (item.signals || []).find((r) => r.status === "open");
+  const openRec = (item.signals || []).find((r) => r.status === "open" || r.status === "partial");
   const sig = openRec
-    ? { entry: openRec.entry, stop: openRec.stop, target: openRec.target, rr: openRec.rr, currentPrice: item.sig.currentPrice }
-    : item.sig;
+    ? {
+        entry: openRec.entry, stop: openRec.stop, target: openRec.target, rr: openRec.rr,
+        target2: openRec.target2 ?? null, rr2: openRec.rr2 ?? null, partialExit: !!openRec.partialExit,
+        trailStop: openRec.trailStop ?? openRec.stop, tp1HitTs: openRec.tp1HitTs ?? null,
+        currentPrice: item.sig.currentPrice,
+      }
+    : { ...item.sig, trailStop: item.sig.stop, tp1HitTs: null };
+  // Tiam, 2026-07-24: "mehrere take profits [...] das erste oldtime high
+  // waere dann der stop loss" - bei partialExit-Trades zeigt die Tabelle jetzt
+  // TP1 (mit "50% + Trail"-Hinweis) und TP2 statt eines einzelnen "Target",
+  // und der Stop-Wert ist der AKTUELL aktive (nachgezogene), nicht mehr der
+  // urspruengliche, sobald TP1 schon erreicht wurde.
+  const stopLabel = sig.tp1HitTs ? "Stop (nachgezogen auf TP1)" : "Stop";
+  const targetRows = sig.partialExit
+    ? `<div class="row-target"><span>TP1 (50% + Trail)</span><span>${fmtOrDash(sig.target)}</span></div>
+       <div class="row-target"><span>TP2 (Rest)</span><span>${fmtOrDash(sig.target2)}</span></div>`
+    : `<div class="row-target"><span>Target</span><span>${fmtOrDash(sig.target)}</span></div>`;
+  const rrText = sig.partialExit
+    ? `1:${sig.rr} / 1:${sig.rr2}`
+    : (sig.rr ? "1:" + sig.rr : "–");
   tableEl.innerHTML = `
     <div class="row-entry"><span>Entry</span><span>${fmtOrDash(sig.entry)}</span></div>
-    <div class="row-stop"><span>Stop</span><span>${fmtOrDash(sig.stop)}</span></div>
-    <div class="row-target"><span>Target</span><span>${fmtOrDash(sig.target)}</span></div>
-    <div><span>R:R</span><span>${sig.rr ? "1:" + sig.rr : "–"}</span></div>
+    <div class="row-stop"><span>${stopLabel}</span><span>${fmtOrDash(sig.tp1HitTs ? sig.trailStop : sig.stop)}</span></div>
+    ${targetRows}
+    <div><span>R:R</span><span>${rrText}</span></div>
     <div class="row-size"><span>Positionsgröße</span><span>${positionSizeText(item.asset, sig)}</span></div>
     <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>`;
 }
@@ -938,6 +956,9 @@ function drawPositionBox(chart, candles, sig, startTs, series) {
   if (sig.entry === null || sig.stop === null || sig.target === null) return;
   const startIdx = candles.findIndex((c) => c.time >= startTs);
   if (startIdx === -1) return;
+  // Tiam, 2026-07-24: aktuell aktiver Stop - vor TP1 der urspruengliche
+  // Sweep-Stop, danach der auf TP1 nachgezogene (siehe resolveSignals()).
+  const activeStop = sig.tp1HitTs ? (sig.trailStop ?? sig.stop) : sig.stop;
   // Tiam, 2026-07-13: "diese short position geht wieder ins unendliche" -
   // im Gegensatz zur Zone-Box und den Analyse-Linien (#64/#65, beide auf
   // ANALYSIS_LINE_MAX_BARS/MAX_ZONE_BARS begrenzt) lief diese Box bisher bis
@@ -951,14 +972,26 @@ function drawPositionBox(chart, candles, sig, startTs, series) {
   // sig.entry (umgekehrt bei LONG) - Math.max/min bestimmt Ober-/Unterkante
   // der Box unabhaengig von der Richtung, statt eines der beiden Felder
   // direkt als "oben" anzunehmen.
-  const profitTop = Math.max(sig.entry, sig.target);
-  const profitBottom = Math.min(sig.entry, sig.target);
+  // Tiam, 2026-07-24: bei partialExit reicht die Gewinnzone bis TP2 (der
+  // weiter entfernte, "zweite oldtime high/low"), mit TP1 als zusaetzlicher
+  // gestrichelter Trennlinie innerhalb der Box - macht sichtbar, dass bei TP1
+  // die Haelfte der Position gesichert wird, bevor es Richtung TP2 weitergeht.
+  const farTarget = (sig.partialExit && sig.target2 !== null) ? sig.target2 : sig.target;
+  const profitTop = Math.max(sig.entry, farTarget);
+  const profitBottom = Math.min(sig.entry, farTarget);
   drawBox(chart, series, segData, profitTop, profitBottom, {
     fillColor: POSITION_BOX_COLORS.profit.fill, borderColor: POSITION_BOX_COLORS.profit.line, borderWidth: 2, borderDash: [4, 3],
   });
+  if (sig.partialExit && sig.target2 !== null) {
+    const tp1LineSeries = chart.addLineSeries({
+      color: "rgba(255,255,255,0.55)", lineWidth: 1, lineStyle: 2,
+      priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+    });
+    tp1LineSeries.setData(segData.map((d) => ({ time: d.time, value: sig.target })));
+  }
 
-  const riskTop = Math.max(sig.entry, sig.stop);
-  const riskBottom = Math.min(sig.entry, sig.stop);
+  const riskTop = Math.max(sig.entry, activeStop);
+  const riskBottom = Math.min(sig.entry, activeStop);
   drawBox(chart, series, segData, riskTop, riskBottom, {
     fillColor: POSITION_BOX_COLORS.risk.fill, borderColor: POSITION_BOX_COLORS.risk.line, borderWidth: 2, borderDash: [4, 3],
   });
@@ -989,7 +1022,7 @@ const HISTORICAL_BOX_COLORS = {
 const STALE_BOX_FALLBACK_BARS = 120; // ~10h bei 5-Min-Kerzen, falls kein resolvedTs vorliegt (seit 2026-07-15 Kerzen-Umstellung korrigiert)
 
 function drawHistoricalPositionBox(chart, candles, rec, series, pseudoOffsetSec) {
-  if (rec.status === "open") return; // die laufende Position zeigt bereits drawPositionBox()
+  if (rec.status === "open" || rec.status === "partial") return; // laufende Position zeigt bereits drawPositionBox()
   if (rec.entry == null || rec.stop == null || rec.target == null) return;
   // Tiam, 2026-07-22: entryTs kommt aus signals_log.json als ECHTE UTC-Zeit
   // (Date.now() beim Build) - siehe pseudoOffsetSec-Kommentar in renderChart()
@@ -1012,8 +1045,13 @@ function drawHistoricalPositionBox(chart, candles, rec, series, pseudoOffsetSec)
   const segData = candles.slice(startIdx, endIdx + 1).map((c) => ({ time: c.time }));
   if (segData.length === 0) return;
 
-  const histProfitTop = Math.max(rec.entry, rec.target);
-  const histProfitBottom = Math.min(rec.entry, rec.target);
+  // Tiam, 2026-07-24: falls die Position ueber TP1 hinaus bis TP2 lief
+  // (tp1HitTs gesetzt), zeigt die abgeschlossene Box den vollen TP1-TP2-
+  // Bereich statt nur bis TP1 - naeherungsweise, exakte Ausschlagshoehe wird
+  // hier nicht rekonstruiert, nur der Zielrahmen.
+  const histFarTarget = (rec.partialExit && rec.tp1HitTs && rec.target2 != null) ? rec.target2 : rec.target;
+  const histProfitTop = Math.max(rec.entry, histFarTarget);
+  const histProfitBottom = Math.min(rec.entry, histFarTarget);
   drawBox(chart, series, segData, histProfitTop, histProfitBottom, {
     fillColor: HISTORICAL_BOX_COLORS.profit.fill, borderColor: HISTORICAL_BOX_COLORS.profit.line, borderWidth: 1, borderDash: null,
   });
@@ -1557,10 +1595,14 @@ function renderChart(item) {
   // nehmen statt der potenziell zurueckgesetzten frischen sig-Werte - die
   // Box bleibt so sichtbar, bis der Trade selbst per Stop/Target aufgeloest
   // wird, nicht bis die Sweep-Erkennung zufaellig aus dem Lookback laeuft.
-  const openRec = (item.signals || []).find((r) => r.status === "open");
+  const openRec = (item.signals || []).find((r) => r.status === "open" || r.status === "partial");
   const boxSig = openRec
-    ? { entry: openRec.entry, stop: openRec.stop, target: openRec.target }
-    : sig;
+    ? {
+        entry: openRec.entry, stop: openRec.stop, target: openRec.target,
+        target2: openRec.target2 ?? null, partialExit: !!openRec.partialExit,
+        trailStop: openRec.trailStop ?? openRec.stop, tp1HitTs: openRec.tp1HitTs ?? null,
+      }
+    : { ...sig, target2: sig.target2 ?? null, partialExit: !!sig.partialExit, trailStop: sig.stop, tp1HitTs: null };
   if (boxSig.entry !== null) {
     // Box zuerst zeichnen (liegt hinter den duennen Preis-Linien) - Startpunkt
     // ist der tatsaechliche Einstiegszeitpunkt bei einer offenen Position; ist
@@ -1588,6 +1630,7 @@ function renderChart(item) {
     win: { color: "#4fff9c", text: "WIN" },
     loss: { color: "#ff6b6b", text: "LOSS" },
     open: { color: "#ffd25c", text: "OFFEN" },
+    partial: { color: "#4fd6ff", text: "TP1 ✓" },
     stale: { color: "#7c8399", text: "ABGELAUFEN" },
   };
   for (const rec of (item.signals || [])) {
@@ -1596,11 +1639,14 @@ function renderChart(item) {
     const isLong = rec.direction === "LONG";
     // Tiam, 2026-07-12: "schaut ob der Trade wirklich in die richtige
     // Richtung geht" - bei noch offenen Trades den unrealisierten
-    // R-Fortschritt statt eines bloßen "OFFEN" anzeigen.
+    // R-Fortschritt statt eines bloßen "OFFEN" anzeigen. "partial" (TP1
+    // erreicht, Stop nachgezogen, Rest laeuft Richtung TP2) bekommt denselben
+    // Fortschritts-Zusatz, aber mit eigenem Label statt "OFFEN".
     let text = style.text;
-    if (rec.status === "open" && typeof rec.unrealizedR === "number") {
+    if ((rec.status === "open" || rec.status === "partial") && typeof rec.unrealizedR === "number") {
       const sign = rec.unrealizedR >= 0 ? "+" : "";
-      text = `OFFEN ${sign}${rec.unrealizedR}R`;
+      const label = rec.status === "partial" ? "TP1 ✓" : "OFFEN";
+      text = `${label} ${sign}${rec.unrealizedR}R`;
     }
     markers.push({
       time: entryChartSec(rec.entryTs),
