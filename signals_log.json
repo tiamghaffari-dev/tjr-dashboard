@@ -348,5 +348,27 @@
     "status": "loss",
     "resolvedTs": 1784891700000,
     "rMultiple": -1
+  },
+  {
+    "id": "ETHUSD-1784991092236",
+    "asset": "ETHUSD",
+    "direction": "LONG",
+    "entryTs": 1784991092236,
+    "entry": 1861.494995,
+    "stop": 1852.317326,
+    "target": 1955.810059,
+    "rr": 10.28,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 1852.317326,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
