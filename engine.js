@@ -541,6 +541,51 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   // faellt auf `.level` zurueck, falls `.extreme` aus irgendeinem Grund
   // fehlt (sollte nach diesem Fix nicht mehr vorkommen, reine Absicherung).
   const sweepAnchor = recentSweep.extreme ?? recentSweep.level;
+
+  // Tiam, 2026-07-25: Screenshot einer echten LOSS-Position gezeigt - Stop lag
+  // weit ueber dem Preis, "der stop loss ist ja viel zu hoch gesetzt [...] er
+  // soll sich auf vorherigen Highs oder vom Gann-Box die Mitte nehmen [...]
+  // kommt darauf an wo er es platziert - er soll von sich selber lernen".
+  // Root Cause geprueft: der bisherige Stop war praktisch IMMER `sweepAnchor`
+  // (der wirkliche Sweep-Docht) - sowohl cand.bottom/top (Zonen-Rand) ALS AUCH
+  // der Equilibrium-Fallback (legLow/legHigh) sind naeher am Entry als der
+  // Docht, also gewinnt min()/max() immer den Docht. Das ist strukturell
+  // "korrekt" (Docht = der Punkt, an dem sich der Sweep wirklich umgedreht
+  // hat), aber oft unnoetig weit, wenn seither schon eine frische Struktur
+  // (ein bestaetigter Swing) oder die Equilibrium-Mitte des seit dem Sweep
+  // laufenden Legs naeher dran liegt und trotzdem strukturell begruendet ist.
+  // Fix: bevorzuge das ENGERE (naeher am Entry) von (a) dem juengsten
+  // bestaetigten Swing High/Low SEIT dem Sweep (="vorherige Highs/Lows" -
+  // reflektiert echtes Preisverhalten NACH dem Sweep, nicht nur die alte
+  // Linie) und (b) der Equilibrium/Gann-Box-Mitte (`mid`, 50% des Sweep-Legs)
+  // - per AskUserQuestion mit Tiam bestaetigt ("Naeherer von beiden"). Faellt
+  // auf `sweepAnchor` zurueck, wenn kein bestaetigter Swing existiert UND
+  // `mid` auf der falschen Seite des Entrys liegt (Sanity-Check) - reine
+  // Absicherung fuer Randfaelle, nicht der Normalfall mehr.
+  const protectiveSwingType = wantDir === "up" ? "L" : "H";
+  const structureSwings = ltfSwings.filter(
+    (s) => s.type === protectiveSwingType && s.ts > recentSweep.ts && s.ts <= conf.ts
+  );
+  const nearestStructureSwing = structureSwings.length
+    ? structureSwings[structureSwings.length - 1].price
+    : null;
+  // Nur Kandidaten auf der RICHTIGEN Seite des Entrys sind ueberhaupt gueltige
+  // Stops (z.B. liegt `mid` im Equilibrium-Fallback-Fall IMMER ueber dem Entry
+  // bei einem Long, weil Entry selbst als Mitte von [legLow, mid] definiert
+  // ist - waere hier also nie gueltig). Erst filtern, DANN das engere der
+  // gueltigen waehlen - nicht umgekehrt (sonst wirft ein einzelner ungueltiger,
+  // zufaellig naeherer Kandidat den ganzen gueltigen Rest weg).
+  const structureCandidatesRaw = [mid];
+  if (nearestStructureSwing !== null) structureCandidatesRaw.push(nearestStructureSwing);
+  const validStructureCandidates = structureCandidatesRaw.filter((c) => (
+    wantDir === "up" ? c < entry : c > entry
+  ));
+  let structureAnchor = sweepAnchor;
+  if (validStructureCandidates.length > 0) {
+    validStructureCandidates.sort((a, b) => Math.abs(entry - a) - Math.abs(entry - b));
+    structureAnchor = validStructureCandidates[0];
+  }
+
   // Tiam, 2026-07-24: "mehrere take profits [...] es kann sein das es ueber
   // ein oldtime high geht und auch vllt noch ueber ein anderes aber dann
   // waere das erste oldtime high ja der stop loss" - bis zu 2 Key-Level als
@@ -551,7 +596,7 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   // hier wird nur berechnet, WELCHE Level ueberhaupt in Frage kommen.
   let stop, target, target2, targetSource;
   if (wantDir === "up") {
-    stop = Math.min(cand.bottom, sweepAnchor) * 0.9985;
+    stop = structureAnchor * 0.9985;
     const risk = entry - stop;
     const keyLevels = findMultipleKeyLevelTargets(htfKeyLevels, htfDf, wantDir, entry, risk, 2);
     if (keyLevels.length > 0) {
@@ -562,7 +607,7 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
       target = entry + risk * rrTarget; target2 = null; targetSource = "fixed-rr-fallback";
     }
   } else {
-    stop = Math.max(cand.top, sweepAnchor) * 1.0015;
+    stop = structureAnchor * 1.0015;
     const risk = stop - entry;
     const keyLevels = findMultipleKeyLevelTargets(htfKeyLevels, htfDf, wantDir, entry, risk, 2);
     if (keyLevels.length > 0) {
