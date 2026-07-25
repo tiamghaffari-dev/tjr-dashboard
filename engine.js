@@ -325,7 +325,77 @@ function findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk) {
 // nur dass hier weitergesammelt statt beim ersten Treffer abgebrochen wird.
 // AskUserQuestion mit Tiam ergab: 2 Level (TP1/TP2), TP1 = Teilausstieg 50%
 // + Stop wird auf TP1 nachgezogen (siehe buildSignal()/resolveSignals()).
-function findMultipleKeyLevelTargets(htfSwings, htfDf, wantDir, entry, risk, maxCount = 2) {
+// Tiam, 2026-07-25: "er soll [...] den take profit bzw den stoploss
+// entsprechend fuer ein day trading anpassen also es kann ruhig ueber paar
+// stunden bis tage laufen der trade aber take profit so tief zu setzen ist
+// fuer day trading unmoeglich zu erreichen."
+//
+// Kernproblem (an echten Daten verifiziert): `findMultipleKeyLevelTargets`
+// hatte nur eine UNTERgrenze (MIN_KEY_LEVEL_RR), aber keine OBERgrenze - das
+// naechste noch offene 4H-Key-Level wurde genommen, egal wie weit weg. Im
+// Live-Log stand dadurch z.B. ein ETHUSD-Signal mit Target 7.19% entfernt
+// (RR 43.9) - ETH bewegt sich im Median 2.89% pro TAG, dieses Ziel haette
+// also mehrere Tage perfekter Einbahnstrasse gebraucht.
+//
+// Kalibriert an einer EMPIRISCHEN Erreichbarkeitsmessung auf den echten
+// 5min-Kerzen aller 6 Assets (20 Tage, Stichprobe alle 30min): wie oft laeuft
+// der Kurs ueberhaupt k x Tagesrange in eine Richtung, innerhalb von 8h / 24h?
+//   0.25x ADR: 45-73% / 69-83%
+//   0.50x ADR: 19-49% / 44-65%
+//   1.00x ADR:  3-15% / 17-30%
+//   1.50x ADR:  1- 2% /  5- 8%
+//   2.50x ADR:      0% /     0%   <- das alte ETH-Ziel (2.49x) lag GENAU hier
+// Das sind unbedingte Wahrscheinlichkeiten (zufaelliger Einstiegszeitpunkt);
+// ein echtes Setup nach Sweep + Bestaetigung in Trendrichtung schneidet
+// besser ab, aber die Groessenordnung zeigt klar: alles ab ~1.5x Tagesrange
+// ist im Day-Trading-Horizont praktisch unerreichbar - exakt Tiams Beobachtung.
+// Daher: TP1 (der 50%-Teilausstieg, soll zuverlaessig kommen) max. 0.5x
+// Tagesrange, TP2 (der Runner, per Struktur-Trailing-Stop abgesichert) max.
+// 1.0x - zusammen mit der Stop-Untergrenze unten ergibt das an den Deckeln
+// RR 2.5 (TP1) bzw. RR 5.0 (TP2). Letzteres deckt sich fast exakt mit dem
+// einzigen Wert, den TJR selbst on-screen zeigt (Bootcamp Tag 53, "$19k
+// Profit GBPJPY Recap": Position-Tool mit "Risk/Reward Ratio: 5.43" bei
+// 0.28%-Stop) - sein grosser Gewinner entspricht also unserem TP2, waehrend
+// TP1 den halben Gewinn vorher sicher einsammelt.
+const MAX_TP1_ADR_MULT = 0.5;
+const MAX_TP2_ADR_MULT = 1.0;
+// Gegenstueck nach unten: ein Stop, der viel enger als die normale
+// Tagesbewegung ist, wird vom blossen Rauschen abgeraeumt, bevor die These
+// ueberhaupt eine Chance hatte (der ETH-Fall oben: 0.164% Stop bei 2.89%
+// Tagesrange). TJR liegt bei ~0.28x, die gesunden eigenen Signale bei
+// 0.23-0.32x - 0.20x als Untergrenze greift also nur in den pathologischen
+// Faellen und laesst normale Struktur-Stops unangetastet.
+const MIN_STOP_ADR_MULT = 0.20;
+const ADR_LOOKBACK_DAYS = 14;
+// Mindest-RR, damit ein Setup ueberhaupt als Day-Trade gilt (siehe
+// Viabilitaets-Check in buildSignal()).
+const MIN_TRADE_RR = 1.0;
+
+// Median der letzten `maxDays` Tagesranges (High-Low je Kalendertag), in
+// absoluten Preiseinheiten. Median statt Mittelwert, damit ein einzelner
+// News-Ausreisser-Tag den Deckel nicht verzerrt. Erwartet HTF-Kerzen (4H) -
+// die Tagesgruppierung nutzt dieselbe "ET-Uhrzeit-als-UTC"-Pseudozeit wie
+// der Rest des Systems, ist also konsistent mit allen anderen ts-Werten.
+function medianDailyRange(htfDf, maxDays = ADR_LOOKBACK_DAYS) {
+  if (!htfDf || htfDf.length === 0) return null;
+  const byDay = new Map();
+  for (const r of htfDf) {
+    const day = Math.floor(r.ts / 86400000);
+    const cur = byDay.get(day);
+    if (!cur) byDay.set(day, { hi: r.high, lo: r.low });
+    else { cur.hi = Math.max(cur.hi, r.high); cur.lo = Math.min(cur.lo, r.low); }
+  }
+  const ranges = Array.from(byDay.entries())
+    .sort((a, b) => a[0] - b[0])
+    .slice(-maxDays)
+    .map(([, v]) => v.hi - v.lo)
+    .filter((x) => x > 0)
+    .sort((a, b) => a - b);
+  if (ranges.length === 0) return null;
+  return ranges[Math.floor(ranges.length / 2)];
+}
+
+function findMultipleKeyLevelTargets(htfSwings, htfDf, wantDir, entry, risk, maxCount = 2, maxDistances = null) {
   if (!risk || risk <= 0) return [];
   const wantType = wantDir === "up" ? "H" : "L";
   const inDirection = htfSwings.filter((s) => (
@@ -339,6 +409,14 @@ function findMultipleKeyLevelTargets(htfSwings, htfDf, wantDir, entry, risk, max
   const hits = [];
   for (const cand of untouched) {
     const reward = Math.abs(cand.price - entry);
+    // Tiam, 2026-07-25: "take profit so tief zu setzen ist fuer day trading
+    // unmoeglich zu erreichen" - Distanz-Deckel pro TP-Slot (siehe
+    // medianDailyRange()/MAX_TP*_ADR_MULT). Ein Key-Level jenseits des Deckels
+    // wird uebersprungen, NICHT der ganze Rest verworfen: ein naeheres
+    // Level weiter hinten in der Liste kann es trotzdem noch geben (die Liste
+    // ist zwar distanzsortiert, aber der Deckel fuer TP2 ist groesser als der
+    // fuer TP1 - ohne `continue` wuerde TP2 mit TP1 zusammen wegfallen).
+    if (maxDistances && maxDistances[hits.length] != null && reward > maxDistances[hits.length]) continue;
     if (reward / risk >= MIN_KEY_LEVEL_RR) {
       hits.push(cand.price);
       if (hits.length >= maxCount) break;
@@ -594,29 +672,59 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   // Richtung TP2 (per AskUserQuestion mit Tiam bestaetigt) - die eigentliche
   // Nachzieh-/Teilausstiegs-Mechanik lebt in build.js' resolveSignals(),
   // hier wird nur berechnet, WELCHE Level ueberhaupt in Frage kommen.
-  let stop, target, target2, targetSource;
-  if (wantDir === "up") {
-    stop = structureAnchor * 0.9985;
-    const risk = entry - stop;
-    const keyLevels = findMultipleKeyLevelTargets(htfKeyLevels, htfDf, wantDir, entry, risk, 2);
-    if (keyLevels.length > 0) {
-      target = keyLevels[0];
-      target2 = keyLevels.length > 1 ? keyLevels[1] : null;
-      targetSource = "key-level";
-    } else {
-      target = entry + risk * rrTarget; target2 = null; targetSource = "fixed-rr-fallback";
-    }
+  // Day-Trading-Kalibrierung (siehe langen Kommentar bei medianDailyRange()):
+  // Stop bekommt eine Mindestdistanz, Targets einen Maximalabstand - beides
+  // relativ zur tatsaechlichen Tagesbewegung des jeweiligen Assets, damit
+  // dieselben Regeln fuer GBPUSD (~0.5%/Tag) und ETH (~2.9%/Tag) passen.
+  // `adr === null` (zu wenig HTF-Historie) degradiert sauber auf das alte
+  // Verhalten ohne Deckel/Untergrenze.
+  const adr = medianDailyRange(htfDf);
+  const minStopDist = adr ? adr * MIN_STOP_ADR_MULT : 0;
+  const tp1Cap = adr ? adr * MAX_TP1_ADR_MULT : Infinity;
+  const tp2Cap = adr ? adr * MAX_TP2_ADR_MULT : Infinity;
+  const dirSign = wantDir === "up" ? 1 : -1;
+
+  const stop = wantDir === "up"
+    ? Math.min(structureAnchor * 0.9985, entry - minStopDist)
+    : Math.max(structureAnchor * 1.0015, entry + minStopDist);
+  const risk = Math.abs(entry - stop);
+
+  // Key-Level bis zum WEITEREN (TP2-)Deckel sammeln und erst danach auf die
+  // beiden Slots verteilen. Wichtig: ein Level, das fuer TP1 schon zu weit
+  // ist, darf trotzdem TP2 werden - genau das ist der "Runner", den der
+  // Struktur-Trailing-Stop absichert. Wuerde man stattdessen direkt mit dem
+  // engen TP1-Deckel filtern, fiele so ein Level komplett weg und die
+  // strukturelle Zielsetzung (TJRs "take profit at other key levels") waere
+  // in der Praxis fast immer durch das generische RR-Ziel ersetzt.
+  const keyLevels = findMultipleKeyLevelTargets(htfKeyLevels, htfDf, wantDir, entry, risk, 2, [tp2Cap, tp2Cap]);
+  const nearLevels = keyLevels.filter((p) => Math.abs(p - entry) <= tp1Cap);
+  const farLevels = keyLevels.filter((p) => Math.abs(p - entry) > tp1Cap);
+
+  let target, target2, targetSource;
+  if (nearLevels.length > 0) {
+    target = nearLevels[0];
+    target2 = nearLevels[1] != null ? nearLevels[1] : (farLevels[0] != null ? farLevels[0] : null);
+    targetSource = "key-level";
   } else {
-    stop = structureAnchor * 1.0015;
-    const risk = stop - entry;
-    const keyLevels = findMultipleKeyLevelTargets(htfKeyLevels, htfDf, wantDir, entry, risk, 2);
-    if (keyLevels.length > 0) {
-      target = keyLevels[0];
-      target2 = keyLevels.length > 1 ? keyLevels[1] : null;
-      targetSource = "key-level";
-    } else {
-      target = entry - risk * rrTarget; target2 = null; targetSource = "fixed-rr-fallback";
-    }
+    // Kein Key-Level nah genug fuer TP1: klassisches RR-Ziel, aber hart auf
+    // den TP1-Deckel begrenzt (lieber ein etwas kleineres, real erreichbares
+    // Ziel als ein sauberes 2:1, das im Day-Trading-Horizont nie ankommt).
+    target = entry + dirSign * Math.min(risk * rrTarget, tp1Cap);
+    target2 = farLevels[0] != null ? farLevels[0] : null;
+    targetSource = farLevels.length > 0 ? "rr-capped + key-level TP2" : "fixed-rr-fallback";
+  }
+
+  // Wenn selbst das gedeckelte TP1 weniger einbringt als der Stop riskiert,
+  // ist das Setup als Day-Trade nicht sinnvoll handelbar (typisch: sehr
+  // breiter Struktur-Stop bei einem Asset mit kleiner Tagesrange). Lieber
+  // kein Trade als ein Trade mit strukturell negativem Erwartungswert -
+  // dieselbe Linie wie bei allen anderen Filtern: kein erzwungenes Signal.
+  if (Math.abs(target - entry) < risk * MIN_TRADE_RR) {
+    result.detail = `Setup verworfen: Stop-Distanz (${(risk / entry * 100).toFixed(2)}%) ist im Verhaeltnis zur `
+      + `Tagesrange (${adr ? (adr / entry * 100).toFixed(2) : "?"}%) zu breit - ein im Day-Trading-Horizont `
+      + `erreichbares Ziel (max. ${MAX_TP1_ADR_MULT}x Tagesrange) haette ein RR unter ${MIN_TRADE_RR}.`;
+    result.signal = "kein Setup";
+    return result;
   }
   const partialExit = target2 !== null;
   const riskDist = Math.abs(entry - stop);
@@ -810,6 +918,7 @@ if (typeof module !== "undefined") {
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
     findIfvg, findBreakerBlock, find1minConfirmation, findKeyLevelTarget,
     findProminentHtfSwingLevels, findSmtDivergence,
+    findMultipleKeyLevelTargets, medianDailyRange,
     premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }
