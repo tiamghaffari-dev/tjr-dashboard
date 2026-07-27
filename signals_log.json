@@ -361,14 +361,14 @@
     "target2": null,
     "rr2": null,
     "partialExit": false,
-    "trailStop": 1862.6417814941408,
+    "trailStop": 1863.091179626465,
     "tp1HitTs": null,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1784982300000,
+    "rMultiple": 0.17
   }
 ]
