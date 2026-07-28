@@ -433,9 +433,9 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1785239100000,
+    "rMultiple": -0.53
   },
   {
     "id": "^GSPC-1785250673438",
