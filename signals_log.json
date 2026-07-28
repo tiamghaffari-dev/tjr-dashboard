@@ -449,15 +449,15 @@
     "target2": null,
     "rr2": null,
     "partialExit": false,
-    "trailStop": 737.474524,
+    "trailStop": 739.8795412902832,
     "tp1HitTs": null,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "SMT",
     "zoneKind": "OrderBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1785239100000,
+    "rMultiple": 2
   },
   {
     "id": "GCUSD-1785250673438",
@@ -477,8 +477,8 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "BreakerBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1785238800000,
+    "rMultiple": -1
   }
 ]
