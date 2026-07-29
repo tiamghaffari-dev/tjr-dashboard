@@ -499,9 +499,9 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "OrderBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1785323700000,
+    "rMultiple": -1
   },
   {
     "id": "XRPUSD-1785337033938",
@@ -521,8 +521,8 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "OrderBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1785323700000,
+    "rMultiple": -0.13
   }
 ]
