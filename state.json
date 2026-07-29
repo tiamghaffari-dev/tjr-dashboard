@@ -1,9 +1,9 @@
 {
   "BTCUSD": true,
-  "ETHUSD": false,
-  "XRPUSD": true,
+  "ETHUSD": true,
+  "XRPUSD": false,
   "GBPUSD": true,
-  "^GSPC": true,
+  "^GSPC": false,
   "GCUSD": false,
   "_meta": {
     "windowOpen": false,
