@@ -524,5 +524,27 @@
     "status": "loss",
     "resolvedTs": 1785323700000,
     "rMultiple": -0.13
+  },
+  {
+    "id": "GCUSD-1785421809517",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1785421809517,
+    "entry": 4153.25,
+    "stop": 4186.470496,
+    "target": 4119.450073,
+    "rr": 1.02,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 4186.470496,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
