@@ -559,14 +559,14 @@
     "target2": 1.0444,
     "rr2": 2.86,
     "partialExit": true,
-    "trailStop": 1.065796,
+    "trailStop": 1.0648949635624887,
     "tp1HitTs": null,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "BreakerBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1785927300000,
+    "rMultiple": -0.84
   }
 ]
