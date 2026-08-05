@@ -546,5 +546,27 @@
     "status": "loss",
     "resolvedTs": 1785411600000,
     "rMultiple": -0.28
+  },
+  {
+    "id": "XRPUSD-1785941087792",
+    "asset": "XRPUSD",
+    "direction": "SHORT",
+    "entryTs": 1785941087792,
+    "entry": 1.06025,
+    "stop": 1.065796,
+    "target": 1.0474,
+    "rr": 2.32,
+    "target2": 1.0444,
+    "rr2": 2.86,
+    "partialExit": true,
+    "trailStop": 1.065796,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "BreakerBlock",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
