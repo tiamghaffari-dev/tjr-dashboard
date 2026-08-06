@@ -100,6 +100,7 @@
   </div>
 
   <div id="equitySection" style="margin-bottom:22px;"></div>
+  <div id="pmPatterns"></div>
   <div id="summary" class="summary-row"></div>
   <div id="assetCards" class="asset-cards"></div>
 
@@ -334,6 +335,89 @@ function renderAssetCards() {
   });
 }
 
+// Tiam, 2026-08-06: "er soll alles analysieren und kritisieren warum das bei
+// trade nicht gepasst hat" - die Obduktion wird in build.js gerechnet
+// (computePostmortem) und hier nur dargestellt: eine ausklappbare Zeile pro
+// abgeschlossenem Trade, damit die Tabelle kompakt bleibt.
+const PM_VERDICT_COLOR = {
+  "zu eng": "#ff6b6b", "vermutlich zu eng": "#ffab4f", "in Ordnung": "#4fff9c",
+  "zu weit": "#ff6b6b", "nicht ursaechlich": "#7c8399", "zu konservativ": "#ffab4f",
+  "zu frueh": "#ffab4f", "knapp": "#ffab4f",
+  "These war falsch": "#ff6b6b", "These war richtig": "#4fd6ff",
+};
+
+function renderPostmortemRow(r) {
+  const pm = r.postmortem;
+  if (!pm) return "";
+  const chips = pm.findings.map((f) => `
+    <span style="display:inline-block;margin:2px 6px 2px 0;padding:2px 7px;border-radius:5px;
+      font-size:10px;font-weight:700;border:1px solid ${PM_VERDICT_COLOR[f.verdict] || "#7c8399"}55;
+      color:${PM_VERDICT_COLOR[f.verdict] || "#9198ad"};background:${PM_VERDICT_COLOR[f.verdict] || "#7c8399"}14;">
+      ${f.area}: ${f.verdict}</span>`).join("");
+  const details = pm.findings.map((f) => `
+    <div style="margin:5px 0;font-size:11px;color:#9198ad;line-height:1.5;">
+      <span style="color:${PM_VERDICT_COLOR[f.verdict] || "#9198ad"};font-weight:700;">${f.area}</span> — ${f.text}
+    </div>`).join("");
+  return `
+    <tr class="pm-row">
+      <td colspan="10" style="padding:0 10px 12px 10px;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <details>
+          <summary style="cursor:pointer;font-size:11px;color:#7c8399;outline:none;">
+            🔎 Obduktion &nbsp;${chips}
+          </summary>
+          <div style="margin:8px 0 4px 14px;padding-left:12px;border-left:2px solid rgba(122,140,255,0.3);">
+            ${details}
+            <div style="margin-top:8px;font-size:10px;color:#5f6678;">
+              Bester Punkt: ${pm.mfeR >= 0 ? "+" : ""}${pm.mfeR}R · Schlechtester: ${pm.maeR}R ·
+              ${pm.towardTargetPct !== null ? `${pm.towardTargetPct}% der Zielstrecke gelaufen · ` : ""}
+              Haltedauer ${pm.holdHours}h${pm.stopDistAdr !== null ? ` · Stop ${pm.stopDistAdr}× Tagesrange` : ""}${pm.targetDistAdr !== null ? ` · Ziel ${pm.targetDistAdr}× Tagesrange` : ""}
+            </div>
+          </div>
+        </details>
+      </td>
+    </tr>`;
+}
+
+// Muster ueber ALLE obduzierten Trades - das ist der eigentliche Lerneffekt:
+// nicht der Einzelfall, sondern was sich wiederholt.
+function renderPostmortemPatterns() {
+  const withPm = DATA.signals.filter((r) => r.postmortem && r.postmortem.findings.length);
+  const el = document.getElementById("pmPatterns");
+  if (!el) return;
+  if (withPm.length < 3) {
+    el.innerHTML = "";
+    return;
+  }
+  const counts = {};
+  for (const r of withPm) {
+    for (const f of r.postmortem.findings) {
+      const k = `${f.area}: ${f.verdict}`;
+      counts[k] = (counts[k] || 0) + 1;
+    }
+  }
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const total = withPm.length;
+  el.innerHTML = `
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+      border-radius:10px;padding:14px 16px;margin-bottom:22px;">
+      <div style="font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#7c8399;margin-bottom:10px;">
+        Wiederkehrende Muster (${total} obduzierte Trades)
+      </div>
+      ${sorted.map(([k, n]) => {
+        const pct = Math.round((n / total) * 100);
+        const verdict = k.split(": ")[1];
+        const col = PM_VERDICT_COLOR[verdict] || "#9198ad";
+        return `<div style="display:flex;align-items:center;gap:10px;margin:5px 0;font-size:11px;">
+          <span style="width:210px;color:${col};">${k}</span>
+          <span style="flex:0 0 120px;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">
+            <span style="display:block;height:100%;width:${pct}%;background:${col};opacity:0.75;"></span>
+          </span>
+          <span style="color:#7c8399;">${n}× (${pct}%)</span>
+        </div>`;
+      }).join("")}
+    </div>`;
+}
+
 function renderTable() {
   let rows = DATA.signals.slice();
   if (activeAsset) rows = rows.filter((r) => r.asset === activeAsset);
@@ -392,7 +476,8 @@ function renderTable() {
             <td>${r.zoneKind || "–"}</td>
             <td><span class="badge ${statusMeta.cls}">${statusMeta.label}</span></td>
             <td>${ergebnis}</td>
-          </tr>`;
+          </tr>
+          ${renderPostmortemRow(r)}`;
         }).join("")}
       </tbody>
     </table>`;
@@ -428,6 +513,7 @@ if (genEl) genEl.textContent = "Zuletzt aktualisiert: " + DATA.generatedAt;
 
 const EQUITY = computeEquityCurve(DATA.signals);
 renderEquity(EQUITY);
+renderPostmortemPatterns();
 renderSummary();
 renderAssetCards();
 renderTable();
