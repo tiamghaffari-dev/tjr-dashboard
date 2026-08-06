@@ -9,6 +9,7 @@ const fs = require("fs");
 const path = require("path");
 const {
   parseTs, loadCandles, resample, buildSignal, buildAnnotations, computeTrendAndBos,
+  medianDailyRange,
 } = require("./engine.js");
 
 const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
@@ -559,6 +560,174 @@ function resolveSignals(signalsLog, asset, ltfFull) {
 // aktuellen Fortschritt in R-Vielfachen aus (Distanz Entry->aktueller Preis
 // relativ zur Distanz Entry->Stop, Richtung beruecksichtigt): positiv =
 // Richtung Target, negativ = Richtung Stop.
+// Tiam, 2026-08-06: "lernt er eh von sich selber? [...] er soll alles
+// analysieren und kritisieren warum das bei trade nicht gepasst hat. sei es
+// der stop loss sei es der take profit, sei es die position entry, sei es die
+// analyse dieses trades selbst."
+//
+// Ehrliche Ausgangslage: die Engine hat bis hierhin NICHTS von selbst gelernt
+// - jede Regelaenderung kam von Hand. Dieser Block ist der erste Schritt
+// dahin: fuer jeden ABGESCHLOSSENEN Trade wird aus den echten Kerzen
+// rekonstruiert, was nach dem Entry wirklich passiert ist, und daraus eine
+// Kritik in vier Dimensionen abgeleitet (Stop / Ziel / Entry / Analyse).
+//
+// Bewusst NICHT automatisch nachjustiert: bei aktuell ~30 Trades waere jede
+// automatische Parameteranpassung statistisch Rauschen-Anpassung. Die
+// Obduktion liefert Belege, die Regelentscheidung trifft Tiam (so mit ihm
+// per AskUserQuestion abgestimmt).
+const POSTMORTEM_LOOKFORWARD_H = 48;   // wie weit nach der Aufloesung noch geschaut wird
+const POSTMORTEM_ENTRY_WINDOW_H = 2;   // Fenster fuer "haette es kurz danach einen besseren Kurs gegeben?"
+
+function computePostmortem(rec, ltfFull, adr) {
+  if (!rec.resolvedTs || !rec.entry || !rec.stop) return null;
+  const entryPseudo = parseTs(etPseudoDateStr(rec.entryTs));
+  const risk = Math.abs(rec.entry - rec.stop);
+  if (!risk) return null;
+  const long = rec.direction === "LONG";
+  // Vorzeichenbehaftete Bewegung in R: positiv = Richtung Ziel.
+  const toR = (price) => (long ? price - rec.entry : rec.entry - price) / risk;
+
+  const during = ltfFull.filter((c) => c.ts >= entryPseudo && c.ts <= rec.resolvedTs);
+  const after = ltfFull.filter((c) => c.ts > rec.resolvedTs
+    && c.ts <= rec.resolvedTs + POSTMORTEM_LOOKFORWARD_H * 3600000);
+  // Ohne Kerzen im Trade-Fenster laesst sich nichts rekonstruieren (Trade
+  // aelter als die vorgehaltene 5min-Historie) - dann lieber gar keine
+  // Obduktion als eine aus Luecken geratene.
+  if (during.length === 0) return null;
+
+  // Beste/schlechteste Auslenkung waehrend des Trades, in R.
+  const mfe = Math.max(...during.map((c) => toR(long ? c.high : c.low)));
+  const mae = Math.min(...during.map((c) => toR(long ? c.low : c.high)));
+  const targetR = toR(rec.target);
+  // Wie weit ist der Preis dem Ziel entgegengekommen (0-100%)?
+  const towardTargetPct = targetR > 0 ? Math.max(0, Math.min(100, (mfe / targetR) * 100)) : null;
+
+  const pm = {
+    holdHours: Math.round(((rec.resolvedTs - entryPseudo) / 3600000) * 10) / 10,
+    mfeR: Math.round(mfe * 100) / 100,
+    maeR: Math.round(mae * 100) / 100,
+    towardTargetPct: towardTargetPct === null ? null : Math.round(towardTargetPct),
+    stopDistAdr: adr ? Math.round((risk / adr) * 100) / 100 : null,
+    targetDistAdr: adr ? Math.round((Math.abs(rec.target - rec.entry) / adr) * 100) / 100 : null,
+    findings: [],
+  };
+
+  const isLoss = rec.status === "loss" || (typeof rec.rMultiple === "number" && rec.rMultiple < 0);
+  // Vorzeichen sauber setzen - sonst entsteht bei negativen Werten "+-0.2R".
+  const sr = (x) => `${x >= 0 ? "+" : ""}${x.toFixed(1)}R`;
+
+  // --- 1) STOP-KRITIK -------------------------------------------------
+  // Kernfrage bei einem Verlust: war die These falsch, oder war nur der Stop
+  // zu eng? Messbar daran, ob der Preis NACH dem Stop-Out doch noch das
+  // urspruengliche Ziel erreicht hat.
+  if (isLoss && after.length > 0) {
+    const reachedTargetAfter = after.some((c) => (long ? c.high >= rec.target : c.low <= rec.target));
+    const bestAfterR = Math.max(...after.map((c) => toR(long ? c.high : c.low)));
+    if (reachedTargetAfter) {
+      pm.findings.push({
+        area: "Stop-Loss", verdict: "zu eng",
+        text: `Der Preis hat das urspruengliche Ziel nach dem Stop-Out doch noch erreicht `
+          + `(innerhalb ${POSTMORTEM_LOOKFORWARD_H}h). Die Richtungs-These war also richtig - `
+          + `nur der Stop lag im Rauschbereich und wurde vorher abgeraeumt.`,
+      });
+    } else if (bestAfterR > 1) {
+      pm.findings.push({
+        area: "Stop-Loss", verdict: "vermutlich zu eng",
+        text: `Nach dem Stop-Out lief der Preis noch bis ${sr(bestAfterR)} in Zielrichtung, `
+          + `ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet.`,
+      });
+    } else {
+      pm.findings.push({
+        area: "Stop-Loss", verdict: "in Ordnung",
+        text: `Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen `
+          + `(max ${sr(bestAfterR)}). Der Stop war nicht das Problem - die Richtung war falsch.`,
+      });
+    }
+  }
+  if (!isLoss && mae < -0.7) {
+    pm.findings.push({
+      area: "Stop-Loss", verdict: "knapp",
+      text: `Gewonnen, aber der Trade lag zwischenzeitlich ${sr(mae)} im Minus - `
+        + `es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht.`,
+    });
+  }
+
+  // --- 2) ZIEL-KRITIK -------------------------------------------------
+  if (isLoss && pm.towardTargetPct !== null) {
+    if (pm.towardTargetPct < 25) {
+      pm.findings.push({
+        area: "Take-Profit", verdict: "nicht ursaechlich",
+        text: `Der Preis kam dem Ziel nur ${pm.towardTargetPct}% entgegen (max ${sr(mfe)}). `
+          + `Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung.`,
+      });
+    } else if (pm.towardTargetPct >= 60) {
+      pm.findings.push({
+        area: "Take-Profit", verdict: "zu weit",
+        text: `Der Preis lief ${pm.towardTargetPct}% der Zielstrecke (max ${sr(mfe)}) und drehte dann. `
+          + `Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt.`,
+      });
+    }
+  }
+  if (!isLoss && after.length > 0) {
+    const bestAfterR = Math.max(...after.map((c) => toR(long ? c.high : c.low)));
+    if (bestAfterR > targetR * 2) {
+      pm.findings.push({
+        area: "Take-Profit", verdict: "zu konservativ",
+        text: `Gewonnen bei ${sr(targetR)}, der Preis lief danach aber noch bis `
+          + `${sr(bestAfterR)} weiter. Hier lag deutlich mehr drin.`,
+      });
+    }
+  }
+
+  // --- 3) ENTRY-KRITIK ------------------------------------------------
+  // Gab es kurz nach dem Einstieg einen spuerbar besseren Kurs, der den Stop
+  // noch nicht verletzt haette? Dann war der Einstieg zu frueh/zu teuer.
+  const entryWindow = during.filter((c) => c.ts <= entryPseudo + POSTMORTEM_ENTRY_WINDOW_H * 3600000);
+  if (entryWindow.length > 1) {
+    const bestPrice = long
+      ? Math.min(...entryWindow.map((c) => c.low))
+      : Math.max(...entryWindow.map((c) => c.high));
+    const stopViolated = long ? bestPrice <= rec.stop : bestPrice >= rec.stop;
+    const betterByR = Math.abs(bestPrice - rec.entry) / risk;
+    if (!stopViolated && betterByR > 0.4) {
+      pm.findings.push({
+        area: "Entry", verdict: "zu frueh",
+        text: `Innerhalb von ${POSTMORTEM_ENTRY_WINDOW_H}h nach dem Einstieg gab es einen um `
+          + `${betterByR.toFixed(1)}R besseren Kurs, ohne dass der Stop verletzt worden waere. `
+          + `Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart.`,
+      });
+    }
+  }
+
+  // --- 4) KRITIK AN DER ANALYSE SELBST --------------------------------
+  // Hat sich die Richtungs-These ueberhaupt bestaetigt - unabhaengig von
+  // Stop und Ziel? Gemessen an der Netto-Bewegung ueber das gesamte
+  // Beobachtungsfenster (Trade + Nachlauf).
+  const wholeWindow = during.concat(after);
+  if (wholeWindow.length > 0) {
+    const netR = toR(wholeWindow[wholeWindow.length - 1].close);
+    if (isLoss && netR < -1) {
+      pm.findings.push({
+        area: "Analyse", verdict: "These war falsch",
+        text: `Auch ${POSTMORTEM_LOOKFORWARD_H}h spaeter steht der Preis ${sr(netR)} gegen die `
+          + `Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier `
+          + `das Falsche angezeigt.`,
+      });
+    } else if (isLoss && netR > 0.5) {
+      pm.findings.push({
+        area: "Analyse", verdict: "These war richtig",
+        text: `Die Richtung stimmte am Ende (${sr(netR)} netto) - `
+          + `verloren wurde dieser Trade an der Ausfuehrung (Stop/Timing), nicht an der Analyse.`,
+      });
+    }
+  }
+
+  pm.summary = pm.findings.length
+    ? pm.findings.map((f) => `${f.area}: ${f.verdict}`).join(" · ")
+    : "Keine auffaellige Schwachstelle gefunden.";
+  return pm;
+}
+
 function unrealizedR(rec, currentPrice) {
   if ((rec.status !== "open" && rec.status !== "partial") || currentPrice == null) return null;
   const riskDist = Math.abs(rec.entry - rec.stop);
@@ -753,6 +922,20 @@ async function main() {
     }
     if (ltfFullBySymbol[item.asset.symbol]) {
       resolveSignals(signalsLog, item.asset, ltfFullBySymbol[item.asset.symbol]);
+      // Obduktion direkt nach dem Aufloesen: jeder abgeschlossene Trade dieses
+      // Assets, der noch keine hat, bekommt eine. Einmal berechnet bleibt sie
+      // im Log stehen (idempotent) - so wandert die Analyse nicht mehr, wenn
+      // die 5min-Historie den Trade irgendwann nicht mehr abdeckt.
+      // ADR hier bewusst aus den 5min-Kerzen statt aus 4H: dieselbe Funktion,
+      // aber die feinere Serie trifft das echte Tages-High/Low genauer.
+      const adrForAsset = medianDailyRange(ltfFullBySymbol[item.asset.symbol]);
+      for (const rec of signalsLog) {
+        if (rec.asset !== item.asset.symbol) continue;
+        if (rec.status === "open" || rec.status === "partial") continue;
+        if (rec.postmortem) continue;
+        const pm = computePostmortem(rec, ltfFullBySymbol[item.asset.symbol], adrForAsset);
+        if (pm) rec.postmortem = pm;
+      }
     }
     // Modus pro Asset fuers Dashboard: "analyzing" (aktiv im Handelsfenster),
     // "monitoring" (ausserhalb, aber ein offener Paper-Trade laeuft noch -
