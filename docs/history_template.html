@@ -101,6 +101,7 @@
 
   <div id="equitySection" style="margin-bottom:22px;"></div>
   <div id="pmPatterns"></div>
+  <div id="pmValidation"></div>
   <div id="summary" class="summary-row"></div>
   <div id="assetCards" class="asset-cards"></div>
 
@@ -418,6 +419,95 @@ function renderPostmortemPatterns() {
     </div>`;
 }
 
+// Tiam, 2026-08-06: Selbstpruefung der eigenen Befunde.
+//
+// Anlass: der haeufigste Befund ("Entry: zu frueh", 14 von 30 Trades) sah nach
+// dem Hauptproblem aus - bis die Gegenrechnung zeigte, dass genau diese Trades
+// BESSER liefen (43% statt 19% Win-Rate, +0.29R statt -0.38R). Der Befund misst
+// nicht "schlechter Einstieg", sondern nur, wie stark sich der Preis danach
+// bewegt hat. Fast waere daraus eine Regel gebaut worden, die das beste
+// Segment kaputtoptimiert haette.
+//
+// Konsequenz: jeder Befundtyp muss sich ab jetzt selbst rechtfertigen. Fuer
+// jeden Typ wird verglichen, wie Trades MIT diesem Befund abschneiden gegen
+// die OHNE. Nur wenn die markierten spuerbar schlechter sind, ist der Befund
+// als Diagnose brauchbar. Sonst wird er ausdruecklich als "ohne Aussagekraft"
+// bzw. "widerlegt" ausgewiesen - statt als Wahrheit dazustehen.
+const PM_MIN_N = 5;          // darunter ist jede Aussage Rauschen
+const PM_MEANINGFUL_WR = 15; // Prozentpunkte Unterschied, ab denen es zaehlt
+
+function validateFindings() {
+  const closed = DATA.signals.filter((r) => r.postmortem && (r.status === "win" || r.status === "loss"));
+  if (closed.length < PM_MIN_N * 2) return [];
+  const types = new Set();
+  for (const r of closed) for (const f of r.postmortem.findings) types.add(`${f.area}: ${f.verdict}`);
+  const wr = (a) => (a.length ? Math.round((a.filter((r) => r.status === "win").length / a.length) * 100) : null);
+  const avg = (a) => (a.length ? Math.round((a.reduce((s, r) => s + (r.rMultiple || 0), 0) / a.length) * 100) / 100 : null);
+  const out = [];
+  for (const t of types) {
+    const has = closed.filter((r) => r.postmortem.findings.some((f) => `${f.area}: ${f.verdict}` === t));
+    const not = closed.filter((r) => !r.postmortem.findings.some((f) => `${f.area}: ${f.verdict}` === t));
+    if (!has.length || !not.length) continue;
+    const wrHas = wr(has); const wrNot = wr(not);
+    const diff = wrHas - wrNot;   // negativ = markierte Trades schlechter = Befund traegt
+    let status;
+    if (has.length < PM_MIN_N || not.length < PM_MIN_N) status = "zu wenig Daten";
+    else if (diff <= -PM_MEANINGFUL_WR) status = "bestaetigt";
+    else if (diff >= PM_MEANINGFUL_WR) status = "widerlegt";
+    else status = "ohne Aussagekraft";
+    out.push({ type: t, n: has.length, wrHas, wrNot, diff, avgHas: avg(has), avgNot: avg(not), status });
+  }
+  // erst die belastbaren Befunde, dann die fragwuerdigen
+  const rank = { bestaetigt: 0, "ohne Aussagekraft": 1, widerlegt: 2, "zu wenig Daten": 3 };
+  return out.sort((a, b) => (rank[a.status] - rank[b.status]) || (a.diff - b.diff));
+}
+
+function renderFindingValidation() {
+  const el = document.getElementById("pmValidation");
+  if (!el) return;
+  const rows = validateFindings();
+  if (!rows.length) { el.innerHTML = ""; return; }
+  const COL = { bestaetigt: "#4fff9c", "ohne Aussagekraft": "#7c8399", widerlegt: "#ff6b6b", "zu wenig Daten": "#5f6678" };
+  const NOTE = {
+    bestaetigt: "Trades mit diesem Befund laufen deutlich schlechter — als Diagnose brauchbar.",
+    "ohne Aussagekraft": "Kein messbarer Unterschied — dieser Befund taugt nicht als Handlungsgrundlage.",
+    widerlegt: "Trades mit diesem Befund laufen sogar BESSER — der Befund misst etwas anderes als gedacht.",
+    "zu wenig Daten": "Zu wenige Faelle für eine belastbare Aussage.",
+  };
+  el.innerHTML = `
+    <details style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+      border-radius:10px;padding:14px 16px;margin-bottom:22px;">
+      <summary style="cursor:pointer;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#7c8399;outline:none;">
+        🧪 Selbstprüfung: taugen die eigenen Befunde überhaupt?
+      </summary>
+      <div style="font-size:11px;color:#7c8399;margin:10px 0 12px;line-height:1.5;">
+        Für jeden Befundtyp wird verglichen, wie Trades <b>mit</b> diesem Befund abschneiden gegenüber denen <b>ohne</b>.
+        Nur wenn die markierten Trades spürbar schlechter laufen, ist der Befund als Diagnose zu gebrauchen.
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr>
+          <th style="text-align:left;padding:6px 8px;color:#7c8399;">Befund</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">Fälle</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">WR mit</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">WR ohne</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">Ø R mit / ohne</th>
+          <th style="text-align:left;padding:6px 8px;color:#7c8399;">Urteil</th>
+        </tr></thead>
+        <tbody>
+        ${rows.map((r) => `
+          <tr title="${NOTE[r.status]}">
+            <td style="padding:5px 8px;border-top:1px solid rgba(255,255,255,0.05);">${r.type}</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${r.n}</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${r.wrHas}%</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);color:#7c8399;">${r.wrNot}%</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${r.avgHas} / <span style="color:#7c8399;">${r.avgNot}</span></td>
+            <td style="padding:5px 8px;border-top:1px solid rgba(255,255,255,0.05);color:${COL[r.status]};font-weight:700;">${r.status}</td>
+          </tr>`).join("")}
+        </tbody>
+      </table>
+    </details>`;
+}
+
 function renderTable() {
   let rows = DATA.signals.slice();
   if (activeAsset) rows = rows.filter((r) => r.asset === activeAsset);
@@ -514,6 +604,7 @@ if (genEl) genEl.textContent = "Zuletzt aktualisiert: " + DATA.generatedAt;
 const EQUITY = computeEquityCurve(DATA.signals);
 renderEquity(EQUITY);
 renderPostmortemPatterns();
+renderFindingValidation();
 renderSummary();
 renderAssetCards();
 renderTable();
