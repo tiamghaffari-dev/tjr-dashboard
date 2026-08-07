@@ -1269,9 +1269,19 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "BreakerBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1786017300000,
+    "rMultiple": 0.45,
+    "postmortem": {
+      "holdHours": 1,
+      "mfeR": 1.62,
+      "maeR": 0.33,
+      "towardTargetPct": 81,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1786028160351",
@@ -1291,8 +1301,29 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1786015200000,
+    "rMultiple": -0.92,
+    "postmortem": {
+      "holdHours": 0.4,
+      "mfeR": 0.61,
+      "maeR": -1.15,
+      "towardTargetPct": 31,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.2R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Analyse: These war falsch"
+    }
   }
 ]
