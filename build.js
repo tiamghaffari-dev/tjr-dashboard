@@ -11,7 +11,7 @@ const {
   parseTs, loadCandles, resample, buildSignal, buildAnnotations, computeTrendAndBos,
   medianDailyRange,
 } = require("./engine.js");
-const { evaluateRules, ruleSummary, KNOWN_GAPS } = require("./tjr_rules.js");
+const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS } = require("./tjr_rules.js");
 
 const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 
@@ -904,6 +904,25 @@ async function main() {
   const nowTs = Date.now();
   for (const item of assets) {
     if (item.error) continue;
+
+    // Tiam, 2026-08-07: "ich moechte das sie selbststaendig wird."
+    // Erster Punkt, an dem das Regelwerk das Verhalten TATSAECHLICH aendert
+    // statt es nur zu kommentieren: verletzt ein Signal eine scharf
+    // geschaltete TJR-Regel (blocking: true), wird daraus kein ENTRY - es
+    // wird also weder als Paper-Trade geloggt noch ein Alert ausgeloest.
+    // Muss VOR der isEntry-Pruefung stehen, sonst waere der Trade schon
+    // geloggt, bevor die Regel greift.
+    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann });
+    item.ruleSummary = ruleSummary(item.ruleCheck);
+    const blocked = blockingViolations(item.ruleCheck);
+    if (blocked.length > 0 && item.sig.signal === "ENTRY") {
+      item.sig.signal = "Kein Entry (TJR-Regel verletzt)";
+      item.sig.blockedBy = blocked.map((b) => ({ id: b.id, title: b.title, detail: b.detail }));
+      item.sig.detail = `Von der Regelpruefung gestoppt: ${blocked.map((b) => b.detail).join(" ")} `
+        + `(urspruengliche Analyse: ${item.sig.detail})`;
+      console.log(`REGEL-STOPP ${item.asset.name}: ${blocked.map((b) => b.id).join(", ")}`);
+    }
+
     const isEntry = item.sig.signal === "ENTRY";
     newState[item.asset.symbol] = isEntry;
     const wasEntry = !!prevState[item.asset.symbol];
@@ -1015,12 +1034,6 @@ async function main() {
   // erfuellt sind und welche nicht, statt dass die Regeln unsichtbar im Code
   // stecken. Rein additiv: das mechanische Signal wird dadurch NICHT veraendert
   // oder blockiert, es bekommt nur ein Pruefergebnis angehaengt.
-  for (const item of assets) {
-    if (item.error || !item.sig) continue;
-    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow });
-    item.ruleSummary = ruleSummary(item.ruleCheck);
-  }
-
   const payload = {
     generatedAt: new Date().toISOString(),
     assets,
