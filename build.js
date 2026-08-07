@@ -11,6 +11,7 @@ const {
   parseTs, loadCandles, resample, buildSignal, buildAnnotations, computeTrendAndBos,
   medianDailyRange,
 } = require("./engine.js");
+const { evaluateRules, ruleSummary, KNOWN_GAPS } = require("./tjr_rules.js");
 
 const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 
@@ -1008,6 +1009,18 @@ async function main() {
         : r));
   }
 
+  // Tiam, 2026-08-06: "immer video auf fehler zurueck weisen um die nicht mehr
+  // zu machen." Jedes Signal wird gegen TJRs quellenbelegtes Regelwerk geprueft
+  // (tjr_rules.js) - so ist am Signal selbst sichtbar, welche seiner Regeln
+  // erfuellt sind und welche nicht, statt dass die Regeln unsichtbar im Code
+  // stecken. Rein additiv: das mechanische Signal wird dadurch NICHT veraendert
+  // oder blockiert, es bekommt nur ein Pruefergebnis angehaengt.
+  for (const item of assets) {
+    if (item.error || !item.sig) continue;
+    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow });
+    item.ruleSummary = ruleSummary(item.ruleCheck);
+  }
+
   const payload = {
     generatedAt: new Date().toISOString(),
     assets,
@@ -1015,6 +1028,7 @@ async function main() {
     aiEnabled: true,
     alertsEnabled: !!NTFY_TOPIC,
     inTradingWindow: inWindow,
+    knownGaps: KNOWN_GAPS,
   };
 
   renderFromTemplate("report_template.html", "index.html", payload);
