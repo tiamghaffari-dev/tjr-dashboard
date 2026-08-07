@@ -611,8 +611,64 @@ function renderInfoTable(item) {
     ${targetRows}
     <div><span>R:R</span><span>${rrText}</span></div>
     <div class="row-size"><span>Positionsgröße</span><span>${positionSizeText(item.asset, sig)}</span></div>
-    <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>`;
+    <div><span>Preis</span><span>${fmtOrDash(sig.currentPrice)}</span></div>
+    ${renderRuleCheck(item)}`;
 }
+
+// Tiam, 2026-08-07: "fügs in die skills der KI ein" - die Regelpruefung
+// (tjr_rules.js) lief bisher nur im Payload mit, war auf der Seite aber
+// unsichtbar. Damit war nicht nachvollziehbar, WARUM ein Signal gestoppt
+// wurde - eine selbststaendig handelnde Engine ohne Sichtbarkeit waere eine
+// Blackbox, und das ist bei echtem Geld das Letzte, was man will.
+//
+// Zeigt: gestoppte Signale prominent mit Begruendung + Quelle, sonst eine
+// kompakte Bilanz zum Aufklappen. "unbekannt" wird bewusst mit ausgewiesen
+// (fehlende Daten sind kein "ok").
+const RULE_STATUS_STYLE = {
+  ok:        { farbe: "#4fff9c", zeichen: "✓" },
+  verletzt:  { farbe: "#ff6b6b", zeichen: "✗" },
+  unbekannt: { farbe: "#7c8399", zeichen: "?" },
+};
+
+function renderRuleCheck(item) {
+  const rc = item.ruleCheck;
+  if (!Array.isArray(rc) || !rc.length) return "";
+  const s = item.ruleSummary || {};
+  const blocked = item.sig && item.sig.blockedBy;
+
+  const stopBanner = blocked && blocked.length ? `
+    <div style="margin:10px 0 4px;padding:10px 12px;border-radius:8px;
+      background:rgba(255,107,157,0.12);border:1px solid rgba(255,107,157,0.4);">
+      <div style="font-size:11px;font-weight:700;color:#ff6b6b;margin-bottom:5px;">
+        ⛔ Von der Regelprüfung gestoppt — kein Entry
+      </div>
+      ${blocked.map((b) => `<div style="font-size:11px;color:#e8eaf0;line-height:1.5;">${b.detail}</div>`).join("")}
+    </div>` : "";
+
+  const zeilen = rc.map((r) => {
+    const st = RULE_STATUS_STYLE[r.status] || RULE_STATUS_STYLE.unbekannt;
+    return `
+      <div style="margin:6px 0;font-size:11px;line-height:1.45;">
+        <span style="color:${st.farbe};font-weight:700;">${st.zeichen}</span>
+        <span style="color:#e8eaf0;"> ${r.title}</span>
+        <div style="color:#9198ad;margin:2px 0 0 14px;">${r.detail}</div>
+        <div style="color:#5f6678;margin-left:14px;font-style:italic;">„${r.quote}" — ${r.source}</div>
+      </div>`;
+  }).join("");
+
+  return `${stopBanner}
+    <details style="margin-top:8px;">
+      <summary style="cursor:pointer;font-size:11px;color:#7c8399;outline:none;">
+        📋 TJR-Regelprüfung:
+        <span style="color:#4fff9c;">${s.ok || 0}× erfüllt</span>${s.verletzt ? ` · <span style="color:#ff6b6b;">${s.verletzt}× verletzt</span>` : ""}${s.unbekannt ? ` · <span style="color:#7c8399;">${s.unbekannt}× offen</span>` : ""}
+      </summary>
+      <div style="margin:8px 0 4px 6px;padding-left:10px;border-left:2px solid rgba(122,140,255,0.3);">
+        ${zeilen}
+      </div>
+    </details>`;
+}
+
+
 
 // Tiam, 2026-07-12: Struktur-Ueberarbeitung - kompakte Uebersicht statt
 // langer Linkliste. selectedAssetId bleibt ein Modul-Level-Wert (nicht in
