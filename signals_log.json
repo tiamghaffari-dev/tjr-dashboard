@@ -1381,7 +1381,7 @@
     "target2": null,
     "rr2": null,
     "partialExit": false,
-    "trailStop": 769.3142657470704,
+    "trailStop": 771.2314905700684,
     "tp1HitTs": null,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
@@ -1409,8 +1409,34 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "OrderBlock",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1786097100000,
+    "rMultiple": -1,
+    "postmortem": {
+      "holdHours": 0,
+      "mfeR": -1.22,
+      "maeR": -1.54,
+      "towardTargetPct": 0,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.2R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 0% entgegen (max -1.2R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.3R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   }
 ]
