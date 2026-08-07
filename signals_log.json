@@ -1325,5 +1325,27 @@
       ],
       "summary": "Stop-Loss: in Ordnung · Analyse: These war falsch"
     }
+  },
+  {
+    "id": "ETHUSD-1786088797388",
+    "asset": "ETHUSD",
+    "direction": "SHORT",
+    "entryTs": 1786088797388,
+    "entry": 1902.014954,
+    "stop": 1913.902942,
+    "target": 1878.238977,
+    "rr": 2,
+    "target2": 1853.920044,
+    "rr2": 4.05,
+    "partialExit": true,
+    "trailStop": 1913.902942,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
