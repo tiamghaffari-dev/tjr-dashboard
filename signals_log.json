@@ -1387,9 +1387,19 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1786096500000,
+    "rMultiple": 0.52,
+    "postmortem": {
+      "holdHours": 0.1,
+      "mfeR": 0.87,
+      "maeR": 0.24,
+      "towardTargetPct": 67,
+      "stopDistAdr": 0.38,
+      "targetDistAdr": 0.5,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1786111429298",
