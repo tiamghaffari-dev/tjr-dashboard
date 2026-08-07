@@ -105,12 +105,29 @@ const TJR_RULES = [
     quote: "Liq sweep + BOS + FVG/OB + EQ: [...] we waited for the price range that has either "
       + "a OB or FVG along with it bein in a discount to enter",
     source: "Bootcamp Tag 30 Ausfuehrung, Notizblock \"Putting The Pieces Together\" (~7min)",
-    check: (sig) => {
-      if (!sig || !sig.zone) return { status: "unbekannt", detail: "Zonenlage nicht bestimmt" };
-      const want = sig.bias === "bullish" ? "discount" : "premium";
-      return sig.zone === want
-        ? { status: "ok", detail: `Zone im ${sig.zone} - passt zum ${sig.bias}-Bias.` }
-        : { status: "verletzt", detail: `Zone im ${sig.zone}, erwartet ${want} beim ${sig.bias}-Bias.` };
+    // ACHTUNG - hier lag am 2026-08-07 ein Fehler in DIESER Regel (nicht in der
+    // Engine): geprueft wurde `sig.zone`. Dieses Feld beschreibt aber, wo der
+    // AKTUELLE PREIS steht, nicht wo die Entry-Zone liegt (in buildSignal():
+    // `premiumDiscountZone(legLow, legHigh, currentPrice)`). Ergebnis war ein
+    // Fehlalarm bei GCUSD: Zone lag mit Mitte 4329.40 sauber im Discount
+    // (Equilibrium 4340.30), nur der Preis war mit 4348.60 schon darueber
+    // gelaufen. Haette man die Regel so scharf geschaltet, waeren voellig
+    // gueltige Signale blockiert worden, sobald sich der Preis vom Einstieg
+    // entfernt - was staendig vorkommt. Jetzt wird die ZONENMITTE gegen das
+    // Equilibrium geprueft, so wie TJRs Zitat es meint.
+    blocking: true,
+    check: (sig, ctx) => {
+      const eq = ctx && ctx.ann && ctx.ann.equilibrium;
+      if (!sig || !Array.isArray(sig.zoneRange) || typeof eq !== "number") {
+        return { status: "unbekannt", detail: "Zonenbereich oder Equilibrium nicht verfuegbar" };
+      }
+      const zoneMid = (sig.zoneRange[0] + sig.zoneRange[1]) / 2;
+      const long = sig.bias === "bullish";
+      const lage = zoneMid < eq ? "Discount" : "Premium";
+      const passt = long ? zoneMid < eq : zoneMid > eq;
+      return passt
+        ? { status: "ok", detail: `Entry-Zone liegt im ${lage} (Mitte ${zoneMid.toFixed(2)} vs. Equilibrium ${eq.toFixed(2)}) - passt zum ${sig.bias}-Bias.` }
+        : { status: "verletzt", detail: `Entry-Zone liegt im ${lage} (Mitte ${zoneMid.toFixed(2)} vs. Equilibrium ${eq.toFixed(2)}), erwartet ${long ? "Discount" : "Premium"} beim ${sig.bias}-Bias.` };
     },
   },
   {
@@ -195,6 +212,26 @@ function ruleSummary(results) {
   return { ok: n("ok"), verletzt: n("verletzt"), unbekannt: n("unbekannt"), gesamt: results.length };
 }
 
+// ---------------------------------------------------------------------------
+// Scharf geschaltete Regeln (Tiam, 2026-08-07: "ich moechte das sie
+// selbststaendig wird").
+//
+// Nur Regeln mit `blocking: true` duerfen ein ENTRY tatsaechlich verhindern -
+// und nur bei Status "verletzt", NIE bei "unbekannt". Fehlende Daten sind kein
+// Regelverstoss; sonst wuerde ein Datenausfall stillschweigend alle Signale
+// abwuergen (dieselbe Vorsicht wie beim 1min-Gate in engine.js).
+//
+// Bewusst konservativ: aktuell ist nur R6 (Discount/Premium) blockierend. Die
+// Regel ist woertlich belegt ("along with it bein in a discount to enter") und
+// binaer pruefbar - im Gegensatz zu statistischen Befunden aus der Obduktion,
+// die sich als Scheinkorrelation erweisen koennen (siehe der widerlegte
+// "Entry zu frueh"-Befund). Weitere Regeln erst scharf schalten, wenn sie
+// denselben Beleg-Standard erfuellen.
+function blockingViolations(results) {
+  const ids = new Set(TJR_RULES.filter((r) => r.blocking).map((r) => r.id));
+  return results.filter((r) => ids.has(r.id) && r.status === "verletzt");
+}
+
 if (typeof module !== "undefined") {
-  module.exports = { TJR_RULES, KNOWN_GAPS, evaluateRules, ruleSummary };
+  module.exports = { TJR_RULES, KNOWN_GAPS, evaluateRules, ruleSummary, blockingViolations };
 }
