@@ -1368,5 +1368,27 @@
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
     }
+  },
+  {
+    "id": "^GSPC-1786110551534",
+    "asset": "^GSPC",
+    "direction": "LONG",
+    "entryTs": 1786110551534,
+    "entry": 769.785004,
+    "stop": 766.97781,
+    "target": 773.459991,
+    "rr": 1.31,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 766.97781,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
