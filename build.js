@@ -982,7 +982,30 @@ async function main() {
     // wird also weder als Paper-Trade geloggt noch ein Alert ausgeloest.
     // Muss VOR der isEntry-Pruefung stehen, sonst waere der Trade schon
     // geloggt, bevor die Regel greift.
-    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann, dailyBias: item.dailyBias, weeklyTrend: item.weeklyTrend });
+    // Tiam, 2026-08-10 (Bootcamp Tag 49, selbst transkribiert): TJR lehnt nach
+    // einem Verlust einen sofortigen Nachfolgetrade ausdruecklich ab - "do I
+    // want to get another trade in, [put] more risk on the table? no [...] it
+    // just doesn't make sense [...] there's just no reason". Fuer Regel R11.
+    //
+    // ACHTUNG Zwei-Uhren-Falle: rec.resolvedTs ist PSEUDO-Zeit (ET-Wanduhr als
+    // UTC gelesen), nowTs ist echte Epoche. Direkt subtrahieren ergaebe einen
+    // um mehrere Stunden verschobenen Abstand - genau der Fehler, der schon
+    // die Equity-Kurve und resolveSignals() erwischt hat. Deshalb wird nowTs
+    // durch dieselbe real->pseudo-Pipeline geschickt wie die Kerzen.
+    const nowPseudo = parseTs(etPseudoDateStr(nowTs));
+    let letzterVerlust = null;
+    for (const rec of signalsLog) {
+      if (rec.asset !== item.asset.symbol) continue;
+      if (rec.status !== "loss" || !rec.resolvedTs) continue;
+      if (!letzterVerlust || rec.resolvedTs > letzterVerlust.resolvedTs) letzterVerlust = rec;
+    }
+    item.lastLoss = letzterVerlust
+      ? {
+        stundenHer: Math.round(((nowPseudo - letzterVerlust.resolvedTs) / 3600000) * 10) / 10,
+        rMultiple: letzterVerlust.rMultiple,
+      }
+      : null;
+    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann, dailyBias: item.dailyBias, weeklyTrend: item.weeklyTrend, lastLoss: item.lastLoss });
     item.ruleSummary = ruleSummary(item.ruleCheck);
     const blocked = blockingViolations(item.ruleCheck);
     if (blocked.length > 0 && item.sig.signal === "ENTRY") {
