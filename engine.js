@@ -357,8 +357,32 @@ function findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk) {
 // Profit GBPJPY Recap": Position-Tool mit "Risk/Reward Ratio: 5.43" bei
 // 0.28%-Stop) - sein grosser Gewinner entspricht also unserem TP2, waehrend
 // TP1 den halben Gewinn vorher sicher einsammelt.
-const MAX_TP1_ADR_MULT = 0.5;
-const MAX_TP2_ADR_MULT = 1.0;
+//
+// Tiam, 2026-08-10 - Entscheidung im Zielkonflikt zwischen TJRs "take profit at
+// other key levels" (Regel R1) und "im Day-Trading muss das Ziel erreichbar
+// sein": Deckel LOCKERN, aber nicht aufgeben.
+//
+// Warum ueberhaupt: der enge TP1-Deckel war der eigentliche Ausloeser dafuer,
+// dass praktisch JEDES ENTRY R1 verletzt hat. `targetSource = "key-level"` wird
+// unten nur gesetzt, wenn ein echtes Key-Level innerhalb des TP1-Deckels liegt;
+// war keins nah genug, fiel die Engine auf ein gerechnetes RR-Ziel zurueck.
+// Nicht das Konzept war falsch, sondern der Deckel zu eng.
+//
+// Warum 0.75x / 1.25x und NICHT die 1.5x, die ich Tiam zuerst vorgeschlagen
+// hatte: die Messreihe direkt darueber widerlegt meinen eigenen Vorschlag -
+// bei 1.5x Tagesrange liegt die Erreichbarkeit nur noch bei 1-2% bzw. 5-8%.
+// Ein TP2 dort waere faktisch nie erreichbar und haette exakt das Problem
+// zurueckgebracht, das die ADR-Kalibrierung ueberhaupt erst geloest hat.
+// 0.75x liegt zwischen den gemessenen Stuetzstellen 0.5x und 1.0x und bleibt
+// damit klar im erreichbaren Bereich.
+//
+// Rueckendeckung aus dem Video (Bootcamp Tag 35, selbst transkribiert):
+// "the extension is always larger [...] than the retrace [...] ideally you try
+// to catch [the] extension" - in Trendrichtung darf das Ziel also weiter weg
+// liegen. Das stuetzt die Lockerung, rechtfertigt aber keinen Sprung in den
+// gemessenen Nicht-erreichbar-Bereich.
+const MAX_TP1_ADR_MULT = 0.75;
+const MAX_TP2_ADR_MULT = 1.25;
 // Gegenstueck nach unten: ein Stop, der viel enger als die normale
 // Tagesbewegung ist, wird vom blossen Rauschen abgeraeumt, bevor die These
 // ueberhaupt eine Chance hatte (der ETH-Fall oben: 0.164% Stop bei 2.89%
