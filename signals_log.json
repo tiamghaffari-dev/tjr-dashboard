@@ -1480,5 +1480,27 @@
       "findings": [],
       "summary": "Keine auffaellige Schwachstelle gefunden."
     }
+  },
+  {
+    "id": "^GSPC-1786372525734",
+    "asset": "^GSPC",
+    "direction": "LONG",
+    "entryTs": 1786372525734,
+    "entry": 773.545013,
+    "stop": 771.34125,
+    "target": 776.849976,
+    "rr": 1.5,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 771.34125,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
