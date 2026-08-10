@@ -811,7 +811,23 @@ function unrealizedR(rec, currentPrice) {
 // (rising edge - dieselbe wasEntry/isEntry-Pruefung wie beim ntfy-Alert, also
 // ein Log-Eintrag pro Episode, nicht einer pro 5-15-Minuten-Lauf solange das
 // Signal aktiv bleibt).
-function logNewSignal(signalsLog, asset, sig, ann, firedAtTs) {
+// Tiam, 2026-08-10: Ohne diesen Schnappschuss laeuft die gesamte Selbst-
+// Validierung ins Leere. Die Regeln R9/R10/R11 sind bewusst nicht blockierend,
+// weil erst GEMESSEN werden soll, ob "Bias stimmt mit Daily ueberein" o.ae.
+// tatsaechlich mit Gewinnen korreliert. Diese Messung passiert aber erst
+// Wochen spaeter, wenn der Trade aufgeloest ist - und zu dem Zeitpunkt ist der
+// Marktzustand vom Einstiegsmoment laengst weg. Wird der Regelstatus nicht
+// JETZT mitgeschrieben, laesst er sich nie mehr rekonstruieren.
+// Bewusst nur `id -> status` (kompakt), plus die beiden Bias-Werte, weil man
+// die fuer die Auswertung braucht und sie sonst nirgends persistiert sind.
+function ruleSnapshot(ruleCheck) {
+  if (!Array.isArray(ruleCheck)) return null;
+  const out = {};
+  for (const r of ruleCheck) out[r.id] = r.status;
+  return out;
+}
+
+function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBias, weeklyTrend) {
   signalsLog.push({
     id: `${asset.symbol}-${firedAtTs}`,
     asset: asset.symbol,
@@ -824,6 +840,11 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs) {
     sweepType: ann.sweep ? ann.sweep.type : null,
     confirmationKind: ann.confirmation ? ann.confirmation.kind : null,
     zoneKind: ann.zoneKind,
+    // Marktzustand + Regelurteil zum EINSTIEGSZEITPUNKT festhalten (siehe
+    // Kommentar ueber ruleSnapshot) - Grundlage der spaeteren Auswertung.
+    rules: ruleSnapshot(ruleCheck),
+    dailyBiasAtEntry: dailyBias && dailyBias.bias ? dailyBias.bias : null,
+    weeklyBiasAtEntry: weeklyTrend && weeklyTrend.structureBias ? weeklyTrend.structureBias : null,
     status: "open", resolvedTs: null, rMultiple: null,
   });
 }
@@ -1028,7 +1049,7 @@ async function main() {
     // des Fensters wird ein erkanntes Setup zwar noch angezeigt (siehe
     // outsideBadge im Template), aber nicht mehr geloggt/getradet.
     if (isEntry && !wasEntry && inWindow) {
-      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs);
+      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs, item.ruleCheck, item.dailyBias, item.weeklyTrend);
       console.log(`PAPER-TRADE geloggt: ${item.asset.name} ${item.sig.bias === "bullish" ? "LONG" : "SHORT"}`);
     } else if (isEntry && !wasEntry && !inWindow) {
       console.log(`Setup erkannt, aber ausserhalb Handelsfenster - kein Paper-Trade geloggt: ${item.asset.name}`);
