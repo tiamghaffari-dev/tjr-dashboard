@@ -1461,7 +1461,7 @@
     "target2": 1.0125,
     "rr2": 4.71,
     "partialExit": true,
-    "trailStop": 1.04347,
+    "trailStop": 1.0376541799902916,
     "tp1HitTs": null,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
