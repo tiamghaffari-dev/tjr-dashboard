@@ -187,8 +187,23 @@ function computeWeeklyContext(weeklyCandles) {
   const equilibrium = (high + low) / 2;
   const current = recent[recent.length - 1].close;
   const bias = current >= equilibrium ? "bullish" : "bearish";
+  // Tiam, 2026-08-10 (Bootcamp Tag 35/36, selbst transkribiert): TJR leitet die
+  // Richtung aus der STRUKTUR ab, nicht aus der Lage zum Equilibrium. Das
+  // bestehende `bias`-Feld (Preis ueber/unter Wochen-Equilibrium) bleibt
+  // unveraendert, weil computeMarketContextOpinion() darauf aufbaut - hier kommt
+  // die strukturelle Lesart als SEPARATES Feld dazu, damit Regel R10 dasselbe
+  // BOS-Kriterium benutzt wie Daily und 4H.
+  let structureBias = null;
+  try {
+    const { bosEvents } = computeTrendAndBos(weeklyCandles);
+    if (bosEvents.length) {
+      structureBias = bosEvents[bosEvents.length - 1].dir === "up" ? "bullish" : "bearish";
+    }
+  } catch (e) {
+    console.error("Wochen-Strukturbias nicht bestimmbar (R10 bleibt \"unbekannt\"):", e.message || e);
+  }
   return {
-    bias, equilibrium, high, low, current, weeksUsed: recent.length,
+    bias, structureBias, equilibrium, high, low, current, weeksUsed: recent.length,
   };
 }
 
