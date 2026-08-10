@@ -1448,5 +1448,27 @@
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
     }
+  },
+  {
+    "id": "XRPUSD-1786348018584",
+    "asset": "XRPUSD",
+    "direction": "SHORT",
+    "entryTs": 1786348018584,
+    "entry": 1.03805,
+    "stop": 1.04347,
+    "target": 1.02721,
+    "rr": 2,
+    "target2": 1.0125,
+    "rr2": 4.71,
+    "partialExit": true,
+    "trailStop": 1.04347,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
