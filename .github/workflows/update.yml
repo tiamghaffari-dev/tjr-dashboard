@@ -14,6 +14,21 @@ on:
     - cron: "*/5 13-14 * * 1-5"
     # 17:00-23:59 Vienna: wieder alle 15 Minuten
     - cron: "*/15 15-21 * * 1-5"
+  # Tiam, 2026-08-10: Bisher lief der Report NUR nach Zeitplan. Nach einer
+  # Aenderung an der Engine oder am Regelwerk musste der Lauf jedes Mal von Hand
+  # ueber "Run workflow" angestossen werden, sonst war die neue Logik bis zum
+  # naechsten Cron-Slot nicht auf der Seite - und GitHub verzoegert geplante
+  # Laeufe regelmaessig um 20+ Minuten. Deshalb zusaetzlich bei Push auf die
+  # Logikdateien. Bewusst mit paths-Filter: ein Push, der nur docs/ oder
+  # signals_log.json aendert, ist ja gerade das ERGEBNIS eines Laufs und wuerde
+  # sonst sofort den naechsten ausloesen (Endlosschleife).
+  push:
+    branches: [main]
+    paths:
+      - "engine.js"
+      - "build.js"
+      - "tjr_rules.js"
+      - ".github/workflows/update.yml"
   workflow_dispatch: {}
 
 permissions:
