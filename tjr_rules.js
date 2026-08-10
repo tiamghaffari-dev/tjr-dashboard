@@ -200,6 +200,49 @@ const TJR_RULES = [
       };
     },
   },
+  {
+    id: "R10-htf-vorrang",
+    area: "Bias",
+    blocking: false,
+    title: "Bei Widerspruch hat der hoehere Zeitrahmen Vorrang",
+    quote: "[sinngemaess, ASR-Transkript] \"if we raid[ed] structure to the downside [on] the day "
+      + "but we're in a bull[ish] turn on a weekly, odds are it's going [to] be weekly [...] whatever "
+      + "the h[igher] time[frame] is [...] higher power [...] going to cause the market [in] that "
+      + "direction\" - und an anderer Stelle: \"fifteen minute break [of] structure -> one hour retrace "
+      + "[...] four hour -> daily retrace [...] weekly retrace [...] [the] high[er] holds higher power\".",
+    source: "Bootcamp Tag 36 \"Daily Bias pt. 3\" (zwei unabhaengige Stellen), eigenes "
+      + "pocketsphinx-Transkript vom 2026-08-10 - fehlerbehaftet, KEIN woertliches Zitat. "
+      + "Transkripte liegen neben den Videos im Ordner tjr_videos.",
+    // Rangfolge nach TJR: Weekly > Daily > 4H. Die Engine triggert auf dem 4H,
+    // also dem SCHWAECHSTEN der drei. R9 misst den Konflikt mit dem Daily,
+    // R10 den mit dem Weekly - bewusst getrennt, damit die Befund-Validierung
+    // beide Effekte unabhaengig voneinander messen kann, statt sie zu vermischen.
+    check: (sig, ctx) => {
+      const wk = ctx && ctx.weeklyTrend && ctx.weeklyTrend.structureBias;
+      const daily = ctx && ctx.dailyBias && ctx.dailyBias.bias;
+      if (!sig || !sig.bias || sig.bias === "neutral") {
+        return { status: "unbekannt", detail: "Kein gerichteter Bias im Signal." };
+      }
+      if (!wk) {
+        return { status: "unbekannt", detail: "Wochenstruktur nicht bestimmbar." };
+      }
+      if (sig.bias === wk) {
+        const mit = daily && daily !== wk
+          ? ` (Daily steht mit ${daily} dagegen - laut TJR schlaegt die Woche den Tag)`
+          : "";
+        return { status: "ok", detail: `Signal (${sig.bias}) laeuft mit der Wochenstruktur${mit}.` };
+      }
+      const zusatz = daily === sig.bias
+        ? ` Das Daily (${daily}) stuetzt das Signal zwar, steht aber selbst gegen die Woche - `
+          + "genau der Fall, den TJR beschreibt: die Woche gewinnt."
+        : "";
+      return {
+        status: "verletzt",
+        detail: `Signal ist ${sig.bias}, die Wochenstruktur aber ${wk}.${zusatz} `
+          + "Wird vorerst NUR protokolliert, nicht blockiert.",
+      };
+    },
+  },
 ];
 
 // ---------------------------------------------------------------------------
