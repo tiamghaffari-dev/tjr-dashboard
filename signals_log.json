@@ -1499,8 +1499,29 @@
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1786365000000,
+    "rMultiple": -0.22,
+    "postmortem": {
+      "holdHours": 1.9,
+      "mfeR": 0.68,
+      "maeR": -0.87,
+      "towardTargetPct": 46,
+      "stopDistAdr": 0.3,
+      "targetDistAdr": 0.45,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.1R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.9R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Entry: zu frueh"
+    }
   }
 ]
