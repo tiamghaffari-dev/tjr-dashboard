@@ -243,6 +243,44 @@ const TJR_RULES = [
       };
     },
   },
+  {
+    id: "R11-kein-trade-nach-verlust",
+    area: "Risiko",
+    blocking: false,
+    title: "Nach einem Verlust nicht sofort nachlegen",
+    quote: "[sinngemaess, ASR-Transkript] \"do I want to get another trade in, [put] more risk on "
+      + "the table? no [...] it just doesn't make sense to me to take another trade, especially with "
+      + "[...] last week's losses [...] there's just no reason\".",
+    source: "Bootcamp Tag 49 \"Taegliches Bias Backtesting + 9.000 $ Verlust SPX\", eigenes "
+      + "pocketsphinx-Transkript vom 2026-08-10 - fehlerbehaftet, KEIN woertliches Zitat.",
+    // Die STUNDENZAHL ist meine Setzung, nicht TJRs: er nennt keine Frist,
+    // sondern lehnt im Video den Nachfolgetrade am selben Handelstag ab.
+    // COOLDOWN_H = 12 bildet "nicht mehr am selben Tag" ab. Bewusst
+    // nicht blockierend - erst messen, ob Trades kurz nach einem Verlust
+    // wirklich schlechter laufen, dann ueber eine Sperre entscheiden.
+    check: (sig, ctx) => {
+      const COOLDOWN_H = 12;
+      const ll = ctx && ctx.lastLoss;
+      if (!sig || sig.signal !== "ENTRY") {
+        return { status: "unbekannt", detail: "Nur fuer aktive ENTRY-Signale relevant." };
+      }
+      if (!ll || typeof ll.stundenHer !== "number") {
+        return { status: "ok", detail: "Kein frueherer Verlust in diesem Wert protokolliert." };
+      }
+      if (ll.stundenHer < 0) {
+        return { status: "unbekannt", detail: "Zeitabstand zum letzten Verlust unplausibel (negativ)." };
+      }
+      if (ll.stundenHer <= COOLDOWN_H) {
+        return {
+          status: "verletzt",
+          detail: `Letzter Verlust liegt erst ${ll.stundenHer} h zurueck `
+            + `(${typeof ll.rMultiple === "number" ? ll.rMultiple.toFixed(2) + "R" : "R unbekannt"}). `
+            + "TJR legt nach einem Verlust nicht sofort nach. Wird vorerst NUR protokolliert.",
+        };
+      }
+      return { status: "ok", detail: `Letzter Verlust ${ll.stundenHer} h her - Abstand ausreichend.` };
+    },
+  },
 ];
 
 // ---------------------------------------------------------------------------
