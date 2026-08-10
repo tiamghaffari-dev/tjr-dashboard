@@ -1467,8 +1467,18 @@
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
     "zoneKind": "FVG",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1786334400000,
+    "rMultiple": 0.07,
+    "postmortem": {
+      "holdHours": 0.2,
+      "mfeR": 0.38,
+      "maeR": 0.03,
+      "towardTargetPct": 19,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
