@@ -161,6 +161,45 @@ const TJR_RULES = [
         : { status: "verletzt", detail: "Stop liegt auf der falschen Seite des Einstiegs." };
     },
   },
+  {
+    id: "R9-daily-bias",
+    area: "Bias",
+    // NICHT blockierend - siehe Warnung unten. Diese Regel MISST nur.
+    blocking: false,
+    title: "Nicht gegen den Daily Bias handeln",
+    // ACHTUNG, anders als R1-R8: das hier ist KEIN woertliches Zitat vom
+    // Bildschirm, sondern sinngemaess aus einem maschinellen Transkript mit
+    // erkennbaren Wortfehlern. Bewusst so gekennzeichnet.
+    quote: "[sinngemaess, ASR-Transkript] \"we use the daily [...] to figure out my daily bias "
+      + "[...] what is the daily market structure?\" - und: wer gegen den Daily Bias handelt, "
+      + "\"[will] probably end up being a very short lived trade or you just losing\".",
+    source: "Bootcamp Tag 34 \"Taegliche Voreingenommenheit\" (~00:00-02:30), eigenes "
+      + "pocketsphinx-Transkript vom 2026-08-10 - fehlerbehaftet, KEIN woertliches Zitat. "
+      + "Transkript liegt neben dem Video im Ordner tjr_videos.",
+    check: (sig, ctx) => {
+      const daily = ctx && ctx.dailyBias;
+      if (!sig || !sig.bias || sig.bias === "neutral") {
+        return { status: "unbekannt", detail: "Kein gerichteter Bias im Signal." };
+      }
+      if (!daily || !daily.bias) {
+        return { status: "unbekannt", detail: "Keine Daily-Kerzen verfuegbar - Daily-Bias nicht bestimmbar." };
+      }
+      const wochen = ctx && ctx.weeklyTrend && ctx.weeklyTrend.bias
+        ? `, Weekly ${ctx.weeklyTrend.bias}`
+        : "";
+      if (sig.bias === daily.bias) {
+        return {
+          status: "ok",
+          detail: `Signal (${sig.bias}) stimmt mit der Daily-Struktur ueberein${wochen}.`,
+        };
+      }
+      return {
+        status: "verletzt",
+        detail: `Signal ist ${sig.bias}, die Daily-Struktur aber ${daily.bias}${wochen}. `
+          + "TJR wuerde diesen Trade nicht nehmen. Wird vorerst NUR protokolliert, nicht blockiert.",
+      };
+    },
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -172,12 +211,19 @@ const KNOWN_GAPS = [
   {
     id: "G1-daily-bias",
     title: "Wie TJR den Daily Bias tatsaechlich bestimmt",
-    why: "Bootcamp Tag 34/35/36 (Daily Bias 1-3) sind reine Sprech- und Chart-Videos ohne "
-      + "eingeblendete Notizen; die Tonspur ist nicht transkribierbar (Whisper-Modelle sind "
-      + "im Sandbox-Proxy blockiert). Die Engine benutzt aktuell 'Richtung des letzten 4H-BOS' "
-      + "als Bias - das ist eine eigene Vereinfachung, KEINE belegte TJR-Regel.",
+    why: "TEILWEISE GESCHLOSSEN am 2026-08-10. Bootcamp Tag 34 wurde selbst transkribiert "
+      + "(pocketsphinx, da Whisper im Sandbox-Proxy blockiert ist; Transkript liegt neben dem "
+      + "Video). Ergebnis: TJR arbeitet TOP-DOWN Weekly -> Daily -> 4H -> 15/5min und leitet den "
+      + "Bias aus der DAILY-Marktstruktur ab, nicht aus dem 4H. Die Engine benutzt weiterhin "
+      + "'Richtung des letzten 4H-BOS' als Trigger-Bias; der Daily-Bias wird seit 2026-08-10 "
+      + "parallel berechnet und ueber Regel R9 mitprotokolliert - NICHT blockierend, weil die "
+      + "Quelle ein fehlerbehaftetes Transkript ist und kein Bildschirmzitat.",
     relevanz: "HOCH - die Obduktion zeigt 13x 'These war falsch' gegen 6x 'richtig'. "
-      + "Genau hier liegt das groesste ungeloeste Problem.",
+      + "Naechster Schritt: sobald genug Trades mit R9-Status vorliegen, per Befund-Validierung "
+      + "in history.html messen, ob 'stimmt mit Daily ueberein' wirklich mit Gewinnen korreliert. "
+      + "ERST DANN scharf schalten, und nur mit Tiams Zustimmung. Offen bleibt TJRs zweite "
+      + "Bias-Komponente, der 'draw on liquidity' (wohin der Kurs gezogen wird) - dafuer muessen "
+      + "Tag 35/36 und die Live-Bias-Videos transkribiert werden.",
   },
   {
     id: "G2-key-level-touch",
