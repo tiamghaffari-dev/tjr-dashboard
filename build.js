@@ -192,6 +192,55 @@ function computeWeeklyContext(weeklyCandles) {
   };
 }
 
+// Tiam, 2026-08-10 (nach eigener Transkription von Bootcamp Tag 34 "Taegliche
+// Voreingenommenheit"): TJR bestimmt den Bias TOP-DOWN und zwar ausdruecklich
+// auf dem DAILY, nicht auf dem 4H. Sinngemaess aus dem Transkript:
+// "we use the daily - I like to use the daily [...] to figure out my daily
+// bias [...] what is the daily market structure? we [broke] to the downside
+// -> bearish on the daily", davor als Rahmen "figure out where [price is]
+// going on the weekly". Und die Warnung: gegen den Daily Bias handeln heisst
+// "you'll probably end up being a very short lived trade or you just losing".
+//
+// Unsere Engine hat den Bias bisher aus dem letzten 4H-BOS gezogen - eine
+// EIGENE Vereinfachung (dokumentiert als KNOWN_GAPS G1 in tjr_rules.js), und
+// genau das Feld mit dem groessten Problem (13x These falsch gegen 6x richtig).
+//
+// WICHTIG - bewusst NICHT scharf geschaltet: die Quelle ist ein maschinelles
+// Transkript mit Wortfehlern, kein woertliches Zitat vom Bildschirm. Der
+// Daily-Bias wird hier nur BERECHNET und als nicht-blockierende Regel R9
+// mitgeschrieben, damit die Obduktions-Validierung (history.html) ueber die
+// naechsten Wochen selbst misst, ob "stimmt mit Daily ueberein" tatsaechlich
+// mit Gewinnen korreliert. Erst dann - und nur mit Tiams Zustimmung - darf das
+// den Trigger beeinflussen. Dieselbe Vorsicht wie bei "Entry zu frueh", das
+// sich als Scheinbefund herausgestellt hat.
+const DAILY_LOOKBACK_DAYS = 200;
+
+async function fetchDailyCandles(asset) {
+  const yahooSymbol = YAHOO_SYMBOL_MAP[asset.symbol];
+  if (!yahooSymbol) return [];
+  const raw = await fetchYahooChart(yahooSymbol, "1d", DAILY_LOOKBACK_DAYS);
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  return loadCandles(raw);
+}
+
+// Daily-Marktstruktur: Richtung des juengsten Strukturbruchs auf dem
+// Tageschart - exakt dieselbe BOS-Definition wie ueberall sonst (Close jenseits
+// des Swings, Docht zaehlt nicht; Bootcamp Tag 6, woertlich belegt).
+function computeDailyBias(dailyCandles) {
+  if (!dailyCandles || dailyCandles.length < 20) return null;
+  const { bosEvents } = computeTrendAndBos(dailyCandles);
+  if (!bosEvents.length) return null;
+  const last = bosEvents[bosEvents.length - 1];
+  const closes = dailyCandles.slice(-30);
+  return {
+    bias: last.dir === "up" ? "bullish" : "bearish",
+    bosTs: last.ts,
+    bosLevel: last.level,
+    bosCount30d: bosEvents.filter((b) => b.ts >= closes[0].ts).length,
+    candlesUsed: dailyCandles.length,
+  };
+}
+
 async function analyzeAsset(asset) {
   const today = new Date();
   const from1h = new Date(today); from1h.setDate(from1h.getDate() - 30);
@@ -241,8 +290,14 @@ async function analyzeAsset(asset) {
   } catch (e) {
     console.error(`Wochentrend-Abruf fehlgeschlagen fuer ${asset.name} (wird ignoriert):`, e.message || e);
   }
+  let dailyBias = null;
+  try {
+    dailyBias = computeDailyBias(await fetchDailyCandles(asset));
+  } catch (e) {
+    console.error(`Daily-Bias-Abruf fehlgeschlagen fuer ${asset.name} (Regel R9 bleibt "unbekannt"):`, e.message || e);
+  }
   return {
-    sig, ann, ltf: ltf.slice(-CHART_HISTORY_CANDLES), ltfFull: ltf, weeklyTrend,
+    sig, ann, ltf: ltf.slice(-CHART_HISTORY_CANDLES), ltfFull: ltf, weeklyTrend, dailyBias,
     // Tiam, 2026-07-14: "die KI kann auch manchmal selber denken und schauen ob
     // es vllt doch ein entry gibt [...] da es ja auch auf dem gesamten Markt
     // zugreifen kann" - getAiAssessment() bekam bisher nur die letzten 20
@@ -862,10 +917,10 @@ async function main() {
   for (const asset of ASSETS) {
     try {
       const {
-        sig, ann, ltf, ltfFull, weeklyTrend, htfRecent,
+        sig, ann, ltf, ltfFull, weeklyTrend, dailyBias, htfRecent,
       } = await analyzeAsset(asset);
       assets.push({
-        asset, sig, ann, ltf, error: null, aiNote: null, weeklyTrend, htfRecent,
+        asset, sig, ann, ltf, error: null, aiNote: null, weeklyTrend, dailyBias, htfRecent,
       });
       ltfFullBySymbol[asset.symbol] = ltfFull;
       console.log(`OK   ${asset.name}: bias=${sig.bias} signal=${sig.signal}`);
@@ -912,7 +967,7 @@ async function main() {
     // wird also weder als Paper-Trade geloggt noch ein Alert ausgeloest.
     // Muss VOR der isEntry-Pruefung stehen, sonst waere der Trade schon
     // geloggt, bevor die Regel greift.
-    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann });
+    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann, dailyBias: item.dailyBias, weeklyTrend: item.weeklyTrend });
     item.ruleSummary = ruleSummary(item.ruleCheck);
     const blocked = blockingViolations(item.ruleCheck);
     if (blocked.length > 0 && item.sig.signal === "ENTRY") {
