@@ -1633,5 +1633,42 @@
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
     }
+  },
+  {
+    "id": "BTCUSD-1786456497881",
+    "asset": "BTCUSD",
+    "direction": "LONG",
+    "entryTs": 1786456497881,
+    "entry": 64214.763672,
+    "stop": 63967.883203,
+    "target": 64897.53125,
+    "rr": 2.77,
+    "target2": 65400.351563,
+    "rr2": 4.8,
+    "partialExit": true,
+    "trailStop": 63967.883203,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok"
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bearish",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
