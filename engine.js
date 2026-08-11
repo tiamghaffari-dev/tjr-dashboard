@@ -489,11 +489,60 @@ function findSmtDivergence(correlatedSwingsSorted, correlatedDf, wantSwingType, 
   };
 }
 
+// Tiam, 2026-08-11 - aus den selbst transkribierten Live-Bias-Videos: TJRs
+// "draw on liquidity" meint NICHT nur vorherige Hochs/Tiefs, sondern
+// ausdruecklich auch UNVERFUELLTE IMBALANCES auf hoeherem Zeitrahmen - und die
+// benutzt er als ZIEL:
+//   "yesterday I [pointed] out [that] imbalance - [it's] more than likely going
+//    to be the target for today"            (Live Daily Bias 2)
+//   "next target area for G[BP]U[SD] was the top of this imbalance"  (Day 47)
+// ("imbalance" faellt 31x in den 7 Live-Transkripten, fast immer in dieser Rolle.)
+//
+// Bisher lieferte nur findProminentHtfSwingLevels() Ziel-Kandidaten, also
+// ausschliesslich Swing-Hochs/-Tiefs. Unverfuellte FVGs kannte die Engine zwar,
+// benutzte sie aber NUR als Einstiegszone - genau die Ziele, die TJR nimmt,
+// waren fuer die Zielsuche unsichtbar.
+//
+// WICHTIG, leicht zu verwechseln: eine unverfuellte Imbalance zieht den Kurs in
+// Richtung ihrer FUELLUNG, also entgegen der Bewegung, die sie erzeugt hat. Ein
+// bullisches FVG entsteht beim Hochlaufen und liegt danach UNTER dem Kurs (es
+// wird beim Zurueckfallen gefuellt) -> Ziel fuer SHORTS. Ein bearisches FVG
+// liegt UEBER dem Kurs -> Ziel fuer LONGS. Deshalb wird hier bewusst gekreuzt
+// zugeordnet.
+//
+// Pro Gap zwei Kandidaten: die zuerst beruehrte Kante (Teilfuellung) und die
+// Gegenkante (vollstaendige Fuellung, TJRs "top of this imbalance"). Da die
+// Auswahl unten nach Naehe sortiert und die ADR-Deckel weiterhin greifen, wird
+// daraus von selbst das gewuenschte Muster: nahe Kante als TP1, vollstaendige
+// Fuellung als TP2 (der Runner).
+function findUnfilledImbalanceLevels(htfDf) {
+  if (!Array.isArray(htfDf) || htfDf.length < 3) return [];
+  const offen = unmitigatedFvgs(htfDf, findFvgs(htfDf));
+  const levels = [];
+  for (const gap of offen) {
+    if (gap.type === "bearish") {
+      // liegt ueber dem Kurs -> wird beim Steigen gefuellt -> Ziel fuer Longs
+      levels.push({ ts: gap.ts, price: gap.bottom, type: "H", source: "imbalance" });
+      levels.push({ ts: gap.ts, price: gap.top, type: "H", source: "imbalance" });
+    } else {
+      // liegt unter dem Kurs -> wird beim Fallen gefuellt -> Ziel fuer Shorts
+      levels.push({ ts: gap.ts, price: gap.top, type: "L", source: "imbalance" });
+      levels.push({ ts: gap.ts, price: gap.bottom, type: "L", source: "imbalance" });
+    }
+  }
+  return levels;
+}
+
 function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookbackBars = 40, correlatedLtfDf = null) {
   const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
   // Grobe, "wuerde ein Mensch das beim Ueberfliegen des Charts markieren"
   // Kandidatenliste fuers Target - siehe Kommentar bei findProminentHtfSwingLevels.
-  const htfKeyLevels = findProminentHtfSwingLevels(htfDf);
+  // Seit 2026-08-11 zusaetzlich die unverfuellten Imbalances (siehe
+  // findUnfilledImbalanceLevels) - TJRs zweite Haelfte des "draw on liquidity".
+  const htfKeyLevels = [
+    ...findProminentHtfSwingLevels(htfDf),
+    ...findUnfilledImbalanceLevels(htfDf),
+  ];
   const bias = htfDf.length ? htfTrend : 0;
   const biasLabel = { 1: "bullish", "-1": "bearish", 0: "neutral" }[bias];
 
@@ -942,7 +991,7 @@ if (typeof module !== "undefined") {
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
     findIfvg, findBreakerBlock, find1minConfirmation, findKeyLevelTarget,
     findProminentHtfSwingLevels, findSmtDivergence,
-    findMultipleKeyLevelTargets, medianDailyRange,
+    findMultipleKeyLevelTargets, medianDailyRange, findUnfilledImbalanceLevels,
     premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }
