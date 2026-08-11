@@ -1557,9 +1557,19 @@
     },
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bearish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1786418100000,
+    "rMultiple": 0.71,
+    "postmortem": {
+      "holdHours": 0,
+      "mfeR": 0.99,
+      "maeR": 0.69,
+      "towardTargetPct": 49,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1786432356263",
