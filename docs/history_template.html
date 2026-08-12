@@ -82,6 +82,9 @@
   .dir-long { color: #4fff9c; }
   .dir-short { color: #ff6b6b; }
   .empty-state { color: #7c8399; font-size: 13px; padding: 30px 10px; text-align: center; }
+    .analyse-block { margin-top:34px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.08); }
+    .analyse-titel { font-size:11px; letter-spacing:0.6px; text-transform:uppercase; color:#9aa3b8; margin-bottom:6px; }
+    .analyse-hinweis { font-size:11px; color:#5f6678; line-height:1.55; margin-bottom:14px; max-width:70ch; }
 </style>
 </head>
 <body>
@@ -100,9 +103,6 @@
   </div>
 
   <div id="equitySection" style="margin-bottom:22px;"></div>
-  <div id="pmPatterns"></div>
-  <div id="pmValidation"></div>
-  <div id="ruleEffect"></div>
   <div id="summary" class="summary-row"></div>
   <div id="assetCards" class="asset-cards"></div>
 
@@ -120,6 +120,27 @@
   </div>
 
   <div id="tableWrap"></div>
+
+  <!-- Tiam, 2026-08-12 ("optimiere das ganze etwas" -> Seite aufraeumen):
+       Die drei Analyseblocke standen bisher GANZ OBEN, noch vor Trefferquote
+       und Trade-Tabelle. Wer die Seite aufmachte, sah zuerst drei dichte
+       Tabellen mit Fachbegriffen und musste daran vorbeiscrollen, um an die
+       eigentliche Frage zu kommen: wie steht das Konto, welche Trades liefen.
+       Jetzt: Zahlen und Trades zuerst, Selbstanalyse darunter und eingeklappt -
+       dieselbe Linie wie auf index.html (Klartext oben, ICT-Details in
+       <details>). -->
+  <div class="analyse-block">
+    <div class="analyse-titel">Selbstanalyse der Engine</div>
+    <div class="analyse-hinweis">
+      Was die Engine über ihre eigenen Trades herausgefunden hat. Zum Aufklappen anklicken —
+      solange zu wenige Trades vorliegen, steht das ausdrücklich dabei, statt eine Aussage
+      vorzutäuschen.
+    </div>
+    <div id="ruleEffect"></div>
+    <div id="pmPatterns"></div>
+    <div id="pmValidation"></div>
+  </div>
+
 
 <script>
 const DATA = __PRECOMPUTED_JSON__;
@@ -595,7 +616,7 @@ function renderRuleEffect() {
   const empfehlung = rows.filter((r) => r.status === "Regel hilft")
     .map((r) => r.id.replace(/^R(\d+)-.*/, "R$1")).join(", ");
   el.innerHTML = `
-    <details open style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+    <details style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
       border-radius:10px;padding:14px 16px;margin-bottom:22px;">
       <summary style="cursor:pointer;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#7c8399;outline:none;">
         ⚖️ Wirkung der Regeln — welche lohnt sich wirklich?
