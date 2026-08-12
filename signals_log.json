@@ -1777,9 +1777,30 @@
     },
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bearish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1786525800000,
+    "rMultiple": -0.03,
+    "postmortem": {
+      "holdHours": 0,
+      "mfeR": 0.31,
+      "maeR": -0.07,
+      "towardTargetPct": 16,
+      "stopDistAdr": 0.39,
+      "targetDistAdr": 0.75,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.0R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 16% entgegen (max +0.3R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "GCUSD-1786540062131",
@@ -1813,6 +1834,53 @@
       "R11-kein-trade-nach-verlust": "ok"
     },
     "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bullish",
+    "status": "win",
+    "resolvedTs": 1786527000000,
+    "rMultiple": 0,
+    "postmortem": {
+      "holdHours": 0.4,
+      "mfeR": 1.07,
+      "maeR": -0.08,
+      "towardTargetPct": 53,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.48,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
+  },
+  {
+    "id": "ETHUSD-1786543906053",
+    "asset": "ETHUSD",
+    "direction": "LONG",
+    "entryTs": 1786543906053,
+    "entry": 1896.959961,
+    "stop": 1885.018201,
+    "target": 1920.843482,
+    "rr": 2,
+    "target2": 1935.900024,
+    "rr2": 3.26,
+    "partialExit": true,
+    "trailStop": 1885.018201,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok"
+    },
+    "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
     "status": "open",
     "resolvedTs": null,
