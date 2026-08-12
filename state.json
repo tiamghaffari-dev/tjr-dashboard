@@ -1,12 +1,12 @@
 {
-  "BTCUSD": true,
+  "BTCUSD": false,
   "ETHUSD": true,
   "XRPUSD": false,
-  "GBPUSD": false,
-  "^GSPC": true,
-  "GCUSD": true,
+  "GBPUSD": true,
+  "^GSPC": false,
+  "GCUSD": false,
   "_meta": {
-    "windowOpen": true,
+    "windowOpen": false,
     "lastSessionLogDate": "2026-08-12"
   }
 }
