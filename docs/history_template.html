@@ -102,6 +102,7 @@
   <div id="equitySection" style="margin-bottom:22px;"></div>
   <div id="pmPatterns"></div>
   <div id="pmValidation"></div>
+  <div id="ruleEffect"></div>
   <div id="summary" class="summary-row"></div>
   <div id="assetCards" class="asset-cards"></div>
 
@@ -462,6 +463,121 @@ function validateFindings() {
   return out.sort((a, b) => (rank[a.status] - rank[b.status]) || (a.diff - b.diff));
 }
 
+// ---------------------------------------------------------------------------
+// Wirkt eine Regel ueberhaupt? (Tiam, 2026-08-12)
+// ---------------------------------------------------------------------------
+// R9/R10/R11 sind bewusst NICHT blockierend: erst messen, ob "Regel eingehalten"
+// wirklich mit besseren Ergebnissen einhergeht, dann ueber eine Sperre
+// entscheiden. Seit 2026-08-10 speichert jeder neue Paper-Trade dafuer den
+// Regelstatus zum EINSTIEGSZEITPUNKT (Feld `rules`). Ausgewertet hat den
+// bisher nichts - genau das passiert hier.
+//
+// WICHTIG, und bewusst anders als bei validateFindings(): das Urteil haengt am
+// ERWARTUNGSWERT (Ø R), nicht an der Trefferquote. Eine Regel, die die
+// Trefferquote hebt, aber die Gewinne kleiner macht, ist wertlos - man kann die
+// Trefferquote beliebig hochtreiben, indem man das Ziel naeher legt. Was zaehlt,
+// ist der Ertrag pro Trade. Die Trefferquote steht nur als Kontext daneben.
+//
+// "unbekannt" wird ausgeschlossen: fehlende Daten sind keine Regelbefolgung.
+const RULE_MIN_N = 5;        // je Gruppe - darunter ist alles Rauschen
+const RULE_MEANINGFUL_R = 0.25;  // R pro Trade Unterschied, ab dem es zaehlt
+
+function analyseRuleEffect() {
+  const closed = DATA.signals.filter((r) =>
+    r.rules && (r.status === "win" || r.status === "loss") && r.rMultiple != null);
+  if (!closed.length) return { rows: [], n: 0 };
+  const ids = new Set();
+  for (const r of closed) for (const k of Object.keys(r.rules)) ids.add(k);
+  const wr = (a) => (a.length ? Math.round((a.filter((r) => r.status === "win").length / a.length) * 100) : null);
+  const avg = (a) => (a.length ? Math.round((a.reduce((s, r) => s + r.rMultiple, 0) / a.length) * 100) / 100 : null);
+  const rows = [];
+  for (const id of ids) {
+    const ok = closed.filter((r) => r.rules[id] === "ok");
+    const bad = closed.filter((r) => r.rules[id] === "verletzt");
+    if (!ok.length && !bad.length) continue;
+    const rOk = avg(ok), rBad = avg(bad);
+    const diffR = (rOk != null && rBad != null) ? Math.round((rOk - rBad) * 100) / 100 : null;
+    let status;
+    if (ok.length < RULE_MIN_N || bad.length < RULE_MIN_N) status = "zu wenig Daten";
+    else if (diffR >= RULE_MEANINGFUL_R) status = "Regel hilft";
+    else if (diffR <= -RULE_MEANINGFUL_R) status = "Regel schadet";
+    else status = "kein Effekt";
+    rows.push({ id, nOk: ok.length, nBad: bad.length, wrOk: wr(ok), wrBad: wr(bad),
+                rOk, rBad, diffR, status });
+  }
+  const rank = { "Regel hilft": 0, "Regel schadet": 1, "kein Effekt": 2, "zu wenig Daten": 3 };
+  rows.sort((a, b) => (rank[a.status] - rank[b.status]) || ((b.diffR ?? -99) - (a.diffR ?? -99)));
+  return { rows, n: closed.length };
+}
+
+function renderRuleEffect() {
+  const el = document.getElementById("ruleEffect");
+  if (!el) return;
+  const { rows, n } = analyseRuleEffect();
+  const gesamt = DATA.signals.filter((r) => r.status === "win" || r.status === "loss").length;
+  if (!rows.length) {
+    el.innerHTML = `
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+        border-radius:10px;padding:14px 16px;margin-bottom:22px;font-size:11px;color:#7c8399;line-height:1.6;">
+        <b style="color:#9aa3b8;">⚖️ Wirkung der Regeln</b><br>
+        Noch keine abgeschlossenen Trades mit aufgezeichnetem Regelstatus.
+        Aufgezeichnet wird seit dem 10.08.2026 — ${gesamt} ältere abgeschlossene Trades
+        haben die Aufzeichnung nicht und können hier nicht mitgerechnet werden.
+        Sobald je Gruppe ${RULE_MIN_N} Trades vorliegen, erscheint hier die Auswertung.
+      </div>`;
+    return;
+  }
+  const COL = { "Regel hilft": "#4fff9c", "Regel schadet": "#ff6b6b",
+                "kein Effekt": "#7c8399", "zu wenig Daten": "#5f6678" };
+  const sr = (x) => (x == null ? "—" : `${x >= 0 ? "+" : ""}${x.toFixed(2)}R`);
+  const empfehlung = rows.filter((r) => r.status === "Regel hilft")
+    .map((r) => r.id.replace(/^R(\d+)-.*/, "R$1")).join(", ");
+  el.innerHTML = `
+    <details open style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+      border-radius:10px;padding:14px 16px;margin-bottom:22px;">
+      <summary style="cursor:pointer;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#7c8399;outline:none;">
+        ⚖️ Wirkung der Regeln — welche lohnt sich wirklich?
+      </summary>
+      <div style="font-size:11px;color:#7c8399;margin:10px 0 12px;line-height:1.5;">
+        Verglichen wird, wie Trades abschneiden, bei denen eine Regel <b>eingehalten</b> war,
+        gegenüber denen, bei denen sie <b>verletzt</b> war. Maßgeblich ist der
+        <b>Ertrag pro Trade (Ø R)</b>, nicht die Trefferquote — die lässt sich beliebig
+        hochtreiben, indem man das Ziel näher legt, ohne dass mehr dabei herauskommt.
+        Grundlage: ${n} abgeschlossene Trades mit aufgezeichnetem Regelstatus.
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr>
+          <th style="text-align:left;padding:6px 8px;color:#7c8399;">Regel</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">eingehalten</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">verletzt</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">Ø R gehalten</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">Ø R verletzt</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">Vorteil</th>
+          <th style="text-align:left;padding:6px 8px;color:#7c8399;">Urteil</th>
+        </tr></thead>
+        <tbody>
+        ${rows.map((r) => `
+          <tr>
+            <td style="padding:5px 8px;border-top:1px solid rgba(255,255,255,0.05);">${r.id}</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${r.nOk}× <span style="color:#5f6678;">(${r.wrOk ?? "—"}%)</span></td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${r.nBad}× <span style="color:#5f6678;">(${r.wrBad ?? "—"}%)</span></td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${sr(r.rOk)}</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${sr(r.rBad)}</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);color:${COL[r.status]};">${sr(r.diffR)}</td>
+            <td style="padding:5px 8px;border-top:1px solid rgba(255,255,255,0.05);color:${COL[r.status]};">${r.status}</td>
+          </tr>`).join("")}
+        </tbody>
+      </table>
+      ${empfehlung ? `
+      <div style="margin-top:12px;padding:10px 12px;border-radius:8px;background:rgba(79,255,156,0.08);
+        border:1px solid rgba(79,255,156,0.25);font-size:11px;color:#9aa3b8;line-height:1.6;">
+        <b style="color:#4fff9c;">Vorschlag:</b> ${empfehlung} scharf schalten
+        (verletzt ⇒ kein Entry). Das ist eine Empfehlung, keine automatische Änderung —
+        die Umstellung geschieht nur, wenn du sie ausdrücklich freigibst.
+      </div>` : ""}
+    </details>`;
+}
+
 function renderFindingValidation() {
   const el = document.getElementById("pmValidation");
   if (!el) return;
@@ -605,6 +721,7 @@ const EQUITY = computeEquityCurve(DATA.signals);
 renderEquity(EQUITY);
 renderPostmortemPatterns();
 renderFindingValidation();
+renderRuleEffect();
 renderSummary();
 renderAssetCards();
 renderTable();
