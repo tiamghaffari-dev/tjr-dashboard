@@ -281,7 +281,80 @@ const TJR_RULES = [
       return { status: "ok", detail: `Letzter Verlust ${ll.stundenHer} h her - Abstand ausreichend.` };
     },
   },
+  {
+    id: "R12-news-fenster",
+    area: "Risiko",
+    blocking: false,
+    title: "Nicht kurz vor einer High-Impact-Nachricht einsteigen",
+    quote: "[keine woertliche Regel von TJR] Abgeleitet daraus, dass er den Nachrichtenkalender "
+      + "aktiv in seine Tagesanalyse einbezieht - Bootcamp Tag 48 ist eine Live-Bias-Analyse zu PPI, "
+      + "Day 47 ein Backtest rund um CPI.",
+    source: "Eigene Regel, KEIN Videobeleg fuer eine konkrete Zeitspanne. Die 30 Minuten sind "
+      + "gesetzt, nicht belegt. Daten aus dem ForexFactory-Kalenderfeed (High Impact, USD/GBP).",
+    // Gilt bewusst fuer ALLE Werte, nicht nur die Waehrungspaare: USD-Termine
+    // bewegen auch Gold, den S&P und die Kryptos.
+    check: (sig, ctx) => {
+      const NEWS_FENSTER_MIN = 30;
+      const nn = ctx && ctx.newsSoon;
+      if (!sig || sig.signal !== "ENTRY") {
+        return { status: "unbekannt", detail: "Nur fuer aktive ENTRY-Signale relevant." };
+      }
+      if (!ctx || ctx.newsGeladen !== true) {
+        return { status: "unbekannt", detail: "Nachrichtenkalender nicht verfuegbar." };
+      }
+      if (!nn) {
+        return { status: "ok", detail: "Heute kein High-Impact-Termin mehr vor uns." };
+      }
+      if (nn.minuten <= NEWS_FENSTER_MIN) {
+        return {
+          status: "verletzt",
+          detail: `${nn.event} (${nn.currency}) in ${nn.minuten} min. `
+            + "So kurz davor bewegt die Nachricht den Kurs, nicht das Setup. Nur protokolliert.",
+        };
+      }
+      return { status: "ok", detail: `Naechster Termin (${nn.event}) erst in ${nn.minuten} min.` };
+    },
+  },
 ];
+
+
+// ---------------------------------------------------------------------------
+// Confluence-Punktzahl (Tiam, 2026-08-12)
+// ---------------------------------------------------------------------------
+// Tiam: "es muessen eh ned alle regeln gelten also mehre sollten es schon sein
+// aber alle wird meistens schwer."
+//
+// Richtig - aber nur fuer einen Teil der Regeln. R2-R8 sind KEINE optionalen
+// Haken, sondern die Definition des Setups: ohne Liquidity Sweep, ohne
+// Bestaetigung, ohne Continuation-Zone gibt es schlicht kein TJR-Trade. Die
+// tauchen im Log immer als "ok" auf, weil sonst gar kein Signal entstanden
+// waere - eine Punktzahl darueber waere eine Konstante.
+//
+// Was TJR "confluence" nennt, sind die zusaetzlichen Uebereinstimmungen
+// obendrauf. Genau die sind hier gezaehlt. Damit laesst sich Tiams eigentliche
+// Frage beantworten: reichen 3 von 5, oder braucht es 5 von 5?
+const QUALITY_RULE_IDS = [
+  "R1-key-levels",              // Ziel ist ein echtes Key-Level, kein gerechnetes
+  "R9-daily-bias",              // Richtung stimmt mit dem Tageschart
+  "R10-htf-vorrang",            // Richtung stimmt mit der Wochenstruktur
+  "R11-kein-trade-nach-verlust",// kein frischer Verlust im selben Wert
+  "R12-news-fenster",           // kein Nachrichtentermin unmittelbar bevor
+];
+
+// "unbekannt" zaehlt weder als erfuellt noch als moeglich - fehlende Daten
+// duerfen die Punktzahl weder heben noch druecken.
+function confluenceScore(results) {
+  if (!Array.isArray(results)) return null;
+  let erfuellt = 0, bewertbar = 0;
+  const fehlend = [];
+  for (const r of results) {
+    if (!QUALITY_RULE_IDS.includes(r.id)) continue;
+    if (r.status === "ok") { erfuellt++; bewertbar++; }
+    else if (r.status === "verletzt") { bewertbar++; fehlend.push(r.id); }
+  }
+  if (!bewertbar) return null;
+  return { erfuellt, bewertbar, fehlend };
+}
 
 // ---------------------------------------------------------------------------
 // Bekannte Luecken - bewusst NICHT als Regel formuliert, weil kein belegter
@@ -360,5 +433,6 @@ function blockingViolations(results) {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { TJR_RULES, KNOWN_GAPS, evaluateRules, ruleSummary, blockingViolations };
+  module.exports = { TJR_RULES, KNOWN_GAPS, evaluateRules, ruleSummary, blockingViolations,
+    confluenceScore, QUALITY_RULE_IDS };
 }
