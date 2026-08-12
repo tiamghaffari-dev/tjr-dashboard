@@ -4,9 +4,9 @@
   "XRPUSD": false,
   "GBPUSD": true,
   "^GSPC": true,
-  "GCUSD": true,
+  "GCUSD": false,
   "_meta": {
-    "windowOpen": true,
-    "lastSessionLogDate": "2026-08-11"
+    "windowOpen": false,
+    "lastSessionLogDate": "2026-08-12"
   }
 }
