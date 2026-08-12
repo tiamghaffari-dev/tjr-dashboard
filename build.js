@@ -11,7 +11,7 @@ const {
   parseTs, loadCandles, resample, buildSignal, buildAnnotations, computeTrendAndBos,
   medianDailyRange,
 } = require("./engine.js");
-const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS } = require("./tjr_rules.js");
+const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS, confluenceScore } = require("./tjr_rules.js");
 
 const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 
@@ -843,6 +843,10 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBi
     // Marktzustand + Regelurteil zum EINSTIEGSZEITPUNKT festhalten (siehe
     // Kommentar ueber ruleSnapshot) - Grundlage der spaeteren Auswertung.
     rules: ruleSnapshot(ruleCheck),
+    // Tiams Frage "wie viele Regeln muessen es denn sein?" - siehe
+    // confluenceScore() in tjr_rules.js. Zaehlt nur die QUALITAETS-Regeln,
+    // nicht die Setup-Vorbedingungen (die sind bei jedem Trade erfuellt).
+    confluence: confluenceScore(ruleCheck),
     dailyBiasAtEntry: dailyBias && dailyBias.bias ? dailyBias.bias : null,
     weeklyBiasAtEntry: weeklyTrend && weeklyTrend.structureBias ? weeklyTrend.structureBias : null,
     status: "open", resolvedTs: null, rMultiple: null,
@@ -969,8 +973,15 @@ async function main() {
   }
 
   let news = [];
+  // Ob der Abruf GEKLAPPT hat, ist fuer Regel R12 entscheidend: eine leere
+  // Liste kann "heute keine Termine" heissen oder "Abruf fehlgeschlagen".
+  // Ohne diese Unterscheidung wuerde ein Ausfall stillschweigend als
+  // "keine News, alles frei" durchgehen - genau die Art stiller Fehlannahme,
+  // die der Status "unbekannt" verhindern soll.
+  let newsOk = false;
   try {
     news = await loadNews();
+    newsOk = true;
   } catch (e) {
     console.error("News-Abruf fehlgeschlagen (wird ignoriert):", e.message || e);
   }
@@ -1026,7 +1037,26 @@ async function main() {
         rMultiple: letzterVerlust.rMultiple,
       }
       : null;
-    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann, dailyBias: item.dailyBias, weeklyTrend: item.weeklyTrend, lastLoss: item.lastLoss });
+    // Naechster High-Impact-Termin fuer Regel R12. Die ForexFactory-Daten
+    // liegen bereits vor (loadNews oben), wurden bisher aber nur fuer einen
+    // Hinweissatz benutzt und nirgends messbar festgehalten.
+    //
+    // ACHTUNG, genau UMGEKEHRT zur Zwei-Uhren-Falle bei R11: hier wird NICHT
+    // in Pseudo-Zeit gerechnet. Sowohl nowTs (Date.now()) als auch das
+    // date-Feld des Kalenderfeeds (ISO mit Zeitzonen-Offset) sind echte
+    // Epochenwerte - eine Umrechnung wuerde den Abstand hier VERFAELSCHEN.
+    // Pseudo-Zeit gilt nur fuer Kerzen und alles, was aus ihnen abgeleitet ist.
+    let newsSoon = null;
+    for (const e of news) {
+      const t = new Date(e.date).getTime();
+      if (Number.isNaN(t) || t < nowTs) continue;
+      const minuten = Math.round((t - nowTs) / 60000);
+      if (!newsSoon || minuten < newsSoon.minuten) {
+        newsSoon = { minuten, event: e.event, currency: e.currency };
+      }
+    }
+    item.newsSoon = newsSoon;
+    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann, dailyBias: item.dailyBias, weeklyTrend: item.weeklyTrend, lastLoss: item.lastLoss, newsSoon, newsGeladen: newsOk });
     item.ruleSummary = ruleSummary(item.ruleCheck);
     const blocked = blockingViolations(item.ruleCheck);
     if (blocked.length > 0 && item.sig.signal === "ENTRY") {
