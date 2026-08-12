@@ -510,6 +510,67 @@ function analyseRuleEffect() {
   return { rows, n: closed.length };
 }
 
+// Tiams Frage: "es muessen eh ned alle regeln gelten, mehrere sollten es schon
+// sein - aber alle wird meistens schwer." Genau das wird hier beantwortet:
+// gruppiert nach Anzahl erfuellter Qualitaets-Regeln (siehe confluenceScore()
+// in tjr_rules.js) und je Gruppe der Ertrag pro Trade. Wenn 5/5 nicht besser
+// laeuft als 3/5, ist Warten auf perfekte Setups verschenkte Zeit - wenn doch,
+// ist es der Hebel.
+function analyseConfluence() {
+  const closed = DATA.signals.filter((r) =>
+    r.confluence && (r.status === "win" || r.status === "loss") && r.rMultiple != null);
+  const map = new Map();
+  for (const r of closed) {
+    const k = `${r.confluence.erfuellt}/${r.confluence.bewertbar}`;
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(r);
+  }
+  const out = [];
+  for (const [k, a] of map) {
+    out.push({
+      stufe: k,
+      n: a.length,
+      wr: Math.round((a.filter((r) => r.status === "win").length / a.length) * 100),
+      avgR: Math.round((a.reduce((s, r) => s + r.rMultiple, 0) / a.length) * 100) / 100,
+    });
+  }
+  return out.sort((a, b) => parseInt(b.stufe) - parseInt(a.stufe));
+}
+
+function renderConfluence() {
+  const rows = analyseConfluence();
+  if (!rows.length) {
+    return `<div style="font-size:11px;color:#5f6678;margin-top:14px;line-height:1.5;">
+      <b style="color:#7c8399;">Wie viele Bestätigungen braucht es?</b><br>
+      Noch keine abgeschlossenen Trades mit Punktzahl. Sobald welche vorliegen, steht hier,
+      ob 5 von 5 wirklich besser laufen als 3 von 5.</div>`;
+  }
+  const sr = (x) => `${x >= 0 ? "+" : ""}${x.toFixed(2)}R`;
+  return `
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);">
+      <div style="font-size:11px;color:#9aa3b8;margin-bottom:4px;"><b>Wie viele Bestätigungen braucht es?</b></div>
+      <div style="font-size:11px;color:#7c8399;margin-bottom:10px;line-height:1.5;">
+        Gezählt werden nur die Qualitäts-Regeln (Zielquelle, Daily, Woche, Verlust-Abstand, News) —
+        nicht die Setup-Bedingungen, die ohnehin bei jedem Trade erfüllt sind.
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead><tr>
+          <th style="text-align:left;padding:6px 8px;color:#7c8399;">Bestätigungen</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">Trades</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">Trefferquote</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;">Ø R</th>
+        </tr></thead>
+        <tbody>${rows.map((r) => `
+          <tr>
+            <td style="padding:5px 8px;border-top:1px solid rgba(255,255,255,0.05);">${r.stufe}</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${r.n}${r.n < RULE_MIN_N ? ' <span style="color:#5f6678;">(zu wenig)</span>' : ""}</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${r.wr} %</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);color:${r.avgR >= 0 ? "#4fff9c" : "#ff6b6b"};">${sr(r.avgR)}</td>
+          </tr>`).join("")}</tbody>
+      </table>
+    </div>`;
+}
+
 function renderRuleEffect() {
   const el = document.getElementById("ruleEffect");
   if (!el) return;
@@ -524,6 +585,7 @@ function renderRuleEffect() {
         Aufgezeichnet wird seit dem 10.08.2026 — ${gesamt} ältere abgeschlossene Trades
         haben die Aufzeichnung nicht und können hier nicht mitgerechnet werden.
         Sobald je Gruppe ${RULE_MIN_N} Trades vorliegen, erscheint hier die Auswertung.
+        ${renderConfluence()}
       </div>`;
     return;
   }
@@ -575,6 +637,7 @@ function renderRuleEffect() {
         (verletzt ⇒ kein Entry). Das ist eine Empfehlung, keine automatische Änderung —
         die Umstellung geschieht nur, wenn du sie ausdrücklich freigibst.
       </div>` : ""}
+      ${renderConfluence()}
     </details>`;
 }
 
