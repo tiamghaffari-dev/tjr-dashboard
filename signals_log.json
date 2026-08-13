@@ -1949,9 +1949,30 @@
     },
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1786594500000,
+    "rMultiple": -0.18,
+    "postmortem": {
+      "holdHours": 0.6,
+      "mfeR": 0.35,
+      "maeR": -0.27,
+      "towardTargetPct": 18,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.1R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 18% entgegen (max +0.4R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "XRPUSD-1786606719386",
@@ -1965,7 +1986,7 @@
     "target2": null,
     "rr2": null,
     "partialExit": false,
-    "trailStop": 1.014118844985962,
+    "trailStop": 1.0136181312799455,
     "tp1HitTs": null,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
@@ -2008,7 +2029,7 @@
     "target2": null,
     "rr2": null,
     "partialExit": false,
-    "trailStop": 4419.760302490235,
+    "trailStop": 4424.553395019531,
     "tp1HitTs": null,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
