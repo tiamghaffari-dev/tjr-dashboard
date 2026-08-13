@@ -2160,8 +2160,24 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1786624800000,
+    "rMultiple": -0.36,
+    "postmortem": {
+      "holdHours": 2.9,
+      "mfeR": 0.59,
+      "maeR": -0.38,
+      "towardTargetPct": 51,
+      "stopDistAdr": 0.65,
+      "targetDistAdr": 0.75,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.2R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   }
 ]
