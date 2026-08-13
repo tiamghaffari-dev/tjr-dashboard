@@ -2118,5 +2118,50 @@
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Entry: zu frueh · Analyse: These war richtig"
     }
+  },
+  {
+    "id": "GBPUSD-1786628702136",
+    "asset": "GBPUSD",
+    "direction": "LONG",
+    "entryTs": 1786628702136,
+    "entry": 1.349473,
+    "stop": 1.346486,
+    "target": 1.352894,
+    "rr": 1.15,
+    "target2": 1.354059,
+    "rr2": 1.54,
+    "partialExit": true,
+    "trailStop": 1.346486,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 5,
+      "fehlend": [
+        "R1-key-levels"
+      ]
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bullish",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
