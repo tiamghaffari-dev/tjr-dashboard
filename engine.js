@@ -533,6 +533,28 @@ function findUnfilledImbalanceLevels(htfDf) {
   return levels;
 }
 
+// Abstand eines Preises zum naechstgelegenen prominenten HTF-Level, normiert
+// auf die Tagesrange. Gibt null zurueck, wenn die noetigen Daten fehlen - der
+// Aufrufer soll das als "unbekannt" behandeln, nicht als "kein Key-Level".
+function keyLevelNaehe(preis, htfKeyLevels, adr) {
+  if (typeof preis !== "number" || !Array.isArray(htfKeyLevels) || !htfKeyLevels.length) return null;
+  if (!adr || adr <= 0) return null;
+  let naechstes = null, minAbstand = Infinity;
+  for (const lv of htfKeyLevels) {
+    // Imbalance-Kanten hier bewusst AUSSCHLIESSEN: G2 meint TJRs Key-Level
+    // (1H/4H-Liquiditaet, Session-Hochs/-Tiefs), nicht jede offene Kursluecke.
+    if (lv.source === "imbalance") continue;
+    const d = Math.abs(lv.price - preis);
+    if (d < minAbstand) { minAbstand = d; naechstes = lv.price; }
+  }
+  if (naechstes === null) return null;
+  return {
+    level: round6(naechstes),
+    abstand: round6(minAbstand),
+    abstandAdr: Math.round((minAbstand / adr) * 1000) / 1000,
+  };
+}
+
 function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookbackBars = 40, correlatedLtfDf = null) {
   const { trend: htfTrend, bosEvents: htfBos } = computeTrendAndBos(htfDf);
   // Grobe, "wuerde ein Mensch das beim Ueberfliegen des Charts markieren"
@@ -852,6 +874,17 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
     zoneKind: cand.kind, zoneRange: [cand.bottom, cand.top],
     currentPrice, targetSource,
     m1Gate: hasM1Data, m1Confirmation: m1.confirmed ? m1.event : null, zoneTouchTs: m1.touchTs,
+    // Tiam, 2026-08-12: schliesst die dokumentierte Luecke G2. TJRs Checkliste
+    // beginnt mit "a) wait for price to hit key level" - erst wenn der Kurs ein
+    // uebergeordnetes Level erreicht hat, wird nach dem Setup gesucht. Die
+    // Engine startet dagegen direkt beim 5min-Sweep und hat nie geprueft, ob
+    // dieser ueberhaupt an einem Key-Level stattfand. Ein Sweep mitten im
+    // Niemandsland ist laut TJR kein gueltiger Ausgangspunkt.
+    //
+    // Gemessen wird der Abstand des gesweepten Levels zum naechsten prominenten
+    // 4H-Level, normiert auf die Tagesrange (ADR) - absolute Preisabstaende
+    // waeren zwischen Gold, Bitcoin und GBPUSD nicht vergleichbar.
+    sweepKeyLevel: keyLevelNaehe(recentSweep.level, htfKeyLevels, adr),
   });
   return result;
 }
@@ -991,7 +1024,7 @@ if (typeof module !== "undefined") {
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
     findIfvg, findBreakerBlock, find1minConfirmation, findKeyLevelTarget,
     findProminentHtfSwingLevels, findSmtDivergence,
-    findMultipleKeyLevelTargets, medianDailyRange, findUnfilledImbalanceLevels,
+    findMultipleKeyLevelTargets, medianDailyRange, findUnfilledImbalanceLevels, keyLevelNaehe,
     premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }
