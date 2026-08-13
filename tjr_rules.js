@@ -315,8 +315,47 @@ const TJR_RULES = [
       return { status: "ok", detail: `Naechster Termin (${nn.event}) erst in ${nn.minuten} min.` };
     },
   },
+  {
+    id: "R13-sweep-am-key-level",
+    area: "Setup",
+    blocking: false,
+    title: "Der Sweep muss an einem Key-Level stattfinden",
+    quote: "a) wait for price to hit key level",
+    source: "Beginners Guide, Execution-Checklist (~3h22m+) - WOERTLICH vom Bildschirm. "
+      + "Zusammen mit Punkt 1 der Checkliste: \"key levels: 1hr, 4hr liq and session highs/lows\".",
+    // Schliesst die dokumentierte Luecke G2. TJRs Checkliste beginnt damit, dass
+    // der Kurs ZUERST ein uebergeordnetes Level erreicht - erst dann wird nach
+    // dem Setup gesucht. Die Engine startete direkt beim 5min-Sweep und hat nie
+    // geprueft, ob dieser ueberhaupt an einem Key-Level lag.
+    //
+    // Der Schwellwert ist MEINE Setzung, nicht TJRs: er sagt nicht, wie nah
+    // "hit" ist. 0.15x Tagesrange entspricht grob dem, was auf einem Chart noch
+    // als "am Level" durchgeht. Deshalb nicht blockierend - erst messen, ob
+    // Sweeps fern jedes Levels wirklich schlechter laufen. Genau hier warnt
+    // KNOWN_GAPS G2 auch ausdruecklich vor voreiliger Umsetzung.
+    check: (sig) => {
+      const MAX_ABSTAND_ADR = 0.15;
+      if (!sig || !sig.sweep) {
+        return { status: "unbekannt", detail: "Kein Sweep im Signal." };
+      }
+      const kl = sig.sweepKeyLevel;
+      if (!kl || typeof kl.abstandAdr !== "number") {
+        return { status: "unbekannt", detail: "Kein Key-Level oder keine Tagesrange verfuegbar." };
+      }
+      if (kl.abstandAdr <= MAX_ABSTAND_ADR) {
+        return {
+          status: "ok",
+          detail: `Sweep lag am 4H-Level ${kl.level} (${kl.abstandAdr}x Tagesrange entfernt).`,
+        };
+      }
+      return {
+        status: "verletzt",
+        detail: `Sweep lag ${kl.abstandAdr}x Tagesrange vom naechsten Key-Level (${kl.level}) entfernt - `
+          + "also im Niemandsland. TJR startet erst, wenn der Kurs ein Level erreicht hat.",
+      };
+    },
+  },
 ];
-
 
 // ---------------------------------------------------------------------------
 // Confluence-Punktzahl (Tiam, 2026-08-12)
@@ -339,6 +378,7 @@ const QUALITY_RULE_IDS = [
   "R10-htf-vorrang",            // Richtung stimmt mit der Wochenstruktur
   "R11-kein-trade-nach-verlust",// kein frischer Verlust im selben Wert
   "R12-news-fenster",           // kein Nachrichtentermin unmittelbar bevor
+  "R13-sweep-am-key-level",     // Sweep lag an einem echten Key-Level
 ];
 
 // "unbekannt" zaehlt weder als erfuellt noch als moeglich - fehlende Daten
@@ -382,12 +422,11 @@ const KNOWN_GAPS = [
   {
     id: "G2-key-level-touch",
     title: "\"wait for price to hit key level\" als Vorbedingung",
-    why: "TJRs Checklist-Schritt a) verlangt, dass der Preis zuerst ein Key-Level (1H/4H-Liquiditaet, "
-      + "Session-High/Low) erreicht. Die Engine startet stattdessen direkt beim 5min-Sweep und prueft "
-      + "NICHT, ob dieser Sweep an einem uebergeordneten Key-Level stattfand.",
-    relevanz: "MITTEL-HOCH - koennte erklaeren, warum Sweeps in beliebigen Zwischenbereichen "
-      + "zu Fehlrichtungen fuehren. Vor einer Umsetzung erst gegen die Historie pruefen "
-      + "(siehe die Lehre aus dem widerlegten Entry-Befund).",
+    why: "GESCHLOSSEN am 2026-08-12 durch Regel R13. Die Engine misst jetzt den Abstand des "
+      + "gesweepten Levels zum naechsten prominenten 4H-Level, normiert auf die Tagesrange. "
+      + "Der Schwellwert (0.15x) ist eine eigene Setzung - TJR sagt nicht, wie nah \"hit\" ist.",
+    relevanz: "Wird ab jetzt gemessen statt vermutet. R13 ist bewusst nicht blockierend, bis die "
+      + "Auswertung zeigt, ob Sweeps fern jedes Levels wirklich schlechter laufen.",
   },
 ];
 
