@@ -543,41 +543,38 @@ function realizedR(rec, price) {
 
 function resolveSignals(signalsLog, asset, ltfFull) {
   const oldestTs = ltfFull.length ? ltfFull[0].ts : null;
-  const { swingsSorted } = computeTrendAndBos(ltfFull);
   for (const rec of signalsLog) {
     if (rec.asset !== asset.symbol) continue;
     if (rec.status !== "open" && rec.status !== "partial") continue;
-    if (rec.trailStop === undefined || rec.trailStop === null) rec.trailStop = rec.stop;
+    // Tiam, 2026-08-13: "ich hätte eher daran gedacht, dass wenn der Trade eine
+    // Take-Profit-Ebene erreicht hat, dass dieser neue Punkt als Stop-Linie
+    // wäre - weil der Markt verläuft ja nicht immer wunderschön in eine
+    // Richtung, so wird man immer einen Trade verlieren."
+    //
+    // Der Stop bewegt sich ab jetzt NUR noch an erreichten Take-Profit-Ebenen,
+    // nicht mehr an jedem 5min-Swing. Damit ist er bis TP1 der urspruengliche
+    // Stop und danach exakt TP1 - zwei definierte Zustaende statt eines
+    // staendig mitwandernden Wertes.
+    //
+    // Bewusst deterministisch neu gesetzt statt den gespeicherten Wert
+    // weiterzuverwenden: Bestandsdatensaetze tragen noch einen vom alten
+    // Struktur-Trail verengten Stop. Wuerde man den behalten, wuerden offene
+    // Trades weiterhin nach der abgeschafften Logik sterben.
+    rec.trailStop = rec.status === "partial" ? rec.target : rec.stop;
 
     const scanFromTs = rec.status === "partial" && rec.tp1HitTs
       ? parseTs(etPseudoDateStr(rec.tp1HitTs))
       : parseTs(etPseudoDateStr(rec.entryTs));
     const candles = ltfFull.filter((c) => c.ts >= scanFromTs);
 
-    // Alle bestaetigten Swings in Trade-Richtung SEIT Entry (nicht erst seit
-    // scanFromTs, damit ein resumtes "partial"-Record beim naechsten Build-
-    // Lauf dieselben Swings deterministisch nochmal durchlaeuft - laenger
-    // schon angewendete tighten() den Stop dann einfach nicht nochmal,
-    // reine Absicherung/idempotent).
-    const entryPseudoTs = parseTs(etPseudoDateStr(rec.entryTs));
-    const favSwingType = rec.direction === "LONG" ? "L" : "H";
-    const favSwings = swingsSorted
-      .filter((s) => s.type === favSwingType && s.ts > entryPseudoTs)
-      .sort((a, b) => a.ts - b.ts);
-    let swingPtr = 0;
-
+    // Der frueher hier stehende Struktur-Nachzug (Stop wandert bei jedem
+    // bestaetigten 5min-Swing mit) ist am 2026-08-13 ENTFERNT worden. Die
+    // Gegenrechnung an echten Kursdaten ueber 39 abgeschlossene Trades hatte
+    // gezeigt: er kostete rund 16,8R, weil er Gewinner halbierte und Trades,
+    // die ihr Ziel erreicht haetten, in kleine Verluste verwandelte. Auf dem
+    // 5min-Chart entsteht staendig ein neues Zwischentief - der Stop rueckte
+    // damit heran, bevor der Trade ueberhaupt Luft hatte.
     for (const c of candles) {
-      // Struktur-Nachzug zuerst (mit Daten bis inkl. dieser Kerze bekannt),
-      // dann erst pruefen ob Stop/TP diese Kerze beruehrt - sonst waere die
-      // Reihenfolge kausal falsch (Stop muesste VOR der Kerze schon stehen).
-      while (swingPtr < favSwings.length && favSwings[swingPtr].ts <= c.ts) {
-        const sw = favSwings[swingPtr];
-        const candidateStop = rec.direction === "LONG" ? sw.price * 0.9985 : sw.price * 1.0015;
-        const tightens = rec.direction === "LONG" ? candidateStop > rec.trailStop : candidateStop < rec.trailStop;
-        if (tightens) rec.trailStop = candidateStop;
-        swingPtr++;
-      }
-
       if (rec.status === "open") {
         const hitStop = rec.direction === "LONG" ? c.low <= rec.trailStop : c.high >= rec.trailStop;
         const hitTp1 = rec.direction === "LONG" ? c.high >= rec.target : c.low <= rec.target;
@@ -597,7 +594,9 @@ function resolveSignals(signalsLog, asset, ltfFull) {
           }
           rec.status = "partial";
           rec.tp1HitTs = c.ts;
-          if (rec.rr > realizedR(rec, rec.trailStop)) rec.trailStop = rec.target; // Stop mindestens auf TP1 nachziehen, aber nie zuruecksetzen falls Struktur schon weiter war
+          // TP1 erreicht -> ab jetzt ist TP1 die Stop-Linie. Der Rest der
+          // Position kann nun nicht mehr schlechter als TP1 enden.
+          rec.trailStop = rec.target;
           continue; // im selben Durchlauf weiterscannen (jetzt als "partial")
         }
       } else {
