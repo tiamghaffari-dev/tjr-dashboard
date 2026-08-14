@@ -2239,5 +2239,51 @@
       ],
       "summary": "Entry: zu frueh"
     }
+  },
+  {
+    "id": "GBPUSD-1786716407227",
+    "asset": "GBPUSD",
+    "direction": "LONG",
+    "entryTs": 1786716407227,
+    "entry": 1.354683,
+    "stop": 1.351607,
+    "target": 1.358104,
+    "rr": 1.11,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 1.351607,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels"
+      ]
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bullish",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
