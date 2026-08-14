@@ -2179,5 +2179,49 @@
       ],
       "summary": "Stop-Loss: in Ordnung"
     }
+  },
+  {
+    "id": "BTCUSD-1786693012292",
+    "asset": "BTCUSD",
+    "direction": "SHORT",
+    "entryTs": 1786693012292,
+    "entry": 63200.955078,
+    "stop": 63429.488672,
+    "target": 62778.421875,
+    "rr": 1.85,
+    "target2": 62210.148438,
+    "rr2": 4.34,
+    "partialExit": true,
+    "trailStop": 63429.488672,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok"
+    },
+    "confluence": {
+      "erfuellt": 6,
+      "bewertbar": 6,
+      "fehlend": []
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
