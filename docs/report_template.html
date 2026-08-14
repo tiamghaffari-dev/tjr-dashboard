@@ -1772,11 +1772,46 @@ function renderChart(item) {
       const label = rec.status === "partial" ? "TP1 ✓" : "OFFEN";
       text = `${label} ${sign}${rec.unrealizedR}R`;
     }
+    // Tiam, 2026-08-13: "wo genau war der win da? ich will gerne markiert
+    // haben wo er ausgestiegen ist." Berechtigt - bisher gab es NUR EINEN
+    // Marker, und der sass am EINSTIEG. Ein gruenes "WIN" am Einstiegspunkt
+    // liest sich zwangslaeufig so, als waere dort der Gewinn entstanden.
+    // Der Einstiegsmarker heisst deshalb jetzt "EIN" (Richtungspfeil), und der
+    // Ausgang bekommt einen eigenen Marker an rec.resolvedTs.
+    const istOffen = rec.status === "open" || rec.status === "partial";
     markers.push({
       time: entryChartSec(rec.entryTs),
       position: isLong ? "belowBar" : "aboveBar",
-      color: style.color, shape: isLong ? "arrowUp" : "arrowDown", text,
+      color: style.color, shape: isLong ? "arrowUp" : "arrowDown",
+      text: istOffen ? text : (isLong ? "EIN ▲" : "EIN ▼"),
     });
+
+    // Ausstiegsmarker. rec.resolvedTs stammt direkt aus einer Kerze
+    // (rec.resolvedTs = c.ts in resolveSignals) und ist damit BEREITS in der
+    // Kerzen-Zeitbasis - hier also KEIN entryChartSec(), das waere ein
+    // doppelter Versatz. Genau diese Verwechslung hat frueher schon einmal
+    // die Chart-Sprungmarken um mehrere Stunden verschoben.
+    if (!istOffen && rec.resolvedTs) {
+      const r = typeof rec.rMultiple === "number" ? rec.rMultiple : null;
+      const rTxt = r === null ? "" : ` ${r >= 0 ? "+" : ""}${r.toFixed(2)}R`;
+      // Woran ist er ausgestiegen? Preisvergleich statt Vermutung.
+      // Nur benennen, was wirklich bekannt ist: exitPrice wird erst seit
+      // 2026-08-13 mitgeschrieben. Aeltere Datensaetze bekommen bewusst nur
+      // "Ausstieg" statt einer geratenen Beschriftung - viele von ihnen wurden
+      // vom inzwischen abgeschafften Struktur-Trail geschlossen und NICHT am
+      // Ziel, ein "Ziel"-Label waere dort schlicht falsch.
+      let wo = "Ausstieg";
+      const nah = (x, y) => x != null && y != null && Math.abs(x - y) < Math.abs(rec.entry) * 1e-6;
+      if (nah(rec.exitPrice, rec.target2)) wo = "TP2";
+      else if (nah(rec.exitPrice, rec.target)) wo = "TP1";
+      else if (nah(rec.exitPrice, rec.stop)) wo = "Stop";
+      markers.push({
+        time: Math.floor(rec.resolvedTs / 1000),
+        position: isLong ? "aboveBar" : "belowBar",
+        color: style.color, shape: "circle",
+        text: `${style.text} ${wo}${rTxt}`,
+      });
+    }
   }
 
   markers.sort((a, b) => a.time - b.time);
