@@ -584,12 +584,14 @@ function resolveSignals(signalsLog, asset, ltfFull) {
           // klassischer -1R-Verlust mehr, sondern realisiert genau das, was
           // die Struktur bis hierhin gesichert hat (kann 0 oder positiv sein).
           rec.status = "loss"; rec.resolvedTs = c.ts; rec.rMultiple = realizedR(rec, rec.trailStop);
+          rec.exitPrice = rec.trailStop;
           if (rec.rMultiple >= 0) rec.status = "win";
           break;
         }
         if (hitTp1) {
           if (!rec.partialExit) {
             rec.status = "win"; rec.resolvedTs = c.ts; rec.rMultiple = rec.rr;
+            rec.exitPrice = rec.target;
             break;
           }
           rec.status = "partial";
@@ -608,10 +610,12 @@ function resolveSignals(signalsLog, asset, ltfFull) {
           // hinaus verbesserte) nachgezogene Stop tatsaechlich hergibt.
           rec.status = "win"; rec.resolvedTs = c.ts;
           rec.rMultiple = Math.round((0.5 * rec.rr + 0.5 * realizedR(rec, rec.trailStop)) * 100) / 100;
+          rec.exitPrice = rec.trailStop;
           break;
         }
         if (hitTp2) {
           rec.status = "win"; rec.resolvedTs = c.ts; rec.rMultiple = Math.round((0.5 * rec.rr + 0.5 * rec.rr2) * 100) / 100;
+          rec.exitPrice = rec.target2;
           break;
         }
       }
