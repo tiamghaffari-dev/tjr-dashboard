@@ -2192,8 +2192,8 @@
     "target2": 62210.148438,
     "rr2": 4.34,
     "partialExit": true,
-    "trailStop": 63429.488672,
-    "tp1HitTs": null,
+    "trailStop": 62778.421875,
+    "tp1HitTs": 1786681200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -2220,8 +2220,24 @@
     },
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bearish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1786682100000,
+    "rMultiple": 1.85,
+    "postmortem": {
+      "holdHours": 1,
+      "mfeR": 2.52,
+      "maeR": 1.04,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.37,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 1.0R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   }
 ]
