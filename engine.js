@@ -381,8 +381,20 @@ function findKeyLevelTarget(htfSwings, htfDf, wantDir, entry, risk) {
 // to catch [the] extension" - in Trendrichtung darf das Ziel also weiter weg
 // liegen. Das stuetzt die Lockerung, rechtfertigt aber keinen Sprung in den
 // gemessenen Nicht-erreichbar-Bereich.
-const MAX_TP1_ADR_MULT = 0.75;
-const MAX_TP2_ADR_MULT = 1.25;
+// Seit 2026-08-14 zur Laufzeit setzbar (Selbstjustierung, siehe auto_tune.js).
+// Bewusst KEINE const mehr: build.js ueberschreibt die Werte beim Start mit dem
+// Stand aus tuning.json. Die Grenzen, innerhalb derer sich das bewegen darf,
+// stehen in auto_tune.js - hier stehen nur die Ausgangswerte.
+let MAX_TP1_ADR_MULT = 0.75;
+let MAX_TP2_ADR_MULT = 1.25;
+function setTuning(werte) {
+  if (!werte) return;
+  if (typeof werte.MAX_TP1_ADR_MULT === "number") MAX_TP1_ADR_MULT = werte.MAX_TP1_ADR_MULT;
+  if (typeof werte.MAX_TP2_ADR_MULT === "number") MAX_TP2_ADR_MULT = werte.MAX_TP2_ADR_MULT;
+}
+function getTuning() {
+  return { MAX_TP1_ADR_MULT, MAX_TP2_ADR_MULT };
+}
 // Gegenstueck nach unten: ein Stop, der viel enger als die normale
 // Tagesbewegung ist, wird vom blossen Rauschen abgeraeumt, bevor die These
 // ueberhaupt eine Chance hatte (der ETH-Fall oben: 0.164% Stop bei 2.89%
@@ -1025,6 +1037,7 @@ if (typeof module !== "undefined") {
     findIfvg, findBreakerBlock, find1minConfirmation, findKeyLevelTarget,
     findProminentHtfSwingLevels, findSmtDivergence,
     findMultipleKeyLevelTargets, medianDailyRange, findUnfilledImbalanceLevels, keyLevelNaehe,
+    setTuning, getTuning,
     premiumDiscountZone, buildSignal, buildAnnotations,
   };
 }
