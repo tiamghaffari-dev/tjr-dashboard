@@ -1,0 +1,9 @@
+{
+  "aktiv": {
+    "MAX_TP1_ADR_MULT": 0.75,
+    "MAX_TP2_ADR_MULT": 1.25,
+    "NEWS_FENSTER_MIN": 30,
+    "KEY_LEVEL_MAX_ADR": 0.15
+  },
+  "verlauf": []
+}
