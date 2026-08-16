@@ -28,6 +28,17 @@
 // fehlgeschlagen) - ausdruecklich NICHT "ok", damit fehlende Daten nicht
 // stillschweigend als Regelkonformitaet durchgehen.
 
+// Seit 2026-08-14 zur Laufzeit setzbar (Selbstjustierung, siehe auto_tune.js).
+// build.js ueberschreibt das beim Start mit dem Stand aus tuning.json; im
+// Browser bleiben es die Ausgangswerte. Die Grenzen stehen in auto_tune.js.
+const TUNING = { NEWS_FENSTER_MIN: 30, KEY_LEVEL_MAX_ADR: 0.15 };
+function setRuleTuning(werte) {
+  if (!werte) return;
+  for (const k of Object.keys(TUNING)) {
+    if (typeof werte[k] === "number") TUNING[k] = werte[k];
+  }
+}
+
 const TJR_RULES = [
   {
     id: "R1-key-levels",
@@ -294,7 +305,7 @@ const TJR_RULES = [
     // Gilt bewusst fuer ALLE Werte, nicht nur die Waehrungspaare: USD-Termine
     // bewegen auch Gold, den S&P und die Kryptos.
     check: (sig, ctx) => {
-      const NEWS_FENSTER_MIN = 30;
+      const NEWS_FENSTER_MIN = TUNING.NEWS_FENSTER_MIN;
       const nn = ctx && ctx.newsSoon;
       if (!sig || sig.signal !== "ENTRY") {
         return { status: "unbekannt", detail: "Nur fuer aktive ENTRY-Signale relevant." };
@@ -334,7 +345,7 @@ const TJR_RULES = [
     // Sweeps fern jedes Levels wirklich schlechter laufen. Genau hier warnt
     // KNOWN_GAPS G2 auch ausdruecklich vor voreiliger Umsetzung.
     check: (sig) => {
-      const MAX_ABSTAND_ADR = 0.15;
+      const MAX_ABSTAND_ADR = TUNING.KEY_LEVEL_MAX_ADR;
       if (!sig || !sig.sweep) {
         return { status: "unbekannt", detail: "Kein Sweep im Signal." };
       }
@@ -473,5 +484,5 @@ function blockingViolations(results) {
 
 if (typeof module !== "undefined") {
   module.exports = { TJR_RULES, KNOWN_GAPS, evaluateRules, ruleSummary, blockingViolations,
-    confluenceScore, QUALITY_RULE_IDS };
+    confluenceScore, QUALITY_RULE_IDS, setRuleTuning, TUNING };
 }
