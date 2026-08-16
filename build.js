@@ -9,9 +9,25 @@ const fs = require("fs");
 const path = require("path");
 const {
   parseTs, loadCandles, resample, buildSignal, buildAnnotations, computeTrendAndBos,
-  medianDailyRange,
+  medianDailyRange, setTuning,
 } = require("./engine.js");
-const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS, confluenceScore } = require("./tjr_rules.js");
+const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS, confluenceScore, setRuleTuning } = require("./tjr_rules.js");
+const { justiere, bereinigen } = require("./auto_tune.js");
+
+const TUNING_PATH = path.join(__dirname, "tuning.json");
+
+function ladeTuning() {
+  try {
+    return bereinigen(JSON.parse(fs.readFileSync(TUNING_PATH, "utf8")));
+  } catch (e) {
+    return bereinigen(null);   // erster Lauf oder Datei kaputt -> Standardwerte
+  }
+}
+
+function speichereTuning(stand) {
+  fs.writeFileSync(TUNING_PATH, JSON.stringify(stand, null, 2) + "\n");
+}
+
 
 const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 
@@ -830,7 +846,7 @@ function ruleSnapshot(ruleCheck) {
   return out;
 }
 
-function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBias, weeklyTrend) {
+function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBias, weeklyTrend, tuningAktiv) {
   signalsLog.push({
     id: `${asset.symbol}-${firedAtTs}`,
     asset: asset.symbol,
@@ -850,6 +866,10 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBi
     // confluenceScore() in tjr_rules.js. Zaehlt nur die QUALITAETS-Regeln,
     // nicht die Setup-Vorbedingungen (die sind bei jedem Trade erfuellt).
     confluence: confluenceScore(ruleCheck),
+    // Welche justierbaren Werte beim EINSTIEG aktiv waren. Grundlage der
+    // Selbstjustierung: nur so laesst sich spaeter vergleichen, ob ein Wert
+    // tatsaechlich bessere Ergebnisse gebracht hat als ein anderer.
+    tuningAtEntry: tuningAktiv ? { ...tuningAktiv } : null,
     dailyBiasAtEntry: dailyBias && dailyBias.bias ? dailyBias.bias : null,
     weeklyBiasAtEntry: weeklyTrend && weeklyTrend.structureBias ? weeklyTrend.structureBias : null,
     status: "open", resolvedTs: null, rMultiple: null,
@@ -1005,6 +1025,15 @@ async function main() {
   const inWindow = isViennaTradingWindow();
   const prevState = loadPrevState();
   const newState = {};
+  // Selbstjustierung: gespeicherten Stand laden und BEIDEN Modulen geben,
+  // BEVOR irgendein Signal gerechnet wird - sonst liefe der Lauf noch mit den
+  // alten Werten und die Zuordnung "welcher Wert war beim Einstieg aktiv"
+  // waere falsch.
+  const tuning = ladeTuning();
+  setTuning(tuning.aktiv);
+  setRuleTuning(tuning.aktiv);
+  console.log("Selbstjustierung aktiv:", JSON.stringify(tuning.aktiv));
+
   const signalsLog = loadSignalsLog();
   const nowTs = Date.now();
   for (const item of assets) {
@@ -1082,7 +1111,7 @@ async function main() {
     // des Fensters wird ein erkanntes Setup zwar noch angezeigt (siehe
     // outsideBadge im Template), aber nicht mehr geloggt/getradet.
     if (isEntry && !wasEntry && inWindow) {
-      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs, item.ruleCheck, item.dailyBias, item.weeklyTrend);
+      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs, item.ruleCheck, item.dailyBias, item.weeklyTrend, tuning.aktiv);
       console.log(`PAPER-TRADE geloggt: ${item.asset.name} ${item.sig.bias === "bullish" ? "LONG" : "SHORT"}`);
     } else if (isEntry && !wasEntry && !inWindow) {
       console.log(`Setup erkannt, aber ausserhalb Handelsfenster - kein Paper-Trade geloggt: ${item.asset.name}`);
@@ -1154,6 +1183,23 @@ async function main() {
 
   fs.writeFileSync(STATE_PATH, JSON.stringify(newState, null, 2), "utf8");
   fs.writeFileSync(SIGNALS_LOG_PATH, JSON.stringify(signalsLog, null, 2), "utf8");
+  // Selbstjustierung ganz am Ende: erst jetzt sind die Trades dieses Laufs
+  // aufgeloest, also stehen die aktuellsten Ergebnisse zur Verfuegung. Die
+  // Aenderung wirkt bewusst erst im NAECHSTEN Lauf - damit bleibt der Wert,
+  // unter dem ein Trade eroeffnet wurde, waehrend seiner gesamten Laufzeit
+  // derselbe. Sonst waere "welcher Wert war aktiv" nicht mehr eindeutig.
+  try {
+    const ergebnis = justiere(tuning, signalsLog, new Date().toISOString());
+    speichereTuning(ergebnis.stand);
+    for (const zeile of ergebnis.bericht) console.log("  Justierung:", zeile);
+    if (ergebnis.geaendert) {
+      console.log(`SELBSTJUSTIERUNG: ${ergebnis.geaendert.wert} ${ergebnis.geaendert.von} -> ${ergebnis.geaendert.zu}`);
+    }
+  } catch (e) {
+    // Ein Fehler hier darf niemals den Report-Lauf kippen - die Justierung ist
+    // eine Zusatzfunktion, kein Kernbestandteil.
+    console.error("Selbstjustierung fehlgeschlagen (wird ignoriert):", e.message || e);
+  }
   const closedSignals = signalsLog.filter((r) => r.status === "win" || r.status === "loss");
   const wins = closedSignals.filter((r) => r.status === "win").length;
   console.log(`Paper-Trades: ${signalsLog.length} gesamt, ${closedSignals.length} abgeschlossen (${wins} Gewinn), ${signalsLog.filter((r) => r.status === "open" || r.status === "partial").length} offen.`);
