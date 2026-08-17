@@ -2497,9 +2497,20 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bearish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1786966500000,
+    "rMultiple": 2,
+    "exitPrice": 64044.347258,
+    "postmortem": {
+      "holdHours": 1.5,
+      "mfeR": 2.01,
+      "maeR": -0.03,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.48,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1786975338327",
