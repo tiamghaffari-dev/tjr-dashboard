@@ -366,6 +366,42 @@ const TJR_RULES = [
       };
     },
   },
+  {
+    id: "R14-keine-doppelposition",
+    area: "Risiko",
+    // SCHARF GESCHALTET. Anders als R9-R13 ist das keine statistische
+    // Vermutung, sondern Positionsverwaltung: zwei gleichzeitige Positionen im
+    // selben Wert sind doppeltes Risiko auf EINE These. Geht die These nicht
+    // auf, verliert man zweimal - das ist kein Messproblem, das ist Arithmetik.
+    blocking: true,
+    title: "Keine zweite Position im selben Wert",
+    quote: "[keine woertliche TJR-Regel] Abgeleitet aus seinem Risikoverstaendnis "
+      + "(Bootcamp Tag 39, feste Risikostufen je Trade) und aus Tag 49: "
+      + "\"do I want to get another trade in, [put] more risk on the table? no\".",
+    source: "Eigene Regel. Ausloeser war ein realer Fall am 2026-08-17: ETHUSD LONG um "
+      + "14:02 bei 1899.59, dann nochmal LONG um 14:56 bei 1902.23 - 54 Minuten Abstand, "
+      + "0,14 % Preisunterschied, beide mit vollem Stop. Insgesamt 4 solcher Doppel-"
+      + "Einstiege im Log, zusammen -1,6R.",
+    check: (sig, ctx) => {
+      if (!sig || sig.signal !== "ENTRY") {
+        return { status: "unbekannt", detail: "Nur fuer aktive ENTRY-Signale relevant." };
+      }
+      // Fehlende Information darf hier NICHT blockieren - dieselbe Logik wie
+      // ueberall: ein Datenausfall soll nicht stillschweigend alle Signale
+      // abwuergen.
+      if (!ctx || typeof ctx.hasOpenTrade !== "boolean") {
+        return { status: "unbekannt", detail: "Status offener Positionen nicht uebergeben." };
+      }
+      if (ctx.hasOpenTrade) {
+        return {
+          status: "verletzt",
+          detail: "In diesem Wert laeuft bereits eine Position. Ein zweiter Einstieg "
+            + "verdoppelt das Risiko auf dieselbe These, statt es zu streuen.",
+        };
+      }
+      return { status: "ok", detail: "Keine offene Position in diesem Wert." };
+    },
+  },
 ];
 
 // ---------------------------------------------------------------------------
