@@ -1088,7 +1088,15 @@ async function main() {
       }
     }
     item.newsSoon = newsSoon;
-    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann, dailyBias: item.dailyBias, weeklyTrend: item.weeklyTrend, lastLoss: item.lastLoss, newsSoon, newsGeladen: newsOk });
+    // Laeuft in diesem Wert schon eine Position? Muss VOR der Regelpruefung
+    // stehen - bisher wurde das erst weiter unten fuer die Anzeige ermittelt,
+    // also lange nachdem der Einstieg bereits geloggt war. Die Engine wusste
+    // zum Entscheidungszeitpunkt schlicht nicht, dass sie gerade nachlegt.
+    // Realer Fall 2026-08-17: ETHUSD LONG 14:02, nochmal LONG 14:56, beide -1R.
+    const offeneImWert = signalsLog.some(
+      (r) => r.asset === item.asset.symbol && (r.status === "open" || r.status === "partial"),
+    );
+    item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann, dailyBias: item.dailyBias, weeklyTrend: item.weeklyTrend, lastLoss: item.lastLoss, newsSoon, newsGeladen: newsOk, hasOpenTrade: offeneImWert });
     item.ruleSummary = ruleSummary(item.ruleCheck);
     const blocked = blockingViolations(item.ruleCheck);
     if (blocked.length > 0 && item.sig.signal === "ENTRY") {
