@@ -2558,9 +2558,36 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1787006700000,
+    "rMultiple": -1,
+    "exitPrice": 1891.039185,
+    "postmortem": {
+      "holdHours": 12.7,
+      "mfeR": 2.01,
+      "maeR": -1.33,
+      "towardTargetPct": 77,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.62,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.7R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 77% der Zielstrecke (max +2.0R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1786978593092",
@@ -2608,8 +2635,30 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1787005800000,
+    "rMultiple": -1,
+    "exitPrice": 1894.983211,
+    "postmortem": {
+      "holdHours": 11.6,
+      "mfeR": 2.01,
+      "maeR": -1.06,
+      "towardTargetPct": 78,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.52,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 78% der Zielstrecke (max +2.0R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   }
 ]
