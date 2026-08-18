@@ -2673,8 +2673,8 @@
     "target2": 65398.269531,
     "rr2": 5.53,
     "partialExit": true,
-    "trailStop": 63918.938281,
-    "tp1HitTs": null,
+    "trailStop": 64897.558594,
+    "tp1HitTs": 1787048700000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -2711,9 +2711,20 @@
     },
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bearish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1787049000000,
+    "rMultiple": 3.32,
+    "exitPrice": 64897.558594,
+    "postmortem": {
+      "holdHours": 0.4,
+      "mfeR": 3.8,
+      "maeR": 0.18,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.66,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1787062124402",
@@ -2727,8 +2738,8 @@
     "target2": 1935.900024,
     "rr2": 4.84,
     "partialExit": true,
-    "trailStop": 1889.231841,
-    "tp1HitTs": null,
+    "trailStop": 1921.930054,
+    "tp1HitTs": 1787049000000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -2764,9 +2775,20 @@
     },
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1787049300000,
+    "rMultiple": 3.09,
+    "exitPrice": 1921.930054,
+    "postmortem": {
+      "holdHours": 0.4,
+      "mfeR": 3.12,
+      "maeR": -0.22,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.69,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1787062124402",
@@ -2816,8 +2838,35 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1787047800000,
+    "rMultiple": -1,
+    "exitPrice": 772.140038,
+    "postmortem": {
+      "holdHours": 0,
+      "mfeR": -3.69,
+      "maeR": -4.4,
+      "towardTargetPct": 0,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.37,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -3.2R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 0% entgegen (max -3.7R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -3.8R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   }
 ]
