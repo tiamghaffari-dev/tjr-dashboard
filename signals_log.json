@@ -2903,8 +2903,8 @@
     "target2": 65398.269531,
     "rr2": 3.07,
     "partialExit": true,
-    "trailStop": 64331.369701,
-    "tp1HitTs": null,
+    "trailStop": 65007.289063,
+    "tp1HitTs": 1787131800000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -2941,9 +2941,26 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bearish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1787132108000,
+    "rMultiple": 1.58,
+    "exitPrice": 65007.289063,
+    "postmortem": {
+      "holdHours": 0.1,
+      "mfeR": 2.21,
+      "maeR": 1.25,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.39,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 1.3R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1787146172384",
