@@ -3009,9 +3009,26 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1787136600000,
+    "rMultiple": 2.47,
+    "exitPrice": 1955.599976,
+    "postmortem": {
+      "holdHours": 1.3,
+      "mfeR": 2.56,
+      "maeR": -0.17,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.3,
+      "targetDistAdr": 0.74,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +2.5R, der Preis lief danach aber noch bis +8.2R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "BTCUSD-1787148533346",
