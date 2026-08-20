@@ -1118,6 +1118,32 @@ function entryChartSec(entryTsMs) {
   return Math.floor(ms / 1000);
 }
 
+// Tiam, 2026-08-17: "das ist irgendwie komisch gesetzt, das soll ja auf den
+// candles sein". Nachgemessen: 0 von 34 Einstiegsmarkern lagen auf einer Kerze
+// - alle zwischen zweien, mit 2 bis 297 Sekunden Versatz.
+//
+// Grund: entryTs ist der Moment des Builds (Date.now()), also ein beliebiger
+// Zeitpunkt; die Kerzen liegen im 5-Minuten-Raster. lightweight-charts erwartet
+// fuer Marker aber einen Zeitwert, der EXAKT einem Datenpunkt entspricht -
+// sonst platziert es sie nach eigenem Gutduenken zwischen die Kerzen.
+//
+// Deshalb wird auf die ENTHALTENDE Kerze abgerundet (letzte Kerze mit ts <=
+// Zeitpunkt), nicht auf ein Vielfaches von 300 s gerechnet: bei Wochenenden,
+// Handelspausen und Feiertagen gibt es Luecken im Raster, ein errechneter Wert
+// traefe dort ins Leere. Binaere Suche, weil die Marker fuer jedes Signal
+// einzeln gesetzt werden.
+function aufKerze(sec, candles) {
+  if (!candles || !candles.length) return sec;
+  if (sec <= candles[0].time) return candles[0].time;
+  if (sec >= candles[candles.length - 1].time) return candles[candles.length - 1].time;
+  let lo = 0, hi = candles.length - 1;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    if (candles[mid].time <= sec) lo = mid; else hi = mid - 1;
+  }
+  return candles[lo].time;
+}
+
 function drawHistoricalPositionBox(chart, candles, rec, series) {
   if (rec.status === "open" || rec.status === "partial") return; // laufende Position zeigt bereits drawPositionBox()
   if (rec.entry == null || rec.stop == null || rec.target == null) return;
@@ -1125,7 +1151,7 @@ function drawHistoricalPositionBox(chart, candles, rec, series) {
   // (Date.now() beim Build) - siehe pseudoOffsetSec-Kommentar in renderChart()
   // weiter unten fuer die volle Erklaerung. resolvedTs (fuer endTs) ist davon
   // NICHT betroffen, das kommt schon direkt aus einer Kerze.
-  const startTs = entryChartSec(rec.entryTs);
+  const startTs = aufKerze(entryChartSec(rec.entryTs), candles);
   const startIdx = candles.findIndex((c) => c.time >= startTs);
   if (startIdx === -1) return;
 
@@ -1798,7 +1824,7 @@ function renderChart(item) {
     // Ausgang bekommt einen eigenen Marker an rec.resolvedTs.
     const istOffen = rec.status === "open" || rec.status === "partial";
     markers.push({
-      time: entryChartSec(rec.entryTs),
+      time: aufKerze(entryChartSec(rec.entryTs), candles),
       position: isLong ? "belowBar" : "aboveBar",
       color: style.color, shape: isLong ? "arrowUp" : "arrowDown",
       text: istOffen ? text : (isLong ? "EIN ▲" : "EIN ▼"),
@@ -1824,7 +1850,7 @@ function renderChart(item) {
       else if (nah(rec.exitPrice, rec.target)) wo = "TP1";
       else if (nah(rec.exitPrice, rec.stop)) wo = "Stop";
       markers.push({
-        time: Math.floor(rec.resolvedTs / 1000),
+        time: aufKerze(Math.floor(rec.resolvedTs / 1000), candles),
         position: isLong ? "aboveBar" : "belowBar",
         color: style.color, shape: "circle",
         text: `${style.text} ${wo}${rTxt}`,
