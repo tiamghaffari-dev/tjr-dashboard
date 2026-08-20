@@ -3310,8 +3310,25 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1787218800000,
+    "rMultiple": 2,
+    "exitPrice": 1.202535,
+    "postmortem": {
+      "holdHours": 0,
+      "mfeR": 2.5,
+      "maeR": 0.81,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.36,
+      "targetDistAdr": 0.72,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +2.0R, der Preis lief danach aber noch bis +6.7R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   }
 ]
