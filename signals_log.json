@@ -3239,8 +3239,25 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1787198873000,
+    "rMultiple": -1,
+    "exitPrice": 70062.029391,
+    "postmortem": {
+      "holdHours": 0.6,
+      "mfeR": 0.66,
+      "maeR": -1.63,
+      "towardTargetPct": 33,
+      "stopDistAdr": 0.3,
+      "targetDistAdr": 0.59,
+      "findings": [
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.6R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Analyse: These war falsch"
+    }
   }
 ]
