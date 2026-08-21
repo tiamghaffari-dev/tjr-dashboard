@@ -3586,9 +3586,26 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1787310300000,
+    "rMultiple": 2,
+    "exitPrice": 2401.01673,
+    "postmortem": {
+      "holdHours": 0.9,
+      "mfeR": 2.08,
+      "maeR": -0.7,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.32,
+      "targetDistAdr": 0.63,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "^GSPC-1787323807535",
