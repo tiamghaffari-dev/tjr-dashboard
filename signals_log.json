@@ -4198,9 +4198,26 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1787742000000,
+    "rMultiple": -1,
+    "exitPrice": 77711.045313,
+    "postmortem": {
+      "holdHours": 1.3,
+      "mfeR": 0.97,
+      "maeR": -1.17,
+      "towardTargetPct": 49,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "ETHUSD-1787751592719",
@@ -4252,9 +4269,31 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1787742000000,
+    "rMultiple": -1,
+    "exitPrice": 2434.627002,
+    "postmortem": {
+      "holdHours": 1.3,
+      "mfeR": 0.37,
+      "maeR": -1.11,
+      "towardTargetPct": 18,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 18% entgegen (max +0.4R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "GCUSD-1787751592719",
@@ -4364,8 +4403,19 @@
     },
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1787740200000,
+    "rMultiple": 1.29,
+    "exitPrice": 1.358789,
+    "postmortem": {
+      "holdHours": 0.1,
+      "mfeR": 1.35,
+      "maeR": 1.15,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.58,
+      "targetDistAdr": 0.75,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
