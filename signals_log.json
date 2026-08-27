@@ -4347,9 +4347,41 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1787781600000,
+    "rMultiple": -1,
+    "exitPrice": 4697.035,
+    "postmortem": {
+      "holdHours": 12.3,
+      "mfeR": 1.82,
+      "maeR": -1.03,
+      "towardTargetPct": 91,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.49,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "zu eng",
+          "text": "Der Preis hat das urspruengliche Ziel nach dem Stop-Out doch noch erreicht (innerhalb 48h). Die Richtungs-These war also richtig - nur der Stop lag im Rauschbereich und wurde vorher abgeraeumt."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 91% der Zielstrecke (max +1.8R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war richtig",
+          "text": "Die Richtung stimmte am Ende (+0.6R netto) - verloren wurde dieser Trade an der Ausfuehrung (Stop/Timing), nicht an der Analyse."
+        }
+      ],
+      "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Entry: zu frueh · Analyse: These war richtig"
+    }
   },
   {
     "id": "GBPUSD-1787754365138",
