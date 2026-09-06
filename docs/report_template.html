@@ -668,8 +668,6 @@ function renderRuleCheck(item) {
     </details>`;
 }
 
-
-
 // Tiam, 2026-07-12: Struktur-Ueberarbeitung - kompakte Uebersicht statt
 // langer Linkliste. selectedAssetId bleibt ein Modul-Level-Wert (nicht in
 // localStorage), damit die Auswahl innerhalb einer Sitzung stabil bleibt,
@@ -1144,14 +1142,26 @@ function aufKerze(sec, candles) {
   return candles[lo].time;
 }
 
+// Wann wurde tatsaechlich eingestiegen? fillTs ist der Zeitpunkt, an dem der
+// Markt den Einstiegspreis wirklich gehandelt hat, und liegt bereits in der
+// Kerzen-Zeitbasis (aus c.ts) - deshalb KEIN entryChartSec() darauf.
+// entryTs dagegen ist die echte Uhrzeit des Builds und muss umgerechnet
+// werden. Vor der Fuellpruefung (2026-09-05) gab es nur entryTs, und genau
+// deshalb sass der EIN-Marker teils 26 Pips neben dem echten Einstieg.
+function einstiegSek(rec) {
+  return rec.fillTs ? Math.floor(rec.fillTs / 1000) : entryChartSec(rec.entryTs);
+}
+
 function drawHistoricalPositionBox(chart, candles, rec, series) {
   if (rec.status === "open" || rec.status === "partial") return; // laufende Position zeigt bereits drawPositionBox()
+  // Nie ausgefuehrt = es gab keine Position. Nichts zu zeichnen.
+  if (rec.status === "unfilled") return;
   if (rec.entry == null || rec.stop == null || rec.target == null) return;
   // Tiam, 2026-07-22: entryTs kommt aus signals_log.json als ECHTE UTC-Zeit
   // (Date.now() beim Build) - siehe pseudoOffsetSec-Kommentar in renderChart()
   // weiter unten fuer die volle Erklaerung. resolvedTs (fuer endTs) ist davon
   // NICHT betroffen, das kommt schon direkt aus einer Kerze.
-  const startTs = aufKerze(entryChartSec(rec.entryTs), candles);
+  const startTs = aufKerze(einstiegSek(rec), candles);
   const startIdx = candles.findIndex((c) => c.time >= startTs);
   if (startIdx === -1) return;
 
@@ -1800,8 +1810,12 @@ function renderChart(item) {
     open: { color: "#ffd25c", text: "OFFEN" },
     partial: { color: "#4fd6ff", text: "TP1 ✓" },
     stale: { color: "#7c8399", text: "ABGELAUFEN" },
+    unfilled: { color: "#7c8399", text: "NICHT AUSGEFÜHRT" },
   };
   for (const rec of (item.signals || [])) {
+    // Signale ohne Ausfuehrung erzeugen keinen Marker: es gab keinen Trade,
+    // und ein Marker dafuer wuerde den Chart nur zumuellen.
+    if (rec.status === "unfilled") continue;
     drawHistoricalPositionBox(chart, candles, rec, series);
     const style = SIGNAL_OUTCOME_STYLE[rec.status] || SIGNAL_OUTCOME_STYLE.open;
     const isLong = rec.direction === "LONG";
@@ -1811,7 +1825,12 @@ function renderChart(item) {
     // erreicht, Stop nachgezogen, Rest laeuft Richtung TP2) bekommt denselben
     // Fortschritts-Zusatz, aber mit eigenem Label statt "OFFEN".
     let text = style.text;
-    if ((rec.status === "open" || rec.status === "partial") && typeof rec.unrealizedR === "number") {
+    // Geloggt, aber der Markt war noch nicht am Einstiegspreis: als
+    // schwebend ausweisen statt als offene Position. Ein "OFFEN +0,4R" waere
+    // hier schlicht erfunden.
+    if (rec.status === "open" && !rec.fillTs) {
+      text = "WARTET AUF EINSTIEG";
+    } else if ((rec.status === "open" || rec.status === "partial") && typeof rec.unrealizedR === "number") {
       const sign = rec.unrealizedR >= 0 ? "+" : "";
       const label = rec.status === "partial" ? "TP1 ✓" : "OFFEN";
       text = `${label} ${sign}${rec.unrealizedR}R`;
@@ -1824,7 +1843,7 @@ function renderChart(item) {
     // Ausgang bekommt einen eigenen Marker an rec.resolvedTs.
     const istOffen = rec.status === "open" || rec.status === "partial";
     markers.push({
-      time: aufKerze(entryChartSec(rec.entryTs), candles),
+      time: aufKerze(einstiegSek(rec), candles),
       position: isLong ? "belowBar" : "aboveBar",
       color: style.color, shape: isLong ? "arrowUp" : "arrowDown",
       text: istOffen ? text : (isLong ? "EIN ▲" : "EIN ▼"),
