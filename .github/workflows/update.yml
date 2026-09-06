@@ -55,6 +55,16 @@ jobs:
         run: |
           git config user.name "tjr-bot"
           git config user.email "actions@github.com"
-          git add docs/index.html docs/chart.html docs/history.html state.json signals_log.json session_log.json
+          # tuning.json MUSS mit committet werden: die Selbstjustierung schreibt
+          # ihren Stand dorthin. Fehlte es hier, waere jede selbst vorgenommene
+          # Anpassung beim naechsten Lauf spurlos weg - der Auto-Tune haette
+          # ewig bei den Startwerten gestanden, ohne dass es jemand merkt.
+          # (Gefunden 2026-09-05, bevor die erste echte Anpassung anstand.)
+          git add docs/index.html docs/chart.html docs/history.html state.json signals_log.json session_log.json tuning.json
+          # daten/ = selbst aufgebaute 5min-Kurshistorie (siehe kerzen_archiv.js).
+          # Als if-Block statt "&&", weil ein fehlgeschlagenes Test-Kommando bei
+          # bash -e den ganzen Schritt abbrechen wuerde - der Ordner existiert
+          # beim allerersten Lauf noch nicht.
+          if [ -d daten ]; then git add daten; fi
           git diff --quiet --cached || git commit -m "Report aktualisiert: $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
