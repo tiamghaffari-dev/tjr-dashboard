@@ -122,8 +122,14 @@ function tageSeit(iso) {
 function justiere(stand, signalsLog, jetztIso) {
   const s = bereinigen(stand);
   const bericht = [];
+  // Phantom-Fuellungs-Fund 2026-09-05: Trades, bei denen der Markt nie am
+  // Einstiegspreis war ("unfilled"), sind keine Trades - und Altbestaende, die
+  // sich nicht mehr ehrlich nachrechnen liessen ("unzuverlaessig"), sind keine
+  // Belege. Wuerde die Selbstjustierung sie mitzaehlen, wuerde sie ihre Werte
+  // an Ergebnissen ausrichten, die es nie gab.
   const geschlossen = (signalsLog || []).filter(
-    (r) => (r.status === "win" || r.status === "loss") && typeof r.rMultiple === "number",
+    (r) => (r.status === "win" || r.status === "loss")
+      && !r.unzuverlaessig && typeof r.rMultiple === "number",
   );
 
   const letzte = s.verlauf.length ? s.verlauf[s.verlauf.length - 1].wann : null;
