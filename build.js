@@ -13,6 +13,7 @@ const {
 } = require("./engine.js");
 const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS, confluenceScore, setRuleTuning } = require("./tjr_rules.js");
 const { justiere, bereinigen } = require("./auto_tune.js");
+const { archiviere, bestand } = require("./kerzen_archiv.js");
 
 const TUNING_PATH = path.join(__dirname, "tuning.json");
 
@@ -27,7 +28,6 @@ function ladeTuning() {
 function speichereTuning(stand) {
   fs.writeFileSync(TUNING_PATH, JSON.stringify(stand, null, 2) + "\n");
 }
-
 
 const NTFY_TOPIC = process.env.NTFY_TOPIC || null;
 
@@ -498,6 +498,13 @@ function loadSessionLog() {
 // (wiederkehrende Fehlermuster erkennen) passiert separat beim periodischen
 // Review dieser Datei, siehe Memory project_tjr_trade_journal.
 const STALE_DAYS = 10;
+// Wie lange ein noch nicht ausgefuehrter Einstieg gueltig bleibt. TJRs Setups
+// sind Intraday - ein Limit an der Zone, das binnen dieser Frist nicht
+// beruehrt wird, ist tot, und der Kontext (Sweep, Bestaetigung) ist es auch.
+// Bewusst grosszuegig gewaehlt: lieber ein Trade zu viel geprueft als ein
+// echter verworfen. Kandidat fuer die Selbstjustierung, sobald genug
+// korrigierte Trades vorliegen.
+const FILL_WINDOW_H = 8;
 // Tiam, 2026-07-22 (Korrektheits-Audit auf eigenen Wunsch: "arbeite weiter an
 // der KI [...] das sie wirklich alles korrekt macht"): entryTs ist ein
 // echter UTC-Zeitstempel (Date.now() beim Loggen), aber jede Kerze in
@@ -578,10 +585,59 @@ function resolveSignals(signalsLog, asset, ltfFull) {
     // Trades weiterhin nach der abgeschafften Logik sterben.
     rec.trailStop = rec.status === "partial" ? rec.target : rec.stop;
 
+    const entryPseudo = parseTs(etPseudoDateStr(rec.entryTs));
     const scanFromTs = rec.status === "partial" && rec.tp1HitTs
       ? parseTs(etPseudoDateStr(rec.tp1HitTs))
-      : parseTs(etPseudoDateStr(rec.entryTs));
-    const candles = ltfFull.filter((c) => c.ts >= scanFromTs);
+      : (rec.fillTs || entryPseudo);
+    let candles = ltfFull.filter((c) => c.ts >= scanFromTs);
+
+    // ------------------------------------------------------------------
+    // FUELLPRUEFUNG - Tiam, 2026-09-05, erkannt aus einem Chart-Screenshot:
+    // "das stimmt gar ned mal, es ist falsch platziert."
+    //
+    // Bis hierher galt ein Trade in dem Moment als eroeffnet, in dem er
+    // geloggt wurde - OHNE zu pruefen, ob der Markt den Einstiegspreis je
+    // erreicht hat. `rec.entry` ist aber ein GEPLANTES Niveau (die Zone),
+    // keine Ausfuehrung. War der Kurs schon durchgelaufen, traf die erste
+    // gescannte Kerze sofort das Ziel und buchte einen Gewinn, den es nie
+    // zu holen gab.
+    //
+    // Nachgemessen an echten Kursdaten: 12 von 30 pruefbaren Trades waren
+    // NIE fuellbar, und genau diese trugen +11,61R. Die 18 echt handelbaren
+    // ergaben -2,27R. Der gesamte ausgewiesene Vorsprung war ein Artefakt.
+    //
+    // Verstaerkt wurde das durch das Log-Fenster (15-17 Wien): ein Setup von
+    // 14:50 wird erst um 16:26 eingetragen - die Bewegung ist dann oft vorbei.
+    // ------------------------------------------------------------------
+    if (rec.status === "open" && !rec.fillTs) {
+      // LONG: Kauflimit an der Zone fuellt, wenn der Kurs bis dorthin faellt.
+      // Steht er schon darunter, ist die erste Kerze ohnehin ein Treffer.
+      const trifft = (c) => (rec.direction === "LONG" ? c.low <= rec.entry : c.high >= rec.entry);
+      const frist = entryPseudo + FILL_WINDOW_H * 3600000;
+      const idx = candles.findIndex((c) => c.ts <= frist && trifft(c));
+      if (idx === -1) {
+        // Nur dann endgueltig verwerfen, wenn wir Kerzen BIS UEBER die Frist
+        // hinaus haben - sonst wuerde eine blosse Datenluecke einen gueltigen
+        // Trade toeten.
+        if (candles.some((c) => c.ts > frist)) {
+          rec.status = "unfilled"; rec.rMultiple = 0; rec.resolvedTs = frist;
+        }
+        continue;   // sonst: bleibt schwebend, naechster Lauf schaut erneut
+      }
+      const fk = candles[idx];
+      rec.fillTs = fk.ts;
+      // Auf der Fuell-Kerze selbst NUR den Stop pruefen, niemals das Ziel:
+      // welche Seite innerhalb dieser 5 Minuten zuerst beruehrt wurde, ist
+      // aus einer OHLC-Kerze nicht ableitbar. Genau diese Optimismus-Annahme
+      // hat den Phantom-Fehler erzeugt - im Zweifel gegen den Trade werten.
+      const stopAufFuellkerze = rec.direction === "LONG" ? fk.low <= rec.stop : fk.high >= rec.stop;
+      if (stopAufFuellkerze) {
+        rec.status = "loss"; rec.resolvedTs = fk.ts;
+        rec.rMultiple = realizedR(rec, rec.stop); rec.exitPrice = rec.stop;
+        continue;
+      }
+      candles = candles.slice(idx + 1);
+    }
 
     // Der frueher hier stehende Struktur-Nachzug (Stop wandert bei jedem
     // bestaetigten 5min-Swing mit) ist am 2026-08-13 ENTFERNT worden. Die
@@ -670,7 +726,13 @@ const POSTMORTEM_ENTRY_WINDOW_H = 2;   // Fenster fuer "haette es kurz danach ei
 
 function computePostmortem(rec, ltfFull, adr) {
   if (!rec.resolvedTs || !rec.entry || !rec.stop) return null;
-  const entryPseudo = parseTs(etPseudoDateStr(rec.entryTs));
+  // Nicht ausgefuehrte Signale haben keinen Verlauf, den man obduzieren
+  // koennte - es gab nie eine Position.
+  if (rec.status === "unfilled") return null;
+  // Ab der TATSAECHLICHEN Ausfuehrung messen, nicht ab dem Zeitpunkt, an dem
+  // das Signal geloggt wurde. Sonst wandert Kursbewegung in die Obduktion,
+  // die vor dem Einstieg lag (Phantom-Fuellungs-Fund 2026-09-05).
+  const entryPseudo = rec.fillTs || parseTs(etPseudoDateStr(rec.entryTs));
   const risk = Math.abs(rec.entry - rec.stop);
   if (!risk) return null;
   const long = rec.direction === "LONG";
@@ -820,6 +882,9 @@ function computePostmortem(rec, ltfFull, adr) {
 
 function unrealizedR(rec, currentPrice) {
   if ((rec.status !== "open" && rec.status !== "partial") || currentPrice == null) return null;
+  // Noch nicht ausgefuehrt = es gibt keine Position, also auch keinen
+  // Zwischenstand. Ein Wert waere hier frei erfunden.
+  if (rec.status === "open" && !rec.fillTs) return null;
   const riskDist = Math.abs(rec.entry - rec.stop);
   if (!riskDist) return null;
   const moveDist = rec.direction === "LONG" ? currentPrice - rec.entry : rec.entry - currentPrice;
@@ -872,8 +937,58 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBi
     tuningAtEntry: tuningAktiv ? { ...tuningAktiv } : null,
     dailyBiasAtEntry: dailyBias && dailyBias.bias ? dailyBias.bias : null,
     weeklyBiasAtEntry: weeklyTrend && weeklyTrend.structureBias ? weeklyTrend.structureBias : null,
+    // fillTs = wann der Markt den Einstiegspreis TATSAECHLICH gehandelt hat.
+    // null = noch nicht ausgefuehrt, der Trade ist bis dahin nur ein Plan.
+    // fuellGeprueft markiert diesen Datensatz als bereits nach der neuen
+    // Logik entstanden, damit die einmalige Neuberechnung ihn nicht anfasst.
+    fillTs: null, fuellGeprueft: true,
     status: "open", resolvedTs: null, rMultiple: null,
   });
+}
+
+// ---------------------------------------------------------------------------
+// EINMALIGE NEUBERECHNUNG der Altbestaende nach dem Phantom-Fuellungs-Fund.
+// Tiams Entscheidung 2026-09-05: "Neu rechnen, wo Daten da sind."
+//
+// Jeder Datensatz wird genau einmal angefasst (`fuellGeprueft`), danach nie
+// wieder - die Funktion ist damit gefahrlos idempotent, auch wenn der Lauf
+// alle paar Minuten startet.
+//
+// Trades, die aelter sind als die vorgehaltene 5min-Historie, lassen sich
+// NICHT ehrlich nachrechnen. Sie werden als `unzuverlaessig` markiert und aus
+// allen Kennzahlen genommen, statt sie zu raten oder stillschweigend zu
+// behalten. Genau deshalb gibt es ab jetzt das Kerzen-Archiv.
+// ---------------------------------------------------------------------------
+function einmaligeFuellNeuberechnung(signalsLog, asset, ltfFull) {
+  // OHNE Kerzen NICHTS anfassen. Sonst wuerde ein einzelner fehlgeschlagener
+  // Datenabruf alle Trades dieses Assets dauerhaft als "unzuverlaessig"
+  // brandmarken - und `fuellGeprueft` macht das unumkehrbar. Eine vorueber-
+  // gehende Netzstoerung darf keine Historie vernichten.
+  if (!ltfFull || !ltfFull.length) return;
+  const oldestTs = ltfFull[0].ts;
+  let neuGerechnet = 0, markiert = 0;
+  for (const rec of signalsLog) {
+    if (rec.asset !== asset.symbol || rec.fuellGeprueft) continue;
+    const entryPseudo = parseTs(etPseudoDateStr(rec.entryTs));
+    rec.fuellGeprueft = true;
+    if (entryPseudo < oldestTs) {
+      rec.unzuverlaessig = true;   // vor der Korrektur entstanden, nicht nachrechenbar
+      markiert++;
+      continue;
+    }
+    // Auf Anfang zuruecksetzen und von resolveSignals ehrlich neu aufloesen
+    // lassen. Die Obduktion muss mit weg - sie beschreibt sonst einen Verlauf,
+    // den es nach der Korrektur so nicht mehr gibt.
+    rec.status = "open";
+    rec.fillTs = null; rec.resolvedTs = null; rec.rMultiple = null;
+    rec.exitPrice = null; rec.tp1HitTs = null; rec.trailStop = rec.stop;
+    delete rec.postmortem;
+    delete rec.unrealizedR;
+    neuGerechnet++;
+  }
+  if (neuGerechnet || markiert) {
+    console.log(`  Fuellpruefung ${asset.symbol}: ${neuGerechnet} neu gerechnet, ${markiert} als unzuverlaessig markiert`);
+  }
 }
 
 // Tiam tradet 15:00-17:00 Wiener Zeit (NY-Session, siehe README/Cron-
@@ -1034,6 +1149,34 @@ async function main() {
   setRuleTuning(tuning.aktiv);
   console.log("Selbstjustierung aktiv:", JSON.stringify(tuning.aktiv));
 
+  // EINMALIGE NACHLADUNG der vollen 60 Tage. Der normale Lauf holt nur 25 Tage
+  // (CHART_HISTORY_DAYS + FETCH_BUFFER_DAYS); die restlichen ~35 Tage, die
+  // Yahoo noch hergibt, waeren sonst fuer immer verloren, sobald sie aus dem
+  // 60-Tage-Fenster fallen. Laeuft genau einmal - danach verhindert die
+  // Markierungsdatei jede Wiederholung, und das laufende Mitschreiben
+  // uebernimmt ab dann die Fortschreibung.
+  const BACKFILL_MARKE = path.join(__dirname, "daten", ".nachladung_erledigt");
+  if (!fs.existsSync(BACKFILL_MARKE)) {
+    console.log("Einmalige Nachladung der Kurshistorie (60 Tage) laeuft ...");
+    let summe = 0;
+    for (const asset of ASSETS) {
+      try {
+        const yahooSymbol = YAHOO_SYMBOL_MAP[asset.symbol];
+        if (!yahooSymbol) continue;
+        const roh = await fetchYahooChart(yahooSymbol, "5m", 60);
+        const kerzen = loadCandles(roh);
+        const a = archiviere(__dirname, asset.symbol, kerzen);
+        summe += a.neu;
+        console.log(`  nachgeladen ${asset.symbol}: ${kerzen.length} Kerzen, davon ${a.neu} neu`);
+      } catch (e) {
+        console.error(`  Nachladung fehlgeschlagen fuer ${asset.symbol} (wird uebersprungen):`, e.message || e);
+      }
+    }
+    fs.mkdirSync(path.dirname(BACKFILL_MARKE), { recursive: true });
+    fs.writeFileSync(BACKFILL_MARKE, new Date().toISOString() + "\n", "utf8");
+    console.log(`Nachladung abgeschlossen: ${summe} Kerzen ergaenzt.`);
+  }
+
   const signalsLog = loadSignalsLog();
   const nowTs = Date.now();
   for (const item of assets) {
@@ -1125,6 +1268,18 @@ async function main() {
       console.log(`Setup erkannt, aber ausserhalb Handelsfenster - kein Paper-Trade geloggt: ${item.asset.name}`);
     }
     if (ltfFullBySymbol[item.asset.symbol]) {
+      // Kurshistorie mitschreiben, bevor irgendetwas anderes passiert. Nutzt
+      // die ohnehin geholten 5min-Kerzen - keine zusaetzliche Netzabfrage.
+      // Hintergrund: Yahoo liefert 5min nur 60 Tage rueckwirkend, alles
+      // Aeltere ist unwiederbringlich weg (siehe kerzen_archiv.js).
+      // Ein Fehler hier darf den Lauf niemals kippen - reines Mitschreiben.
+      try {
+        const a = archiviere(__dirname, item.asset.symbol, ltfFullBySymbol[item.asset.symbol]);
+        if (a.neu > 0) console.log(`  Archiv ${item.asset.symbol}: +${a.neu} Kerzen (${a.dateien.join(", ")})`);
+      } catch (e) {
+        console.error(`Kerzen-Archiv fehlgeschlagen fuer ${item.asset.symbol} (wird ignoriert):`, e.message || e);
+      }
+      einmaligeFuellNeuberechnung(signalsLog, item.asset, ltfFullBySymbol[item.asset.symbol]);
       resolveSignals(signalsLog, item.asset, ltfFullBySymbol[item.asset.symbol]);
       // Obduktion direkt nach dem Aufloesen: jeder abgeschlossene Trade dieses
       // Assets, der noch keine hat, bekommt eine. Einmal berechnet bleibt sie
@@ -1191,6 +1346,11 @@ async function main() {
 
   fs.writeFileSync(STATE_PATH, JSON.stringify(newState, null, 2), "utf8");
   fs.writeFileSync(SIGNALS_LOG_PATH, JSON.stringify(signalsLog, null, 2), "utf8");
+  try {
+    const b = bestand(__dirname);
+    console.log(`Kurshistorie im Archiv: ${b.zeilen} Kerzen in ${b.dateien} Dateien (${b.von} bis ${b.bis})`);
+  } catch (e) { /* nur Protokoll, nie kritisch */ }
+
   // Selbstjustierung ganz am Ende: erst jetzt sind die Trades dieses Laufs
   // aufgeloest, also stehen die aktuellsten Ergebnisse zur Verfuegung. Die
   // Aenderung wirkt bewusst erst im NAECHSTEN Lauf - damit bleibt der Wert,
