@@ -141,7 +141,6 @@
     <div id="pmValidation"></div>
   </div>
 
-
 <script>
 const DATA = __PRECOMPUTED_JSON__;
 
@@ -154,6 +153,10 @@ const STATUS_META = {
   open:    { label: "OFFEN",        cls: "badge-open" },
   partial: { label: "TP1 ERREICHT", cls: "badge-open" },
   stale:   { label: "ABGELAUFEN",   cls: "badge-stale" },
+  // Der Markt war nie am Einstiegspreis - es kam kein Trade zustande.
+  // Bewusst sichtbar gelistet statt stillschweigend geschluckt: wie oft ein
+  // Setup nicht zur Ausfuehrung kommt, ist selbst eine wichtige Zahl.
+  unfilled: { label: "NICHT AUSGEFÜHRT", cls: "badge-stale" },
 };
 
 function assetMeta(symbol) {
@@ -219,7 +222,7 @@ function toPseudoTs(realEpochMs) { return parseTs(etPseudoDateStr(realEpochMs));
 
 function computeEquityCurve(signals) {
   const closed = signals
-    .filter((r) => (r.status === "win" || r.status === "loss" || r.status === "stale")
+    .filter((r) => (r.status === "win" || r.status === "loss" || r.status === "stale" || r.status === "unfilled")
       && typeof r.rMultiple === "number" && r.resolvedTs)
     .sort((a, b) => a.resolvedTs - b.resolvedTs);
 
@@ -308,10 +311,21 @@ function renderEquity(eq) {
     </div>`;
 }
 
+// Nach dem Phantom-Fuellungs-Fund (2026-09-05, siehe build.js resolveSignals):
+// Ein Trade zaehlt nur, wenn er TATSAECHLICH ausgefuehrt wurde und ehrlich
+// nachgerechnet werden konnte.
+//   status "unfilled"   -> der Markt war nie am Einstiegspreis, es gab keinen Trade
+//   unzuverlaessig=true -> vor der Korrektur entstanden, 5min-Historie reicht
+//                          nicht mehr zurueck, um es nachzurechnen
+// Beide fliessen in KEINE Kennzahl ein. Lieber weniger Trades als falsche.
+function bewertbar(r) {
+  return (r.status === "win" || r.status === "loss") && !r.unzuverlaessig;
+}
+
 function computeStats(signals) {
-  const closed = signals.filter((r) => r.status === "win" || r.status === "loss");
-  const wins = signals.filter((r) => r.status === "win").length;
-  const losses = signals.filter((r) => r.status === "loss").length;
+  const closed = signals.filter(bewertbar);
+  const wins = signals.filter((r) => bewertbar(r) && r.status === "win").length;
+  const losses = signals.filter((r) => bewertbar(r) && r.status === "loss").length;
   const open = signals.filter((r) => r.status === "open" || r.status === "partial").length;
   const stale = signals.filter((r) => r.status === "stale").length;
   const winRate = closed.length ? Math.round((wins / closed.length) * 100) : null;
@@ -459,7 +473,7 @@ const PM_MIN_N = 5;          // darunter ist jede Aussage Rauschen
 const PM_MEANINGFUL_WR = 15; // Prozentpunkte Unterschied, ab denen es zaehlt
 
 function validateFindings() {
-  const closed = DATA.signals.filter((r) => r.postmortem && (r.status === "win" || r.status === "loss"));
+  const closed = DATA.signals.filter((r) => r.postmortem && bewertbar(r));
   if (closed.length < PM_MIN_N * 2) return [];
   const types = new Set();
   for (const r of closed) for (const f of r.postmortem.findings) types.add(`${f.area}: ${f.verdict}`);
@@ -505,7 +519,7 @@ const RULE_MEANINGFUL_R = 0.25;  // R pro Trade Unterschied, ab dem es zaehlt
 
 function analyseRuleEffect() {
   const closed = DATA.signals.filter((r) =>
-    r.rules && (r.status === "win" || r.status === "loss") && r.rMultiple != null);
+    r.rules && bewertbar(r) && r.rMultiple != null);
   if (!closed.length) return { rows: [], n: 0 };
   const ids = new Set();
   for (const r of closed) for (const k of Object.keys(r.rules)) ids.add(k);
@@ -539,7 +553,7 @@ function analyseRuleEffect() {
 // ist es der Hebel.
 function analyseConfluence() {
   const closed = DATA.signals.filter((r) =>
-    r.confluence && (r.status === "win" || r.status === "loss") && r.rMultiple != null);
+    r.confluence && bewertbar(r) && r.rMultiple != null);
   const map = new Map();
   for (const r of closed) {
     const k = `${r.confluence.erfuellt}/${r.confluence.bewertbar}`;
@@ -596,7 +610,7 @@ function renderRuleEffect() {
   const el = document.getElementById("ruleEffect");
   if (!el) return;
   const { rows, n } = analyseRuleEffect();
-  const gesamt = DATA.signals.filter((r) => r.status === "win" || r.status === "loss").length;
+  const gesamt = DATA.signals.filter(bewertbar).length;
   if (!rows.length) {
     el.innerHTML = `
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
@@ -737,7 +751,7 @@ function renderTable() {
           // R steht klein daneben statt als einziger Wert.
           let ergebnis = "–";
           const pnl = EQUITY.pnlById.get(r.id);
-          if (r.status === "win" || r.status === "loss") {
+          if (bewertbar(r)) {
             const sign = r.rMultiple >= 0 ? "+" : "";
             ergebnis = typeof pnl === "number"
               ? `${fmtUsd(pnl)} <span style="color:#7c8399;font-size:10px;">(${sign}${r.rMultiple}R)</span>`
