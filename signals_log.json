@@ -4714,5 +4714,60 @@
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: nicht ursaechlich · Entry: zu frueh · Analyse: These war richtig"
     }
+  },
+  {
+    "id": "BTCUSD-1788786620898",
+    "asset": "BTCUSD",
+    "direction": "LONG",
+    "entryTs": 1788786620898,
+    "entry": 79496.902344,
+    "stop": 79032.263281,
+    "target": 80426.180469,
+    "rr": 2,
+    "target2": 81812.3125,
+    "rr2": 4.98,
+    "partialExit": true,
+    "trailStop": 79032.263281,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.75,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bullish",
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
