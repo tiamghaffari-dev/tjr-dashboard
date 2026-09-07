@@ -4841,8 +4841,8 @@
     "weeklyBiasAtEntry": "bearish",
     "fillTs": null,
     "fuellGeprueft": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "unfilled",
+    "resolvedTs": 1788803517000,
+    "rMultiple": 0
   }
 ]
