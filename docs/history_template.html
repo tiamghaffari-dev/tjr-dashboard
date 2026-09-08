@@ -222,8 +222,7 @@ function toPseudoTs(realEpochMs) { return parseTs(etPseudoDateStr(realEpochMs));
 
 function computeEquityCurve(signals) {
   const closed = signals
-    .filter((r) => (r.status === "win" || r.status === "loss" || r.status === "stale" || r.status === "unfilled")
-      && typeof r.rMultiple === "number" && r.resolvedTs)
+    .filter((r) => bewertbar(r) && typeof r.rMultiple === "number" && r.resolvedTs)
     .sort((a, b) => a.resolvedTs - b.resolvedTs);
 
   let balance = EQUITY_START_BALANCE;
@@ -319,6 +318,18 @@ function renderEquity(eq) {
 //                          nicht mehr zurueck, um es nachzurechnen
 // Beide fliessen in KEINE Kennzahl ein. Lieber weniger Trades als falsche.
 function bewertbar(r) {
+  // beobachtung = ausserhalb von TJRs Handelsfenster nur mitgeschrieben.
+  // Zaehlt NIE zur Bilanz - Tiam haette diese Trades nach TJRs Regeln gar
+  // nicht genommen.
+  return (r.status === "win" || r.status === "loss") && !r.unzuverlaessig && !r.beobachtung;
+}
+
+// Breitere Basis, ausschliesslich zum MESSEN der Regelwirkung: hier duerfen
+// die Beobachtungen mit. Sie verdreifachen ungefaehr die Datenmenge. Die
+// Auswertung zeigt deshalb IMMER beide Basen nebeneinander - stimmen sie
+// ueberein, ist der Befund belastbarer; weichen sie ab, ist genau das der
+// interessante Befund (dann haengt die Regel an der Handelszeit).
+function bewertbarMitBeobachtung(r) {
   return (r.status === "win" || r.status === "loss") && !r.unzuverlaessig;
 }
 
@@ -329,7 +340,10 @@ function computeStats(signals) {
   const open = signals.filter((r) => r.status === "open" || r.status === "partial").length;
   const stale = signals.filter((r) => r.status === "stale").length;
   const winRate = closed.length ? Math.round((wins / closed.length) * 100) : null;
-  return { total: signals.length, wins, losses, open, stale, closed: closed.length, winRate };
+  const beobachtungen = signals.filter((r) => r.beobachtung).length;
+  // total meint die OFFIZIELLEN Signale - Beobachtungen sind kein Teil davon.
+  return { total: signals.length - beobachtungen, wins, losses, open, stale,
+           closed: closed.length, winRate, beobachtungen };
 }
 
 function renderSummary() {
@@ -341,7 +355,8 @@ function renderSummary() {
     <div class="summary-card"><div class="label">Wins</div><div class="value v-win">${s.wins}</div></div>
     <div class="summary-card"><div class="label">Losses</div><div class="value v-loss">${s.losses}</div></div>
     <div class="summary-card"><div class="label">Offen</div><div class="value v-open">${s.open}</div></div>
-    <div class="summary-card"><div class="label">Abgelaufen</div><div class="value v-neutral">${s.stale}</div></div>`;
+    <div class="summary-card"><div class="label">Abgelaufen</div><div class="value v-neutral">${s.stale}</div></div>
+    <div class="summary-card" title="Signale außerhalb der Handelszeiten, nur zur Messung mitgeschrieben. Zählen NICHT zur Bilanz."><div class="label">Beobachtungen</div><div class="value v-neutral">${s.beobachtungen}</div></div>`;
 }
 
 function renderAssetCards() {
@@ -517,9 +532,10 @@ function validateFindings() {
 const RULE_MIN_N = 5;        // je Gruppe - darunter ist alles Rauschen
 const RULE_MEANINGFUL_R = 0.25;  // R pro Trade Unterschied, ab dem es zaehlt
 
-function analyseRuleEffect() {
+function analyseRuleEffect(filter) {
+  const basis = filter || bewertbar;
   const closed = DATA.signals.filter((r) =>
-    r.rules && bewertbar(r) && r.rMultiple != null);
+    r.rules && basis(r) && r.rMultiple != null);
   if (!closed.length) return { rows: [], n: 0 };
   const ids = new Set();
   for (const r of closed) for (const k of Object.keys(r.rules)) ids.add(k);
@@ -610,7 +626,9 @@ function renderRuleEffect() {
   const el = document.getElementById("ruleEffect");
   if (!el) return;
   const { rows, n } = analyseRuleEffect();
+  const breit = analyseRuleEffect(bewertbarMitBeobachtung);
   const gesamt = DATA.signals.filter(bewertbar).length;
+  const nBeob = DATA.signals.filter((r) => r.beobachtung && (r.status === "win" || r.status === "loss")).length;
   if (!rows.length) {
     el.innerHTML = `
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
@@ -641,6 +659,8 @@ function renderRuleEffect() {
         <b>Ertrag pro Trade (Ø R)</b>, nicht die Trefferquote — die lässt sich beliebig
         hochtreiben, indem man das Ziel näher legt, ohne dass mehr dabei herauskommt.
         Grundlage: ${n} abgeschlossene Trades mit aufgezeichnetem Regelstatus.
+        ${nBeob ? `Dazu ${nBeob} <b>Beobachtungen</b> außerhalb der Handelszeiten — die zählen
+        nicht zu deiner Bilanz, dienen aber als zweite Messbasis (Spalte rechts).` : ""}
       </div>
       <table style="width:100%;border-collapse:collapse;font-size:11px;">
         <thead><tr>
@@ -651,6 +671,7 @@ function renderRuleEffect() {
           <th style="text-align:right;padding:6px 8px;color:#7c8399;">Ø R verletzt</th>
           <th style="text-align:right;padding:6px 8px;color:#7c8399;">Vorteil</th>
           <th style="text-align:left;padding:6px 8px;color:#7c8399;">Urteil</th>
+          <th style="text-align:right;padding:6px 8px;color:#7c8399;" title="Dieselbe Rechnung, aber inklusive der Beobachtungen außerhalb der Handelszeiten. Weicht sie stark ab, hängt die Regel an der Uhrzeit.">Vorteil inkl. Beob.</th>
         </tr></thead>
         <tbody>
         ${rows.map((r) => `
@@ -662,6 +683,14 @@ function renderRuleEffect() {
             <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);">${sr(r.rBad)}</td>
             <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);color:${COL[r.status]};">${sr(r.diffR)}</td>
             <td style="padding:5px 8px;border-top:1px solid rgba(255,255,255,0.05);color:${COL[r.status]};">${r.status}</td>
+            <td style="padding:5px 8px;text-align:right;border-top:1px solid rgba(255,255,255,0.05);color:#7c8399;">${(() => {
+              const b = breit.rows.find((x) => x.id === r.id);
+              if (!b || b.diffR == null) return "—";
+              // Gegenlaeufig? Dann sichtbar markieren - das ist ein Warnzeichen,
+              // kein Detail.
+              const gegen = r.diffR != null && Math.sign(b.diffR) !== Math.sign(r.diffR) && Math.abs(b.diffR) > 0.1;
+              return `<span style="color:${gegen ? "#ffd25c" : "#7c8399"};">${sr(b.diffR)} <span style="color:#5f6678;">(${b.nOk}/${b.nBad})</span>${gegen ? " ⚠" : ""}</span>`;
+            })()}</td>
           </tr>`).join("")}
         </tbody>
       </table>
