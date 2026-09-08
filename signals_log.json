@@ -1389,7 +1389,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1786088797388",
@@ -1469,7 +1470,8 @@
       "targetDistAdr": 0.84,
       "findings": [],
       "summary": "Keine auffaellige Schwachstelle gefunden."
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1786111429298",
@@ -1604,7 +1606,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Entry: zu frueh · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "XRPUSD-1786432356263",
@@ -1654,7 +1657,8 @@
       "targetDistAdr": 0.14,
       "findings": [],
       "summary": "Keine auffaellige Schwachstelle gefunden."
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "GCUSD-1786432356263",
@@ -1720,7 +1724,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1786456497881",
@@ -1786,7 +1791,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "GCUSD-1786520236517",
@@ -1852,7 +1858,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1786540062131",
@@ -1902,7 +1909,8 @@
       "targetDistAdr": 0.33,
       "findings": [],
       "summary": "Keine auffaellige Schwachstelle gefunden."
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "GCUSD-1786540062131",
@@ -1968,7 +1976,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1786543906053",
@@ -2034,7 +2043,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1786606719386",
@@ -2109,7 +2119,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "XRPUSD-1786606719386",
@@ -2176,7 +2187,8 @@
         }
       ],
       "summary": "Stop-Loss: knapp · Entry: zu frueh"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "GCUSD-1786606719386",
@@ -2245,7 +2257,8 @@
         }
       ],
       "summary": "Stop-Loss: knapp · Entry: zu frueh"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "GBPUSD-1786628702136",
@@ -2309,7 +2322,8 @@
         }
       ],
       "summary": "Entry: zu frueh"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1786693012292",
@@ -2426,7 +2440,8 @@
         }
       ],
       "summary": "Stop-Loss: knapp · Take-Profit: zu konservativ"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "XRPUSD-1786950066546",
@@ -2509,7 +2524,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1786952669070",
@@ -2591,7 +2607,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: nicht ursaechlich · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1786975338327",
@@ -2664,7 +2681,8 @@
         }
       ],
       "summary": "Take-Profit: zu konservativ"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1786975338327",
@@ -2748,7 +2766,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Entry: zu frueh · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1786978593092",
@@ -2827,7 +2846,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1787062124402",
@@ -2956,7 +2976,8 @@
         }
       ],
       "summary": "Take-Profit: zu konservativ"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "^GSPC-1787062124402",
@@ -3037,7 +3058,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1787146172384",
@@ -3164,7 +3186,8 @@
         }
       ],
       "summary": "Take-Profit: zu konservativ"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1787148533346",
@@ -3309,7 +3332,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: nicht ursaechlich · Entry: zu frueh · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1787211227499",
@@ -3394,7 +3418,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "XRPUSD-1787233025799",
@@ -3534,7 +3559,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit · Entry: zu frueh"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "GCUSD-1787317742198",
@@ -3674,7 +3700,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1787321382556",
@@ -3752,7 +3779,8 @@
         }
       ],
       "summary": "Take-Profit: zu konservativ · Entry: zu frueh"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "^GSPC-1787323807535",
@@ -3826,7 +3854,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1787555038081",
@@ -3910,7 +3939,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: nicht ursaechlich · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1787555038081",
@@ -3988,7 +4018,8 @@
         }
       ],
       "summary": "Take-Profit: zu konservativ · Entry: zu frueh"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "GBPUSD-1787555038081",
@@ -4071,7 +4102,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Entry: zu frueh · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1787643421157",
@@ -4154,7 +4186,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1787643421157",
@@ -4232,7 +4265,8 @@
         }
       ],
       "summary": "Stop-Loss: vermutlich zu eng · Take-Profit: nicht ursaechlich"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "XRPUSD-1787665138306",
@@ -4316,7 +4350,8 @@
         }
       ],
       "summary": "Stop-Loss: vermutlich zu eng · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1787751592719",
@@ -4394,7 +4429,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1787751592719",
@@ -4477,7 +4513,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: nicht ursaechlich · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "GCUSD-1787751592719",
@@ -4567,7 +4604,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Entry: zu frueh · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "GBPUSD-1787754365138",
@@ -4713,7 +4751,8 @@
         }
       ],
       "summary": "Stop-Loss: zu eng · Take-Profit: nicht ursaechlich · Entry: zu frueh · Analyse: These war richtig"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1788786620898",
@@ -4790,7 +4829,8 @@
         }
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
-    }
+    },
+    "benachrichtigt": true
   },
   {
     "id": "XRPUSD-1788789117296",
@@ -4951,6 +4991,119 @@
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
     "fillTs": 1788874800000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "ETHUSD-1788890408076",
+    "asset": "ETHUSD",
+    "direction": "LONG",
+    "entryTs": 1788890408076,
+    "entry": 2489.419922,
+    "stop": 2472.829932,
+    "target": 2535,
+    "rr": 2.75,
+    "target2": 2545.899902,
+    "rr2": 3.4,
+    "partialExit": true,
+    "trailStop": 2472.829932,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.75,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bullish",
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "^GSPC-1788890408076",
+    "asset": "^GSPC",
+    "direction": "LONG",
+    "entryTs": 1788890408076,
+    "entry": 767.502502,
+    "stop": 766.16403,
+    "target": 769.130005,
+    "rr": 1.22,
+    "target2": 772.119995,
+    "rr2": 3.45,
+    "partialExit": true,
+    "trailStop": 766.16403,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R9-daily-bias",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.75,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "fillTs": null,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
