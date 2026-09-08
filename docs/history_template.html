@@ -337,7 +337,9 @@ function computeStats(signals) {
   const closed = signals.filter(bewertbar);
   const wins = signals.filter((r) => bewertbar(r) && r.status === "win").length;
   const losses = signals.filter((r) => bewertbar(r) && r.status === "loss").length;
-  const open = signals.filter((r) => r.status === "open" || r.status === "partial").length;
+  // Beobachtungen sind KEINE laufenden Positionen - sonst laese sich die Karte
+  // "Offen" als "du haeltst gerade 2 Trades", was schlicht falsch waere.
+  const open = signals.filter((r) => (r.status === "open" || r.status === "partial") && !r.beobachtung).length;
   const stale = signals.filter((r) => r.status === "stale").length;
   const winRate = closed.length ? Math.round((wins / closed.length) * 100) : null;
   const beobachtungen = signals.filter((r) => r.beobachtung).length;
