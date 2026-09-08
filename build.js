@@ -12,7 +12,7 @@ const {
   medianDailyRange, setTuning,
 } = require("./engine.js");
 const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS, confluenceScore, setRuleTuning } = require("./tjr_rules.js");
-const { justiere, bereinigen } = require("./auto_tune.js");
+const { justiere, bereinigen, tageswerte } = require("./auto_tune.js");
 const { archiviere, bestand } = require("./kerzen_archiv.js");
 
 const TUNING_PATH = path.join(__dirname, "tuning.json");
@@ -911,7 +911,7 @@ function ruleSnapshot(ruleCheck) {
   return out;
 }
 
-function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBias, weeklyTrend, tuningAktiv) {
+function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBias, weeklyTrend, tuningAktiv, beobachtung) {
   signalsLog.push({
     id: `${asset.symbol}-${firedAtTs}`,
     asset: asset.symbol,
@@ -942,6 +942,13 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBi
     // fuellGeprueft markiert diesen Datensatz als bereits nach der neuen
     // Logik entstanden, damit die einmalige Neuberechnung ihn nicht anfasst.
     fillTs: null, fuellGeprueft: true,
+    // beobachtung = ausserhalb von TJRs Handelsfenster erkannt und nur zu
+    // MESSZWECKEN mitgeschrieben. Tiam, 2026-09-08: bei ~5 verwertbaren
+    // Trades pro Woche haette ein belastbares Urteil ueber acht Monate
+    // gedauert - die Signale entstehen ja, sie wurden nur weggeworfen.
+    // Diese Datensaetze zaehlen NIE in die offizielle Bilanz und loesen
+    // weder Benachrichtigung noch Doppelpositions-Sperre aus.
+    beobachtung: !!beobachtung,
     status: "open", resolvedTs: null, rMultiple: null,
   });
 }
@@ -1090,6 +1097,38 @@ function renderFromTemplate(templateFile, outFile, payload) {
 }
 
 async function main() {
+  // ==========================================================================
+  // SELBSTJUSTIERUNG ZUERST - hier stand frueher ein schwerer Fehler.
+  // ==========================================================================
+  // Bis 2026-09-08 wurde dieser Block ERST NACH der Signalberechnung
+  // ausgefuehrt (ladeTuning/setTuning standen ~50 Zeilen weiter unten, hinter
+  // der Asset-Schleife). Die Folge: `buildSignal()` rechnete IMMER mit den
+  // Standardwerten aus engine.js, und die in tuning.json gespeicherten Werte
+  // wirkten auf kein einziges Signal. Da jeder Lauf ein frischer Prozess ist,
+  // wurden die Modulwerte danach ohnehin wieder zurueckgesetzt.
+  //
+  // Damit war die Selbstjustierung selbst dann wirkungslos, wenn sie
+  // ausgeloest haette. Der alte Kommentar an der Stelle behauptete sogar
+  // ausdruecklich "BEVOR irgendein Signal gerechnet wird" - er beschrieb eine
+  // Absicht, nicht den Code. **Merksatz: bei Reihenfolge-Annahmen die
+  // Zeilennummern nachsehen, nicht den Kommentar glauben.**
+  const signalsLog = loadSignalsLog();
+  const nowTs = Date.now();
+  const tuning = ladeTuning();
+  // Erkunden: an einem Teil der Tage bewusst einen Nachbarwert fahren, damit
+  // ueberhaupt Vergleichsgruppen entstehen (siehe auto_tune.js). Tagesstabil,
+  // damit ein Trade unter demselben Wert aufgeloest wird, unter dem er
+  // eroeffnet wurde.
+  const heute = tageswerte(tuning, signalsLog, viennaDateStr());
+  const aktiveWerte = heute.werte;
+  setTuning(aktiveWerte);
+  setRuleTuning(aktiveWerte);
+  console.log("Selbstjustierung aktiv:", JSON.stringify(aktiveWerte));
+  if (heute.erkundet) {
+    console.log(`ERKUNDUNG heute: ${heute.erkundet.wert} = ${heute.erkundet.probiert} `
+      + `statt ${heute.erkundet.statt} (um Vergleichsdaten zu erzeugen)`);
+  }
+
   const assets = [];
   const ltfFullBySymbol = {};
   for (const asset of ASSETS) {
@@ -1140,15 +1179,6 @@ async function main() {
   const inWindow = isViennaTradingWindow();
   const prevState = loadPrevState();
   const newState = {};
-  // Selbstjustierung: gespeicherten Stand laden und BEIDEN Modulen geben,
-  // BEVOR irgendein Signal gerechnet wird - sonst liefe der Lauf noch mit den
-  // alten Werten und die Zuordnung "welcher Wert war beim Einstieg aktiv"
-  // waere falsch.
-  const tuning = ladeTuning();
-  setTuning(tuning.aktiv);
-  setRuleTuning(tuning.aktiv);
-  console.log("Selbstjustierung aktiv:", JSON.stringify(tuning.aktiv));
-
   // EINMALIGE NACHLADUNG der vollen 60 Tage. Der normale Lauf holt nur 25 Tage
   // (CHART_HISTORY_DAYS + FETCH_BUFFER_DAYS); die restlichen ~35 Tage, die
   // Yahoo noch hergibt, waeren sonst fuer immer verloren, sobald sie aus dem
@@ -1177,8 +1207,6 @@ async function main() {
     console.log(`Nachladung abgeschlossen: ${summe} Kerzen ergaenzt.`);
   }
 
-  const signalsLog = loadSignalsLog();
-  const nowTs = Date.now();
   for (const item of assets) {
     if (item.error) continue;
 
@@ -1236,8 +1264,13 @@ async function main() {
     // also lange nachdem der Einstieg bereits geloggt war. Die Engine wusste
     // zum Entscheidungszeitpunkt schlicht nicht, dass sie gerade nachlegt.
     // Realer Fall 2026-08-17: ETHUSD LONG 14:02, nochmal LONG 14:56, beide -1R.
+    // Beobachtungs-Trades bewusst ausgeklammert: sie sind nur Messung. Wuerde
+    // R14 sie mitzaehlen, koennte eine Beobachtung einen ECHTEN Trade
+    // blockieren - dann haette das Mitschreiben die Strategie veraendert,
+    // genau das, was es nicht darf.
     const offeneImWert = signalsLog.some(
-      (r) => r.asset === item.asset.symbol && (r.status === "open" || r.status === "partial"),
+      (r) => r.asset === item.asset.symbol && !r.beobachtung
+        && (r.status === "open" || r.status === "partial"),
     );
     item.ruleCheck = evaluateRules(item.sig, { inTradingWindow: inWindow, ann: item.ann, dailyBias: item.dailyBias, weeklyTrend: item.weeklyTrend, lastLoss: item.lastLoss, newsSoon, newsGeladen: newsOk, hasOpenTrade: offeneImWert });
     item.ruleSummary = ruleSummary(item.ruleCheck);
@@ -1262,10 +1295,11 @@ async function main() {
     // des Fensters wird ein erkanntes Setup zwar noch angezeigt (siehe
     // outsideBadge im Template), aber nicht mehr geloggt/getradet.
     if (isEntry && !wasEntry && inWindow) {
-      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs, item.ruleCheck, item.dailyBias, item.weeklyTrend, tuning.aktiv);
+      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs, item.ruleCheck, item.dailyBias, item.weeklyTrend, aktiveWerte, false);
       console.log(`PAPER-TRADE geloggt: ${item.asset.name} ${item.sig.bias === "bullish" ? "LONG" : "SHORT"}`);
     } else if (isEntry && !wasEntry && !inWindow) {
-      console.log(`Setup erkannt, aber ausserhalb Handelsfenster - kein Paper-Trade geloggt: ${item.asset.name}`);
+      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs, item.ruleCheck, item.dailyBias, item.weeklyTrend, aktiveWerte, true);
+      console.log(`BEOBACHTUNG mitgeschrieben (ausserhalb Handelsfenster, zaehlt nicht zur Bilanz): ${item.asset.name}`);
     }
     if (ltfFullBySymbol[item.asset.symbol]) {
       // Kurshistorie mitschreiben, bevor irgendetwas anderes passiert. Nutzt
@@ -1300,7 +1334,8 @@ async function main() {
     // "monitoring" (ausserhalb, aber ein offener Paper-Trade laeuft noch -
     // "nichts machen ausser schauen ob der Trade in die richtige Richtung
     // geht"), "idle" (ausserhalb, nichts offen - komplett pausiert).
-    const openRec = signalsLog.find((r) => r.asset === item.asset.symbol && (r.status === "open" || r.status === "partial"));
+    const openRec = signalsLog.find((r) => r.asset === item.asset.symbol && !r.beobachtung
+      && (r.status === "open" || r.status === "partial"));
     item.hasOpenTrade = !!openRec;
     // Tiam, 2026-07-15: "wieso nimmt er immer ein entry weg? wenn er ein
     // entry hat und ganz sicher ist das es passt soll er es ja laufen
@@ -1383,7 +1418,11 @@ async function main() {
   for (const item of assets) {
     if (item.error) continue;
     item.signals = signalsLog
-      .filter((r) => r.asset === item.asset.symbol && r.entryTs >= chartHistoryCutoff)
+      // Beobachtungen (ausserhalb der Handelszeiten) gehoeren NICHT in den
+      // Chart: es waren keine handelbaren Trades, und Tiam, 2026-09-05:
+      // "wer soll das checken" - der Chart soll zeigen, was zaehlt.
+      // In der Historie sind sie weiterhin einzeln aufgefuehrt.
+      .filter((r) => r.asset === item.asset.symbol && !r.beobachtung && r.entryTs >= chartHistoryCutoff)
       .map((r) => ((r.status === "open" || r.status === "partial")
         ? { ...r, unrealizedR: unrealizedR(r, item.sig.currentPrice) }
         : r));
