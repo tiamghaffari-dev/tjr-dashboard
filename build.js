@@ -1046,25 +1046,45 @@ function viennaDateStr(date = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Vienna" }).format(date);
 }
 
-// Push-Benachrichtigung ueber ntfy.sh (kein Account/Key noetig, nur ein
-// geheimer Topic-Name). Nur bei neuem ENTRY-Signal (rising edge), nicht bei
-// jedem Refresh solange das Signal aktiv bleibt — sonst Spam alle 5 Minuten.
-async function sendNtfy(asset, sig) {
+// Push-Benachrichtigung ueber ntfy.sh (kein Account noetig, nur ein geheimer
+// Themenname).
+//
+// Tiam, 2026-09-08: "ich will auch vllt mal so benachrichtungen bekommen das
+// gerade ein signal da ist bzw die KI ein Trade geoeffnet hat." Auf Nachfrage
+// hat er sich fuer **"wenn ein Trade wirklich eroeffnet ist"** entschieden.
+//
+// Das ist seit der Fuellpruefung ein echter Unterschied: frueher meldete diese
+// Funktion beim blossen ERKENNEN eines Setups. 8 von 82 Signalen kamen aber
+// nie zur Ausfuehrung - er haette also regelmaessig Trades gemeldet bekommen,
+// die es nie gab. Jetzt wird erst gemeldet, wenn der Markt den Einstiegspreis
+// tatsaechlich gehandelt hat (rec.fillTs gesetzt).
+//
+// Wie lange nach der Fuellung eine Meldung noch sinnvoll ist. Alles Aeltere
+// wird stumm abgehakt - siehe Begruendung an der Aufrufstelle.
+const ALERT_MAX_ALTER_MIN = 60;
+
+async function sendNtfyFuellung(asset, rec) {
   if (!NTFY_TOPIC) return;
-  const dir = sig.bias === "bullish" ? "LONG" : "SHORT";
-  const message = `${dir} ${asset.display} — Entry ${sig.entry}, Stop ${sig.stop}, Target ${sig.target}, R:R ${sig.rr}. ${sig.detail || ""}`.trim();
+  const crv = typeof rec.rr === "number" ? rec.rr.toFixed(2) : "?";
+  const text = [
+    `${rec.direction} ${asset.display}`,
+    `Einstieg ${rec.entry}`,
+    `Stop     ${rec.stop}`,
+    `Ziel     ${rec.target}`,
+    `CRV      ${crv}`,
+  ].join("\n");
   try {
     await fetch(`https://ntfy.sh/${encodeURIComponent(NTFY_TOPIC)}`, {
       method: "POST",
       signal: AbortSignal.timeout(15000),
       headers: {
-        Title: `TJR Entry: ${asset.name} ${dir}`,
+        Title: `Trade eroeffnet: ${asset.name} ${rec.direction}`,
         Priority: "high",
         Tags: "chart_with_upwards_trend",
       },
-      body: message,
+      body: text,
     });
-    console.log(`ALERT gesendet: ${asset.name} ${dir}`);
+    console.log(`ALERT gesendet (Fuellung): ${asset.name} ${rec.direction}`);
   } catch (e) {
     console.error(`ntfy-Benachrichtigung fehlgeschlagen fuer ${asset.name}:`, e.message || e);
   }
@@ -1114,6 +1134,10 @@ async function main() {
   // Zeilennummern nachsehen, nicht den Kommentar glauben.**
   const signalsLog = loadSignalsLog();
   const nowTs = Date.now();
+  // "Jetzt" in der Kerzen-Zeitbasis - fillTs stammt aus einer Kerze und darf
+  // NICHT mit der echten Uhrzeit verglichen werden (die bekannte Zwei-Uhren-
+  // Falle dieses Projekts).
+  const jetztPseudo = parseTs(etPseudoDateStr(nowTs));
   const tuning = ladeTuning();
   // Erkunden: an einem Teil der Tage bewusst einen Nachbarwert fahren, damit
   // ueberhaupt Vergleichsgruppen entstehen (siehe auto_tune.js). Tagesstabil,
@@ -1350,10 +1374,21 @@ async function main() {
     // resolveSignals ihn tatsaechlich per Stop/Target aufloest, nicht bis
     // die Sweep-Erkennung zufaellig aus dem Lookback-Fenster laeuft.
     item.mode = openRec ? "monitoring" : (inWindow ? "analyzing" : "idle");
-    if (isEntry && !wasEntry && NTFY_TOPIC && inWindow) {
-      await sendNtfy(item.asset, item.sig);
-    } else if (isEntry && !wasEntry && NTFY_TOPIC && !inWindow) {
-      console.log(`ALERT uebersprungen (ausserhalb Handelsfenster 9-10/15-17 Wien): ${item.asset.name}`);
+    // Melden, sobald ein Trade dieses Assets TATSAECHLICH eroeffnet wurde.
+    // resolveSignals() weiter oben hat in diesem Lauf ggf. rec.fillTs gesetzt.
+    if (NTFY_TOPIC) {
+      for (const rec of signalsLog) {
+        if (rec.asset !== item.asset.symbol) continue;
+        // Beobachtungen sind keine handelbaren Trades - nie melden.
+        if (rec.beobachtung || !rec.fillTs || rec.benachrichtigt) continue;
+        // IMMER abhaken, auch wenn nichts gesendet wird. Sonst haette der
+        // erste Lauf nach dem Einbau den gesamten Altbestand auf einmal
+        // verschickt (rund 40 Nachrichten), und nach einem Ausfall des Laufs
+        // kaeme ein ganzer Schwall verspaeteter Meldungen nach.
+        rec.benachrichtigt = true;
+        if ((jetztPseudo - rec.fillTs) / 60000 > ALERT_MAX_ALTER_MIN) continue;
+        await sendNtfyFuellung(item.asset, rec);
+      }
     }
   }
   const meta = prevState._meta || {};
