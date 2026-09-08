@@ -95,7 +95,8 @@ function mittel(arr) {
 // Vergleicht die abgeschlossenen Trades danach, welcher Wert beim EINSTIEG
 // aktiv war. Ohne `tuningAtEntry` im Datensatz ist kein Vergleich moeglich -
 // dann passiert bewusst nichts.
-function vergleiche(schluessel, trades) {
+function vergleiche(schluessel, trades, mindestens) {
+  const grenze = typeof mindestens === "number" ? mindestens : MIN_PRO_GRUPPE;
   const gruppen = new Map();
   for (const t of trades) {
     const v = t.tuningAtEntry && t.tuningAtEntry[schluessel];
@@ -105,10 +106,90 @@ function vergleiche(schluessel, trades) {
     gruppen.get(k).push(t.rMultiple);
   }
   const brauchbar = [...gruppen.entries()]
-    .filter(([, v]) => v.length >= MIN_PRO_GRUPPE)
+    .filter(([, v]) => v.length >= grenze)
     .map(([k, v]) => ({ wert: Number(k), n: v.length, schnittR: mittel(v) }))
     .sort((a, b) => b.schnittR - a.schnittR);
   return brauchbar;
+}
+
+// Welche Trades duerfen als Beleg dienen?
+//   unfilled       -> der Markt war nie am Einstiegspreis, es gab keinen Trade
+//   unzuverlaessig -> vor der Fuellpruefung entstanden, nicht nachrechenbar
+//   beobachtung    -> ausserhalb von TJRs Handelsfenster nur mitgeschrieben;
+//                     zaehlt fuer die MESSUNG, nie fuer Tiams Bilanz
+function auswertbar(signalsLog, mitBeobachtung) {
+  return (signalsLog || []).filter(
+    (r) => (r.status === "win" || r.status === "loss")
+      && !r.unzuverlaessig && typeof r.rMultiple === "number"
+      && (mitBeobachtung || !r.beobachtung),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ERKUNDEN - Tiams Entscheidung 2026-09-08
+// ---------------------------------------------------------------------------
+// Der Konstruktionsfehler, den diese Funktion behebt: `vergleiche()` braucht
+// zwei Gruppen mit unterschiedlichen Werten. Solange ein Wert nie wechselt,
+// gibt es nur eine Gruppe - die Automatik wartete also auf Unterschiede, die
+// nur sie selbst haette erzeugen koennen. Nachgemessen am 2026-09-08: ueber
+// alle 40 bewertbaren Trades hatte JEDER der vier Werte genau einen einzigen
+// Wert. In 25 Tagen kam deshalb keine einzige Anpassung zustande.
+//
+// Loesung: an einem Teil der Tage bewusst den Nachbarwert fahren. Das ist der
+// unvermeidliche Einsatz fuers Lernen - ohne Streuung keine Erkenntnis.
+//
+// Zwei bewusste Festlegungen:
+//  - IMMER NUR EIN WERT gleichzeitig, sonst liessen sich Ursache und Wirkung
+//    nicht mehr trennen (dieselbe Begruendung wie "eine Aenderung pro Lauf").
+//  - Entschieden wird pro TAG, nicht pro Lauf. Der Lauf startet alle paar
+//    Minuten; wechselte der Wert dabei, saehe Tiam beim Neuladen staendig
+//    andere Ziele, und ein Trade koennte unter einem anderen Wert aufgeloest
+//    werden als er eroeffnet wurde.
+const ERKUNDUNG_ANTEIL = 0.4;   // Anteil der Tage auf dem Nachbarwert
+
+// Deterministischer Streuwert aus einem Text (FNV-1a). Bewusst KEIN
+// Math.random(): gleicher Tag muss immer dasselbe ergeben, auch nach einem
+// Neustart des Laufs.
+function tagesZahl(text) {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return ((h >>> 0) % 10000) / 10000;
+}
+
+// Welcher Wert wird gerade erkundet? Der erste, dem noch Vergleichsdaten
+// fehlen. Hat ein Wert genug Belege, rueckt die Erkundung zum naechsten weiter
+// und hoert von selbst auf, wenn alle abgedeckt sind.
+function erkundungsZiel(geschlossen) {
+  for (const schluessel of Object.keys(JUSTIERBAR)) {
+    if (vergleiche(schluessel, geschlossen).length < 2) return schluessel;
+  }
+  return null;
+}
+
+// Welche Werte gelten HEUTE? `datumStr` muss ein tagesstabiler Text sein
+// (z.B. "2026-09-08").
+function tageswerte(stand, signalsLog, datumStr) {
+  const s = bereinigen(stand);
+  const werte = { ...s.aktiv };
+  const ziel = erkundungsZiel(auswertbar(signalsLog, true));
+  if (!ziel) return { werte, erkundet: null };
+
+  const d = JUSTIERBAR[ziel];
+  // Nachbarwert: einen Schritt nach oben, sonst nach unten. Nie ueber die
+  // harten Grenzen hinaus - die gelten fuers Erkunden genauso.
+  let nachbar = Math.round((werte[ziel] + d.schritt) * 1000) / 1000;
+  if (nachbar > d.max) nachbar = Math.round((werte[ziel] - d.schritt) * 1000) / 1000;
+  if (nachbar < d.min || nachbar > d.max) return { werte, erkundet: null };
+
+  if (tagesZahl(`${datumStr}:${ziel}`) >= ERKUNDUNG_ANTEIL) {
+    return { werte, erkundet: null };   // heute der normale Wert
+  }
+  const statt = werte[ziel];
+  werte[ziel] = nachbar;
+  return { werte, erkundet: { wert: ziel, statt, probiert: nachbar } };
 }
 
 function tageSeit(iso) {
@@ -127,10 +208,13 @@ function justiere(stand, signalsLog, jetztIso) {
   // sich nicht mehr ehrlich nachrechnen liessen ("unzuverlaessig"), sind keine
   // Belege. Wuerde die Selbstjustierung sie mitzaehlen, wuerde sie ihre Werte
   // an Ergebnissen ausrichten, die es nie gab.
-  const geschlossen = (signalsLog || []).filter(
-    (r) => (r.status === "win" || r.status === "loss")
-      && !r.unzuverlaessig && typeof r.rMultiple === "number",
-  );
+  // Beobachtungs-Trades (ausserhalb des Handelsfensters) liefern die MENGE,
+  // die Fenster-Trades behalten das VETO: zeigen die echten Trades in die
+  // Gegenrichtung, wird nichts geaendert. So beschleunigt die Beobachtung das
+  // Lernen, ohne dass eine Umstellung allein auf Zeiten beruht, die Tiam nach
+  // TJRs Regeln gar nicht handelt.
+  const geschlossen = auswertbar(signalsLog, true);
+  const nurFenster = auswertbar(signalsLog, false);
 
   const letzte = s.verlauf.length ? s.verlauf[s.verlauf.length - 1].wann : null;
   if (tageSeit(letzte) < COOLDOWN_TAGE) {
@@ -151,6 +235,16 @@ function justiere(stand, signalsLog, jetztIso) {
       bericht.push(`${schluessel}: Unterschied nur ${unterschied.toFixed(2)}R - zu klein, bleibt bei ${s.aktiv[schluessel]}.`);
       continue;
     }
+    // VETO der echten Fenster-Trades (siehe oben). Schon ab 3 je Gruppe, weil
+    // es hier nicht um einen Beweis geht, sondern nur darum, einen offenen
+    // Widerspruch zu bemerken.
+    const fensterGruppen = vergleiche(schluessel, nurFenster, 3);
+    if (fensterGruppen.length >= 2 && Math.abs(fensterGruppen[0].wert - beste.wert) > 1e-9) {
+      bericht.push(`${schluessel}: Beobachtung bevorzugt ${beste.wert}, die echten Fenster-Trades aber `
+        + `${fensterGruppen[0].wert} - Widerspruch, keine Aenderung.`);
+      continue;
+    }
+
     const jetzt = s.aktiv[schluessel];
     if (Math.abs(beste.wert - jetzt) < 1e-9) {
       bericht.push(`${schluessel}: der aktuelle Wert ist bereits der beste - bleibt bei ${jetzt}.`);
@@ -183,7 +277,8 @@ function justiere(stand, signalsLog, jetztIso) {
 
 if (typeof module !== "undefined") {
   module.exports = {
-    JUSTIERBAR, MIN_PRO_GRUPPE, COOLDOWN_TAGE, MIN_UNTERSCHIED_R,
+    JUSTIERBAR, MIN_PRO_GRUPPE, COOLDOWN_TAGE, MIN_UNTERSCHIED_R, ERKUNDUNG_ANTEIL,
     standardwerte, bereinigen, vergleiche, justiere,
+    auswertbar, tagesZahl, erkundungsZiel, tageswerte,
   };
 }
