@@ -98,7 +98,9 @@
   <div class="subtitle">
     Jedes ENTRY-Signal, das die Engine seit Start des automatischen Trackings gefeuert hat (Paper-Trading, kein echtes Geld) —
     Ergebnis wird mechanisch anhand der echten Kursdaten ermittelt (Stop oder Target zuerst getroffen). "Offen" zeigt den
-    aktuellen unrealisierten Fortschritt in R. Nur Signale innerhalb 15–17 Uhr Wien werden geloggt.
+    aktuellen unrealisierten Fortschritt in R. Als <b>Trade</b> zählen nur Signale innerhalb der Handelszeiten
+    (9–10 und 15–17 Uhr Wien). Signale außerhalb werden seit 08.09.2026 als <b>Beobachtung</b> mitgeschrieben —
+    sie dienen nur der Messung und fließen weder in Kontostand noch in Trefferquote ein.
     <span id="generated-at">__GENERATED_AT__</span>
   </div>
 
@@ -235,8 +237,12 @@ function computeEquityCurve(signals) {
     points.push({ ts: r.resolvedTs, balance });
   }
 
+  // Beobachtungen gehoeren NICHT ins simulierte Konto. Hier fehlte der Filter
+  // (Tiam, 2026-09-09, aus einem Screenshot erkannt): dadurch floss der
+  // Zwischenstand von Trades, die er nie gehalten haette, in den aktuellen
+  // Kontostand UND als $-Betrag in die Ergebnis-Spalte der Tabelle.
   const openTrades = signals.filter((r) => (r.status === "open" || r.status === "partial")
-    && typeof r.unrealizedR === "number");
+    && !r.beobachtung && typeof r.unrealizedR === "number");
   let currentBalance = balance;
   for (const r of openTrades) {
     const pnl = balance * EQUITY_RISK_PCT * r.unrealizedR;
@@ -776,7 +782,12 @@ function renderTable() {
       <tbody>
         ${rows.map((r) => {
           const meta = assetMeta(r.asset);
-          const statusMeta = STATUS_META[r.status] || STATUS_META.open;
+          // Beobachtungen mussten sich vom Rest unterscheiden: vorher trugen
+          // sie dasselbe "OFFEN" wie echte Positionen.
+          const basisMeta = STATUS_META[r.status] || STATUS_META.open;
+          const statusMeta = r.beobachtung
+            ? { label: `BEOBACHTUNG · ${basisMeta.label}`, cls: "badge-stale" }
+            : basisMeta;
           // Tiam, 2026-07-25: "sehen ob es steigt oder sinkt statt diesem R
           // als ergebnis" - $ (aus der Kontostand-Simulation) fuehrt jetzt,
           // R steht klein daneben statt als einziger Wert.
@@ -787,6 +798,12 @@ function renderTable() {
             ergebnis = typeof pnl === "number"
               ? `${fmtUsd(pnl)} <span style="color:#7c8399;font-size:10px;">(${sign}${r.rMultiple}R)</span>`
               : `${sign}${r.rMultiple}R`;
+          } else if (r.beobachtung) {
+            // Nie ein $-Betrag: das ist nicht sein Geld. Nur der R-Wert, grau.
+            const wert = typeof r.rMultiple === "number" ? r.rMultiple
+              : (typeof r.unrealizedR === "number" ? r.unrealizedR : null);
+            ergebnis = wert === null ? "–"
+              : `<span style="color:#7c8399;">${wert >= 0 ? "+" : ""}${wert}R <span style="font-size:10px;">(nur Beobachtung)</span></span>`;
           } else if ((r.status === "open" || r.status === "partial") && typeof r.unrealizedR === "number") {
             const sign = r.unrealizedR >= 0 ? "+" : "";
             ergebnis = typeof pnl === "number"
