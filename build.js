@@ -1390,10 +1390,10 @@ async function main() {
     if (NTFY_TOPIC) {
       for (const rec of signalsLog) {
         if (rec.asset !== item.asset.symbol) continue;
-        // Beobachtungen werden seit 2026-09-09 ebenfalls gemeldet (Tiams
-        // Entscheidung) - gekennzeichnet und leiser, siehe sendNtfyFuellung.
-        // Sie bleiben trotzdem aus JEDER Kennzahl draussen.
-        if (!rec.fillTs || rec.benachrichtigt) continue;
+        // Tiam, 2026-09-10: zurueck zu TJRs Zeiten. Beobachtungen melden NIE -
+        // sie werden nur noch still mitgeschrieben. Sieben Meldungen taeglich,
+        // auch nachts, waren genau die Komplexitaet, die er nicht wollte.
+        if (rec.beobachtung || !rec.fillTs || rec.benachrichtigt) continue;
         // IMMER abhaken, auch wenn nichts gesendet wird. Sonst haette der
         // erste Lauf nach dem Einbau den gesamten Altbestand auf einmal
         // verschickt (rund 40 Nachrichten), und nach einem Ausfall des Laufs
