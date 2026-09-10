@@ -760,7 +760,12 @@ function renderFindingValidation() {
 }
 
 function renderTable() {
-  let rows = DATA.signals.slice();
+  // Tiam, 2026-09-10: "analysiere wie TJR also in den richtigen uhrzeiten
+  // sonst nicht. sonst machen wir es zu komplex." Beobachtungen werden
+  // weiter still mitgeschrieben (sie beantworten "taugt die Strategie?" in
+  // ~3 statt ~8 Monaten), erscheinen aber NICHT mehr in der Tabelle.
+  // Sichtbar bleibt nur die Zaehlkarte oben.
+  let rows = DATA.signals.filter((r) => !r.beobachtung);
   if (activeAsset) rows = rows.filter((r) => r.asset === activeAsset);
   if (activeStatus !== "all") rows = rows.filter((r) => r.status === activeStatus);
   rows.sort((a, b) => b.entryTs - a.entryTs);
