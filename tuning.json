@@ -1,9 +1,29 @@
 {
   "aktiv": {
-    "MAX_TP1_ADR_MULT": 0.75,
+    "MAX_TP1_ADR_MULT": 0.8,
     "MAX_TP2_ADR_MULT": 1.25,
     "NEWS_FENSTER_MIN": 30,
     "KEY_LEVEL_MAX_ADR": 0.15
   },
-  "verlauf": []
+  "verlauf": [
+    {
+      "wann": "2026-09-10T16:40:49.571Z",
+      "wert": "MAX_TP1_ADR_MULT",
+      "von": 0.75,
+      "zu": 0.8,
+      "grund": "0.8 brachte -0.02R (12 Trades) gegen -0.38R bei 0.75 (29 Trades).",
+      "gruppen": [
+        {
+          "wert": 0.8,
+          "n": 12,
+          "schnittR": -0.01749999999999996
+        },
+        {
+          "wert": 0.75,
+          "n": 29,
+          "schnittR": -0.37758620689655176
+        }
+      ]
+    }
+  ]
 }

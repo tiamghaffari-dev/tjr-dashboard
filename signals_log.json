@@ -5790,9 +5790,9 @@
     "fillTs": null,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "unfilled",
+    "resolvedTs": 1788987185000,
+    "rMultiple": 0
   },
   {
     "id": "GBPUSD-1788987959874",
@@ -5928,10 +5928,37 @@
     "fillTs": 1788981900000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1789014600000,
+    "rMultiple": 1.36,
+    "benachrichtigt": true,
+    "exitPrice": 77626.601563,
+    "postmortem": {
+      "holdHours": 9.1,
+      "mfeR": 0.71,
+      "maeR": -0.91,
+      "towardTargetPct": 52,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.29,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.4R, der Preis lief danach aber noch bis +3.8R weiter. Hier lag deutlich mehr drin."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.8R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Take-Profit: zu konservativ · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1788995842783",
@@ -6032,8 +6059,8 @@
     "target2": 1.3103,
     "rr2": 5.65,
     "partialExit": true,
-    "trailStop": 1.40111,
-    "tp1HitTs": null,
+    "trailStop": 1.36013,
+    "tp1HitTs": 1789029900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -6072,9 +6099,20 @@
     "fillTs": 1789008300000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789030200000,
+    "rMultiple": 2,
+    "exitPrice": 1.36013,
+    "postmortem": {
+      "holdHours": 6.1,
+      "mfeR": 2.89,
+      "maeR": -0.25,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1789022392226",
@@ -6198,9 +6236,26 @@
     "fillTs": 1789008600000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789014600000,
+    "rMultiple": 2.14,
+    "exitPrice": 77629.546875,
+    "postmortem": {
+      "holdHours": 1.7,
+      "mfeR": 1.44,
+      "maeR": -0.27,
+      "towardTargetPct": 67,
+      "stopDistAdr": 0.19,
+      "targetDistAdr": 0.42,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +2.1R, der Preis lief danach aber noch bis +4.8R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "GBPUSD-1789043763091",
@@ -6246,6 +6301,62 @@
     },
     "tuningAtEntry": {
       "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "fillTs": 1789036800000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "^GSPC-1789058438174",
+    "asset": "^GSPC",
+    "direction": "SHORT",
+    "entryTs": 1789058438174,
+    "entry": 758.985016,
+    "stop": 760.719387,
+    "target": 756.599976,
+    "rr": 1.38,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 760.719387,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "SMT",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.75,
       "MAX_TP2_ADR_MULT": 1.25,
       "NEWS_FENSTER_MIN": 30,
       "KEY_LEVEL_MAX_ADR": 0.15
