@@ -1063,28 +1063,39 @@ function viennaDateStr(date = new Date()) {
 // wird stumm abgehakt - siehe Begruendung an der Aufrufstelle.
 const ALERT_MAX_ALTER_MIN = 60;
 
+// Tiam, 2026-09-09: "und ich bekomme keine benanchrichtung !!!" - berechtigt.
+// Seit dem Scharfschalten wurde KEIN einziger echter Trade eroeffnet, weil
+// praktisch alle Setups ausserhalb des Log-Fensters entstehen. Die Meldung
+// war technisch korrekt und praktisch nutzlos. Auf seine Entscheidung hin
+// werden ab jetzt AUCH Beobachtungen gemeldet - deutlich gekennzeichnet und
+// mit leiserer Prioritaet, weil sie rund sieben Mal taeglich kommen, auch
+// nachts. Sie bleiben trotzdem aus JEDER Kennzahl draussen.
 async function sendNtfyFuellung(asset, rec) {
   if (!NTFY_TOPIC) return;
   const crv = typeof rec.rr === "number" ? rec.rr.toFixed(2) : "?";
-  const text = [
+  const beob = !!rec.beobachtung;
+  const zeilen = [
     `${rec.direction} ${asset.display}`,
     `Einstieg ${rec.entry}`,
     `Stop     ${rec.stop}`,
     `Ziel     ${rec.target}`,
     `CRV      ${crv}`,
-  ].join("\n");
+  ];
+  if (beob) zeilen.unshift("Ausserhalb der Handelszeit - kein echter Trade.", "");
   try {
     await fetch(`https://ntfy.sh/${encodeURIComponent(NTFY_TOPIC)}`, {
       method: "POST",
       signal: AbortSignal.timeout(15000),
       headers: {
-        Title: `Trade eroeffnet: ${asset.name} ${rec.direction}`,
-        Priority: "high",
-        Tags: "chart_with_upwards_trend",
+        Title: beob
+          ? `Beobachtung: ${asset.name} ${rec.direction}`
+          : `Trade eroeffnet: ${asset.name} ${rec.direction}`,
+        Priority: beob ? "default" : "high",
+        Tags: rec.direction === "LONG" ? "chart_with_upwards_trend" : "chart_with_downwards_trend",
       },
-      body: text,
+      body: zeilen.join("\n"),
     });
-    console.log(`ALERT gesendet (Fuellung): ${asset.name} ${rec.direction}`);
+    console.log(`ALERT gesendet (${beob ? "Beobachtung" : "Fuellung"}): ${asset.name} ${rec.direction}`);
   } catch (e) {
     console.error(`ntfy-Benachrichtigung fehlgeschlagen fuer ${asset.name}:`, e.message || e);
   }
@@ -1379,8 +1390,10 @@ async function main() {
     if (NTFY_TOPIC) {
       for (const rec of signalsLog) {
         if (rec.asset !== item.asset.symbol) continue;
-        // Beobachtungen sind keine handelbaren Trades - nie melden.
-        if (rec.beobachtung || !rec.fillTs || rec.benachrichtigt) continue;
+        // Beobachtungen werden seit 2026-09-09 ebenfalls gemeldet (Tiams
+        // Entscheidung) - gekennzeichnet und leiser, siehe sendNtfyFuellung.
+        // Sie bleiben trotzdem aus JEDER Kennzahl draussen.
+        if (!rec.fillTs || rec.benachrichtigt) continue;
         // IMMER abhaken, auch wenn nichts gesendet wird. Sonst haette der
         // erste Lauf nach dem Einbau den gesamten Altbestand auf einmal
         // verschickt (rund 40 Nachrichten), und nach einem Ausfall des Laufs
