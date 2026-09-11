@@ -363,8 +363,12 @@ function renderSummary() {
     <div class="summary-card"><div class="label">Wins</div><div class="value v-win">${s.wins}</div></div>
     <div class="summary-card"><div class="label">Losses</div><div class="value v-loss">${s.losses}</div></div>
     <div class="summary-card"><div class="label">Offen</div><div class="value v-open">${s.open}</div></div>
-    <div class="summary-card"><div class="label">Abgelaufen</div><div class="value v-neutral">${s.stale}</div></div>
-    <div class="summary-card" title="Signale außerhalb der Handelszeiten, nur zur Messung mitgeschrieben. Zählen NICHT zur Bilanz."><div class="label">Beobachtungen</div><div class="value v-neutral">${s.beobachtungen}</div></div>`;
+    <div class="summary-card"><div class="label">Abgelaufen</div><div class="value v-neutral">${s.stale}</div></div>`;
+  // Tiam, 2026-09-11: die Beobachtungs-Karte ist wieder weg. Sie zeigte eine
+  // ueber Tage WACHSENDE Summe (26 nach vier Tagen), er las sie aber als
+  // "gerade offene Beobachtungen" und erwartete hoechstens eine je Asset.
+  // Eine Zahl, die man zwangslaeufig falsch versteht, ist schlechter als
+  // keine. Die Daten laufen unveraendert im Hintergrund weiter.
 }
 
 function renderAssetCards() {
