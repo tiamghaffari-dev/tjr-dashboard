@@ -349,8 +349,11 @@ function computeStats(signals) {
   const stale = signals.filter((r) => r.status === "stale").length;
   const winRate = closed.length ? Math.round((wins / closed.length) * 100) : null;
   const beobachtungen = signals.filter((r) => r.beobachtung).length;
-  // total meint die OFFIZIELLEN Signale - Beobachtungen sind kein Teil davon.
-  return { total: signals.length - beobachtungen, wins, losses, open, stale,
+  // Tiam, 2026-09-11: die Karte zeigte 82, darunter aber nur 12 Wins und 28
+  // Losses. Die 42 dazwischen (34 zu alt zum Nachrechnen, 8 nie ausgefuehrt)
+  // tauchten nirgends auf, die Zeile ging also nicht auf. Jetzt zaehlt sie
+  // GENAU das, was die anderen Karten beschreiben.
+  return { total: wins + losses + open + stale, wins, losses, open, stale,
            closed: closed.length, winRate, beobachtungen };
 }
 
@@ -358,7 +361,7 @@ function renderSummary() {
   const s = computeStats(DATA.signals);
   const el = document.getElementById("summary");
   el.innerHTML = `
-    <div class="summary-card"><div class="label">Gesamt Signale</div><div class="value v-neutral">${s.total}</div></div>
+    <div class="summary-card" title="Wins + Losses + Offen + Abgelaufen. Nicht mitgezählt: Signale, bei denen der Markt nie am Einstiegspreis war, und Altbestände von vor der Füllprüfung."><div class="label">Trades gewertet</div><div class="value v-neutral">${s.total}</div></div>
     <div class="summary-card"><div class="label">Win-Rate (abgeschlossen)</div><div class="value v-neutral">${s.winRate === null ? "–" : s.winRate + "%"}</div></div>
     <div class="summary-card"><div class="label">Wins</div><div class="value v-win">${s.wins}</div></div>
     <div class="summary-card"><div class="label">Losses</div><div class="value v-loss">${s.losses}</div></div>
