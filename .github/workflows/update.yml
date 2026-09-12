@@ -1,42 +1,66 @@
 name: Update TJR Report
 
+# ============================================================================
+# TAKTUNG - warum dieser Workflow eine Schleife enthaelt
+# ============================================================================
+# Gemessen am 2026-09-10 ueber 2,5 Tage: GitHub startete den Lauf im MEDIAN nur
+# alle 92 Minuten, die groesste Luecke betrug 11,6 Stunden - obwohl unten
+# Cron-Eintraege mit 15 Minuten stehen. Das ist GitHubs bekannte Drosselung
+# haeufiger Zeitplaene; im Repo laesst sie sich nicht abstellen.
+#
+# Folge: Setups, die innerhalb einer Stunde entstehen und wieder vergehen,
+# wurden nie gesehen. Zusammen mit dem engen Handelsfenster (9-10/15-17 Wien)
+# war das der zweite Grund fuer die wenigen Trades.
+#
+# Loesung ohne Token und ohne fremden Dienst: Der Lauf startet seltener, bleibt
+# dafuer rund eine Stunde am Leben und arbeitet SELBST im 5-Minuten-Takt. Aus
+# einem Start werden so zehn Auswertungen. Moeglich, weil das Repo oeffentlich
+# ist - dort sind Actions-Minuten unbegrenzt und kostenlos.
+# ============================================================================
+
 on:
   schedule:
-    # 08:00-08:59 Vienna (CEST/UTC+2): alle 15 Minuten
+    # Dank "concurrency" unten laeuft trotzdem immer nur EIN Lauf, und ein
+    # wartender startet sofort, wenn der vorige endet. Damit heilt der
+    # Zeitplan GitHubs Aussetzer selbst.
     - cron: "*/15 6 * * 1-5"
-    # 09:00-09:59 Vienna: dichter getaktet, alle 5 Minuten (London-Session-
-    # Fokusfenster - TJRs eigenes Checklist: "london session 3am-4am" ET,
-    # siehe project_tjr_strategy Memory "Update 2026-07-15")
-    - cron: "*/5 7 * * 1-5"
-    # 10:00-14:59 Vienna: wieder alle 15 Minuten
-    - cron: "*/15 8-12 * * 1-5"
-    # 15:00-16:59 Vienna: dichter getaktet, alle 5 Minuten (NY-Session Kill-Zone / Fokusfenster)
-    - cron: "*/5 13-14 * * 1-5"
-    # 17:00-23:59 Vienna: wieder alle 15 Minuten
+    - cron: "*/15 7-8 * * 1-5"
+    - cron: "*/15 9-12 * * 1-5"
+    - cron: "*/15 13-14 * * 1-5"
     - cron: "*/15 15-21 * * 1-5"
-  # Tiam, 2026-08-10: Bisher lief der Report NUR nach Zeitplan. Nach einer
-  # Aenderung an der Engine oder am Regelwerk musste der Lauf jedes Mal von Hand
-  # ueber "Run workflow" angestossen werden, sonst war die neue Logik bis zum
-  # naechsten Cron-Slot nicht auf der Seite - und GitHub verzoegert geplante
-  # Laeufe regelmaessig um 20+ Minuten. Deshalb zusaetzlich bei Push auf die
-  # Logikdateien. Bewusst mit paths-Filter: ein Push, der nur docs/ oder
-  # signals_log.json aendert, ist ja gerade das ERGEBNIS eines Laufs und wuerde
-  # sonst sofort den naechsten ausloesen (Endlosschleife).
+  # Bewusst mit paths-Filter: ein Push, der nur docs/ oder signals_log.json
+  # aendert, ist ja gerade das ERGEBNIS eines Laufs und wuerde sonst sofort
+  # den naechsten ausloesen (Endlosschleife).
   push:
     branches: [main]
     paths:
       - "engine.js"
       - "build.js"
       - "tjr_rules.js"
+      - "auto_tune.js"
+      - "kerzen_archiv.js"
       - ".github/workflows/update.yml"
   workflow_dispatch: {}
 
 permissions:
   contents: write
 
+# Nur EIN Lauf gleichzeitig. Zwei Gruende:
+#  1. Zwei gleichzeitig schreibende Laeufe kaemen sich beim Push ins Gehege
+#     und koennten signals_log.json beschaedigen.
+#  2. GitHub haelt je Gruppe hoechstens einen WARTENDEN Lauf vor. Sobald die
+#     Schleife endet, startet er sofort - nahezu luckenlose Abdeckung.
+# cancel-in-progress bewusst FALSE: ein laufender Durchgang darf nie
+# abgeschnitten werden, sonst bliebe ein halb geschriebenes Log zurueck.
+concurrency:
+  group: tjr-report
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
+    # Schleife ~55 Min + Puffer. GitHub erlaubt bis zu 6 Stunden je Job.
+    timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
 
@@ -44,27 +68,47 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Report generieren
+      - name: Report erzeugen (Schleife, alle 5 Minuten)
         env:
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-        run: node build.js
-
-      - name: Änderungen committen und pushen
         run: |
+          # KEIN "set -e": ein einzelner misslungener Durchlauf (z.B. Yahoo
+          # antwortet kurz nicht) darf die restlichen neun nicht mitreissen.
+          set +e
+          DURCHLAEUFE=10
           git config user.name "tjr-bot"
           git config user.email "actions@github.com"
-          # tuning.json MUSS mit committet werden: die Selbstjustierung schreibt
-          # ihren Stand dorthin. Fehlte es hier, waere jede selbst vorgenommene
-          # Anpassung beim naechsten Lauf spurlos weg - der Auto-Tune haette
-          # ewig bei den Startwerten gestanden, ohne dass es jemand merkt.
-          # (Gefunden 2026-09-05, bevor die erste echte Anpassung anstand.)
-          git add docs/index.html docs/chart.html docs/history.html state.json signals_log.json session_log.json tuning.json
-          # daten/ = selbst aufgebaute 5min-Kurshistorie (siehe kerzen_archiv.js).
-          # Als if-Block statt "&&", weil ein fehlgeschlagenes Test-Kommando bei
-          # bash -e den ganzen Schritt abbrechen wuerde - der Ordner existiert
-          # beim allerersten Lauf noch nicht.
-          if [ -d daten ]; then git add daten; fi
-          git diff --quiet --cached || git commit -m "Report aktualisiert: $(date -u +'%Y-%m-%d %H:%M UTC')"
-          git push
+
+          for i in $(seq 1 $DURCHLAEUFE); do
+            echo "::group::Durchlauf $i von $DURCHLAEUFE"
+
+            node build.js
+
+            # tuning.json MUSS mit committet werden: die Selbstjustierung
+            # schreibt ihren Stand dorthin. Fehlte es hier, waere jede
+            # Anpassung beim naechsten Lauf spurlos weg (gefunden 2026-09-05).
+            git add docs/index.html docs/chart.html docs/history.html state.json signals_log.json session_log.json tuning.json
+            # daten/ = selbst aufgebaute 5min-Kurshistorie (kerzen_archiv.js).
+            # Als if-Block, weil der Ordner beim allerersten Lauf fehlt.
+            if [ -d daten ]; then git add daten; fi
+
+            if git diff --quiet --cached; then
+              echo "Nichts geaendert - kein Commit."
+            else
+              git commit -m "Report aktualisiert: $(date -u +'%Y-%m-%d %H:%M UTC')"
+              # Defensiv: falls doch jemand dazwischen gepusht hat.
+              git pull --rebase --autostash -q
+              if git push -q; then
+                echo "Gepusht."
+              else
+                echo "Push fehlgeschlagen - naechster Durchlauf versucht es erneut."
+              fi
+            fi
+
+            echo "::endgroup::"
+            if [ "$i" -lt "$DURCHLAEUFE" ]; then sleep 300; fi
+          done
+
+          echo "Schleife beendet. Ein wartender Lauf uebernimmt jetzt."
