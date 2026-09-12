@@ -6902,6 +6902,63 @@
     "fillTs": null,
     "fuellGeprueft": true,
     "beobachtung": true,
+    "status": "unfilled",
+    "resolvedTs": 1789165077000,
+    "rMultiple": 0
+  },
+  {
+    "id": "ETHUSD-1789207233596",
+    "asset": "ETHUSD",
+    "direction": "SHORT",
+    "entryTs": 1789207233596,
+    "entry": 2533.185059,
+    "stop": 2548.749072,
+    "target": 2517.360107,
+    "rr": 1.02,
+    "target2": 2483.100098,
+    "rr2": 3.22,
+    "partialExit": true,
+    "trailStop": 2548.749072,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R9-daily-bias",
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bullish",
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
