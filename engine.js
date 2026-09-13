@@ -642,7 +642,21 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   const conf = confCandidates[0];
 
   const bosEvent = confirmingBos.length ? confirmingBos[0] : null;
-  const ob = findOrderBlock(ltfDf, conf.ts, wantDir);
+  // ANKER-KORREKTUR 2026-09-13. Vorher stand hier `conf.ts` - der Order Block
+  // wurde also ab der BESTAETIGUNG gesucht, die zeitlich NACH dem Sweep liegt.
+  // TJR definiert ihn selbst (Tag 20/22/24, von seinem Chart abgeschrieben) als
+  // "the leg up or leg down that CAUSES the liquidity sweep" - Bezugspunkt ist
+  // also der Sweep. Bei 5min-Kerzen umfasste das alte Fenster 75 Minuten vor
+  // der Bestaetigung; ob der Sweep ueberhaupt darin lag, war Zufall.
+  //
+  // Gemessen vor der Korrektur: OrderBlock-Zonen -10,47R auf 18 Trades, die
+  // Kombination iFVG+OrderBlock verlor 8 von 8. Erklaerung: der iFVG bestaetigt
+  // zu einem anderen Zeitpunkt als ein BOS und verschob das Fenster systematisch.
+  //
+  // OFFEN GELASSEN: ob die Sweep-Kerze selbst dazugehoert und ob "leg" die ganze
+  // Bewegung statt einer Einzelkerze meint. Beides ist aus der Quelle nicht
+  // eindeutig - deshalb bewusst NUR der Anker, damit zuordenbar bleibt, was wirkt.
+  const ob = findOrderBlock(ltfDf, recentSweep.ts, wantDir);
   const bb = findBreakerBlock(ltfDf, ltfBos, recentSweep.ts, wantDir);
 
   const sinceSweep = ltfDf.filter(r => r.ts >= recentSweep.ts);
@@ -971,7 +985,10 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40, correlatedLtfDf 
   ann.confirmation = conf;
   if (confirmingBos.length) ann.bos = confirmingBos[0];
 
-  const ob = findOrderBlock(ltfDf, conf.ts, wantDir);
+  // Anker am Sweep statt an der Bestaetigung - dieselbe Korrektur wie in
+  // buildSignal(), Begruendung dort. MUSS mitgeaendert werden, sonst zeichnet
+  // der Chart eine andere Zone, als der Trade tatsaechlich benutzt.
+  const ob = findOrderBlock(ltfDf, recentSweep.ts, wantDir);
   if (ob) ann.orderBlock = ob;
 
   const bb = findBreakerBlock(ltfDf, ltfBos, recentSweep.ts, wantDir);
