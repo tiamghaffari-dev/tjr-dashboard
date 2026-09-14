@@ -8466,9 +8466,31 @@
     "fillTs": 1789408800000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1789412798000,
+    "rMultiple": -1,
+    "exitPrice": 78389.20625,
+    "postmortem": {
+      "holdHours": 1.1,
+      "mfeR": 0.34,
+      "maeR": -1.11,
+      "towardTargetPct": 11,
+      "stopDistAdr": 0.17,
+      "targetDistAdr": 0.55,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 11% entgegen (max +0.3R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.1R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   },
   {
     "id": "^GSPC-1789410188362",
@@ -8696,7 +8718,7 @@
     },
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bearish",
-    "fillTs": null,
+    "fillTs": 1789412700000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
