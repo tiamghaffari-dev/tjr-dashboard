@@ -8043,9 +8043,88 @@
     "fillTs": 1789379519000,
     "fuellGeprueft": true,
     "beobachtung": false,
+    "status": "loss",
+    "resolvedTs": 1789381500000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 2495.154053,
+    "postmortem": {
+      "holdHours": 0.6,
+      "mfeR": 0.41,
+      "maeR": -1.09,
+      "towardTargetPct": 20,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.2R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 20% entgegen (max +0.4R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
+  },
+  {
+    "id": "GCUSD-1789399900269",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1789399900269,
+    "entry": 4317.300049,
+    "stop": 4338.86001,
+    "target": 4274.180127,
+    "rr": 2,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 4338.86001,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.35,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "rMultiple": null
   }
 ]
