@@ -9335,7 +9335,7 @@
     },
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
-    "fillTs": null,
+    "fillTs": 1789461000000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
