@@ -9637,10 +9637,32 @@
     "fillTs": 1789466700000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1789468500000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.392508,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 0.53,
+      "maeR": -1.36,
+      "towardTargetPct": 27,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.45,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.4R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Analyse: These war falsch"
+    }
   },
   {
     "id": "^GSPC-1789481015844",
