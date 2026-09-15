@@ -8526,8 +8526,8 @@
     "target2": 756.599976,
     "rr2": 2.25,
     "partialExit": true,
-    "trailStop": 764.6653,
-    "tp1HitTs": null,
+    "trailStop": 758.543542,
+    "tp1HitTs": 1789466700000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -8567,7 +8567,7 @@
     "fillTs": 1789395900000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -9177,9 +9177,10 @@
     "fillTs": 1789462200000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789450500000,
+    "rMultiple": 1.45,
+    "exitPrice": 2462.310059
   },
   {
     "id": "XRPUSD-1789473201592",
@@ -9304,9 +9305,20 @@
     "fillTs": 1789464900000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789464900000,
+    "rMultiple": 1.52,
+    "exitPrice": 1.4182,
+    "postmortem": {
+      "holdHours": 0,
+      "mfeR": 2.14,
+      "maeR": -0.22,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.19,
+      "targetDistAdr": 0.28,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1789475179355",
@@ -9493,9 +9505,10 @@
     "fillTs": 1789462800000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789450500000,
+    "rMultiple": 1.15,
+    "exitPrice": 2462.050049
   },
   {
     "id": "ETHUSD-1789478018395",
@@ -9552,10 +9565,11 @@
     "fillTs": 1789463700000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1789450500000,
+    "rMultiple": 1.1,
+    "benachrichtigt": true,
+    "exitPrice": 2462.050049
   },
   {
     "id": "XRPUSD-1789481015844",
@@ -9609,12 +9623,13 @@
     },
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bearish",
-    "fillTs": null,
+    "fillTs": 1789466700000,
     "fuellGeprueft": true,
     "beobachtung": false,
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "benachrichtigt": true
   },
   {
     "id": "^GSPC-1789481015844",
