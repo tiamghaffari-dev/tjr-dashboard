@@ -10683,10 +10683,21 @@
     "fillTs": 1789553400000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1789567800000,
+    "rMultiple": 1.45,
+    "benachrichtigt": true,
+    "exitPrice": 1.341756,
+    "postmortem": {
+      "holdHours": 4,
+      "mfeR": 1.67,
+      "maeR": -0.29,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.53,
+      "targetDistAdr": 0.77,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1789569245875",
@@ -11030,7 +11041,7 @@
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": 0.215,
-    "fillTs": null,
+    "fillTs": 1789567599000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
