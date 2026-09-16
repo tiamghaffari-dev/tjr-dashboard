@@ -10568,9 +10568,20 @@
     "fillTs": 1789567500000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789569300000,
+    "rMultiple": 2,
+    "exitPrice": 1.26064,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 2.28,
+      "maeR": -0.39,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1789563024948",
@@ -11208,12 +11219,39 @@
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bearish",
     "zonentiefe": -0.233,
-    "fillTs": null,
+    "fillTs": 1789569600000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1789569600000,
+    "rMultiple": -1,
+    "exitPrice": 75579.846875,
+    "postmortem": {
+      "holdHours": 0,
+      "mfeR": -1.32,
+      "maeR": -2.6,
+      "towardTargetPct": 0,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 0% entgegen (max -1.3R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.8R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   },
   {
     "id": "ETHUSD-1789583854492",
@@ -11266,11 +11304,33 @@
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": 1.647,
-    "fillTs": null,
+    "fillTs": 1789569600000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1789569600000,
+    "rMultiple": -1,
+    "exitPrice": 2414.0957,
+    "postmortem": {
+      "holdHours": 0,
+      "mfeR": -0.48,
+      "maeR": -1.13,
+      "towardTargetPct": 0,
+      "stopDistAdr": 0.4,
+      "targetDistAdr": 0.56,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 0% entgegen (max -0.5R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   }
 ]
