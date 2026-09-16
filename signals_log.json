@@ -10749,9 +10749,31 @@
     "fillTs": 1789560900000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1789567554000,
+    "rMultiple": -1,
+    "exitPrice": 2406.253027,
+    "postmortem": {
+      "holdHours": 1.8,
+      "mfeR": 1.36,
+      "maeR": -1.14,
+      "towardTargetPct": 63,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.43,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 63% der Zielstrecke (max +1.4R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.1R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Take-Profit: zu weit · Analyse: These war falsch"
+    }
   },
   {
     "id": "ETHUSD-1789576872706",
@@ -10806,9 +10828,31 @@
     "fillTs": 1789562700000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1789567554000,
+    "rMultiple": -1,
+    "exitPrice": 2406.347998,
+    "postmortem": {
+      "holdHours": 1.3,
+      "mfeR": 1.37,
+      "maeR": -1.13,
+      "towardTargetPct": 63,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.43,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 63% der Zielstrecke (max +1.4R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.1R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Take-Profit: zu weit · Analyse: These war falsch"
+    }
   },
   {
     "id": "GCUSD-1789581006643",
@@ -10862,6 +10906,64 @@
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": 0.365,
     "fillTs": 1789566646000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1789581956587",
+    "asset": "GCUSD",
+    "direction": "LONG",
+    "entryTs": 1789581956587,
+    "entry": 4388.100098,
+    "stop": 4368.960059,
+    "target": 4444.899902,
+    "rr": 2.97,
+    "target2": 4447.5,
+    "rr2": 3.1,
+    "partialExit": true,
+    "trailStop": 4368.960059,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "verletzt",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R9-daily-bias",
+        "R12-news-fenster"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 0.215,
+    "fillTs": null,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
