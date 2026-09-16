@@ -725,6 +725,25 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   const cand = candidates[0];
   const entry = (cand.top + cand.bottom) / 2;
 
+  // Tiam, 2026-09-16: "wenn es jetzt so weit runtergefallen ist und vielleicht
+  // jetzt jeder kauft, dann soll die KI auch so denken."
+  //
+  // Sein Gedanke steckt bereits in R6 (Discount/Premium) - gekauft wird nur
+  // unterhalb der Mitte zwischen Sweep-Tief und dem Hoch danach. Was bisher
+  // fehlte: WIE TIEF darunter. Ohne diese Zahl laesst sich seine eigentliche
+  // Frage - "bringt ein tieferer Einstieg mehr?" - gar nicht beantworten.
+  //
+  // 0 = direkt an der Mitte (gerade so erlaubt), 1 = am Sweep-Extrem,
+  // >1 = sogar jenseits davon. Reine MESSUNG, sie beeinflusst nichts.
+  // Erst wenn genug Werte vorliegen, ist ueber eine Schwelle zu reden - eine
+  // heute geratene Schwelle waere genau die Sorte Scheinbefund, die uns bei
+  // "Entry zu frueh" und bei den Phantom-Fuellungen schon zweimal fast
+  // reingelegt hat.
+  const zonenSpanne = wantDir === "up" ? (mid - legLow) : (legHigh - mid);
+  const zonentiefe = zonenSpanne > 0
+    ? Math.round(((wantDir === "up" ? mid - entry : entry - mid) / zonenSpanne) * 1000) / 1000
+    : null;
+
   // Tiam, 2026-07-22: "er soll auch geschickter die Stop loss setzen [...]
   // es soll passen und auch ned zu klein sein" - TJRs eigene Regel aus
   // Bootcamp Day 38 ("Stop-Losses"): "stop loss above liq sweep" (analog
@@ -898,6 +917,8 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
     target2: target2 !== null ? round6(target2) : null, rr2: rr2Actual, partialExit,
     sweep: recentSweep, bos: bosEvent, confirmation: conf,
     zoneKind: cand.kind, zoneRange: [cand.bottom, cand.top],
+    // Reine Messgroesse, siehe Begruendung bei der Berechnung oben.
+    zonentiefe,
     currentPrice, targetSource,
     m1Gate: hasM1Data, m1Confirmation: m1.confirmed ? m1.event : null, zoneTouchTs: m1.touchTs,
     // Tiam, 2026-08-12: schliesst die dokumentierte Luecke G2. TJRs Checkliste
