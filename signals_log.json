@@ -10047,9 +10047,31 @@
     "fillTs": 1789479900000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1789546800000,
+    "rMultiple": -1,
+    "exitPrice": 1.345162,
+    "postmortem": {
+      "holdHours": 18.6,
+      "mfeR": 0.78,
+      "maeR": -1.06,
+      "towardTargetPct": 58,
+      "stopDistAdr": 0.53,
+      "targetDistAdr": 0.72,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.1R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.1R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Analyse: These war falsch"
+    }
   },
   {
     "id": "XRPUSD-1789498150152",
@@ -10369,6 +10391,121 @@
       "bewertbar": 6,
       "fehlend": [
         "R11-kein-trade-nach-verlust"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "BTCUSD-1789561443729",
+    "asset": "BTCUSD",
+    "direction": "SHORT",
+    "entryTs": 1789561443729,
+    "entry": 76109.882813,
+    "stop": 76504.364063,
+    "target": 75320.920313,
+    "rr": 2,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 76504.364063,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "XRPUSD-1789561443729",
+    "asset": "XRPUSD",
+    "direction": "SHORT",
+    "entryTs": 1789561443729,
+    "entry": 1.2882,
+    "stop": 1.30198,
+    "target": 1.26064,
+    "rr": 2,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 1.30198,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 3,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R11-kein-trade-nach-verlust",
+        "R13-sweep-am-key-level"
       ]
     },
     "tuningAtEntry": {
