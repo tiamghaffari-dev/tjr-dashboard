@@ -10431,9 +10431,9 @@
     "fillTs": null,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "unfilled",
+    "resolvedTs": 1789573360000,
+    "rMultiple": 0
   },
   {
     "id": "BTCUSD-1789561443729",
@@ -10786,10 +10786,32 @@
     "fillTs": 1789567500000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1789573500000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.299046,
+    "postmortem": {
+      "holdHours": 1.7,
+      "mfeR": 1.71,
+      "maeR": -1.24,
+      "towardTargetPct": 85,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.43,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.1R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 85% der Zielstrecke (max +1.7R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "ETHUSD-1789575294665",
@@ -11387,9 +11409,31 @@
     "fillTs": 1789570500000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1789574400000,
+    "rMultiple": -1,
+    "exitPrice": 76138.036,
+    "postmortem": {
+      "holdHours": 1.1,
+      "mfeR": 0.78,
+      "maeR": -1.13,
+      "towardTargetPct": 64,
+      "stopDistAdr": 0.27,
+      "targetDistAdr": 0.33,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.5R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 64% der Zielstrecke (max +0.8R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "ETHUSD-1789585027247",
