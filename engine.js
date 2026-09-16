@@ -723,7 +723,39 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
     return distA - distB;
   });
   const cand = candidates[0];
-  const entry = (cand.top + cand.bottom) / 2;
+
+  // TJRs Checklist verlangt nach der 5min-Zone noch eine 1min-Bestaetigung
+  // (BOS/iFVG), bevor eingestiegen wird. Ohne m1-Daten degradiert das sauber
+  // auf die alte "Preis ist in der Zone"-Logik.
+  // VORGEZOGEN 2026-09-16: stand frueher ~150 Zeilen weiter unten. Der
+  // Einstiegspreis braucht das Ergebnis jetzt, siehe direkt darunter.
+  const inZoneNow = cand.bottom <= currentPrice && currentPrice <= cand.top;
+  const hasM1Data = !!(m1Df && m1Df.length > 0);
+  const m1 = hasM1Data
+    ? find1minConfirmation(m1Df, cand.bottom, cand.top, wantDir, conf.ts)
+    : { touched: inZoneNow, confirmed: inZoneNow, touchTs: null, event: null };
+
+  // EINSTIEGSPREIS - Tiam, 2026-09-16: "er muss ned auf eine bestimmten Wert
+  // warten, wenn es passt dann soll er direkt einsteigen."
+  //
+  // Vorher stand hier `(cand.top + cand.bottom) / 2` - die MITTE der Zone.
+  // Das Signal feuert aber schon, sobald der Kurs die Zone BERUEHRT (siehe
+  // find1minConfirmation: `r.low <= zoneTop && r.high >= zoneBottom`, es
+  // genuegt der Rand). Gebucht wurde also ein Preis, den der Markt danach oft
+  // nie mehr erreichte: 15 Signale kamen nie zustande, bei 43 % dauerte die
+  // Ausfuehrung laenger als 5 Minuten, im schlimmsten Fall 7,7 Stunden.
+  //
+  // Dieselbe Optimismus-Annahme wie bei den Phantom-Fuellungen: nicht der
+  // Preis, den man bekommt, sondern der beste der Zone. TJRs Schritt (e)
+  // heisst schlicht "enter" - kein Warten auf einen tieferen Kurs.
+  //
+  // Jetzt: der Schlusskurs der Kerze, in der die 1min-Bestaetigung fiel.
+  // Ohne m1-Daten bleibt die Zonenmitte als Rueckfall. Bewusster Preis
+  // dafuer: schlechteres CRV. Dafuer stimmen die Zahlen.
+  const bestaetigungsKerze = (hasM1Data && m1.confirmed && m1.event)
+    ? m1Df.filter((r) => r.ts <= m1.event.ts).pop()
+    : null;
+  const entry = bestaetigungsKerze ? bestaetigungsKerze.close : (cand.top + cand.bottom) / 2;
 
   // Tiam, 2026-09-16: "wenn es jetzt so weit runtergefallen ist und vielleicht
   // jetzt jeder kauft, dann soll die KI auch so denken."
@@ -871,17 +903,6 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   const rrActual = riskDist > 0 ? Math.round((Math.abs(target - entry) / riskDist) * 100) / 100 : rrTarget;
   const rr2Actual = (partialExit && riskDist > 0) ? Math.round((Math.abs(target2 - entry) / riskDist) * 100) / 100 : null;
 
-  const inZoneNow = cand.bottom <= currentPrice && currentPrice <= cand.top;
-
-  // TJRs eigenes Checklist verlangt NACH der 5min-Zone noch eine eigene
-  // 1min-Bestaetigung (BOS/iFVG), bevor tatsaechlich eingestiegen wird - ohne
-  // m1-Daten (Fetch fehlgeschlagen etc.) degradiert das sauber auf die alte
-  // "Preis ist in der Zone" Logik, damit ein Datenausfall nie automatisch
-  // jedes Signal blockiert.
-  const hasM1Data = !!(m1Df && m1Df.length > 0);
-  const m1 = hasM1Data
-    ? find1minConfirmation(m1Df, cand.bottom, cand.top, wantDir, conf.ts)
-    : { touched: inZoneNow, confirmed: inZoneNow, touchTs: null, event: null };
   const zoneTouched = hasM1Data ? m1.touched : inZoneNow;
 
   let signal;
