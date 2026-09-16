@@ -941,6 +941,10 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBi
     // null = noch nicht ausgefuehrt, der Trade ist bis dahin nur ein Plan.
     // fuellGeprueft markiert diesen Datensatz als bereits nach der neuen
     // Logik entstanden, damit die einmalige Neuberechnung ihn nicht anfasst.
+    // Tiam, 2026-09-16: wie tief im Discount/Premium wurde eingestiegen?
+    // 0 = an der Mitte, 1 = am Sweep-Extrem. Beantwortet spaeter seine Frage,
+    // ob ein tieferer Einstieg tatsaechlich mehr bringt. Nur Messung.
+    zonentiefe: typeof sig.zonentiefe === "number" ? sig.zonentiefe : null,
     fillTs: null, fuellGeprueft: true,
     // beobachtung = ausserhalb von TJRs Handelsfenster erkannt und nur zu
     // MESSZWECKEN mitgeschrieben. Tiam, 2026-09-08: bei ~5 verwertbaren
