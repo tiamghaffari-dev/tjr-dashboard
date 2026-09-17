@@ -12149,9 +12149,9 @@
     "fillTs": null,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "unfilled",
+    "resolvedTs": 1789663162000,
+    "rMultiple": 0
   },
   {
     "id": "GCUSD-1789648762387",
