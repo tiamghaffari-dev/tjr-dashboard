@@ -749,13 +749,24 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   // Preis, den man bekommt, sondern der beste der Zone. TJRs Schritt (e)
   // heisst schlicht "enter" - kein Warten auf einen tieferen Kurs.
   //
-  // Jetzt: der Schlusskurs der Kerze, in der die 1min-Bestaetigung fiel.
-  // Ohne m1-Daten bleibt die Zonenmitte als Rueckfall. Bewusster Preis
-  // dafuer: schlechteres CRV. Dafuer stimmen die Zahlen.
-  const bestaetigungsKerze = (hasM1Data && m1.confirmed && m1.event)
-    ? m1Df.filter((r) => r.ts <= m1.event.ts).pop()
-    : null;
-  const entry = bestaetigungsKerze ? bestaetigungsKerze.close : (cand.top + cand.bottom) / 2;
+  // NACHGEBESSERT 2026-09-17. Der erste Versuch nahm den Schlusskurs der Kerze,
+  // in der die 1min-Bestaetigung fiel - das war immer noch ein Preis aus der
+  // Vergangenheit. Gemessen am 17.09.: die Bestaetigungen lagen 45 Minuten bis
+  // 2 Stunden zurueck, der gebuchte Einstieg also 0,16-0,31 % vom aktuellen
+  // Kurs entfernt. Bei GBPUSD (Short 1,337471 um 16:21) fiel der Kurs danach
+  // und kam nie zurueck - der Trade kam nie zustande, obwohl die Richtung
+  // stimmte. Tiam dazu: "das war ja perfekt so, er soll direkt reingehen."
+  //
+  // Grund fuer den Abstand: find1minConfirmation nimmt die ERSTE Bestaetigung
+  // nach dem 5min-Signal. Die kann lange zurueckliegen, waehrend das ENTRY
+  // selbst erst spaeter alle Tore passiert. Ein Preis von damals ist dann
+  // Rueckdatierung.
+  //
+  // Jetzt: sobald tatsaechlich eingestiegen wird (1min-Bestaetigung liegt vor),
+  // gilt der AKTUELLE Kurs. Liegt noch keine Bestaetigung vor, ist der Trade
+  // ohnehin nur ein Plan - dann bleibt die Zonenmitte als geplanter Einstieg
+  // stehen, damit die Anzeige zeigt, wo eingestiegen werden SOLL.
+  const entry = (hasM1Data && m1.confirmed) ? currentPrice : (cand.top + cand.bottom) / 2;
 
   // Tiam, 2026-09-16: "wenn es jetzt so weit runtergefallen ist und vielleicht
   // jetzt jeder kauft, dann soll die KI auch so denken."
