@@ -11677,8 +11677,8 @@
     "target2": 1.3723,
     "rr2": 6.2,
     "partialExit": true,
-    "trailStop": 1.27394,
-    "tp1HitTs": null,
+    "trailStop": 1.31492,
+    "tp1HitTs": 1789640700000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -11721,7 +11721,7 @@
     "fillTs": 1789581871000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -11999,8 +11999,8 @@
     "target2": 77631.25,
     "rr2": 4.03,
     "partialExit": true,
-    "trailStop": 75914.196875,
-    "tp1HitTs": null,
+    "trailStop": 76938.176563,
+    "tp1HitTs": 1789640700000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -12041,9 +12041,31 @@
     "fillTs": 1789637400000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789640805000,
+    "rMultiple": 2,
+    "exitPrice": 76938.176563,
+    "postmortem": {
+      "holdHours": 0.9,
+      "mfeR": 2.03,
+      "maeR": -0.93,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.9R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1789648762387",
