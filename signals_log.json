@@ -12640,9 +12640,9 @@
     "fillTs": null,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "unfilled",
+    "resolvedTs": 1789669293000,
+    "rMultiple": 0
   },
   {
     "id": "ETHUSD-1789665828219",
