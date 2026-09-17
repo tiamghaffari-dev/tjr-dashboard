@@ -11882,9 +11882,20 @@
     "fillTs": 1789633500000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789641300000,
+    "rMultiple": 1.05,
+    "exitPrice": 1.335647,
+    "postmortem": {
+      "holdHours": 2.2,
+      "mfeR": 1.11,
+      "maeR": -0.11,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.69,
+      "targetDistAdr": 0.72,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1789645934003",
