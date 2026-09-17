@@ -11982,9 +11982,10 @@
     "fillTs": 1789637700000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789625400000,
+    "rMultiple": 2.19,
+    "exitPrice": 2463.959961
   },
   {
     "id": "BTCUSD-1789647817261",
