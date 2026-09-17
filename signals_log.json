@@ -11721,9 +11721,26 @@
     "fillTs": 1789581871000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789626300000,
+    "rMultiple": 2,
+    "exitPrice": 1.31492,
+    "postmortem": {
+      "holdHours": 12.3,
+      "mfeR": 1.59,
+      "maeR": -0.59,
+      "towardTargetPct": 79,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.41,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "GCUSD-1789596902223",
