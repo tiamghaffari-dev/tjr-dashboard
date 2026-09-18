@@ -13210,9 +13210,26 @@
     "fillTs": 1789720200000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789724400000,
+    "rMultiple": 2,
+    "exitPrice": 2530.787988,
+    "postmortem": {
+      "holdHours": 1.2,
+      "mfeR": 2.2,
+      "maeR": -0.7,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "BTCUSD-1789735195246",
@@ -13269,9 +13286,10 @@
     "fillTs": 1789720800000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789709700000,
+    "rMultiple": 1.01,
+    "exitPrice": 78402.226563
   },
   {
     "id": "ETHUSD-1789735195246",
@@ -13387,8 +13405,25 @@
     "fillTs": 1789721700000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789724400000,
+    "rMultiple": 2,
+    "exitPrice": 2529.487939,
+    "postmortem": {
+      "holdHours": 0.8,
+      "mfeR": 2.29,
+      "maeR": -0.6,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   }
 ]
