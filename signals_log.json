@@ -13384,7 +13384,7 @@
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": 1.724,
-    "fillTs": null,
+    "fillTs": 1789721700000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
