@@ -13213,5 +13213,123 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "BTCUSD-1789735195246",
+    "asset": "BTCUSD",
+    "direction": "LONG",
+    "entryTs": 1789735195246,
+    "entry": 78080.296875,
+    "stop": 77762.017188,
+    "target": 78402.226563,
+    "rr": 1.01,
+    "target2": 79583.101563,
+    "rr2": 4.72,
+    "partialExit": true,
+    "trailStop": 77762.017188,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 3,
+      "bewertbar": 6,
+      "fehlend": [
+        "R9-daily-bias",
+        "R11-kein-trade-nach-verlust",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": -1,
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "ETHUSD-1789735195246",
+    "asset": "ETHUSD",
+    "direction": "LONG",
+    "entryTs": 1789735195246,
+    "entry": 2506.080078,
+    "stop": 2492.156055,
+    "target": 2533.928125,
+    "rr": 2,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 2492.156055,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 3,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R11-kein-trade-nach-verlust",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": -0.224,
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
