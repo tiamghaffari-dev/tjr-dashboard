@@ -15490,5 +15490,64 @@
       ],
       "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
     }
+  },
+  {
+    "id": "GBPUSD-1790033187778",
+    "asset": "GBPUSD",
+    "direction": "SHORT",
+    "entryTs": 1790033187778,
+    "entry": 1.337006,
+    "stop": 1.33902,
+    "target": 1.333711,
+    "rr": 1.64,
+    "target2": 1.333653,
+    "rr2": 1.66,
+    "partialExit": true,
+    "trailStop": 1.33902,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 3,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R11-kein-trade-nach-verlust",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": -0.111,
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
