@@ -13693,9 +13693,31 @@
     "fillTs": 1789737600000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1789990800000,
+    "rMultiple": -1,
+    "exitPrice": 1.336868,
+    "postmortem": {
+      "holdHours": 70.3,
+      "mfeR": 0.26,
+      "maeR": -1.03,
+      "towardTargetPct": 16,
+      "stopDistAdr": 0.61,
+      "targetDistAdr": 0.97,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 16% entgegen (max +0.3R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "ETHUSD-1789755196647",
@@ -14849,7 +14871,7 @@
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": -0.405,
-    "fillTs": null,
+    "fillTs": 1789990800000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
@@ -14908,7 +14930,7 @@
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": 0.28,
-    "fillTs": null,
+    "fillTs": 1789990800000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
