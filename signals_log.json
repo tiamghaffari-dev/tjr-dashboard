@@ -15543,7 +15543,7 @@
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bearish",
     "zonentiefe": -0.111,
-    "fillTs": null,
+    "fillTs": 1790019900000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
