@@ -12570,10 +12570,42 @@
     "fillTs": 1789639237000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1789983000000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 763.90415,
+    "postmortem": {
+      "holdHours": 95.5,
+      "mfeR": 0.88,
+      "maeR": -1.87,
+      "towardTargetPct": 76,
+      "stopDistAdr": 0.75,
+      "targetDistAdr": 0.87,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 76% der Zielstrecke (max +0.9R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.8R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit · Entry: zu frueh · Analyse: These war falsch"
+    }
   },
   {
     "id": "XRPUSD-1789653945578",
@@ -14268,9 +14300,31 @@
     "fillTs": 1789979787000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1789983000000,
+    "rMultiple": -1,
+    "exitPrice": 1.47948,
+    "postmortem": {
+      "holdHours": 0.9,
+      "mfeR": 0.19,
+      "maeR": -1.17,
+      "towardTargetPct": 9,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 9% entgegen (max +0.2R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "ETHUSD-1789995134086",
