@@ -15110,9 +15110,10 @@
     "fillTs": 1789992537000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1789987200000,
+    "rMultiple": 1.81,
+    "exitPrice": 774.030029
   },
   {
     "id": "GBPUSD-1790015083595",
