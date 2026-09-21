@@ -14377,7 +14377,7 @@
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": 0.003,
-    "fillTs": null,
+    "fillTs": 1789983300000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
@@ -14437,9 +14437,31 @@
     "fillTs": 1789981684000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1789983300000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.47578,
+    "postmortem": {
+      "holdHours": 0.4,
+      "mfeR": 0.19,
+      "maeR": -1.3,
+      "towardTargetPct": 9,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 9% entgegen (max +0.2R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   }
 ]
