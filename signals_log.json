@@ -15038,8 +15038,8 @@
     "target2": 1.5488,
     "rr2": 2.67,
     "partialExit": true,
-    "trailStop": 1.469592,
-    "tp1HitTs": null,
+    "trailStop": 1.534415,
+    "tp1HitTs": 1790009400000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -15080,9 +15080,26 @@
     "fillTs": 1789990642000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790009700000,
+    "rMultiple": 2,
+    "exitPrice": 1.534415,
+    "postmortem": {
+      "holdHours": 5.3,
+      "mfeR": 2.15,
+      "maeR": -0.47,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.31,
+      "targetDistAdr": 0.63,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "^GSPC-1790006928909",
@@ -15448,8 +15465,30 @@
     "fillTs": 1790008200000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790009100000,
+    "rMultiple": -1,
+    "exitPrice": 2778.645716,
+    "postmortem": {
+      "holdHours": 0.3,
+      "mfeR": 0.06,
+      "maeR": -1.08,
+      "towardTargetPct": 3,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.49,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.7R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 3% entgegen (max +0.1R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   }
 ]
