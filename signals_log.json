@@ -16003,9 +16003,36 @@
     "fillTs": 1790065500000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790073300000,
+    "rMultiple": -1,
+    "exitPrice": 85565.448438,
+    "postmortem": {
+      "holdHours": 2.2,
+      "mfeR": 1.19,
+      "maeR": -1.29,
+      "towardTargetPct": 59,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +2.0R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.9R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war richtig",
+          "text": "Die Richtung stimmte am Ende (+1.5R netto) - verloren wurde dieser Trade an der Ausfuehrung (Stop/Timing), nicht an der Analyse."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng · Entry: zu frueh · Analyse: These war richtig"
+    }
   },
   {
     "id": "GBPUSD-1790080834346",
@@ -16062,9 +16089,20 @@
     "fillTs": 1790067900000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790078400000,
+    "rMultiple": 1.65,
+    "exitPrice": 1.332372,
+    "postmortem": {
+      "holdHours": 2.9,
+      "mfeR": 1.68,
+      "maeR": -0.14,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.48,
+      "targetDistAdr": 0.8,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1790081779995",
@@ -16325,5 +16363,64 @@
     "resolvedTs": null,
     "rMultiple": null,
     "benachrichtigt": true
+  },
+  {
+    "id": "GBPUSD-1790098112161",
+    "asset": "GBPUSD",
+    "direction": "SHORT",
+    "entryTs": 1790098112161,
+    "entry": 1.332623,
+    "stop": 1.334817,
+    "target": 1.328721,
+    "rr": 1.78,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 1.334817,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 3,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R11-kein-trade-nach-verlust",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 3.86,
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
