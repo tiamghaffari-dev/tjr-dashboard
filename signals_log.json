@@ -15753,9 +15753,36 @@
     "fillTs": 1790061600000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790069400000,
+    "rMultiple": -1,
+    "exitPrice": 85602.473707,
+    "postmortem": {
+      "holdHours": 2.2,
+      "mfeR": 0.41,
+      "maeR": -1.01,
+      "towardTargetPct": 21,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.44,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.3R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 21% entgegen (max +0.4R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Entry: zu frueh"
+    }
   },
   {
     "id": "GCUSD-1790075826728",
@@ -15896,9 +15923,31 @@
     "fillTs": 1790063100000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790069400000,
+    "rMultiple": -1,
+    "exitPrice": 85602.473707,
+    "postmortem": {
+      "holdHours": 1.8,
+      "mfeR": 0.42,
+      "maeR": -1.01,
+      "towardTargetPct": 21,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.43,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.3R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 21% entgegen (max +0.4R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "BTCUSD-1790079889687",
@@ -16010,7 +16059,7 @@
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bearish",
     "zonentiefe": -1,
-    "fillTs": null,
+    "fillTs": 1790067900000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
@@ -16072,6 +16121,122 @@
     "fillTs": 1790067415000,
     "fuellGeprueft": true,
     "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "ETHUSD-1790084915936",
+    "asset": "ETHUSD",
+    "direction": "LONG",
+    "entryTs": 1790084915936,
+    "entry": 2752,
+    "stop": 2732.683984,
+    "target": 2790.632031,
+    "rr": 2,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 2732.683984,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 0.796,
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": false,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1790084915936",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1790084915936,
+    "entry": 4370.200195,
+    "stop": 4387.460156,
+    "target": 4314,
+    "rr": 3.26,
+    "target2": 4273.299805,
+    "rr2": 5.61,
+    "partialExit": true,
+    "trailStop": 4387.460156,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang",
+        "R11-kein-trade-nach-verlust"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": -0.282,
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": false,
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
