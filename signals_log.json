@@ -17012,7 +17012,7 @@
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": 0.637,
-    "fillTs": null,
+    "fillTs": 1790100000000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "status": "open",
