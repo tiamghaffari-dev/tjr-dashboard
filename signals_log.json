@@ -18375,12 +18375,13 @@
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": -0.829,
-    "fillTs": null,
+    "fillTs": 1790159100000,
     "fuellGeprueft": true,
     "beobachtung": false,
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "benachrichtigt": true
   },
   {
     "id": "XRPUSD-1790173242680",
