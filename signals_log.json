@@ -18008,9 +18008,31 @@
     "fillTs": 1790149852000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790154300000,
+    "rMultiple": -1,
+    "exitPrice": 1.55594,
+    "postmortem": {
+      "holdHours": 1.2,
+      "mfeR": 0.01,
+      "maeR": -1.08,
+      "towardTargetPct": 1,
+      "stopDistAdr": 0.17,
+      "targetDistAdr": 0.35,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.7R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 1% entgegen (max +0.0R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "ETHUSD-1790168916659",
@@ -18065,12 +18087,13 @@
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": -1,
-    "fillTs": null,
+    "fillTs": 1790154600000,
     "fuellGeprueft": true,
     "beobachtung": false,
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "benachrichtigt": true
   },
   {
     "id": "XRPUSD-1790168916659",
