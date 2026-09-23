@@ -18165,10 +18165,27 @@
     "fillTs": 1790154600000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1790158200000,
+    "rMultiple": 1.69,
+    "benachrichtigt": true,
+    "exitPrice": 2677.77002,
+    "postmortem": {
+      "holdHours": 1,
+      "mfeR": 2.75,
+      "maeR": -0.57,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.16,
+      "targetDistAdr": 0.26,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1790168916659",
@@ -18224,10 +18241,27 @@
     "fillTs": 1790154519000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1790158200000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.53668,
+    "postmortem": {
+      "holdHours": 1,
+      "mfeR": 1.28,
+      "maeR": -2.14,
+      "towardTargetPct": 56,
+      "stopDistAdr": 0.18,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.9R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "GBPUSD-1790171976480",
