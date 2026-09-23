@@ -17933,9 +17933,20 @@
     "fillTs": 1790148300000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790164200000,
+    "rMultiple": 1.4,
+    "exitPrice": 1.324932,
+    "postmortem": {
+      "holdHours": 4.4,
+      "mfeR": 1.41,
+      "maeR": -0.02,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.56,
+      "targetDistAdr": 0.78,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1790164249536",
@@ -18443,5 +18454,62 @@
     "resolvedTs": null,
     "rMultiple": null,
     "benachrichtigt": true
+  },
+  {
+    "id": "GCUSD-1790185063849",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1790185063849,
+    "entry": 4319.100098,
+    "stop": 4335.500098,
+    "target": 4273.299805,
+    "rr": 2.79,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 4335.500098,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 30,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 0.924,
+    "fillTs": null,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
