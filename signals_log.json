@@ -18248,11 +18248,12 @@
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bearish",
     "zonentiefe": -0.243,
-    "fillTs": null,
+    "fillTs": 1790157600000,
     "fuellGeprueft": true,
     "beobachtung": false,
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "benachrichtigt": true
   }
 ]
