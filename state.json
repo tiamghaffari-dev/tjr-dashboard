@@ -6,7 +6,7 @@
   "^GSPC": false,
   "GCUSD": false,
   "_meta": {
-    "windowOpen": false,
+    "windowOpen": true,
     "lastSessionLogDate": "2026-09-23"
   }
 }
