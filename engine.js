@@ -766,7 +766,18 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   // gilt der AKTUELLE Kurs. Liegt noch keine Bestaetigung vor, ist der Trade
   // ohnehin nur ein Plan - dann bleibt die Zonenmitte als geplanter Einstieg
   // stehen, damit die Anzeige zeigt, wo eingestiegen werden SOLL.
-  const entry = (hasM1Data && m1.confirmed) ? currentPrice : (cand.top + cand.bottom) / 2;
+  // ZWEI Bedingungen (2026-09-24), nicht nur eine:
+  //  1. Der Kurs muss noch IN der Zone sein.
+  //  2. Er muss auf der richtigen Seite des Equilibriums stehen - bei einem
+  //     Long im Discount, bei einem Short im Premium.
+  // Punkt 2 wirkt ueberfluessig, ist es aber nicht: eine Zone kann das
+  // Equilibrium ueberlappen. Beim Test ueber echte Kerzen hatten 6 von 13
+  // ENTRYs trotz Bedingung 1 noch eine negative Zonentiefe, standen also auf
+  // der falschen Seite. Genau das verbietet R6 - die Regel prueft aber nur die
+  // Lage der ZONE, nicht den tatsaechlichen Einstiegspreis.
+  const einstiegErlaubt = wantDir === "up" ? currentPrice <= mid : currentPrice >= mid;
+  const kannJetztEinsteigen = hasM1Data && m1.confirmed && inZoneNow && einstiegErlaubt;
+  const entry = kannJetztEinsteigen ? currentPrice : (cand.top + cand.bottom) / 2;
 
   // Tiam, 2026-09-16: "wenn es jetzt so weit runtergefallen ist und vielleicht
   // jetzt jeder kauft, dann soll die KI auch so denken."
@@ -921,6 +932,19 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
     signal = "Watchlist (auf Retracement in Zone warten)";
   } else if (hasM1Data && !m1.confirmed) {
     signal = "Watchlist (in Zone, warte auf 1min-Bestaetigung)";
+  } else if (hasM1Data && !kannJetztEinsteigen) {
+    // REGRESSION BEHOBEN 2026-09-24. Seit der Umstellung auf den aktuellen
+    // Kurs (17.09.) konnte die Engine einsteigen, NACHDEM der Kurs die Zone
+    // laengst verlassen hatte: die 1min-Bestaetigung liegt oft Minuten bis
+    // Stunden zurueck, der Kurs ist dann woanders. Gemessen am 24.09.:
+    // 39 von 116 Trades (34 %) hatten eine NEGATIVE Zonentiefe, standen also
+    // auf der falschen Seite des Equilibriums - bei einem Short wurde billig
+    // verkauft. Genau das verbietet R6; die Regel prueft aber die ZONE, nicht
+    // den Einstieg, und konnte es deshalb nicht abfangen.
+    //
+    // TJR steigt ein, waehrend der Kurs in der Zone ist. Ist er heraus, ist
+    // die Gelegenheit vorbei - dann gibt es keinen Trade. Tiams Entscheidung.
+    signal = "Watchlist (Einstieg verpasst - Kurs aus der Zone gelaufen)";
   } else {
     signal = "ENTRY";
   }
