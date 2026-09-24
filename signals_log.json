@@ -19810,12 +19810,13 @@
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": 7.577,
-    "fillTs": null,
+    "fillTs": 1790246400000,
     "fuellGeprueft": true,
     "beobachtung": false,
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "benachrichtigt": true
   },
   {
     "id": "ETHUSD-1790260752662",
