@@ -19514,12 +19514,13 @@
     "dailyBiasAtEntry": "bearish",
     "weeklyBiasAtEntry": "bullish",
     "zonentiefe": 2.038,
-    "fillTs": null,
+    "fillTs": 1790252100000,
     "fuellGeprueft": true,
     "beobachtung": false,
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "benachrichtigt": true
   },
   {
     "id": "BTCUSD-1790259148453",
@@ -19813,10 +19814,21 @@
     "fillTs": 1790246400000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1790247000000,
+    "rMultiple": 2,
+    "benachrichtigt": true,
+    "exitPrice": 83612.270313,
+    "postmortem": {
+      "holdHours": 0.2,
+      "mfeR": 2.55,
+      "maeR": -0.27,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1790260752662",
