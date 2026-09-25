@@ -21058,10 +21058,32 @@
     "fillTs": 1790332587000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1790337000000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.560356,
+    "postmortem": {
+      "holdHours": 1.2,
+      "mfeR": 0.12,
+      "maeR": -1.06,
+      "towardTargetPct": 5,
+      "stopDistAdr": 0.27,
+      "targetDistAdr": 0.61,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.1R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 5% entgegen (max +0.1R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "GBPUSD-1790346985501",
@@ -21119,9 +21141,31 @@
     "fillTs": 1790332800000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1790337000000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.323042,
+    "postmortem": {
+      "holdHours": 1.2,
+      "mfeR": 0.35,
+      "maeR": -1.03,
+      "towardTargetPct": 18,
+      "stopDistAdr": 0.29,
+      "targetDistAdr": 0.57,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.1R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 18% entgegen (max +0.3R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng · Take-Profit: nicht ursaechlich"
+    }
   }
 ]
