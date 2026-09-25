@@ -20405,9 +20405,20 @@
     "fillTs": 1790274300000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790305500000,
+    "rMultiple": 1.65,
+    "exitPrice": 1.5678,
+    "postmortem": {
+      "holdHours": 8.7,
+      "mfeR": 1.31,
+      "maeR": -0.43,
+      "towardTargetPct": 79,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.35,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1790289754869",
@@ -20463,8 +20474,19 @@
     "fillTs": 1790289900000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790305500000,
+    "rMultiple": 1.7,
+    "exitPrice": 1.5678,
+    "postmortem": {
+      "holdHours": 4.3,
+      "mfeR": 0.54,
+      "maeR": -0.37,
+      "towardTargetPct": 32,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.36,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
