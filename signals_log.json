@@ -22094,8 +22094,8 @@
     "target2": 2628.129883,
     "rr2": 3.41,
     "partialExit": true,
-    "trailStop": 2697.395947,
-    "tp1HitTs": null,
+    "trailStop": 2660.149902,
+    "tp1HitTs": 1790592000000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -22136,9 +22136,20 @@
     "fillTs": 1790589867000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1790592300000,
+    "rMultiple": 1.37,
+    "benachrichtigt": true,
+    "exitPrice": 2660.149902,
+    "postmortem": {
+      "holdHours": 0.7,
+      "mfeR": 1.58,
+      "maeR": -0.38,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.27,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
