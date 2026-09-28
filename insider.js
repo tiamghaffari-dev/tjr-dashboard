@@ -55,6 +55,13 @@ function quartal(d) {
   return Math.floor(d.getUTCMonth() / 3) + 1;
 }
 
+// "20260925" -> "2026-09-25"; bereits getrennte Datumsangaben bleiben unveraendert.
+function normDatum(s) {
+  if (!s) return s;
+  const m = String(s).trim().match(/^(\d{4})-?(\d{2})-?(\d{2})$/);
+  return m ? `${m[1]}-${m[2]}-${m[3]}` : String(s).trim();
+}
+
 function datumsStempel(d) {
   const j = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, "0");
@@ -80,7 +87,11 @@ async function tagesFilings(datum) {
     treffer.push({
       cik: teile[0].trim(),
       firma: teile[1].trim(),
-      meldedatum: teile[3].trim(),
+      // master.idx liefert YYYYMMDD, das Form-4-XML dagegen YYYY-MM-DD.
+      // Gefunden im ersten echten Lauf (28.09.2026): ohne diese Angleichung
+      // scheitert Date.parse an "20260925", die Verzoegerung wird null und
+      // die Archivdatei heisst "insider_2026092.csv". Beides war kaputt.
+      meldedatum: normDatum(teile[3].trim()),
       pfad: teile[4].trim(),
     });
   }
@@ -113,6 +124,10 @@ function parseForm4(roh) {
   const inhaber = feld(xml, "rptOwnerName");
   const istDirektor = feld(xml, "isDirector") === "1" || feld(xml, "isDirector") === "true";
   const istVorstand = feld(xml, "isOfficer") === "1" || feld(xml, "isOfficer") === "true";
+  // Wichtig fuer die Einordnung: Berkshire Hathaway tauchte im ersten Lauf mit
+  // 409 Mio USD bei Lennar auf - als 10-Prozent-Eigner, nicht als Vorstand. Das
+  // ist etwas voellig anderes als ein Direktor, der eigenes Geld nachschiesst.
+  const istGrossaktionaer = feld(xml, "isTenPercentOwner") === "1" || feld(xml, "isTenPercentOwner") === "true";
   const titel = feld(xml, "officerTitle");
 
   const kaeufe = [];
@@ -124,11 +139,11 @@ function parseForm4(roh) {
     const preis = Number(wert(b, "transactionPricePerShare"));
     const datum = wert(b, "transactionDate");
     if (!isFinite(stueck) || !isFinite(preis) || stueck <= 0 || preis <= 0) continue;
-    kaeufe.push({ stueck, preis, summe: Math.round(stueck * preis), datum });
+    kaeufe.push({ stueck, preis, summe: Math.round(stueck * preis), datum: normDatum(datum) });
   }
   if (!kaeufe.length) return null;
 
-  return { symbol, firma, inhaber, istDirektor, istVorstand, titel, kaeufe };
+  return { symbol, firma, inhaber, istDirektor, istVorstand, istGrossaktionaer, titel, kaeufe };
 }
 
 /* ---------- 3. Sammeln ---------- */
@@ -164,6 +179,9 @@ async function sammle(tageZurueck = 1) {
       if (!roh) continue;
       const p = parseForm4(roh);
       if (!p || !p.symbol) continue;
+      // Nicht boersengehandelte Einreicher (Fonds, Zweckgesellschaften) melden
+      // "N/A" oder "NONE" als Symbol - fuer eine Aktienbeobachtung wertlos.
+      if (/^(n\/?a|none|-)$/i.test(p.symbol)) continue;
 
       for (const k of p.kaeufe) {
         if (k.summe < MIN_KAUF_USD) continue;
@@ -172,7 +190,8 @@ async function sammle(tageZurueck = 1) {
           symbol: p.symbol,
           firma: p.firma || f.firma,
           inhaber: p.inhaber,
-          rolle: p.titel || (p.istDirektor ? "Director" : p.istVorstand ? "Officer" : ""),
+          rolle: p.titel || (p.istDirektor ? "Director" : p.istVorstand ? "Officer" : p.istGrossaktionaer ? "10% Eigner" : ""),
+          grossaktionaer: p.istGrossaktionaer && !p.istDirektor && !p.istVorstand,
           stueck: k.stueck,
           preis: k.preis,
           summe: k.summe,
@@ -202,7 +221,7 @@ function buendle(eintraege) {
       proSymbol.set(e.symbol, {
         symbol: e.symbol, firma: e.firma, insider: new Set(),
         summe: 0, kaeufe: 0, frueheste: e.transaktion, spaeteste: e.transaktion,
-        maxVerzoegerung: 0, belege: [],
+        maxVerzoegerung: 0, nurGrossaktionaer: true, belege: [],
       });
     }
     const g = proSymbol.get(e.symbol);
@@ -214,6 +233,7 @@ function buendle(eintraege) {
     if (e.verzoegerungTage != null && e.verzoegerungTage > g.maxVerzoegerung) {
       g.maxVerzoegerung = e.verzoegerungTage;
     }
+    if (!e.grossaktionaer) g.nurGrossaktionaer = false;
     g.belege.push(e);
   }
   return [...proSymbol.values()]
@@ -269,4 +289,4 @@ function schluessel(f) {
   return [f[0], f[3], f[5], f[7]].join("|").trim();
 }
 
-module.exports = { sammle, buendle, archiviere, parseForm4, tagesFilings, MIN_KAUF_USD };
+module.exports = { sammle, buendle, archiviere, parseForm4, tagesFilings, normDatum, MIN_KAUF_USD };
