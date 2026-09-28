@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insider-Kaeufe // Beobachtung</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(255, 196, 0, 0.13), transparent 42%),
+      radial-gradient(circle at 85% 8%, rgba(88, 101, 242, 0.10), transparent 40%),
+      #05060a;
+    color: #e8eaf0;
+    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  body { padding: 22px 24px 48px; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
+  h1 {
+    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
+    background: linear-gradient(90deg, #ffd25c, #a78bfa 55%, #7dd3fc 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tag {
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,210,92,0.35);
+    color: #ffd25c; background: rgba(255,210,92,0.08);
+  }
+  .howto-link {
+    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 6px; text-decoration: none;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
+    color: #9198ad; transition: all 0.15s ease;
+  }
+  .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 16px 0; font-family: -apple-system, sans-serif; }
+
+  .warn {
+    background: linear-gradient(135deg, rgba(255,196,0,0.09), rgba(255,196,0,0.02));
+    border: 1px solid rgba(255,196,0,0.28); border-radius: 12px;
+    padding: 13px 16px; margin-bottom: 20px; font-size: 12.5px; line-height: 1.6;
+    font-family: -apple-system, sans-serif; animation: fadeUp 0.4s ease; color: #d8cfae;
+  }
+  .warn b { color: #ffd25c; }
+
+  .cards { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .card {
+    flex: 1 1 140px; background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 12px 14px;
+  }
+  .card .k { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: #6b7185; font-family: -apple-system, sans-serif; }
+  .card .v { font-size: 20px; font-weight: 700; margin-top: 4px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th {
+    text-align: left; padding: 9px 10px; color: #6b7185; font-weight: 600;
+    font-size: 10.5px; letter-spacing: 0.7px; text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.1); font-family: -apple-system, sans-serif;
+    cursor: pointer; user-select: none; white-space: nowrap;
+  }
+  th:hover { color: #9fb2ff; }
+  td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.045); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .sym { font-weight: 700; color: #7dd3fc; }
+  .firma { color: #9198ad; font-size: 11.5px; font-family: -apple-system, sans-serif; }
+  .geld { color: #39ff88; font-weight: 600; }
+  .mehrere { color: #ffd25c; font-weight: 700; }
+  .lag-ok { color: #6b7185; }
+  .lag-mittel { color: #ffd25c; }
+  .lag-schlecht { color: #ff6b6b; font-weight: 600; }
+  .insider-liste { color: #7c8399; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 3px; }
+  a.beleg { color: #6b7185; text-decoration: none; font-size: 11px; }
+  a.beleg:hover { color: #7dd3fc; }
+  .leer { color: #6b7185; padding: 40px 10px; text-align: center; font-family: -apple-system, sans-serif; }
+  .fuss { margin-top: 26px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);
+          color: #5a6072; font-size: 11.5px; line-height: 1.7; font-family: -apple-system, sans-serif; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <h1>Insider-Kaeufe</h1>
+    <span class="tag">nur Beobachtung</span>
+  </div>
+  <a class="howto-link" href="index.html">&larr; TJR-Dashboard</a>
+</div>
+<div class="subtitle">SEC Form 4 &mdash; Vorstaende und Direktoren US-amerikanischer Firmen, die eigene Aktien <b>gekauft</b> haben.</div>
+
+<div class="warn">
+  <b>Das hier ist kein Handelssignal.</b> Diese Seite sammelt und zaehlt, mehr nicht &mdash; kein Einstieg, kein Stop, keine Benachrichtigung.<br>
+  <b>Die Verzoegerung ist der Haken:</b> Insider haben 2 Boersentage Meldefrist, in der Praxis vergehen oft mehr. Bis ein Eintrag hier steht, hat der Kurs laengst reagiert. Deshalb steht die Verzoegerung in einer eigenen Spalte.<br>
+  <b>Verkaeufe fehlen bewusst.</b> Sie sagen kaum etwas aus &mdash; Steuern, Streuung, oder ein Automatikplan von vor einem Jahr. Aktien als Gehaltsbestandteil (&bdquo;Award&ldquo;) sind ebenfalls herausgefiltert, das sind keine Kaufentscheidungen.<br>
+  <b>Mehrere Insider schlagen einen grossen Einzelkauf.</b> Danach ist sortiert. Der Zeithorizont dieser Beobachtung ist Monate, nicht Stunden.
+</div>
+
+<div class="cards" id="cards"></div>
+
+<table id="tabelle">
+  <thead>
+    <tr>
+      <th data-sort="anzahlInsider">Insider</th>
+      <th data-sort="symbol">Symbol</th>
+      <th data-sort="summe">Summe</th>
+      <th data-sort="kaeufe">Kaeufe</th>
+      <th data-sort="spaeteste">Transaktion</th>
+      <th data-sort="maxVerzoegerung">Verzoegerung</th>
+      <th>Beleg</th>
+    </tr>
+  </thead>
+  <tbody id="koerper"></tbody>
+</table>
+
+<div class="fuss">
+  Quelle: <a class="beleg" href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&amp;type=4" target="_blank" rel="noopener">SEC EDGAR</a>, oeffentliche Pflichtmeldungen, ohne Gewaehr.
+  Gilt nur fuer <b>US-Aktien</b> &mdash; deutsche Werte wie Rheinmetall melden nach EU-MAR an die BaFin und sind hier nicht enthalten.
+  Erfasst werden nur Kaeufe ab <span id="schwelle"></span> USD.<br>
+  Dies ist keine Anlageberatung.
+</div>
+
+<script>
+const DATA = {"stand":"2026-09-28 17:57 UTC","tageZurueck":4,"angesehen":666,"schwelle":10000,"fehlerAnzahl":3,"gruppen":[{"symbol":"RGCO","firma":"RGC RESOURCES INC","anzahlInsider":2,"insider":["WILLIAMSON JOHN B III","JOHNSTON ROBERT B"],"summe":83880,"kaeufe":4,"frueheste":"2026-09-23","spaeteste":"2026-09-23","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1069533/0001437749-26-031183.txt"}]},{"symbol":"LEN","firma":"LENNAR CORP /NEW/","anzahlInsider":1,"insider":["BERKSHIRE HATHAWAY INC"],"summe":409148364,"kaeufe":27,"frueheste":"2026-09-23","spaeteste":"2026-09-25","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-403089.txt"}]},{"symbol":"CRBG","firma":"Corebridge Financial, Inc.","anzahlInsider":1,"insider":["NIPPON LIFE INSURANCE CO"],"summe":14969330,"kaeufe":2,"frueheste":"2026-09-23","spaeteste":"2026-09-23","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-402895.txt"}]},{"symbol":"N/A","firma":"Calamos Aksia Hedged Strategies Fund","anzahlInsider":1,"insider":["Calamos Aksia Hedged Strategies Fund (Offshore), Ltd."],"summe":14955000,"kaeufe":2,"frueheste":"2026-09-23","spaeteste":"2026-09-23","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/2063706/0002125773-26-000013.txt"}]},{"symbol":"CX","firma":"CEMEX SAB DE CV","anzahlInsider":1,"insider":["Zambrano Lozano Rogelio"],"summe":13852610,"kaeufe":2,"frueheste":"2026-09-25","spaeteste":"2026-09-25","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1076378/0002035244-26-000009.txt"}]},{"symbol":"KBDC","firma":"Kayne Anderson BDC, Inc.","anzahlInsider":1,"insider":["ROBO JAMES L"],"summe":2739660,"kaeufe":2,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1183254/0001183254-26-000007.txt"}]},{"symbol":"NCT","firma":"Intercont (Cayman) Ltd","anzahlInsider":1,"insider":["Zhu Muchun"],"summe":1300000,"kaeufe":2,"frueheste":"2026-09-25","spaeteste":"2026-09-25","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/2018529/0001493152-26-044229.txt"}]},{"symbol":"HRGN","firma":"Harvard Apparatus Regenerative Technology, Inc.","anzahlInsider":1,"insider":["He Junli"],"summe":788918,"kaeufe":4,"frueheste":"2026-09-11","spaeteste":"2026-09-15","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1563665/0001437749-26-031181.txt"}]},{"symbol":"MX","firma":"MAGNACHIP SEMICONDUCTOR Corp","anzahlInsider":1,"insider":["LEE CHAE"],"summe":636992,"kaeufe":6,"frueheste":"2026-09-23","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1325702/0001193125-26-402849.txt"}]},{"symbol":"MSC","firma":"STUDIO CITY INTERNATIONAL HOLDINGS Ltd","anzahlInsider":1,"insider":["HO LAWRENCE YAU LUNG"],"summe":412640,"kaeufe":2,"frueheste":"2026-09-23","spaeteste":"2026-09-23","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1713334/0001193125-26-401498.txt"}]},{"symbol":"ANIX","firma":"Anixa Biosciences Inc","anzahlInsider":1,"insider":["Titterton Lewis H jr"],"summe":263814,"kaeufe":2,"frueheste":"2026-09-23","spaeteste":"2026-09-23","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1499254/0001493152-26-044250.txt"}]},{"symbol":"DLY","firma":"DoubleLine Yield Opportunities Fund","anzahlInsider":1,"insider":["Sherman Jeffrey J."],"summe":260600,"kaeufe":2,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1539718/0000904454-26-000490.txt"}]},{"symbol":"URG","firma":"UR-ENERGY INC","anzahlInsider":1,"insider":["Walle Jade"],"summe":218948,"kaeufe":2,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1375205/0001654954-26-008582.txt"}]},{"symbol":"ANNX","firma":"Annexon, Inc.","anzahlInsider":1,"insider":["Love Douglas"],"summe":199658,"kaeufe":2,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1528115/0001818520-26-000003.txt"}]},{"symbol":"DFDV","firma":"DeFi Development Corp.","anzahlInsider":1,"insider":["White Parker"],"summe":169560,"kaeufe":2,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1805526/0002061848-26-000005.txt"}]},{"symbol":"CLPR","firma":"Clipper Realty Inc.","anzahlInsider":1,"insider":["Levinson Sam"],"summe":154868,"kaeufe":4,"frueheste":"2026-09-23","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1588901/0001539497-26-002601.txt"}]},{"symbol":"SKIL","firma":"Skillsoft Corp.","anzahlInsider":1,"insider":["HOVSEPIAN RONALD W"],"summe":132830,"kaeufe":2,"frueheste":"2026-09-23","spaeteste":"2026-09-23","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1091482/0001091482-26-000019.txt"}]},{"symbol":"FTHY","firma":"FIRST TRUST HIGH YIELD OPPORTUNITIES 2027 TERM FUND","anzahlInsider":1,"insider":["HOUSEY WILLIAM A JR"],"summe":129000,"kaeufe":2,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1501080/0001445546-26-007128.txt"}]},{"symbol":"EDRY","firma":"EuroDry Ltd.","anzahlInsider":1,"insider":["Pittas Aristeidis P"],"summe":92400,"kaeufe":4,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1731388/0002127484-26-000018.txt"}]},{"symbol":"DHF","firma":"BNY MELLON HIGH YIELD STRATEGIES FUND","anzahlInsider":1,"insider":["DIMARTINO JOSEPH S"],"summe":88800,"kaeufe":2,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1057861/0001180645-26-000001.txt"}]},{"symbol":"AEF","firma":"abrdn Emerging Markets ex-China Fund, Inc.","anzahlInsider":1,"insider":["Clark Anthony S."],"summe":86670,"kaeufe":2,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1652951/0001104659-26-110663.txt"}]},{"symbol":"JCTC","firma":"JEWETT CAMERON TRADING CO LTD","anzahlInsider":1,"insider":["AJB Investment Fund II, LP"],"summe":73125,"kaeufe":5,"frueheste":"2026-09-24","spaeteste":"2026-09-24","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1536588/0001536588-26-000034.txt"}]},{"symbol":"RSI","firma":"Rush Street Interactive, Inc.","anzahlInsider":1,"insider":["Markell Jack A."],"summe":58050,"kaeufe":2,"frueheste":"2026-09-25","spaeteste":"2026-09-25","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1705859/0001705859-26-000006.txt"}]},{"symbol":"UMH","firma":"UMH PROPERTIES, INC.","anzahlInsider":1,"insider":["Mitchell William Edward"],"summe":39780,"kaeufe":2,"frueheste":"2026-09-25","spaeteste":"2026-09-25","maxVerzoegerung":0,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1782938/0000752642-26-000112.txt"}]}]};
+
+function euro(n) { return n.toLocaleString("de-DE"); }
+function lagKlasse(t) { return t <= 3 ? "lag-ok" : t <= 7 ? "lag-mittel" : "lag-schlecht"; }
+
+let sortFeld = "anzahlInsider", sortAb = true;
+
+function zeichne() {
+  const g = [...(DATA.gruppen || [])];
+  g.sort((a, b) => {
+    const x = a[sortFeld], y = b[sortFeld];
+    const v = (typeof x === "string") ? x.localeCompare(y) : (x - y);
+    return sortAb ? -v : v;
+  });
+
+  const koerper = document.getElementById("koerper");
+  if (!g.length) {
+    koerper.innerHTML = '<tr><td colspan="7" class="leer">Keine Insider-Kaeufe ueber der Schwelle im beobachteten Zeitraum.<br>Das ist normal &mdash; an vielen Tagen kauft kein einziger Insider nennenswert zu.</td></tr>';
+  } else {
+    koerper.innerHTML = g.map(r => `
+      <tr>
+        <td class="${r.anzahlInsider > 1 ? "mehrere" : ""}">${r.anzahlInsider}</td>
+        <td><span class="sym">${r.symbol}</span><div class="firma">${r.firma || ""}</div>
+            <div class="insider-liste">${(r.insider || []).join(" &middot; ")}</div></td>
+        <td class="geld">${euro(r.summe)} $</td>
+        <td>${r.kaeufe}</td>
+        <td>${r.spaeteste || ""}</td>
+        <td class="${lagKlasse(r.maxVerzoegerung)}">${r.maxVerzoegerung} Tage</td>
+        <td>${(r.belege && r.belege[0]) ? `<a class="beleg" href="${r.belege[0].quelle}" target="_blank" rel="noopener">SEC &rarr;</a>` : ""}</td>
+      </tr>`).join("");
+  }
+
+  const summe = g.reduce((s, r) => s + r.summe, 0);
+  const mehrere = g.filter(r => r.anzahlInsider > 1).length;
+  const lag = g.length ? Math.round(g.reduce((s, r) => s + r.maxVerzoegerung, 0) / g.length * 10) / 10 : 0;
+  document.getElementById("cards").innerHTML = `
+    <div class="card"><div class="k">Firmen</div><div class="v">${g.length}</div></div>
+    <div class="card"><div class="k">davon mehrere Insider</div><div class="v ${mehrere ? "mehrere" : ""}">${mehrere}</div></div>
+    <div class="card"><div class="k">Kaufvolumen</div><div class="v geld">${euro(summe)} $</div></div>
+    <div class="card"><div class="k">Verzoegerung &Oslash;</div><div class="v ${lagKlasse(lag)}">${lag} Tage</div></div>
+    <div class="card"><div class="k">Meldungen gepr&uuml;ft</div><div class="v">${DATA.angesehen || 0}</div></div>`;
+}
+
+document.querySelectorAll("th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const f = th.dataset.sort;
+    if (f === sortFeld) sortAb = !sortAb; else { sortFeld = f; sortAb = true; }
+    zeichne();
+  });
+});
+
+document.getElementById("schwelle").textContent = (DATA.schwelle || 0).toLocaleString("de-DE");
+document.querySelector(".subtitle").insertAdjacentHTML("beforeend",
+  ` &mdash; Stand ${DATA.stand || "?"}`);
+zeichne();
+</script>
+</body>
+</html>
