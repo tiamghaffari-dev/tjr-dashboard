@@ -1,0 +1,74 @@
+name: Insider-Beobachtung
+
+# ============================================================================
+# BEWUSST EIN EIGENER WORKFLOW, nicht Teil von update.yml
+# ============================================================================
+# 1. Andere Taktung: die SEC veroeffentlicht Form-4-Meldungen werktags, ein Lauf
+#    pro Tag genuegt. Der TJR-Report laeuft alle 5 Minuten - das waeren ueber
+#    250 unnoetige SEC-Abfragen taeglich.
+# 2. Trennung: ein Fehler hier darf den TJR-Report NIE kippen. Der Report ist
+#    das Produktivsystem, die Insider-Seite ist Beobachtung.
+# 3. Eigene "concurrency"-Gruppe, damit sich die beiden nicht gegenseitig
+#    blockieren.
+#
+# WICHTIG: Diese Seite erzeugt KEINE Signale und KEINE Benachrichtigungen.
+# Sie sammelt oeffentliche Pflichtmeldungen und zeigt sie an. Mehr nicht.
+# ============================================================================
+
+on:
+  schedule:
+    # 23:10 UTC - nach US-Boersenschluss, wenn die Tagesmeldungen vollstaendig
+    # sind. Montag bis Samstag, damit auch Freitagsmeldungen erfasst werden.
+    - cron: "10 23 * * 1-6"
+  push:
+    branches: [main]
+    paths:
+      - "insider.js"
+      - "insider_build.js"
+      - "docs/insider_template.html"
+      - ".github/workflows/insider.yml"
+  workflow_dispatch:
+    inputs:
+      tage:
+        description: "Wie viele Tage zurueck einlesen"
+        required: false
+        default: "4"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tjr-insider
+  cancel-in-progress: false
+
+jobs:
+  insider:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Insider-Kaeufe sammeln
+        env:
+          # Die SEC verlangt einen User-Agent mit Kontaktadresse, sonst sperrt
+          # sie die Anfragen. Kein Geheimnis, aber als Variable gehalten.
+          SEC_USER_AGENT: "TJR-Dashboard Kontakt tiamghaffari@gmail.com"
+        run: node insider_build.js ${{ github.event.inputs.tage || 4 }}
+
+      - name: Ergebnis sichern
+        run: |
+          git config user.name "tjr-bot"
+          git config user.email "actions@github.com"
+          git add docs/insider.html
+          if [ -d daten/insider ]; then git add daten/insider; fi
+          if git diff --quiet --cached; then
+            echo "Nichts geaendert - kein Commit."
+          else
+            git commit -m "Insider-Beobachtung: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git pull --rebase --autostash -q
+            git push -q && echo "Gepusht."
+          fi
