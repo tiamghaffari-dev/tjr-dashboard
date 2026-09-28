@@ -76,6 +76,11 @@
   .lag-mittel { color: #ffd25c; }
   .lag-schlecht { color: #ff6b6b; font-weight: 600; }
   .insider-liste { color: #7c8399; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 3px; }
+  .grossakt {
+    margin-left: 7px; font-size: 9.5px; letter-spacing: 0.5px; padding: 2px 6px; border-radius: 5px;
+    background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.35); color: #b9a6fb;
+    font-family: -apple-system, sans-serif; vertical-align: middle;
+  }
   a.beleg { color: #6b7185; text-decoration: none; font-size: 11px; }
   a.beleg:hover { color: #7dd3fc; }
   .leer { color: #6b7185; padding: 40px 10px; text-align: center; font-family: -apple-system, sans-serif; }
@@ -99,7 +104,8 @@
   <b>Das hier ist kein Handelssignal.</b> Diese Seite sammelt und zaehlt, mehr nicht &mdash; kein Einstieg, kein Stop, keine Benachrichtigung.<br>
   <b>Die Verzoegerung ist der Haken:</b> Insider haben 2 Boersentage Meldefrist, in der Praxis vergehen oft mehr. Bis ein Eintrag hier steht, hat der Kurs laengst reagiert. Deshalb steht die Verzoegerung in einer eigenen Spalte.<br>
   <b>Verkaeufe fehlen bewusst.</b> Sie sagen kaum etwas aus &mdash; Steuern, Streuung, oder ein Automatikplan von vor einem Jahr. Aktien als Gehaltsbestandteil (&bdquo;Award&ldquo;) sind ebenfalls herausgefiltert, das sind keine Kaufentscheidungen.<br>
-  <b>Mehrere Insider schlagen einen grossen Einzelkauf.</b> Danach ist sortiert. Der Zeithorizont dieser Beobachtung ist Monate, nicht Stunden.
+  <b>Mehrere Insider schlagen einen grossen Einzelkauf.</b> Danach ist sortiert. Der Zeithorizont dieser Beobachtung ist Monate, nicht Stunden.<br>
+  <b>Mit <span class="grossakt">10% Eigner</span> markierte Zeilen sind etwas anderes</b> &mdash; da kauft kein Vorstand eigenes Geld nach, sondern ein Grossaktionaer (z.B. ein Fonds) baut eine Beteiligung auf. Die Forschung zum Insider-Vorsprung bezieht sich auf Vorstaende und Direktoren.
 </div>
 
 <div class="cards" id="cards"></div>
@@ -149,7 +155,8 @@ function zeichne() {
     koerper.innerHTML = g.map(r => `
       <tr>
         <td class="${r.anzahlInsider > 1 ? "mehrere" : ""}">${r.anzahlInsider}</td>
-        <td><span class="sym">${r.symbol}</span><div class="firma">${r.firma || ""}</div>
+        <td><span class="sym">${r.symbol}</span>${r.nurGrossaktionaer ? '<span class="grossakt" title="Kein Vorstand/Direktor, sondern ein Grossaktionaer ab 10 Prozent">10% Eigner</span>' : ""}
+            <div class="firma">${r.firma || ""}</div>
             <div class="insider-liste">${(r.insider || []).join(" &middot; ")}</div></td>
         <td class="geld">${euro(r.summe)} $</td>
         <td>${r.kaeufe}</td>
