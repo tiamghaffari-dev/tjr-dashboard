@@ -22206,9 +22206,31 @@
     "fillTs": 1790593528000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790598000000,
+    "rMultiple": -1,
+    "exitPrice": 2690.760075,
+    "postmortem": {
+      "holdHours": 1.2,
+      "mfeR": 0.51,
+      "maeR": -1.15,
+      "towardTargetPct": 33,
+      "stopDistAdr": 0.31,
+      "targetDistAdr": 0.48,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.5R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.8R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Analyse: These war falsch"
+    }
   },
   {
     "id": "GBPUSD-1790608244432",
