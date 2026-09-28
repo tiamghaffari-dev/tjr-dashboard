@@ -60,6 +60,11 @@ async function main() {
       insider: g.insider, summe: g.summe, kaeufe: g.kaeufe,
       frueheste: g.frueheste, spaeteste: g.spaeteste,
       maxVerzoegerung: g.maxVerzoegerung,
+      // Beim Nachpruefen am 28.09. gefunden: dieses Feld fehlte hier, dadurch
+      // stand Berkshire Hathaway auf der Seite als "Vorstand/Direktor" da,
+      // obwohl die CSV korrekt "10% Eigner" auswies. Die Buendelung war richtig,
+      // nur diese Zuordnung liess das Feld fallen.
+      nurGrossaktionaer: g.nurGrossaktionaer,
       belege: g.belege.map((b) => ({ quelle: b.quelle })).slice(0, 1),
     })),
   };
