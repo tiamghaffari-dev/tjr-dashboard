@@ -22019,10 +22019,37 @@
     "fillTs": 1790589237000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1790670900000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.54262,
+    "postmortem": {
+      "holdHours": 22.7,
+      "mfeR": 2.53,
+      "maeR": -1.55,
+      "towardTargetPct": 79,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.81,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.1R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 79% der Zielstrecke (max +2.5R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.1R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit · Analyse: These war falsch"
+    }
   },
   {
     "id": "GCUSD-1790603950794",
