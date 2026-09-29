@@ -23078,8 +23078,8 @@
     "target2": 81845.90625,
     "rr2": 4.35,
     "partialExit": true,
-    "trailStop": 83924.548438,
-    "tp1HitTs": null,
+    "trailStop": 82758.66875,
+    "tp1HitTs": 1790631000000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -23121,9 +23121,20 @@
     "fillTs": 1790615700000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790631300000,
+    "rMultiple": 2,
+    "exitPrice": 82758.66875,
+    "postmortem": {
+      "holdHours": 4.3,
+      "mfeR": 2.05,
+      "maeR": -0.13,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1790630380256",
