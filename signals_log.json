@@ -24308,9 +24308,9 @@
     "fillTs": null,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "unfilled",
+    "resolvedTs": 1790726322000,
+    "rMultiple": 0
   },
   {
     "id": "ETHUSD-1790712558271",
@@ -25053,11 +25053,12 @@
     "dailyBiasAtEntry": "bullish",
     "weeklyBiasAtEntry": "bearish",
     "zonentiefe": 0.767,
-    "fillTs": null,
+    "fillTs": 1790760600000,
     "fuellGeprueft": true,
     "beobachtung": false,
     "status": "open",
     "resolvedTs": null,
-    "rMultiple": null
+    "rMultiple": null,
+    "benachrichtigt": true
   }
 ]
