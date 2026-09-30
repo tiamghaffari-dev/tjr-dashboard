@@ -976,6 +976,16 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
     // Reine Messgroesse, siehe Begruendung bei der Berechnung oben.
     zonentiefe,
     currentPrice, targetSource,
+    // Tiam, 2026-09-29 (drittes Mal "er soll direkt einsteigen"): Wenn dieser
+    // Schalter true ist, IST der Einstiegspreis der Kurs in genau diesem
+    // Moment - der Markt war also nachweislich dort. build.js darf dann keine
+    // zusaetzliche Fuellkerze mehr verlangen. Genau daran ist der Gold-Short
+    // vom 28.09. gestorben: Einstieg 4190,90 bei einem Kurs von 4189,10
+    // (0,04 % entfernt), Richtung richtig, Kurs lief sofort ins Ziel - und der
+    // Trade verfiel trotzdem als "unfilled", weil er nie wieder nach OBEN kam.
+    // Ist der Schalter false, ist der Einstieg nur ein PLAN (Zonenmitte) und
+    // die Fuellpruefung bleibt zwingend - sie verhindert die Phantom-Fuellungen.
+    sofortEinstieg: kannJetztEinsteigen,
     m1Gate: hasM1Data, m1Confirmation: m1.confirmed ? m1.event : null, zoneTouchTs: m1.touchTs,
     // Tiam, 2026-08-12: schliesst die dokumentierte Luecke G2. TJRs Checkliste
     // beginnt mit "a) wait for price to hit key level" - erst wenn der Kurs ein

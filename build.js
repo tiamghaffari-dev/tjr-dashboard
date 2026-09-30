@@ -945,7 +945,13 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBi
     // 0 = an der Mitte, 1 = am Sweep-Extrem. Beantwortet spaeter seine Frage,
     // ob ein tieferer Einstieg tatsaechlich mehr bringt. Nur Messung.
     zonentiefe: typeof sig.zonentiefe === "number" ? sig.zonentiefe : null,
-    fillTs: null, fuellGeprueft: true,
+    // sofortEinstieg (engine.js): der Einstiegspreis IST der aktuelle Kurs.
+    // Dann ist der Trade in diesem Moment ausgefuehrt - eine weitere Fuellkerze
+    // zu verlangen hiesse, auf einen Preis zu warten, an dem wir schon sind.
+    // fillTs muss in der KERZEN-Zeitbasis stehen (Pseudo-Zeit), nicht in echter
+    // Epoche - sonst vergleicht resolveSignals() zwei verschiedene Uhren.
+    fillTs: sig.sofortEinstieg ? parseTs(etPseudoDateStr(Date.now())) : null,
+    fuellGeprueft: true,
     // beobachtung = ausserhalb von TJRs Handelsfenster erkannt und nur zu
     // MESSZWECKEN mitgeschrieben. Tiam, 2026-09-08: bei ~5 verwertbaren
     // Trades pro Woche haette ein belastbares Urteil ueber acht Monate
