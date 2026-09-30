@@ -23834,10 +23834,37 @@
     "fillTs": 1790692500000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1790738100000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.326842,
+    "postmortem": {
+      "holdHours": 12.7,
+      "mfeR": 0.21,
+      "maeR": -1.14,
+      "towardTargetPct": 20,
+      "stopDistAdr": 0.72,
+      "targetDistAdr": 0.78,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.7R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 20% entgegen (max +0.2R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.5R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   },
   {
     "id": "^GSPC-1790689971571",
@@ -24509,9 +24536,31 @@
     "fillTs": 1790710800000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790737500000,
+    "rMultiple": -1,
+    "exitPrice": 4228.959863,
+    "postmortem": {
+      "holdHours": 7.4,
+      "mfeR": 0.95,
+      "maeR": -1.05,
+      "towardTargetPct": 48,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.42,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.3R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1790725167742",
@@ -24567,9 +24616,41 @@
     "fillTs": 1790710800000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790735100000,
+    "rMultiple": -1,
+    "exitPrice": 2662.185938,
+    "postmortem": {
+      "holdHours": 6.8,
+      "mfeR": -0.01,
+      "maeR": -1.01,
+      "towardTargetPct": 0,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.28,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.2R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 0% entgegen (max -0.0R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war richtig",
+          "text": "Die Richtung stimmte am Ende (+0.8R netto) - verloren wurde dieser Trade an der Ausfuehrung (Stop/Timing), nicht an der Analyse."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng · Take-Profit: nicht ursaechlich · Entry: zu frueh · Analyse: These war richtig"
+    }
   },
   {
     "id": "GCUSD-1790725483938",
@@ -24626,9 +24707,31 @@
     "fillTs": 1790711100000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790737500000,
+    "rMultiple": -1,
+    "exitPrice": 4228.059961,
+    "postmortem": {
+      "holdHours": 7.3,
+      "mfeR": 0.9,
+      "maeR": -1.11,
+      "towardTargetPct": 45,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.42,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.3R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1790726431277",
@@ -24683,8 +24786,40 @@
     "fillTs": 1790712300000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790735400000,
+    "rMultiple": -1,
+    "exitPrice": 2661.566064,
+    "postmortem": {
+      "holdHours": 6.4,
+      "mfeR": 0.02,
+      "maeR": -1.01,
+      "towardTargetPct": 1,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.29,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.2R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 1% entgegen (max +0.0R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war richtig",
+          "text": "Die Richtung stimmte am Ende (+0.9R netto) - verloren wurde dieser Trade an der Ausfuehrung (Stop/Timing), nicht an der Analyse."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng · Take-Profit: nicht ursaechlich · Entry: zu frueh · Analyse: These war richtig"
+    }
   }
 ]
