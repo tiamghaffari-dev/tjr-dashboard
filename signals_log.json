@@ -24936,9 +24936,31 @@
     "fillTs": 1790761200000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790763600000,
+    "rMultiple": -1,
+    "exitPrice": 1.49352,
+    "postmortem": {
+      "holdHours": 0.7,
+      "mfeR": 0.67,
+      "maeR": -1.06,
+      "towardTargetPct": 23,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.57,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 23% entgegen (max +0.7R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "GBPUSD-1790772671984",
@@ -25115,9 +25137,26 @@
     "fillTs": 1790761200000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1790764200000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 83590.855043,
+    "postmortem": {
+      "holdHours": 0.8,
+      "mfeR": 0.8,
+      "maeR": -1.42,
+      "towardTargetPct": 40,
+      "stopDistAdr": 0.32,
+      "targetDistAdr": 0.64,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   }
 ]
