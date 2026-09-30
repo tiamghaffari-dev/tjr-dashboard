@@ -25447,9 +25447,10 @@
     "fillTs": 1790769600000,
     "fuellGeprueft": true,
     "beobachtung": true,
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790768700000,
+    "rMultiple": 2,
+    "exitPrice": 765.504019
   },
   {
     "id": "GCUSD-1790784726914",
