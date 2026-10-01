@@ -313,8 +313,44 @@ async function analyzeAsset(asset) {
   }
   const htf = resample(df1h, 240);
   const ltf = df5m;
-  const sig = buildSignal(htf, ltf, df1m, undefined, undefined, undefined, correlatedLtf);
-  const ann = buildAnnotations(htf, ltf, undefined, correlatedLtf);
+  // ==========================================================================
+  // 15-MINUTEN-STUFE (Tiam, 2026-10-01)
+  // ==========================================================================
+  // TJRs Hauptcheckliste nennt ausdruecklich 5min ("scale to 5 min timeframe,
+  // wait for confirmation ... wait for 5 min continuation"). In Bootcamp Day 35
+  // beschreibt er aber dieselbe Kette auf 15min: "we're looking for [liquidity]
+  // sweeps on a fifteen minute, we're looking for [BOS] from a fifteen minute,
+  // and then [an] order block entry".
+  //
+  // Deshalb bewusst als RUECKFALL, nicht als Ersatz: zuerst 5min (die belegte
+  // Standardvariante), und nur wenn dort KEIN Einstieg steht, wird dasselbe
+  // Verfahren auf 15min geprueft. So kommen Setups dazu, die bisher durchfielen,
+  // ohne dass die bisherigen Trades sich veraendern - und `signalTf` haelt
+  // fest, woher ein Trade stammt, damit sich beide Gruppen spaeter getrennt
+  // auswerten lassen. Genau das fehlte beim Order-Block-Anker, wo zwei
+  // Aenderungen gleichzeitig nicht mehr zuordenbar gewesen waeren.
+  let sig = buildSignal(htf, ltf, df1m, undefined, undefined, undefined, correlatedLtf);
+  let ltfFuerAnzeige = ltf;
+  let signalTf = "5m";
+  if (sig.signal !== "ENTRY") {
+    const ltf15 = resample(ltf, 15);
+    try {
+      const sig15 = buildSignal(htf, ltf15, df1m, undefined, undefined, undefined, correlatedLtf);
+      if (sig15.signal === "ENTRY") {
+        sig = sig15;
+        ltfFuerAnzeige = ltf15;
+        signalTf = "15m";
+      }
+    } catch (e) {
+      console.error(`15min-Pruefung fehlgeschlagen fuer ${asset.name} (wird ignoriert):`, e.message || e);
+    }
+  }
+  sig.signalTf = signalTf;
+  // Die Annotationen MUESSEN aus derselben Kerzenreihe kommen wie das Signal.
+  // Sonst zeichnet der Chart eine andere Zone, als der Trade benutzt - genau
+  // der Fehler, der beim Order-Block-Anker an beiden Aufrufstellen korrigiert
+  // werden musste.
+  const ann = buildAnnotations(htf, ltfFuerAnzeige, undefined, correlatedLtf);
   // CHART_HISTORY_CANDLES (~20 Tage) werden an den Client geschickt, damit man
   // im Chart weit genug zurueckscrollen kann, um vergangene Analysen/Signale
   // zu sehen (siehe CHART_HISTORY_DAYS oben). ltfFull (volle Rohreihe inkl.
@@ -929,6 +965,17 @@ function ruleSnapshot(ruleCheck) {
   return out;
 }
 
+// Widersprechen sich die Zeitrahmen? Nur ein ausdrueckliches "verletzt" zaehlt -
+// "unbekannt" heisst, die Daten fehlten, und darf keinen Trade blockieren.
+function hatZeitrahmenKonflikt(ruleCheck) {
+  if (!Array.isArray(ruleCheck)) return false;
+  const st = (id) => {
+    const r = ruleCheck.find((x) => x.id === id);
+    return r ? r.status : null;
+  };
+  return st("R9-daily-bias") === "verletzt" || st("R10-htf-vorrang") === "verletzt";
+}
+
 function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBias, weeklyTrend, tuningAktiv, beobachtung) {
   signalsLog.push({
     id: `${asset.symbol}-${firedAtTs}`,
@@ -977,6 +1024,14 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBi
     // Diese Datensaetze zaehlen NIE in die offizielle Bilanz und loesen
     // weder Benachrichtigung noch Doppelpositions-Sperre aus.
     beobachtung: !!beobachtung,
+    // Seit 2026-10-01 gibt es zwei Gruende, warum etwas nur beobachtet wird:
+    // ausserhalb des Handelsfensters ODER Zeitrahmen-Konflikt. Ohne diese
+    // Unterscheidung liessen sich die beiden Gruppen spaeter nicht trennen -
+    // und gerade die Konflikt-Gruppe ist die interessante.
+    beobachtungGrund: typeof beobachtung === "string" ? beobachtung : null,
+    // Aus welchem Raster stammt das Signal: "5m" (Standard) oder "15m"
+    // (Rueckfall, Bootcamp Day 35). Macht beide Gruppen getrennt auswertbar.
+    signalTf: sig.signalTf || "5m",
     status: "open", resolvedTs: null, rMultiple: null,
   });
 }
@@ -1366,12 +1421,35 @@ async function main() {
     // Paper-Trade erfasst (nur der Push-Alert war gesperrt). Jetzt: ausserhalb
     // des Fensters wird ein erkanntes Setup zwar noch angezeigt (siehe
     // outsideBadge im Template), aber nicht mehr geloggt/getradet.
-    if (isEntry && !wasEntry && inWindow) {
+    // ZEITRAHMEN-KONFLIKT (Tiam, 2026-10-01). Bootcamp Tag 48 woertlich:
+    // "there [are] conflicting bias[es] [across] time frames - so we don't
+    // really know where price wants to go [...] every single thing is in
+    // alignment, because that's when you're gonna have the highest
+    // probability." Dazu Tag 49: "can we go against daily bias? no".
+    //
+    // Gemessen an 298 eigenen Trades - und das Ergebnis ist der Grund, warum
+    // die Regel NUR als Kombination sinnvoll ist:
+    //   R9 allein ok  EW -0,057  |  verletzt -0,046   -> kein Unterschied
+    //   R10 allein ok EW -0,076  |  verletzt -0,030   -> kein Unterschied
+    //   BEIDE ok      EW -0,007 (n=122)
+    //   einer verletzt EW -0,085 (n=176)
+    // Einzeln hilft also keine der beiden, zusammen schon - genau das sagt TJR.
+    //
+    // WICHTIG: "unbekannt" (fehlende Daten) zaehlt NICHT als Konflikt. Sonst
+    // wuerde ein Ausfall des Daily-/Weekly-Abrufs stillschweigend jeden Trade
+    // blockieren - dieselbe Falle wie bei der einmaligen Fuellneuberechnung.
+    //
+    // Blockierte Signale werden trotzdem als BEOBACHTUNG mitgeschrieben. So
+    // folgen die echten Trades TJRs Regel, ohne dass die Messdaten verloren
+    // gehen - der Unterschied laesst sich damit weiter verfolgen.
+    const konflikt = hatZeitrahmenKonflikt(item.ruleCheck);
+    const beobGrund = !inWindow ? "ausserhalb-fenster" : (konflikt ? "zeitrahmen-konflikt" : false);
+    if (isEntry && !wasEntry && !beobGrund) {
       logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs, item.ruleCheck, item.dailyBias, item.weeklyTrend, aktiveWerte, false);
-      console.log(`PAPER-TRADE geloggt: ${item.asset.name} ${item.sig.bias === "bullish" ? "LONG" : "SHORT"}`);
-    } else if (isEntry && !wasEntry && !inWindow) {
-      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs, item.ruleCheck, item.dailyBias, item.weeklyTrend, aktiveWerte, true);
-      console.log(`BEOBACHTUNG mitgeschrieben (ausserhalb Handelsfenster, zaehlt nicht zur Bilanz): ${item.asset.name}`);
+      console.log(`PAPER-TRADE geloggt: ${item.asset.name} ${item.sig.bias === "bullish" ? "LONG" : "SHORT"} (${item.sig.signalTf || "5m"})`);
+    } else if (isEntry && !wasEntry) {
+      logNewSignal(signalsLog, item.asset, item.sig, item.ann, nowTs, item.ruleCheck, item.dailyBias, item.weeklyTrend, aktiveWerte, beobGrund);
+      console.log(`BEOBACHTUNG mitgeschrieben (${beobGrund}, zaehlt nicht zur Bilanz): ${item.asset.name}`);
     }
     if (ltfFullBySymbol[item.asset.symbol]) {
       // Kurshistorie mitschreiben, bevor irgendetwas anderes passiert. Nutzt
