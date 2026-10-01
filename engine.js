@@ -564,7 +564,7 @@ function findUnfilledImbalanceLevels(htfDf) {
 //
 // Die Zeitstempel der Kerzen liegen in ET-Pseudozeit (ET-Wanduhr als UTC
 // gelesen), deshalb ist getUTCHours() hier bereits die New-Yorker Stunde.
-const SESSIONS = {
+const SESSION_FENSTER = {
   asia:   [20, 24],   // 20:00-24:00 ET
   london: [3, 8],     // 03:00-08:00 ET
   ny:     [8, 16],    // 08:00-16:00 ET
@@ -582,7 +582,7 @@ function findSessionLevels(ltfDf) {
     const d = new Date(c.ts);
     const stunde = d.getUTCHours();
     const tag = d.toISOString().slice(0, 10);
-    for (const [name, [von, bis]] of Object.entries(SESSIONS)) {
+    for (const [name, [von, bis]] of Object.entries(SESSION_FENSTER)) {
       if (stunde < von || stunde >= bis) continue;
       const k = `${tag}|${name}`;
       if (!eimer.has(k)) eimer.set(k, { hi: -Infinity, lo: Infinity, ts: c.ts, ende: von === 24 ? 24 : bis });
@@ -603,7 +603,7 @@ function findSessionLevels(ltfDf) {
   const levels = [];
   for (const [k, o] of eimer) {
     const [tag, name] = k.split("|");
-    const laeuftNoch = tag === heute && stundeJetzt < SESSIONS[name][1];
+    const laeuftNoch = tag === heute && stundeJetzt < SESSION_FENSTER[name][1];
     if (laeuftNoch) continue;
     if (!isFinite(o.hi) || !isFinite(o.lo)) continue;
     levels.push({ ts: o.ts, price: o.hi, type: "H", source: `session-${name}` });
