@@ -26878,9 +26878,20 @@
     "fillTs": 1790847030000,
     "fuellGeprueft": true,
     "beobachtung": false,
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1790848800000,
+    "rMultiple": 1.45,
+    "benachrichtigt": true,
+    "exitPrice": 760.315991,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 1.59,
+      "maeR": -0.15,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.55,
+      "targetDistAdr": 0.8,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
