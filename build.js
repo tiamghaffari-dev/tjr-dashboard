@@ -52,6 +52,12 @@ const CHART_HISTORY_DAYS = 20;
 const FETCH_BUFFER_DAYS = 5;
 const CANDLES_PER_DAY_5M = 288; // 24h * 60min / 5min
 const CHART_HISTORY_CANDLES = CHART_HISTORY_DAYS * CANDLES_PER_DAY_5M;
+// Fuer den Zeitrahmen-Umschalter im Chart (Tiam, 2026-10-01). Bewusst knapp
+// gehalten: 180 Tages- und 60 Wochenkerzen je Wert sind zusammen nur rund
+// 20 kB zusaetzlich pro Asset, geben aber genug Verlauf, um Daily-Bias und
+// Wochenstruktur wirklich zu sehen statt sie nur als Textzeile zu lesen.
+const CHART_DAILY_CANDLES = 180;
+const CHART_WEEKLY_CANDLES = 60;
 
 const ASSETS = [
   { name: "Bitcoin", symbol: "BTCUSD", display: "BTCUSD", icon: "₿" },
@@ -314,21 +320,33 @@ async function analyzeAsset(asset) {
   // zu sehen (siehe CHART_HISTORY_DAYS oben). ltfFull (volle Rohreihe inkl.
   // FETCH_BUFFER_DAYS) wird separat zurueckgegeben fuer resolveSignals()
   // weiter unten, die auch aeltere offene Paper-Trades noch aufloesen muss.
+  // Tiam, 2026-10-01: Der Chart soll zwischen Zeitrahmen umschaltbar sein.
+  // 5min/15min/1h/4h lassen sich im Browser aus `ltf` rechnen - Tages- und
+  // Wochenkerzen NICHT: `ltf` deckt nur rund 20 Tage ab, daraus wuerden 3
+  // Wochenkerzen. Diese beiden Reihen werden hier ohnehin schon geholt (fuer
+  // Daily Bias und Wochentrend), also werden sie jetzt einfach mitgeschickt.
+  // Nur Anzeige, kein Einfluss auf ein Signal.
   let weeklyTrend = null;
+  let weeklyCandlesOut = null;
   try {
     const weeklyCandles = await fetchWeeklyCandles(asset);
     weeklyTrend = computeWeeklyContext(weeklyCandles);
+    weeklyCandlesOut = weeklyCandles.slice(-CHART_WEEKLY_CANDLES);
   } catch (e) {
     console.error(`Wochentrend-Abruf fehlgeschlagen fuer ${asset.name} (wird ignoriert):`, e.message || e);
   }
   let dailyBias = null;
+  let dailyCandlesOut = null;
   try {
-    dailyBias = computeDailyBias(await fetchDailyCandles(asset));
+    const dailyCandles = await fetchDailyCandles(asset);
+    dailyBias = computeDailyBias(dailyCandles);
+    dailyCandlesOut = dailyCandles.slice(-CHART_DAILY_CANDLES);
   } catch (e) {
     console.error(`Daily-Bias-Abruf fehlgeschlagen fuer ${asset.name} (Regel R9 bleibt "unbekannt"):`, e.message || e);
   }
   return {
     sig, ann, ltf: ltf.slice(-CHART_HISTORY_CANDLES), ltfFull: ltf, weeklyTrend, dailyBias,
+    chartDaily: dailyCandlesOut, chartWeekly: weeklyCandlesOut,
     // Tiam, 2026-07-14: "die KI kann auch manchmal selber denken und schauen ob
     // es vllt doch ein entry gibt [...] da es ja auch auf dem gesamten Markt
     // zugreifen kann" - getAiAssessment() bekam bisher nur die letzten 20
