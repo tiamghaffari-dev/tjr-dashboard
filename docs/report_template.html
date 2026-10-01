@@ -1736,9 +1736,6 @@ function zeichneTfLeiste(item) {
     b.addEventListener("click", () => {
       if (aktiverTf[id] === b.dataset.tf) return;
       aktiverTf[id] = b.dataset.tf;
-      // Beim Wechsel die gespeicherte Zoom-Stufe verwerfen: sie stammt aus
-      // einem anderen Raster und ergaebe sonst einen absurden Ausschnitt.
-      delete chartRanges[id];
       renderChart(item);
     });
   });
@@ -2000,7 +1997,15 @@ function renderChart(item) {
   markers.sort((a, b) => a.time - b.time);
   if (markers.length) series.setMarkers(markers);
 
-  const savedRange = chartRanges[assetId(item.asset)];
+  // Die gespeicherte Zoom-Stufe gilt PRO WERT UND ZEITRAHMEN. Vorher war sie
+  // nur pro Wert abgelegt - dadurch wurde z.B. ein Wochen-Ausschnitt (ein
+  // ganzes Jahr) auf den Tages-Chart angewendet, dessen Daten erst im April
+  // beginnen: Kerzen rechts zusammengedraengt, linke Haelfte leer. Genau das
+  // hatte Tiam am 01.10. im Screenshot. Der Schluessel muss den Zeitrahmen
+  // enthalten, sonst holt sich jeder Pfad, der neu zeichnet (Asset-Wechsel,
+  // Auto-Refresh), wieder den falschen Ausschnitt.
+  const rangeKey = assetId(item.asset) + "|" + tfId;
+  const savedRange = chartRanges[rangeKey];
   if (savedRange) {
     try { chart.timeScale().setVisibleRange(savedRange); }
     catch (e) { chart.timeScale().fitContent(); }
@@ -2082,7 +2087,10 @@ function renderAssetSection(item) {
 
 function main() {
   for (const id in charts) {
-    try { chartRanges[id] = charts[id].chart.timeScale().getVisibleRange(); } catch (e) { /* ignore */ }
+    // Schluessel muss zum Zeitrahmen passen, in dem der Chart gerade steht -
+    // sonst landet ein Wochen-Ausschnitt unter dem Schluessel, den spaeter der
+    // 5-Min-Chart liest (siehe Kommentar bei rangeKey in renderChart).
+    try { chartRanges[id + "|" + (aktiverTf[id] || "5m")] = charts[id].chart.timeScale().getVisibleRange(); } catch (e) { /* ignore */ }
     try { charts[id].chart.remove(); } catch (e) { /* ignore */ }
     closeLiveFeed(id);
     delete charts[id];
@@ -2274,7 +2282,9 @@ setInterval(tickCountdown, 1000);
           // Tage daneben - siehe Kommentar bei entryChartSec.
           const centerSec = entryChartSec(Number(tsParam));
           const HALF_WINDOW_SEC = 3 * 3600; // +/- 3h Kontext um den Entry-Zeitpunkt
-          chartRanges[id] = { from: centerSec - HALF_WINDOW_SEC, to: centerSec + HALF_WINDOW_SEC };
+          // Der Sprung aus dem Verlauf zeigt immer den 5-Min-Chart - dort
+          // sitzen die Marker. Schluessel entsprechend (siehe rangeKey).
+          chartRanges[id + "|5m"] = { from: centerSec - HALF_WINDOW_SEC, to: centerSec + HALF_WINDOW_SEC };
         }
       }
     }
