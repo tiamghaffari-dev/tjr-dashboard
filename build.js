@@ -1196,11 +1196,20 @@ async function main() {
   const ltfFullBySymbol = {};
   for (const asset of ASSETS) {
     try {
+      // ACHTUNG: Diese Stelle packt das Ergebnis von analyzeAsset() NEU zusammen
+      // und uebernimmt nur die hier namentlich genannten Felder. Ein neues Feld
+      // in analyzeAsset() allein reicht also nicht - es muss HIER ebenfalls
+      // eingetragen werden, sonst erreicht es die Seite nie.
+      // (Am 01.10.2026 genau so passiert, und zwei Tage davor schon einmal bei
+      // der Insider-Seite. Beide Male war die Quelle richtig und das Umpacken
+      // hat das Feld verschluckt.)
       const {
         sig, ann, ltf, ltfFull, weeklyTrend, dailyBias, htfRecent,
+        chartDaily, chartWeekly,
       } = await analyzeAsset(asset);
       assets.push({
         asset, sig, ann, ltf, error: null, aiNote: null, weeklyTrend, dailyBias, htfRecent,
+        chartDaily, chartWeekly,
       });
       ltfFullBySymbol[asset.symbol] = ltfFull;
       console.log(`OK   ${asset.name}: bias=${sig.bias} signal=${sig.signal}`);
