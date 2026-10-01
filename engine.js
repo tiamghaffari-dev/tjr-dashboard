@@ -545,6 +545,73 @@ function findUnfilledImbalanceLevels(htfDf) {
   return levels;
 }
 
+// ---------------------------------------------------------------------------
+// SESSION-HOCHS UND -TIEFS
+// ---------------------------------------------------------------------------
+// TJRs Checkliste, Punkt 1 woertlich: "key levels: 1hr, 4hr liq and session
+// highs/lows". Die ersten beiden Teile liefern findProminentHtfSwingLevels()
+// und findUnfilledImbalanceLevels(); der dritte fehlte bis 2026-10-01
+// vollstaendig - er stand nur als Kommentar im Code.
+//
+// Warum das wichtig ist (gemessen ueber 432 Zeitpunkte, 5 Werte, echte
+// Archivkerzen): Mit NUR 4H-Levels liegt in lediglich 45 % der Faelle
+// ueberhaupt ein Key-Level im brauchbaren Zielbereich (0,8-1,5 R). Mit 1H- und
+// Session-Levels sind es 96 %. In den restlichen 55 % musste die Engine bisher
+// auf das gerechnete 2R-Ziel ausweichen - und genau dieses Ziel ist laut
+// Messung vom 29.09. das schlechteste von allen (-39R gegen +10R bei 1,0R).
+// Tiams wiederholtes "der Take Profit ist zu weit weg" beschrieb also nicht
+// eine falsche Kalibrierung, sondern diese fehlenden Levels.
+//
+// Die Zeitstempel der Kerzen liegen in ET-Pseudozeit (ET-Wanduhr als UTC
+// gelesen), deshalb ist getUTCHours() hier bereits die New-Yorker Stunde.
+const SESSIONS = {
+  asia:   [20, 24],   // 20:00-24:00 ET
+  london: [3, 8],     // 03:00-08:00 ET
+  ny:     [8, 16],    // 08:00-16:00 ET
+};
+const SESSION_LOOKBACK_DAYS = 15;
+
+function findSessionLevels(ltfDf) {
+  if (!Array.isArray(ltfDf) || ltfDf.length < 2) return [];
+  const letzteTs = ltfDf[ltfDf.length - 1].ts;
+  const grenze = letzteTs - SESSION_LOOKBACK_DAYS * 86400000;
+
+  const eimer = new Map();
+  for (const c of ltfDf) {
+    if (c.ts < grenze) continue;
+    const d = new Date(c.ts);
+    const stunde = d.getUTCHours();
+    const tag = d.toISOString().slice(0, 10);
+    for (const [name, [von, bis]] of Object.entries(SESSIONS)) {
+      if (stunde < von || stunde >= bis) continue;
+      const k = `${tag}|${name}`;
+      if (!eimer.has(k)) eimer.set(k, { hi: -Infinity, lo: Infinity, ts: c.ts, ende: von === 24 ? 24 : bis });
+      const o = eimer.get(k);
+      if (c.high > o.hi) o.hi = c.high;
+      if (c.low < o.lo) o.lo = c.low;
+      o.ts = c.ts;
+    }
+  }
+
+  // Nur ABGESCHLOSSENE Sessions. Das Hoch einer noch laufenden Session ist
+  // kein Level, sondern ein sich bewegender Zwischenstand - es als Ziel zu
+  // nehmen waere dieselbe Rueckdatierung wie frueher beim Einstiegspreis.
+  const jetzt = new Date(letzteTs);
+  const heute = jetzt.toISOString().slice(0, 10);
+  const stundeJetzt = jetzt.getUTCHours();
+
+  const levels = [];
+  for (const [k, o] of eimer) {
+    const [tag, name] = k.split("|");
+    const laeuftNoch = tag === heute && stundeJetzt < SESSIONS[name][1];
+    if (laeuftNoch) continue;
+    if (!isFinite(o.hi) || !isFinite(o.lo)) continue;
+    levels.push({ ts: o.ts, price: o.hi, type: "H", source: `session-${name}` });
+    levels.push({ ts: o.ts, price: o.lo, type: "L", source: `session-${name}` });
+  }
+  return levels;
+}
+
 // Abstand eines Preises zum naechstgelegenen prominenten HTF-Level, normiert
 // auf die Tagesrange. Gibt null zurueck, wenn die noetigen Daten fehlen - der
 // Aufrufer soll das als "unbekannt" behandeln, nicht als "kein Key-Level".
@@ -573,9 +640,20 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   // Kandidatenliste fuers Target - siehe Kommentar bei findProminentHtfSwingLevels.
   // Seit 2026-08-11 zusaetzlich die unverfuellten Imbalances (siehe
   // findUnfilledImbalanceLevels) - TJRs zweite Haelfte des "draw on liquidity".
+  // TJR, Checkliste Punkt 1: "key levels: 1hr, 4hr liq and session highs/lows".
+  // Bis 2026-10-01 kannte die Engine nur die 4H-Haelfte. Das 1H-Raster kommt
+  // ohne neuen Netzabruf zustande - die 5min-Reihe liegt ohnehin vor und wird
+  // hier zu Stundenkerzen zusammengefasst.
+  // In den Transkripten faellt "one hour" 89x, "four hour" 99x - TJR benutzt
+  // beide Raster etwa gleich stark, u.a. "we have this four hour [FVG] which is
+  // overlapping with this one hour [FVG]".
+  const h1Df = resample(ltfDf, 60);
   const htfKeyLevels = [
     ...findProminentHtfSwingLevels(htfDf),
     ...findUnfilledImbalanceLevels(htfDf),
+    ...findProminentHtfSwingLevels(h1Df),
+    ...findUnfilledImbalanceLevels(h1Df),
+    ...findSessionLevels(ltfDf),
   ];
   const bias = htfDf.length ? htfTrend : 0;
   const biasLabel = { 1: "bullish", "-1": "bearish", 0: "neutral" }[bias];
@@ -1139,7 +1217,7 @@ if (typeof module !== "undefined") {
     parseTs, loadCandles, resample, findSwings, computeTrendAndBos,
     findLiquiditySweeps, findFvgs, unmitigatedFvgs, findOrderBlock,
     findIfvg, findBreakerBlock, find1minConfirmation, findKeyLevelTarget,
-    findProminentHtfSwingLevels, findSmtDivergence,
+    findProminentHtfSwingLevels, findSessionLevels, findSmtDivergence,
     findMultipleKeyLevelTargets, medianDailyRange, findUnfilledImbalanceLevels, keyLevelNaehe,
     setTuning, getTuning,
     premiumDiscountZone, buildSignal, buildAnnotations,
