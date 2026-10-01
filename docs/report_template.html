@@ -53,6 +53,24 @@
     color: #9198ad; transition: all 0.15s ease;
   }
   .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+
+  /* Zeitrahmen-Umschalter (Tiam, 2026-10-01). TJR arbeitet Weekly -> Daily ->
+     4H -> 1H -> 15min -> 5min -> 1min; bisher zeigte der Chart nur 5min. */
+  .tf-bar { display: flex; gap: 5px; flex-wrap: wrap; margin: 2px 0 8px 0; align-items: center; }
+  .tf-btn {
+    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
+    padding: 4px 11px; border-radius: 6px; cursor: pointer;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
+    color: #9198ad; transition: all 0.12s ease; user-select: none;
+  }
+  .tf-btn:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .tf-btn.active {
+    background: rgba(122,140,255,0.16); border-color: rgba(122,140,255,0.55); color: #cdd6ff;
+  }
+  .tf-btn.leer { opacity: 0.35; cursor: not-allowed; }
+  .tf-hinweis {
+    font-family: -apple-system, sans-serif; font-size: 10.5px; color: #6b7185; margin-left: 4px;
+  }
   .subtitle {
     color: #a8afc2; font-size: 16px; line-height: 1.5; margin: 10px 0 16px 0;
     font-family: -apple-system, sans-serif;
@@ -1651,9 +1669,93 @@ function viennaCrosshairLabel(epochSeconds) {
   }).format(new Date(realMs));
 }
 
+// ---------------------------------------------------------------------------
+// ZEITRAHMEN-UMSCHALTER (Tiam, 2026-10-01)
+// ---------------------------------------------------------------------------
+// "ich habe selber erst spaet bemerkt, er verwendet verschiedene Timeframes."
+// TJRs Reihenfolge: Weekly -> Daily -> 4H -> 1H -> 15min -> 5min -> 1min.
+// 15min/1h/4h entstehen hier im Browser aus der vorhandenen 5min-Reihe, es
+// werden also KEINE zusaetzlichen Daten geladen. Tages- und Wochenkerzen
+// kommen fertig aus build.js (chartDaily/chartWeekly) - aus 20 Tagen
+// 5min-Daten liessen sich sonst nur drei Wochenkerzen bilden.
+const TIMEFRAMES = [
+  { id: "5m",  label: "5 Min",   minuten: 5 },
+  { id: "15m", label: "15 Min",  minuten: 15 },
+  { id: "1h",  label: "1 Std",   minuten: 60 },
+  { id: "4h",  label: "4 Std",   minuten: 240 },
+  { id: "1d",  label: "Tag",     quelle: "chartDaily" },
+  { id: "1w",  label: "Woche",   quelle: "chartWeekly" },
+];
+const aktiverTf = {};     // je Asset der gewaehlte Zeitrahmen
+const chartInstanzen = {}; // je Asset die laufende Chart-Instanz (zum Aufraeumen)
+
+// Fasst Kerzen zu groesseren zusammen. Gleiche Logik wie resample() in
+// engine.js - bewusst nachgebaut statt importiert, weil diese Seite ohne
+// Node-Module auskommen muss.
+function kerzenZusammenfassen(kerzen, minuten) {
+  const ms = minuten * 60000;
+  const eimer = new Map();
+  for (const c of kerzen) {
+    const start = Math.floor(c.ts / ms) * ms;
+    if (!eimer.has(start)) {
+      eimer.set(start, { ts: start, open: c.open, high: c.high, low: c.low, close: c.close, _letzte: c.ts });
+    } else {
+      const b = eimer.get(start);
+      if (c.high > b.high) b.high = c.high;
+      if (c.low < b.low) b.low = c.low;
+      if (c.ts >= b._letzte) { b.close = c.close; b._letzte = c.ts; }
+    }
+  }
+  return [...eimer.values()].sort((a, b) => a.ts - b.ts);
+}
+
+function kerzenFuerTf(item, tfId) {
+  const tf = TIMEFRAMES.find((t) => t.id === tfId) || TIMEFRAMES[0];
+  if (tf.quelle) {
+    const q = item[tf.quelle];
+    return Array.isArray(q) && q.length ? q : null;
+  }
+  if (tf.minuten === 5) return item.ltf;
+  return kerzenZusammenfassen(item.ltf, tf.minuten);
+}
+
+function zeichneTfLeiste(item) {
+  const id = assetId(item.asset);
+  const bar = document.getElementById("tfbar-" + id);
+  if (!bar) return;
+  const aktiv = aktiverTf[id] || "5m";
+  bar.innerHTML = TIMEFRAMES.map((tf) => {
+    const leer = !kerzenFuerTf(item, tf.id);
+    return `<span class="tf-btn${tf.id === aktiv ? " active" : ""}${leer ? " leer" : ""}" data-tf="${tf.id}"${leer ? ' title="keine Daten"' : ""}>${tf.label}</span>`;
+  }).join("")
+    + (aktiv === "5m"
+      ? ""
+      : `<span class="tf-hinweis">Zonen, Marker und Positionsbox werden nur im 5-Min-Chart gezeichnet &mdash; sie gehoeren zu 5-Min-Kerzen.</span>`);
+  bar.querySelectorAll(".tf-btn").forEach((b) => {
+    if (b.classList.contains("leer")) return;
+    b.addEventListener("click", () => {
+      if (aktiverTf[id] === b.dataset.tf) return;
+      aktiverTf[id] = b.dataset.tf;
+      // Beim Wechsel die gespeicherte Zoom-Stufe verwerfen: sie stammt aus
+      // einem anderen Raster und ergaebe sonst einen absurden Ausschnitt.
+      delete chartRanges[id];
+      renderChart(item);
+    });
+  });
+}
+
 function renderChart(item) {
   const container = document.getElementById("chart-" + assetId(item.asset));
   if (!container || item.error || !item.ltf || !item.ltf.length) return;
+
+  const tfId = aktiverTf[assetId(item.asset)] || "5m";
+  const tfKerzen = kerzenFuerTf(item, tfId);
+  if (!tfKerzen || !tfKerzen.length) return;
+  // Alte Instanz entfernen, sonst stapeln sich die Charts uebereinander.
+  const alt = chartInstanzen[assetId(item.asset)];
+  if (alt) { try { alt.remove(); } catch (e) {} }
+  container.innerHTML = "";
+  zeichneTfLeiste(item);
 
   const chart = LightweightCharts.createChart(container, {
     width: container.clientWidth,
@@ -1699,11 +1801,24 @@ function renderChart(item) {
   }
   const series = chart.addCandlestickSeries(seriesOptions);
 
-  const candles = item.ltf.map((c) => ({
+  const candles = tfKerzen.map((c) => ({
     time: Math.floor(c.ts / 1000), open: c.open, high: c.high, low: c.low, close: c.close,
   }));
   series.setData(candles);
-  const DEFAULT_VIEW_CANDLES = 3 * 288; // ~3 Tage bei 5-Min-Kerzen als Erstansicht (seit 2026-07-15 Kerzen-Umstellung korrigiert)
+  chartInstanzen[assetId(item.asset)] = chart;
+  // Nur im 5-Min-Chart gehoeren die Zonen, Marker und die Positionsbox hin -
+  // ihre Zeitstempel sind auf 5-Min-Kerzen berechnet. Auf einem 4-Stunden-
+  // Raster wuerde drawZoneBox() auf die falsche Kerze zeigen, und genau solche
+  // falsch platzierten Marker hatte Tiam schon einmal zu Recht bemaengelt.
+  const zeigeAnnotationen = tfId === "5m";
+  // Erstansicht: immer rund 3 Tage, unabhaengig vom Raster. Bei Tages- und
+  // Wochenkerzen waeren 3 Tage sinnlos, dort wird mehr gezeigt.
+  const DEFAULT_VIEW_CANDLES = tfId === "5m" ? 3 * 288
+    : tfId === "15m" ? 3 * 96
+    : tfId === "1h" ? 5 * 24
+    : tfId === "4h" ? 10 * 6
+    : tfId === "1d" ? 90
+    : 52;
 
   // Tiam, 2026-07-22 (beim Bauen des "Klick im Verlauf -> Chart springt zum
   // Trade-Zeitpunkt"-Features gefunden): entryTs in signals_log.json ist eine
@@ -1721,7 +1836,9 @@ function renderChart(item) {
 
 
   const { ann, sig } = item;
-  let markers = sessionMarkers(item.ltf);
+  let markers = [];
+  if (zeigeAnnotationen) {
+  markers = sessionMarkers(item.ltf);
   drawSessionLevels(chart, candles, computeSessionLevels(item.ltf), markers);
   drawSessionDividers(chart, item.ltf, candles);
 
@@ -1878,6 +1995,8 @@ function renderChart(item) {
     }
   }
 
+  } // Ende: nur im 5-Min-Chart (zeigeAnnotationen)
+
   markers.sort((a, b) => a.time - b.time);
   if (markers.length) series.setMarkers(markers);
 
@@ -1941,6 +2060,7 @@ function renderAssetSection(item) {
           ${modeBadge(item)}
           ${outsideBadge}
         </div>
+        <div class="tf-bar" id="tfbar-${id}"></div>
         <div class="chart-container" id="chart-${id}"></div>
       </div>
       <div class="panel${glow}">
