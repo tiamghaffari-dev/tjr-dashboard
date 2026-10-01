@@ -1157,13 +1157,24 @@ async function sendNtfyFuellung(asset, rec) {
   if (!NTFY_TOPIC) return;
   const crv = typeof rec.rr === "number" ? rec.rr.toFixed(2) : "?";
   const beob = !!rec.beobachtung;
+  // Tiam, 2026-10-01: "wenn halt wirklich signale sind, dann meldungen".
+  // Die Zahl der Meldungen regelt seit heute die Konflikt-Regel (gemessen:
+  // 2,8 -> 1,7 pro Meldetag, 31 von 57 Werktagen ganz still). Hier geht es
+  // deshalb nicht ums Weglassen, sondern darum, dass eine Meldung ohne
+  // Nachschauen beurteilbar ist - frueher stand die Position nicht drin.
+  const zielQuelle = rec.rules && rec.rules["R1-key-levels"] === "ok"
+    ? "echtes Key-Level" : "gerechnet";
   const zeilen = [
     `${rec.direction} ${asset.display}`,
     `Einstieg ${rec.entry}`,
     `Stop     ${rec.stop}`,
-    `Ziel     ${rec.target}`,
+    `Ziel     ${rec.target}  (${zielQuelle})`,
     `CRV      ${crv}`,
+    `Raster   ${rec.signalTf || "5m"}`,
   ];
+  if (rec.confluence && typeof rec.confluence.erfuellt === "number") {
+    zeilen.push(`Regeln   ${rec.confluence.erfuellt} von ${rec.confluence.bewertbar} erfuellt`);
+  }
   if (beob) zeilen.unshift("Ausserhalb der Handelszeit - kein echter Trade.", "");
   try {
     await fetch(`https://ntfy.sh/${encodeURIComponent(NTFY_TOPIC)}`, {
@@ -1175,6 +1186,9 @@ async function sendNtfyFuellung(asset, rec) {
           : `Trade eroeffnet: ${asset.name} ${rec.direction}`,
         Priority: beob ? "default" : "high",
         Tags: rec.direction === "LONG" ? "chart_with_upwards_trend" : "chart_with_downwards_trend",
+        // Antippen der Meldung oeffnet direkt das Dashboard, statt dass Tiam
+        // erst die Adresse suchen muss.
+        Click: "https://tiamghaffari-dev.github.io/tjr-dashboard/",
       },
       body: zeilen.join("\n"),
     });
