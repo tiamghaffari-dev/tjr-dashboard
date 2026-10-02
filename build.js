@@ -11,7 +11,8 @@ const {
   parseTs, loadCandles, resample, buildSignal, buildAnnotations, computeTrendAndBos,
   medianDailyRange, setTuning,
 } = require("./engine.js");
-const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS, confluenceScore, setRuleTuning } = require("./tjr_rules.js");
+const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS, confluenceScore, setRuleTuning, TJR_RULES } = require("./tjr_rules.js");
+const methodeSeite = require("./methode_seite.js");
 const { justiere, bereinigen, tageswerte } = require("./auto_tune.js");
 const { archiviere, bestand } = require("./kerzen_archiv.js");
 
@@ -1643,6 +1644,18 @@ async function main() {
     }),
   };
   renderFromTemplate("history_template.html", "history.html", historyPayload);
+
+  // Methoden-Seite: stellt TJRs Vorgehen je Zeitrahmen neben das, was die
+  // Engine tatsaechlich tut, und macht sichtbar, welche Stufe erzwungen wird
+  // und welche nur gemessen. Tiam, 2026-10-02: er soll es nachpruefen koennen,
+  // statt mir glauben zu muessen. Reine Anzeige - ein Fehler hier darf den
+  // Report nicht kippen.
+  try {
+    const n = methodeSeite.baue(__dirname, TJR_RULES, signalsLog);
+    console.log(`docs/tjr_methode.html geschrieben (${n} Zeichen).`);
+  } catch (e) {
+    console.error("Methoden-Seite fehlgeschlagen (wird ignoriert):", e.message || e);
+  }
 }
 
 main().catch((e) => {
