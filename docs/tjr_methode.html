@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TJR-Methode // was die Engine wirklich tut</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  html,body { margin:0; padding:0; background:
+     radial-gradient(circle at 15% 0%, rgba(88,101,242,0.14), transparent 42%),
+     radial-gradient(circle at 85% 8%, rgba(57,255,136,0.08), transparent 40%), #05060a;
+     color:#e8eaf0; font-family:"SF Mono","Cascadia Code",Menlo,Consolas,monospace; }
+  body { padding:22px 24px 48px; }
+  h1 { font-size:21px; margin:0 0 4px 0; letter-spacing:.5px;
+       background:linear-gradient(90deg,#7dd3fc,#a78bfa 45%,#39ff88 90%);
+       -webkit-background-clip:text; background-clip:text; color:transparent; }
+  h2 { font-size:15px; margin:30px 0 10px 0; color:#cdd6ff; }
+  .sub { color:#7c8399; font-size:12.5px; font-family:-apple-system,sans-serif; margin-bottom:18px; }
+  .zurueck { font-family:-apple-system,sans-serif; font-size:11px; font-weight:600; padding:4px 10px;
+     border-radius:6px; text-decoration:none; background:rgba(255,255,255,.03);
+     border:1px solid rgba(255,255,255,.12); color:#9198ad; float:right; }
+  table { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:10px; }
+  th { text-align:left; padding:8px 10px; color:#6b7185; font-size:10.5px; letter-spacing:.7px;
+       text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,.1);
+       font-family:-apple-system,sans-serif; }
+  td { padding:9px 10px; border-bottom:1px solid rgba(255,255,255,.05); vertical-align:top; }
+  tr.warn td { background:rgba(255,196,0,.05); }
+  .tf { font-weight:700; color:#7dd3fc; white-space:nowrap; }
+  .neu { font-size:10px; color:#ffd25c; font-weight:400; margin-top:3px; font-family:-apple-system,sans-serif; }
+  .beleg { margin-top:6px; padding-left:9px; border-left:2px solid rgba(122,140,255,.35);
+           color:#b9c2da; font-size:11.5px; font-style:italic; }
+  .quelle { color:#6b7185; font-size:10.5px; font-style:normal; margin-top:3px;
+            font-family:-apple-system,sans-serif; }
+  .code { color:#6b7185; font-size:10.5px; margin-top:4px; }
+  .schritt { font-weight:700; color:#ffd25c; text-align:center; width:34px; }
+  .woertlich { color:#d7dbe8; }
+  .gruen { color:#39ff88; font-size:11px; font-family:-apple-system,sans-serif; }
+  .rot { color:#ffb84d; font-size:11px; font-weight:600; font-family:-apple-system,sans-serif; }
+  .pct { text-align:right; color:#9198ad; white-space:nowrap; }
+  .kasten { border:1px solid rgba(255,196,0,.28); background:rgba(255,196,0,.05);
+            border-radius:11px; padding:13px 16px; font-size:12.5px; line-height:1.65;
+            font-family:-apple-system,sans-serif; color:#d8cfae; margin-bottom:8px; }
+  .kasten b { color:#ffd25c; }
+  ul { font-family:-apple-system,sans-serif; font-size:12px; color:#b9c2da; line-height:1.7; padding-left:18px; }
+  .fuss { margin-top:28px; padding-top:14px; border-top:1px solid rgba(255,255,255,.06);
+          color:#5a6072; font-size:11.5px; line-height:1.7; font-family:-apple-system,sans-serif; }
+</style></head><body>
+
+<a class="zurueck" href="index.html">&larr; Dashboard</a>
+<h1>TJR-Methode &mdash; und was die Engine wirklich tut</h1>
+<div class="sub">Jede Zeile mit Beleg aus dem Video und Fundstelle im Code. Stand: 2026-10-02 19:50 UTC &middot; Grundlage: 367 aufgezeichnete Signale.</div>
+
+<div class="kasten">
+  <b>Wichtig vorweg:</b> Die Engine sieht die Videos nicht und kann es nicht &mdash; sie laeuft auf GitHubs Servern, die Videos liegen auf Tiams PC (11 GB). Alle Regeln hier wurden von Hand aus TJRs Videos abgeleitet: woertlich von seinen eingeblendeten Notizen, wo moeglich, sonst aus Transkripten. <b>Wo ein Beleg schwach ist, steht das dabei.</b>
+</div>
+
+<h2>Die Zeitrahmen-Leiter</h2>
+<table>
+  <thead><tr><th>Zeitrahmen</th><th>Was TJR dort macht</th><th>Was die Engine dort macht</th></tr></thead>
+  <tbody>
+    <tr>
+      <td class="tf">Woche</td>
+      <td>Gesamtrichtung und Kontext - wohin will der Kurs diese Woche?
+        <div class="beleg">"the daily bias is the start of a weekly time[frame] to figure out where is our overall direction"<div class="quelle">Bootcamp Day 35, Daily Bias pt. 2</div></div></td>
+      <td>Wochenstruktur (Equilibrium der letzten 12 Wochen) -&gt; Regel R10<div class="code">build.js: fetchWeeklyCandles()</div></td>
+    </tr>
+    <tr>
+      <td class="tf">Tag</td>
+      <td>Daily Bias - die Richtung, gegen die nicht gehandelt wird
+        <div class="beleg">"can we go against daily bias? no"<div class="quelle">Bootcamp Tag 49</div></div></td>
+      <td>Daily-Marktstruktur (BOS auf dem Tageschart) -&gt; Regel R9<div class="code">build.js: fetchDailyCandles(), computeDailyBias()</div></td>
+    </tr>
+    <tr>
+      <td class="tf">4 Stunden</td>
+      <td>Struktur und Key-Level (Liquiditaet, Imbalances)
+        <div class="beleg">"key levels: 1hr, 4hr liq and session highs/lows"<div class="quelle">Beginners Guide, Checkliste Punkt 1 - woertlich vom Bildschirm</div></div></td>
+      <td>Trend + BOS, Swing-Level und offene Imbalances als Ziel-Kandidaten<div class="code">build.js: resample(df1h, 240)</div></td>
+    </tr>
+    <tr>
+      <td class="tf">1 Stunde<div class="neu">seit 01.10.2026 - vorher fehlte dieser Zeitrahmen komplett</div></td>
+      <td>Key-Level: Hochs, Tiefs und Imbalances
+        <div class="beleg">"we have this four hour [FVG] which is overlapping with this one hour [FVG]"<div class="quelle">Beginners Guide</div></div></td>
+      <td>Swing-Level und Imbalances, gleichberechtigt mit 4H<div class="code">engine.js: resample(ltfDf, 60)</div></td>
+    </tr>
+    <tr>
+      <td class="tf">Sessions<div class="neu">seit 01.10.2026 - stand vorher nur als Kommentar im Code</div></td>
+      <td>Session-Hochs und -Tiefs als Liquiditaetspunkte
+        <div class="beleg">"key levels: [...] and session highs/lows"<div class="quelle">Beginners Guide, Checkliste Punkt 1 - woertlich</div></div></td>
+      <td>Asia / London / New York, nur abgeschlossene Sessions<div class="code">engine.js: findSessionLevels()</div></td>
+    </tr>
+    <tr>
+      <td class="tf">15 Minuten<div class="neu">seit 01.10.2026</div></td>
+      <td>Zwischenstufe: Sweep und Strukturbruch, dann Order-Block-Einstieg
+        <div class="beleg">"we're looking for [liquidity] sweeps on a fifteen minute, we're looking for [BOS] from a fifteen minute, and then [an] order block entry"<div class="quelle">Bootcamp Day 35</div></div></td>
+      <td>Rueckfall: wird geprueft, wenn auf 5min kein Einstieg steht<div class="code">build.js: resample(ltf, 15)</div></td>
+    </tr>
+    <tr>
+      <td class="tf">5 Minuten</td>
+      <td>Bestaetigung (BOS/iFVG/SMT) und Continuation-Zone (FVG/OB/BB/EQ)
+        <div class="beleg">"b) scale to 5 min timeframe, wait for confirmation (bos, ifvg, smt)  c) wait for 5 min continuation (fvg, ob, bb, eq)"<div class="quelle">Beginners Guide, Checkliste - woertlich vom Bildschirm</div></div></td>
+      <td>Haupt-Zeitrahmen der Signalerzeugung<div class="code">engine.js: buildSignal(htf, ltf, ...)</div></td>
+    </tr>
+    <tr>
+      <td class="tf">1 Minute</td>
+      <td>Letzte Bestaetigung, dann Einstieg
+        <div class="beleg">"d) wait for 1 min confirmation (bos, ifvg)  e) enter"<div class="quelle">Beginners Guide, Checkliste - woertlich vom Bildschirm</div></div></td>
+      <td>find1minConfirmation(); ohne 1min-Daten bleibt der Einstieg ein Plan<div class="code">engine.js: find1minConfirmation()</div></td>
+    </tr></tbody>
+</table>
+
+<h2>TJRs Ausfuehrungs-Checkliste &mdash; woertlich, und was davon erzwungen wird</h2>
+<table>
+  <thead><tr><th>Schritt</th><th>TJR woertlich</th><th>Regel</th><th>Status in der Engine</th><th>erfuellt</th></tr></thead>
+  <tbody>
+    <tr class="warn">
+      <td class="schritt">1</td>
+      <td class="woertlich">key levels: 1hr, 4hr liq and session highs/lows</td>
+      <td>R1-key-levels</td>
+      <td class="rot">NUR GEMESSEN - das Ziel darf auch gerechnet sein</td>
+      <td class="pct">47 %</td>
+    </tr>
+    <tr class="">
+      <td class="schritt">2</td>
+      <td class="woertlich">times to trade: ny session 9:50-10:30 (forex 8:00am-10:00am) london session 3am-4am</td>
+      <td>R2-session</td>
+      <td class="gruen">erzwungen fuer echte Trades (ausserhalb nur Beobachtung)</td>
+      <td class="pct">28 %</td>
+    </tr>
+    <tr class="warn">
+      <td class="schritt">a</td>
+      <td class="woertlich">wait for price to hit key level</td>
+      <td>R13-sweep-am-key-level</td>
+      <td class="rot">NUR GEMESSEN - seit den 1H/Session-Levels aber faktisch fast immer erfuellt</td>
+      <td class="pct">45 %</td>
+    </tr>
+    <tr class="">
+      <td class="schritt">b</td>
+      <td class="woertlich">scale to 5 min timeframe, wait for confirmation (bos, ifvg, smt)</td>
+      <td>R4-confirmation</td>
+      <td class="gruen">erzwungen: ohne Bestaetigung entsteht gar kein Signal</td>
+      <td class="pct">100 %</td>
+    </tr>
+    <tr class="">
+      <td class="schritt">c</td>
+      <td class="woertlich">wait for 5 min continuation (fvg, ob, bb, eq)</td>
+      <td>R5-continuation-zone</td>
+      <td class="gruen">erzwungen: ohne Zone entsteht gar kein Signal</td>
+      <td class="pct">100 %</td>
+    </tr>
+    <tr class="">
+      <td class="schritt">d</td>
+      <td class="woertlich">wait for 1 min confirmation (bos, ifvg)</td>
+      <td>R7-1min-confirmation</td>
+      <td class="gruen">erzwungen, sobald 1min-Daten vorliegen</td>
+      <td class="pct">100 %</td>
+    </tr>
+    <tr class="">
+      <td class="schritt">e</td>
+      <td class="woertlich">enter</td>
+      <td>&ndash;</td>
+      <td class="gruen">ergibt sich aus d)</td>
+      <td class="pct">&ndash;</td>
+    </tr>
+    <tr class="">
+      <td class="schritt">f</td>
+      <td class="woertlich">stop loss where trade idea is wrong</td>
+      <td>R8-stop-placement</td>
+      <td class="gruen">erzwungen: der Stop wird nach dieser Regel gesetzt</td>
+      <td class="pct">100 %</td>
+    </tr>
+    <tr class="warn">
+      <td class="schritt">g</td>
+      <td class="woertlich">take profit at other key levels</td>
+      <td>R1-key-levels</td>
+      <td class="rot">NUR GEMESSEN - das Ziel darf auch gerechnet sein</td>
+      <td class="pct">47 %</td>
+    </tr></tbody>
+</table>
+<div class="kasten">
+  <b>Gelb markierte Zeilen werden NICHT erzwungen</b> &mdash; dort kann ein Trade entstehen, obwohl TJRs Schritt nicht erfuellt ist. Das ist die ehrlichste Zahl auf dieser Seite. Am 02.10.2026 zeigte sich, dass bei Schritt (a) &minus;39,1R der insgesamt &minus;42,4R Long-Verluste sassen: Longs, deren Sweep nicht an einem Key-Level lag.
+</div>
+
+<h2>Regeln, die NICHT von TJR stammen</h2>
+<div class="sub">Von mir ergaenzt. Sie sind als Regel genauso scharf wie die anderen &mdash; aber sie haben keinen Videobeleg und duerfen deshalb nicht als &bdquo;TJR sagt&ldquo; gelesen werden.</div>
+<ul>
+    <li><b>R12-news-fenster</b> &mdash; Nicht kurz vor einer High-Impact-Nachricht einsteigen<div class="quelle">Eigene Regel, KEIN Videobeleg fuer eine konkrete Zeitspanne. Die 30 Minuten sind gesetzt, nicht belegt. Daten aus dem ForexFactory-Kalenderfeed (High Impact, USD/GBP).</div></li>
+    <li><b>R14-keine-doppelposition</b> &mdash; Keine zweite Position im selben Wert<div class="quelle">Eigene Regel. Ausloeser war ein realer Fall am 2026-08-17: ETHUSD LONG um 14:02 bei 1899.59, dann nochmal LONG um 14:56 bei 1902.23 - 54 Minuten Abstand, 0,14 % Preisunterschied, beide mit vollem Stop. Insgesamt 4 solcher Doppel-Einstiege im Log, zusammen -1,6R.</div></li></ul>
+
+<h2>Regeln auf schwacher Quellenlage</h2>
+<div class="sub">Belegt nur durch automatisch erzeugte Transkripte (pocketsphinx, fehlerbehaftet). Sinngemaess richtig, aber nicht woertlich zitierfaehig.</div>
+<ul><li><b>R9-daily-bias</b> &mdash; Nicht gegen den Daily Bias handeln</li><li><b>R10-htf-vorrang</b> &mdash; Bei Widerspruch hat der hoehere Zeitrahmen Vorrang</li><li><b>R11-kein-trade-nach-verlust</b> &mdash; Nach einem Verlust nicht sofort nachlegen</li></ul>
+
+<div class="fuss">
+  Diese Seite wird bei jedem Lauf neu aus <code>tjr_rules.js</code> und dem Signal-Log erzeugt &mdash; sie kann also nicht veralten, solange das Regelwerk gepflegt wird.<br>
+  Die Prozentzahlen beziehen alle aufgezeichneten Signale ein, auch Beobachtungen ausserhalb der Handelszeit.
+</div>
+</body></html>
