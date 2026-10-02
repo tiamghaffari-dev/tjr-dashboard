@@ -1,0 +1,66 @@
+meldung,transaktion,verzoegerungTage,symbol,firma,inhaber,rolle,stueck,preis,summe,quelle
+2026-10-01,2026-09-30,1,PCG,PG&amp;E Corp,LARSEN JOHN O,Director,7500,12.2,91500,https://www.sec.gov/Archives/edgar/data/1004980/0001628280-26-064255.txt
+2026-10-01,2026-09-30,1,UUU,UNIVERSAL SAFETY PRODUCTS  INC.,AULT MILTON C III,Director,18000,5134,92412000,https://www.sec.gov/Archives/edgar/data/102109/0001214659-26-012438.txt
+2026-10-01,2026-09-30,1,PODC,PodcastOne  Inc.,MERRIMAN D JONATHAN,Director,7000,2.21,15470,https://www.sec.gov/Archives/edgar/data/1022711/0001213900-26-105925.txt
+2026-10-01,2026-09-30,1,CRESY,CRESUD INC,Elsztain Alejandro Gustavo,CEO,8573,11.63,99704,https://www.sec.gov/Archives/edgar/data/1034957/0002119764-26-000028.txt
+2026-10-01,2026-10-01,0,CRESY,CRESUD INC,Elsztain Alejandro Gustavo,CEO,8761,11.3661,99578,https://www.sec.gov/Archives/edgar/data/1034957/0002119764-26-000028.txt
+2026-10-01,2026-09-30,1,TRCK,Track Group  Inc.,JCP Investment Management  LLC,10% Eigner,384021,0.6,230413,https://www.sec.gov/Archives/edgar/data/1045942/0000921895-26-002696.txt
+2026-10-01,2026-09-29,2,GBR,New Concept Energy  Inc.,REALTY ADVISORS INC,10% Eigner,2000000,1,2000000,https://www.sec.gov/Archives/edgar/data/105744/0001273348-26-000012.txt
+2026-10-01,2026-09-30,1,SPG,SIMON PROPERTY GROUP INC.,LEWIS RANDALL J,Director,65,202.78,13181,https://www.sec.gov/Archives/edgar/data/1063761/0001123485-26-000010.txt
+2026-10-01,2026-09-30,1,SPG,SIMON PROPERTY GROUP INC.,GLASSCOCK LARRY C,Director,367,202.78,74420,https://www.sec.gov/Archives/edgar/data/1063761/0001189793-26-000014.txt
+2026-10-01,2026-09-30,1,SPG,SIMON PROPERTY GROUP INC.,RODKIN GARY M,Director,232,202.78,47045,https://www.sec.gov/Archives/edgar/data/1063761/0001199045-26-000010.txt
+2026-10-01,2026-09-30,1,SPG,SIMON PROPERTY GROUP INC.,LEIBOWITZ REUBEN S,Director,480,202.78,97334,https://www.sec.gov/Archives/edgar/data/1063761/0001210982-26-000010.txt
+2026-10-01,2026-09-30,1,SPG,SIMON PROPERTY GROUP INC.,STEWART MARTA R,Director,199,202.78,40353,https://www.sec.gov/Archives/edgar/data/1063761/0001272064-26-000012.txt
+2026-10-01,2026-09-30,1,SPG,SIMON PROPERTY GROUP INC.,Aeppel Glyn,Director,222,202.78,45017,https://www.sec.gov/Archives/edgar/data/1063761/0001340262-26-000013.txt
+2026-10-01,2026-09-30,1,SPG,SIMON PROPERTY GROUP INC.,Smith Daniel C.,Director,350,202.78,70973,https://www.sec.gov/Archives/edgar/data/1063761/0001464273-26-000010.txt
+2026-10-01,2026-09-30,1,SPG,SIMON PROPERTY GROUP INC.,SELIG STEFAN M,Director,208,202.78,42178,https://www.sec.gov/Archives/edgar/data/1063761/0001709407-26-000012.txt
+2026-10-01,2026-09-30,1,SPG,SIMON PROPERTY GROUP INC.,Roe Peggy,Director,88,202.78,17845,https://www.sec.gov/Archives/edgar/data/1063761/0001898688-26-000011.txt
+2026-10-01,2026-09-29,2,FLNA,FILANA THERAPEUTICS  INC.,Barry Richard,President &amp; CEO,206813,0.9,186132,https://www.sec.gov/Archives/edgar/data/1069530/0001437749-26-031654.txt
+2026-10-01,2026-09-30,1,FLNA,FILANA THERAPEUTICS  INC.,Barry Richard,President &amp; CEO,100000,0.92,92000,https://www.sec.gov/Archives/edgar/data/1069530/0001437749-26-031654.txt
+2026-10-01,2026-09-30,1,DKS,DICK'S SPORTING GOODS  INC.,Barnes Matthew,President - Foot Locker Intl,3665,136.3899,499869,https://www.sec.gov/Archives/edgar/data/1089063/0002100573-26-000006.txt
+2026-10-01,2026-09-29,2,ORCL,ORACLE CORP,RUSCKOWSKI STEPHEN H,Director,25000,139.352,3483800,https://www.sec.gov/Archives/edgar/data/1142624/0001341439-26-000099.txt
+2026-10-01,2026-09-29,2,FUND,SPROTT FOCUS TRUST INC.,GEORGE W WHITNEY,Director,59702,10.05,600005,https://www.sec.gov/Archives/edgar/data/1185838/0001193125-26-410922.txt
+2026-10-01,2026-09-29,2,FUND,SPROTT FOCUS TRUST INC.,GEORGE W WHITNEY,Director,4725,10.05,47486,https://www.sec.gov/Archives/edgar/data/1185838/0001193125-26-410922.txt
+2026-10-01,2026-09-29,2,FUND,SPROTT FOCUS TRUST INC.,GEORGE W WHITNEY,Director,49743,10.05,499917,https://www.sec.gov/Archives/edgar/data/1185838/0001193125-26-410922.txt
+2026-10-01,2026-09-29,2,FUND,SPROTT FOCUS TRUST INC.,GEORGE W WHITNEY,Director,21944,10.05,220537,https://www.sec.gov/Archives/edgar/data/1185838/0001193125-26-410922.txt
+2026-10-01,2026-09-29,2,FUND,SPROTT FOCUS TRUST INC.,GEORGE W WHITNEY,Director,4076,10.05,40964,https://www.sec.gov/Archives/edgar/data/1185838/0001193125-26-410922.txt
+2026-10-01,2026-09-29,2,FUND,SPROTT FOCUS TRUST INC.,GEORGE W WHITNEY,Director,1760,10.05,17688,https://www.sec.gov/Archives/edgar/data/1185838/0001193125-26-410922.txt
+2026-10-01,2026-09-29,2,FUND,SPROTT FOCUS TRUST INC.,GEORGE W WHITNEY,Director,39863,10.05,400623,https://www.sec.gov/Archives/edgar/data/1185838/0001193125-26-410922.txt
+2026-10-01,2026-09-30,1,GPUS,Hyperscale Data  Inc.,AULT MILTON C III,Executive Chairman,311874,0.1639,51116,https://www.sec.gov/Archives/edgar/data/1212502/0001214659-26-012383.txt
+2026-10-01,2026-09-30,1,GPUS,Hyperscale Data  Inc.,AULT MILTON C III,Executive Chairman,10000000,0.5,5000000,https://www.sec.gov/Archives/edgar/data/1212502/0001214659-26-012383.txt
+2026-10-01,2026-10-01,0,GME,GameStop Corp.,Turner Nat,Director,10462,24.33,254540,https://www.sec.gov/Archives/edgar/data/1326380/0001822293-26-000002.txt
+2026-10-01,2026-09-30,1,PRHI,Presurance Holdings  Inc.,MELOCHE HAROLD J,CFO  Treasurer,4100,6.375,26138,https://www.sec.gov/Archives/edgar/data/1339147/0001193125-26-410889.txt
+2026-10-01,2026-09-30,1,PRHI,Presurance Holdings  Inc.,RONEY BRIAN J,Chief Executive Officer,7500,6.7497,50623,https://www.sec.gov/Archives/edgar/data/1339151/0001193125-26-410894.txt
+2026-10-01,2026-09-30,1,PRHI,Presurance Holdings  Inc.,SARAFA JOSEPH D,Director,11000,6.7497,74247,https://www.sec.gov/Archives/edgar/data/1339152/0001193125-26-410914.txt
+2026-10-01,2026-09-29,2,VENU,Venu Holding Corp,Finke Thomas M,Director,50000,1.518,75900,https://www.sec.gov/Archives/edgar/data/1363651/0001493152-26-045391.txt
+2026-10-01,2026-10-01,0,CSWC,CAPITAL SOUTHWEST CORP,Thomas William R III,Director,2170,23.044,50005,https://www.sec.gov/Archives/edgar/data/1369011/0000017313-26-000159.txt
+2026-10-01,2026-09-29,2,FUL,FULLER H B CO,Happe Michael J,Director,2000,49.625,99250,https://www.sec.gov/Archives/edgar/data/1382452/0001225208-26-008046.txt
+2026-10-01,2026-09-30,1,XENE,Xenon Pharmaceuticals Inc.,Kelly Thomas Patrick,Chief Financial Officer,15000,37.316,559740,https://www.sec.gov/Archives/edgar/data/1410514/0001193125-26-410001.txt
+2026-10-01,2026-09-29,2,GRCE,Grace Therapeutics  Inc.,Opaleye Management Inc.,10% Eigner,7849,2.09,16404,https://www.sec.gov/Archives/edgar/data/1444192/0001493152-26-045358.txt
+2026-10-01,2026-09-30,1,RDGL,VIVOS INC,Korenko Michael K,CEO,200000,0.498,99600,https://www.sec.gov/Archives/edgar/data/1449349/0001486806-26-000010.txt
+2026-10-01,2026-09-30,1,PRHI,Presurance Holdings  Inc.,Smith James Grant,Director,7250,6.7497,48935,https://www.sec.gov/Archives/edgar/data/1502292/0001193125-26-410905.txt
+2026-10-01,2026-09-30,1,PRHI,Presurance Holdings  Inc.,O'Hanlon Isolde,Director,7250,6.7497,48935,https://www.sec.gov/Archives/edgar/data/1502292/0001193125-26-410913.txt
+2026-10-01,2026-09-29,2,GF,NEW GERMANY FUND INC,Saba Capital Management  L.P.,10% Eigner,1988,10.63,21132,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000319.txt
+2026-10-01,2026-09-30,1,GF,NEW GERMANY FUND INC,Saba Capital Management  L.P.,10% Eigner,11059,10.71,118442,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000319.txt
+2026-10-01,2026-09-30,1,MXF,MEXICO FUND INC,Saba Capital Management  L.P.,10% Eigner,1238,20.39,25243,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000320.txt
+2026-10-01,2026-09-30,1,RGT,ROYCE GLOBAL TRUST  INC.,CLARK CHRISTOPHER D,President,743,14.22,10565,https://www.sec.gov/Archives/edgar/data/1514490/0000906304-26-000164.txt
+2026-10-01,2026-09-29,2,LPCN,Lipocine Inc.,Higuchi John W.,Director,9037,2.15,19430,https://www.sec.gov/Archives/edgar/data/1535955/0001493152-26-045400.txt
+2026-10-01,2026-09-30,1,LPCN,Lipocine Inc.,Higuchi John W.,Director,15970,2.23,35613,https://www.sec.gov/Archives/edgar/data/1535955/0001493152-26-045400.txt
+2026-10-01,2026-09-30,1,XENE,Xenon Pharmaceuticals Inc.,MORTIMER IAN,PRESIDENT &amp; CEO,30000,37.38,1121400,https://www.sec.gov/Archives/edgar/data/1582313/0001193125-26-409999.txt
+2026-10-01,2026-09-30,1,RMT,ROYCE MICRO-CAP TRUST  INC.,CLARK CHRISTOPHER D,President,1000,13.4,13400,https://www.sec.gov/Archives/edgar/data/1619450/0000906304-26-000163.txt
+2026-10-01,2026-09-30,1,GTLB,Gitlab Inc.,Staples William,Chief Executive Officer,2677,46.62,124802,https://www.sec.gov/Archives/edgar/data/1653482/0001653482-26-000174.txt
+2026-10-01,2026-09-29,2,LILA,Liberty Latin America Ltd.,MALONE JOHN C,10% Eigner,512,20.4492,10470,https://www.sec.gov/Archives/edgar/data/1712184/0000937797-26-000034.txt
+2026-10-01,2026-09-30,1,LILA,Liberty Latin America Ltd.,MALONE JOHN C,10% Eigner,1013,20.4301,20696,https://www.sec.gov/Archives/edgar/data/1712184/0000937797-26-000034.txt
+2026-10-01,2026-09-30,1,LILA,Liberty Latin America Ltd.,MALONE JOHN C,10% Eigner,20000,8.4016,168032,https://www.sec.gov/Archives/edgar/data/1712184/0000937797-26-000034.txt
+2026-10-01,2026-09-30,1,AVR,Anteris Technologies Global Corp.,L1 Capital Pty Ltd,10% Eigner,74286,7.72,573488,https://www.sec.gov/Archives/edgar/data/1817646/0001817646-26-000028.txt
+2026-10-01,2026-10-01,0,AVR,Anteris Technologies Global Corp.,L1 Capital Pty Ltd,10% Eigner,322940,7.6,2454344,https://www.sec.gov/Archives/edgar/data/1817646/0001817646-26-000028.txt
+2026-10-01,2026-09-30,1,SKYH,Sky Harbour Group Corp,Gonzalez Francisco,Chief Financial Officer,1500,9.69,14535,https://www.sec.gov/Archives/edgar/data/1823587/0001437749-26-031686.txt
+2026-10-01,2026-09-29,2,HELP,Helus Pharma Inc.,Cavers Greg,Chief Financial Officer,3000,12.91,38730,https://www.sec.gov/Archives/edgar/data/1833141/0000912282-26-001334.txt
+2026-10-01,2026-09-29,2,TKLF,Tokyo Lifestyle Co.  Ltd.,Kanayama Mei,Representative Director (PEO),1396755,0.274,382711,https://www.sec.gov/Archives/edgar/data/1836242/0001213900-26-105765.txt
+2026-10-01,2026-09-29,2,CINT,CI&amp;T Inc,Gon Cesar Nivaldo,Chief Executive Officer,3835,2.95,11313,https://www.sec.gov/Archives/edgar/data/1868995/0001292814-26-004824.txt
+2026-10-01,2026-09-29,2,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,216818,33.6731,7300934,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-410677.txt
+2026-10-01,2026-09-30-05:00,,ASPI,ASP Isotopes Inc.,Ryan Robert John Andrew,Director,15000,2.68,40200,https://www.sec.gov/Archives/edgar/data/1921865/0001477932-26-005964.txt
+2026-10-01,2026-09-29,2,MOALX,Lord Abbett Municipal Opportunities Fund,English Christopher T.,,5213.764,9.59,50000,https://www.sec.gov/Archives/edgar/data/2029852/0000930413-26-003049.txt
+2026-10-01,2026-09-29,2,SLBT,SL Science Holding Ltd,Wang Ching-Dong,Chief Executive Officer,4545306,2272653,10329903316818,https://www.sec.gov/Archives/edgar/data/2070534/0001104659-26-112844.txt
+2026-10-01,2026-09-29,2,BBASX,AMG BBH Asset-Backed Credit Fund  LLC,AMG New York Holdings Corp.,10% Eigner,280701.754,11.4,3200000,https://www.sec.gov/Archives/edgar/data/2073844/0001193125-26-410415.txt
+2026-10-01,2026-09-30,1,FUL,FULLER H B CO,Martin Celine Christine,Director,464.599,49.5,22998,https://www.sec.gov/Archives/edgar/data/2092680/0001225208-26-008045.txt
