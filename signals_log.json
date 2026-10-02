@@ -28736,8 +28736,8 @@
     "target2": 4162.899902,
     "rr2": 1.21,
     "partialExit": true,
-    "trailStop": 4262.283752,
-    "tp1HitTs": null,
+    "trailStop": 4164.019727,
+    "tp1HitTs": 1790940300000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -28781,9 +28781,20 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790940325000,
+    "rMultiple": 1.18,
+    "exitPrice": 4164.019727,
+    "postmortem": {
+      "holdHours": 1.9,
+      "mfeR": 1.24,
+      "maeR": -0.32,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.59,
+      "targetDistAdr": 0.7,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1790948572188",
@@ -29049,8 +29060,8 @@
     "target2": 4162.899902,
     "rr2": 1.36,
     "partialExit": true,
-    "trailStop": 4262.283752,
-    "tp1HitTs": null,
+    "trailStop": 4166.82002,
+    "tp1HitTs": 1790940000000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -29094,9 +29105,20 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790940300000,
+    "rMultiple": 1.31,
+    "exitPrice": 4162.899902,
+    "postmortem": {
+      "holdHours": 1.5,
+      "mfeR": 1.38,
+      "maeR": -0.15,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.55,
+      "targetDistAdr": 0.7,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1790949514469",
@@ -29284,8 +29306,8 @@
     "target2": 4162.899902,
     "rr2": 1.04,
     "partialExit": true,
-    "trailStop": 4262.283752,
-    "tp1HitTs": null,
+    "trailStop": 4162.899902,
+    "tp1HitTs": 1790940300000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -29328,9 +29350,20 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1790940325000,
+    "rMultiple": 1.04,
+    "exitPrice": 4162.899902,
+    "postmortem": {
+      "holdHours": 1.4,
+      "mfeR": 1.06,
+      "maeR": -0.24,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.64,
+      "targetDistAdr": 0.66,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1790950771602",
