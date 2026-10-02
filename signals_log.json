@@ -28691,5 +28691,64 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "XRPUSD-1790948572188",
+    "asset": "XRPUSD",
+    "direction": "LONG",
+    "entryTs": 1790948572188,
+    "entry": 1.542,
+    "stop": 1.52492,
+    "target": 1.56,
+    "rr": 1.05,
+    "target2": 1.56,
+    "rr2": 1.05,
+    "partialExit": true,
+    "trailStop": 1.52492,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.127,
+    "fillTs": 1790934183000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "zeitrahmen-konflikt",
+    "signalTf": "5m",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
