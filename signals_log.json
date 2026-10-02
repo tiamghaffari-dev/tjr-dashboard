@@ -29498,9 +29498,26 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790943000000,
+    "rMultiple": -1,
+    "exitPrice": 769.894971,
+    "postmortem": {
+      "holdHours": 0.9,
+      "mfeR": 1.36,
+      "maeR": -1.01,
+      "towardTargetPct": 51,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.53,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "^GSPC-1790954683831",
