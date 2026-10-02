@@ -27636,9 +27636,41 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1790933400000,
+    "rMultiple": -1,
+    "exitPrice": 766.467987,
+    "postmortem": {
+      "holdHours": 18.8,
+      "mfeR": 0.37,
+      "maeR": -3,
+      "towardTargetPct": 19,
+      "stopDistAdr": 0.37,
+      "targetDistAdr": 0.75,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -2.6R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 19% entgegen (max +0.4R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -2.6R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Entry: zu frueh · Analyse: These war falsch"
+    }
   },
   {
     "id": "GBPUSD-1790881210990",
@@ -28535,6 +28567,126 @@
     "fuellGeprueft": true,
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "5m",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "XRPUSD-1790947941734",
+    "asset": "XRPUSD",
+    "direction": "LONG",
+    "entryTs": 1790947941734,
+    "entry": 1.5426,
+    "stop": 1.52552,
+    "target": 1.56,
+    "rr": 1.02,
+    "target2": 1.56,
+    "rr2": 1.02,
+    "partialExit": true,
+    "trailStop": 1.52552,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.073,
+    "fillTs": 1790933553000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "zeitrahmen-konflikt",
+    "signalTf": "5m",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1790947941734",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1790947941734,
+    "entry": 4217.299805,
+    "stop": 4262.283752,
+    "target": 4164.019727,
+    "rr": 1.18,
+    "target2": 4162.899902,
+    "rr2": 1.21,
+    "partialExit": true,
+    "trailStop": 4262.283752,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 3,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R10-htf-vorrang",
+        "R11-kein-trade-nach-verlust"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 2.631,
+    "fillTs": 1790933553000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
     "status": "open",
     "resolvedTs": null,
