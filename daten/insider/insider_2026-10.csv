@@ -82,3 +82,72 @@ meldung,transaktion,verzoegerungTage,symbol,firma,inhaber,rolle,stueck,preis,sum
 2026-10-02,2026-10-01,1,ACOG,Alpha Cognition Inc.,Opaleye Management Inc.,10% Eigner,19050,8.6947,165634,https://www.sec.gov/Archives/edgar/data/1595855/0001493152-26-045511.txt
 2026-10-02,2026-10-01,1,XAIR,Beyond Air  Inc.,Lin Yi-Chien,10% Eigner,15393,2.8,43100,https://www.sec.gov/Archives/edgar/data/1641631/0002144385-26-000005.txt
 2026-10-02,2026-05-18,137,LEEEF,Leef Brands Inc.,MENDOLA ROBERT JAMES JR,Director,357553,0.25,89388,https://www.sec.gov/Archives/edgar/data/1711141/0001493152-26-045569.txt
+2026-10-05,2026-10-01,4,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,425869,79.49,33852327,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-01,4,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,92830,80.57,7479313,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-01,4,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,186991,81.46,15232287,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-02,3,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,448113,78.37,35118616,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-02,3,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,342553,79.03,27071964,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-02,3,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,842753,80.04,67453950,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-02,3,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,44300,81.14,3594502,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-02,3,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,20200,81.9,1654380,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-01,4,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,3802,78.26,297545,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-01,4,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,950,79.51,75535,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-02,3,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,2290,77.12,176605,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-02,3,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,2452,77.93,191084,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-02,3,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,5135,78.77,404484,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-10-02,3,LEN,LENNAR CORP /NEW/,BERKSHIRE HATHAWAY INC,10% Eigner,299,79.74,23842,https://www.sec.gov/Archives/edgar/data/1067983/0001193125-26-414744.txt
+2026-10-05,2026-09-11,24,ALP,Alpha Compute Corp,Mitin Yury,See Remarks,3657,3.52,12873,https://www.sec.gov/Archives/edgar/data/1095435/0001171843-26-006419.txt
+2026-10-05,2026-09-14,21,ALP,Alpha Compute Corp,Mitin Yury,See Remarks,9000,4.29,38610,https://www.sec.gov/Archives/edgar/data/1095435/0001171843-26-006419.txt
+2026-10-05,2026-10-01,4,BPRE,Bluerock Private Real Estate Fund,KAMFAR RAMIN,Director,124489,12.617,1570678,https://www.sec.gov/Archives/edgar/data/1111908/0001398344-26-017906.txt
+2026-10-05,2026-10-02,3,BPRE,Bluerock Private Real Estate Fund,KAMFAR RAMIN,Director,50931,12.6879,646207,https://www.sec.gov/Archives/edgar/data/1111908/0001398344-26-017906.txt
+2026-10-05,2026-10-05,0,BPRE,Bluerock Private Real Estate Fund,KAMFAR RAMIN,Director,93744,12.7081,1191308,https://www.sec.gov/Archives/edgar/data/1111908/0001398344-26-017906.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,3400,17.14,58276,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,3700,17.16,63492,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,48200,17.15,826630,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,59646,17.17,1024122,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,91700,17.2,1577240,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,172400,17.26,2975624,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,187900,17.21,3233759,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,215500,17.24,3715220,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,232000,17.25,4002000,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,289254,17.19,4972276,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,308900,17.22,5319258,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-31,35,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,337400,17.23,5813402,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004850.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,15400,16.62,255948,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,17100,16.72,285912,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,21600,16.7,360720,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,26000,16.67,433420,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,31099,16.66,518109,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,34000,16.71,568140,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,36000,16.74,602640,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,38500,16.68,642180,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,40301,16.73,674236,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,40400,16.69,674276,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-08-25,41,BBD,BANK BRADESCO,Alvarez Denise Aguiar,Director,44600,16.63,741698,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004852.txt
+2026-10-05,2026-10-02,3,ESEA,EUROSEAS LTD.,Pittas Aristeidis P,Director,525,71.0721,37313,https://www.sec.gov/Archives/edgar/data/1341170/0002127484-26-000019.txt
+2026-10-05,2026-10-01,4,PALI,PALISADE BIO  INC.,Williams Donald Allen,Director,10000,1.42,14200,https://www.sec.gov/Archives/edgar/data/1357459/0001493152-26-045772.txt
+2026-10-05,2026-10-01,4,ACCV,Accelevation Holdings Corp.,JONES GINGER M,Director,10000,18,180000,https://www.sec.gov/Archives/edgar/data/1360712/0001628280-26-065157.txt
+2026-10-05,2026-10-01,4,OM,Outset Medical  Inc.,Leonard Braden Michael,10% Eigner,228334,3.53,806019,https://www.sec.gov/Archives/edgar/data/1373603/0001373604-26-000050.txt
+2026-10-05,2026-10-02,3,OM,Outset Medical  Inc.,Leonard Braden Michael,10% Eigner,16575,3.8758,64241,https://www.sec.gov/Archives/edgar/data/1373603/0001373604-26-000050.txt
+2026-10-05,2026-10-01,4,GRX,Gabelli Healthcare &amp; WellnessRx Trust,Saba Capital Management  L.P.,10% Eigner,5720,9.41,53825,https://www.sec.gov/Archives/edgar/data/1391437/0001510281-26-000322.txt
+2026-10-05,2026-10-01,4,ACCV,Accelevation Holdings Corp.,Donahue Paul D,Director,7000,18,126000,https://www.sec.gov/Archives/edgar/data/1409902/0001628280-26-065155.txt
+2026-10-05,2026-10-01,4,GRCE,Grace Therapeutics  Inc.,Opaleye Management Inc.,10% Eigner,38796,2.0353,78961,https://www.sec.gov/Archives/edgar/data/1444192/0001493152-26-045809.txt
+2026-10-05,2026-10-02,3,GRCE,Grace Therapeutics  Inc.,Opaleye Management Inc.,10% Eigner,20000,2.0684,41368,https://www.sec.gov/Archives/edgar/data/1444192/0001493152-26-045809.txt
+2026-10-05,2026-10-01,4,GGROU,Golden Growers Cooperative,Johnson Chris A,Director,5000,5,25000,https://www.sec.gov/Archives/edgar/data/1489874/0000914190-26-000144.txt
+2026-10-05,2026-09-30,5,LND,BrasilAgro - Brazilian Agricultural Real Estate Co,Elsztain Alejandro Gustavo,Director,15000,3.4829,52244,https://www.sec.gov/Archives/edgar/data/1499849/0002119764-26-000030.txt
+2026-10-05,2026-10-05,0,LND,BrasilAgro - Brazilian Agricultural Real Estate Co,Elsztain Alejandro Gustavo,Director,11750,3.7261,43782,https://www.sec.gov/Archives/edgar/data/1499849/0002119764-26-000030.txt
+2026-10-05,2026-10-01,4,MXF,MEXICO FUND INC,Saba Capital Management  L.P.,10% Eigner,17921,20,358420,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000323.txt
+2026-10-05,2026-10-02,3,MXF,MEXICO FUND INC,Saba Capital Management  L.P.,10% Eigner,1573,19.74,31051,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000323.txt
+2026-10-05,2026-10-02,3,BPRE,Bluerock Private Real Estate Fund,MacDonald Ryan S,Director,6700,12.7,85090,https://www.sec.gov/Archives/edgar/data/1551047/0001398344-26-017904.txt
+2026-10-05,2026-10-02,3,MKC,MCCORMICK &amp; CO INC,Hattersley Gavin,Director,1000,44.61,44610,https://www.sec.gov/Archives/edgar/data/1552809/0000063754-26-000331.txt
+2026-10-05,2026-10-01,4,NXRT,NexPoint Residential Trust  Inc.,McGraner Matt,See Remarks,5280,18.89,99739,https://www.sec.gov/Archives/edgar/data/1620393/0001437749-26-032065.txt
+2026-10-05,2026-10-05,0,NXRT,NexPoint Residential Trust  Inc.,McGraner Matt,See Remarks,5500,18.42,101310,https://www.sec.gov/Archives/edgar/data/1620393/0001437749-26-032065.txt
+2026-10-05,2026-10-01,4,ACCV,Accelevation Holdings Corp.,HECKES HOWARD C,Director,5000,18,90000,https://www.sec.gov/Archives/edgar/data/1635164/0001628280-26-065156.txt
+2026-10-05,2026-09-30,5,EP,EMPIRE PETROLEUM CORP,Mulacek Phil E,Director,11915,2.2514,26825,https://www.sec.gov/Archives/edgar/data/1670677/0001072613-26-000819.txt
+2026-10-05,2026-10-01,4,INM,InMed Pharmaceuticals Inc.,ADAR1 Capital Management  LLC,10% Eigner,16431,1.3298,21850,https://www.sec.gov/Archives/edgar/data/1728328/0001940272-26-000022.txt
+2026-10-05,2026-10-02,3,INM,InMed Pharmaceuticals Inc.,ADAR1 Capital Management  LLC,10% Eigner,8307,1.33,11048,https://www.sec.gov/Archives/edgar/data/1728328/0001940272-26-000022.txt
+2026-10-05,2026-10-05,0,INM,InMed Pharmaceuticals Inc.,ADAR1 Capital Management  LLC,10% Eigner,18182,1.33,24182,https://www.sec.gov/Archives/edgar/data/1728328/0001940272-26-000022.txt
+2026-10-05,2026-10-01,4,ACCV,Accelevation Holdings Corp.,Jewell Brent C,Chief Operating Officer,2500,18,45000,https://www.sec.gov/Archives/edgar/data/1741720/0001628280-26-065154.txt
+2026-10-05,2026-10-02,3,SKYH,Sky Harbour Group Corp,Gonzalez Francisco,Chief Financial Officer,3850,9.25,35613,https://www.sec.gov/Archives/edgar/data/1823587/0001437749-26-031986.txt
+2026-10-05,2026-10-01,4,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,152573,32.7781,5001053,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-414288.txt
+2026-10-05,2026-10-01,4,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,119635,33.4469,4001420,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-414288.txt
