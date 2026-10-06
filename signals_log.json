@@ -31626,10 +31626,37 @@
     "beobachtung": false,
     "beobachtungGrund": null,
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1791287700000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 85750.5375,
+    "postmortem": {
+      "holdHours": 2.4,
+      "mfeR": 1.3,
+      "maeR": -1.1,
+      "towardTargetPct": 96,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.27,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.9R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 96% der Zielstrecke (max +1.3R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit · Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1791294512470",
@@ -31805,10 +31832,27 @@
     "beobachtung": false,
     "beobachtungGrund": null,
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1791287700000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.50272,
+    "postmortem": {
+      "holdHours": 1.6,
+      "mfeR": 0.68,
+      "maeR": -1.06,
+      "towardTargetPct": 54,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.25,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "GBPUSD-1791296366028",
