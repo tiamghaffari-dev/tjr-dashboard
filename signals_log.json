@@ -34330,8 +34330,8 @@
     "target2": 779.02002,
     "rr2": 3.96,
     "partialExit": true,
-    "trailStop": 772.918897,
-    "tp1HitTs": null,
+    "trailStop": 777.960022,
+    "tp1HitTs": 1791384600000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "SMT",
@@ -34373,10 +34373,27 @@
     "beobachtung": false,
     "beobachtungGrund": null,
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1791384900000,
+    "rMultiple": 3.09,
+    "benachrichtigt": true,
+    "exitPrice": 777.960022,
+    "postmortem": {
+      "holdHours": 4.7,
+      "mfeR": 4.02,
+      "maeR": -0.44,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.65,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "BTCUSD-1791389544182",
@@ -34551,6 +34568,65 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "XRPUSD-1791400181067",
+    "asset": "XRPUSD",
+    "direction": "SHORT",
+    "entryTs": 1791400181067,
+    "entry": 1.4264,
+    "stop": 1.443161,
+    "target": 1.3914,
+    "rr": 2.09,
+    "target2": 1.3914,
+    "rr2": 2.09,
+    "partialExit": true,
+    "trailStop": 1.443161,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 0.426,
+    "fillTs": 1791385793000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "15m",
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
