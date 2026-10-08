@@ -2806,5 +2806,59 @@
         "hasOpenTrade": true
       }
     ]
+  },
+  {
+    "date": "2026-10-08",
+    "closedAt": "2026-10-08T15:02:38.965Z",
+    "perAsset": [
+      {
+        "symbol": "BTCUSD",
+        "bias": "bearish",
+        "signal": "ENTRY",
+        "zoneKind": "BreakerBlock",
+        "sweepType": "buy_side_sweep",
+        "hasOpenTrade": false
+      },
+      {
+        "symbol": "ETHUSD",
+        "bias": "bearish",
+        "signal": "Watchlist (Sweep ohne Bestaetigung)",
+        "zoneKind": null,
+        "sweepType": "buy_side_sweep",
+        "hasOpenTrade": false
+      },
+      {
+        "symbol": "XRPUSD",
+        "bias": "bearish",
+        "signal": "ENTRY",
+        "zoneKind": "FVG",
+        "sweepType": "buy_side_sweep",
+        "hasOpenTrade": false
+      },
+      {
+        "symbol": "GBPUSD",
+        "bias": "bearish",
+        "signal": "kein Setup",
+        "zoneKind": null,
+        "sweepType": null,
+        "hasOpenTrade": false
+      },
+      {
+        "symbol": "^GSPC",
+        "bias": "bullish",
+        "signal": "Watchlist (Einstieg verpasst - Kurs aus der Zone gelaufen)",
+        "zoneKind": "OrderBlock",
+        "sweepType": "sell_side_sweep",
+        "hasOpenTrade": true
+      },
+      {
+        "symbol": "GCUSD",
+        "bias": "bearish",
+        "signal": "Watchlist (Einstieg verpasst - Kurs aus der Zone gelaufen)",
+        "zoneKind": "FVG",
+        "sweepType": "buy_side_sweep",
+        "hasOpenTrade": false
+      }
+    ]
   }
 ]
