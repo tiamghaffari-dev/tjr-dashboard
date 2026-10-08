@@ -36348,5 +36348,63 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1791469562494",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1791469562494,
+    "entry": 4148,
+    "stop": 4165.038004,
+    "target": 4130,
+    "rr": 1.06,
+    "target2": 4091.199951,
+    "rr2": 3.33,
+    "partialExit": true,
+    "trailStop": 4165.038004,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 6,
+      "bewertbar": 6,
+      "fehlend": []
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0,
+    "fillTs": 1791455171000,
+    "fuellGeprueft": true,
+    "beobachtung": false,
+    "beobachtungGrund": null,
+    "signalTf": "5m",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null,
+    "benachrichtigt": true
   }
 ]
