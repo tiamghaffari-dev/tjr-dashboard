@@ -36328,10 +36328,32 @@
     "beobachtung": false,
     "beobachtungGrund": null,
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1791459300000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 774.218982,
+    "postmortem": {
+      "holdHours": 1.8,
+      "mfeR": 1.01,
+      "maeR": -1.03,
+      "towardTargetPct": 76,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.26,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.6R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 76% der Zielstrecke (max +1.0R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "BTCUSD-1791469247651",
@@ -36345,8 +36367,8 @@
     "target2": 80605.421875,
     "rr2": 5.13,
     "partialExit": true,
-    "trailStop": 82986.55625,
-    "tp1HitTs": null,
+    "trailStop": 81820.676563,
+    "tp1HitTs": 1791458400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -36389,7 +36411,7 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "15m",
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -36485,8 +36507,8 @@
     "target2": 80605.421875,
     "rr2": 5.11,
     "partialExit": true,
-    "trailStop": 82978.384375,
-    "tp1HitTs": null,
+    "trailStop": 81812.504688,
+    "tp1HitTs": 1791458400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -36529,7 +36551,7 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "15m",
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -36545,8 +36567,8 @@
     "target2": 80605.421875,
     "rr2": 5.03,
     "partialExit": true,
-    "trailStop": 82948.673438,
-    "tp1HitTs": null,
+    "trailStop": 81782.79375,
+    "tp1HitTs": 1791458400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -36589,7 +36611,7 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "15m",
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -36605,8 +36627,8 @@
     "target2": 1.3731,
     "rr2": 2.42,
     "partialExit": true,
-    "trailStop": 1.41578,
-    "tp1HitTs": null,
+    "trailStop": 1.3836,
+    "tp1HitTs": 1791457800000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -36649,9 +36671,26 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791458100000,
+    "rMultiple": 1.58,
+    "exitPrice": 1.3836,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 2.43,
+      "maeR": -0.22,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.19,
+      "targetDistAdr": 0.3,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.6R, der Preis lief danach aber noch bis +5.0R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "XRPUSD-1791471749616",
@@ -36665,8 +36704,8 @@
     "target2": 1.3731,
     "rr2": 2.16,
     "partialExit": true,
-    "trailStop": 1.41258,
-    "tp1HitTs": null,
+    "trailStop": 1.3836,
+    "tp1HitTs": 1791457800000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -36709,8 +36748,25 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791458100000,
+    "rMultiple": 1.32,
+    "exitPrice": 1.3836,
+    "postmortem": {
+      "holdHours": 0.2,
+      "mfeR": 2.17,
+      "maeR": 0.3,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.19,
+      "targetDistAdr": 0.25,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.3R, der Preis lief danach aber noch bis +4.8R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   }
 ]
