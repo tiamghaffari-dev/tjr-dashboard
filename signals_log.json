@@ -35908,8 +35908,8 @@
     "target2": 2482.860107,
     "rr2": 3.17,
     "partialExit": true,
-    "trailStop": 2548.405957,
-    "tp1HitTs": null,
+    "trailStop": 2507.850098,
+    "tp1HitTs": 1791452400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -35951,9 +35951,26 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791452676000,
+    "rMultiple": 1.58,
+    "exitPrice": 2507.850098,
+    "postmortem": {
+      "holdHours": 0.6,
+      "mfeR": 1.71,
+      "maeR": -0.49,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.32,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1791464889820",
@@ -36025,8 +36042,8 @@
     "target2": 81711,
     "rr2": 1.9,
     "partialExit": true,
-    "trailStop": 82837.4,
-    "tp1HitTs": null,
+    "trailStop": 81845.90625,
+    "tp1HitTs": 1791452400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -36068,9 +36085,20 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791452673000,
+    "rMultiple": 1.55,
+    "exitPrice": 81845.90625,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 1.9,
+      "maeR": -0.34,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.31,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1791466139490",
@@ -36084,8 +36112,8 @@
     "target2": 81711,
     "rr2": 1.45,
     "partialExit": true,
-    "trailStop": 82818.252254,
-    "tp1HitTs": null,
+    "trailStop": 81845.90625,
+    "tp1HitTs": 1791452400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -36127,9 +36155,20 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791452673000,
+    "rMultiple": 1.15,
+    "exitPrice": 81845.90625,
+    "postmortem": {
+      "holdHours": 0.3,
+      "mfeR": 1.45,
+      "maeR": -0.12,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.23,
+      "targetDistAdr": 0.27,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1791466762625",
