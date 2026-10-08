@@ -36288,5 +36288,65 @@
     "resolvedTs": null,
     "rMultiple": null,
     "benachrichtigt": true
+  },
+  {
+    "id": "BTCUSD-1791469247651",
+    "asset": "BTCUSD",
+    "direction": "SHORT",
+    "entryTs": 1791469247651,
+    "entry": 82597.929688,
+    "stop": 82986.55625,
+    "target": 81820.676563,
+    "rr": 2,
+    "target2": 80605.421875,
+    "rr2": 5.13,
+    "partialExit": true,
+    "trailStop": 82986.55625,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 1.434,
+    "fillTs": 1791454858000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "zeitrahmen-konflikt",
+    "signalTf": "15m",
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
