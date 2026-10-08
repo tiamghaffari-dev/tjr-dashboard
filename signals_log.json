@@ -36784,8 +36784,8 @@
     "target2": 776.554993,
     "rr2": 1.9,
     "partialExit": true,
-    "trailStop": 773.09862,
-    "tp1HitTs": null,
+    "trailStop": 776.119995,
+    "tp1HitTs": 1791461700000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "SMT",
@@ -36827,8 +36827,19 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791462000000,
+    "rMultiple": 1.54,
+    "exitPrice": 776.119995,
+    "postmortem": {
+      "holdHours": 0.2,
+      "mfeR": 2.35,
+      "maeR": 0.27,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.31,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
