@@ -238,3 +238,37 @@ meldung,transaktion,verzoegerungTage,symbol,firma,inhaber,rolle,stueck,preis,sum
 2026-10-08,2026-10-06,2,CINT,CI&amp;T Inc,Martins Fernando Matt Borges,Director,6629,3.15,20881,https://www.sec.gov/Archives/edgar/data/1868995/0001292814-26-004872.txt
 2026-10-08,2026-10-07,1,CINT,CI&amp;T Inc,Martins Fernando Matt Borges,Director,9116,3.12,28442,https://www.sec.gov/Archives/edgar/data/1868995/0001292814-26-004872.txt
 2026-10-08,2026-10-06,2,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,116345,35.2323,4099102,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-417973.txt
+2026-10-09,2026-10-08,1,AHRT,AH Realty Trust  Inc.,BIGMAN THEODORE,Director,1879.19,5.96,11200,https://www.sec.gov/Archives/edgar/data/1042733/0001569187-26-000156.txt
+2026-10-09,2026-10-07,2,SAH,SONIC AUTOMOTIVE INC,Rusnak Paul P.,10% Eigner,13701,59.78,819046,https://www.sec.gov/Archives/edgar/data/1043509/0001460471-26-000008.txt
+2026-10-09,2026-10-07,2,PRTA,PROTHENA CORP PUBLIC LTD CO,SCULLY WILLIAM P,10% Eigner,125000,8.4012,1050150,https://www.sec.gov/Archives/edgar/data/1045463/0001045463-26-000020.txt
+2026-10-09,2026-10-08,1,PRTA,PROTHENA CORP PUBLIC LTD CO,SCULLY WILLIAM P,10% Eigner,90000,8.5656,770904,https://www.sec.gov/Archives/edgar/data/1045463/0001045463-26-000020.txt
+2026-10-09,2026-10-06,3,BPRE,Bluerock Private Real Estate Fund,KAMFAR RAMIN,Director,142420,13.0231,1854750,https://www.sec.gov/Archives/edgar/data/1111908/0001398344-26-018110.txt
+2026-10-09,2026-10-07,2,BPRE,Bluerock Private Real Estate Fund,KAMFAR RAMIN,Director,186612,12.9904,2424165,https://www.sec.gov/Archives/edgar/data/1111908/0001398344-26-018110.txt
+2026-10-09,2026-10-08,1,BPRE,Bluerock Private Real Estate Fund,KAMFAR RAMIN,Director,150937,13.0481,1969441,https://www.sec.gov/Archives/edgar/data/1111908/0001398344-26-018110.txt
+2026-10-09,2026-10-09,0,BPRE,Bluerock Private Real Estate Fund,KAMFAR RAMIN,Director,171094,13.1692,2253171,https://www.sec.gov/Archives/edgar/data/1111908/0001398344-26-018110.txt
+2026-10-09,2026-09-01,38,BBD,BANK BRADESCO,Alvarez Rubens Aguiar,Director,2200,17.32,38104,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004880.txt
+2026-10-09,2026-09-01,38,BBD,BANK BRADESCO,Alvarez Rubens Aguiar,Director,26300,17.3,454990,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004880.txt
+2026-10-09,2026-09-01,38,BBD,BANK BRADESCO,Alvarez Rubens Aguiar,Director,27700,17.36,480872,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004880.txt
+2026-10-09,2026-09-01,38,BBD,BANK BRADESCO,Alvarez Rubens Aguiar,Director,34700,17.35,602045,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004880.txt
+2026-10-09,2026-09-01,38,BBD,BANK BRADESCO,Alvarez Rubens Aguiar,Director,56100,17.33,972213,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004880.txt
+2026-10-09,2026-09-01,38,BBD,BANK BRADESCO,Alvarez Rubens Aguiar,Director,1698000,17.37,29494260,https://www.sec.gov/Archives/edgar/data/1160330/0001292814-26-004880.txt
+2026-10-09,2026-10-07,2,CRT,CROSS TIMBERS ROYALTY TRUST,OLIVER ERIC L,10% Eigner,1318,11.49,15144,https://www.sec.gov/Archives/edgar/data/1168602/0001104659-26-115066.txt
+2026-10-09,2026-10-08,1,CRT,CROSS TIMBERS ROYALTY TRUST,OLIVER ERIC L,10% Eigner,6041,11.99,72432,https://www.sec.gov/Archives/edgar/data/1168602/0001104659-26-115066.txt
+2026-10-09,2026-10-09,0,LCU,Lion Copper Corp.,Alford Tony L,Director,5000,3.99,19950,https://www.sec.gov/Archives/edgar/data/1339688/0001062993-26-005273.txt
+2026-10-09,2026-10-07,2,MWA,Mueller Water Products  Inc.,Healy Brian C.,Director,1376,21.7496,29927,https://www.sec.gov/Archives/edgar/data/1350593/0001225208-26-008364.txt
+2026-10-09,2026-02-15,236,CRNC,Cerence Inc.,Rodriquez Antonio,CFO,2000,7.02,14040,https://www.sec.gov/Archives/edgar/data/1354353/0001768267-26-000033.txt
+2026-10-09,2026-10-07,2,GRX,Gabelli Healthcare &amp; WellnessRx Trust,Saba Capital Management  L.P.,10% Eigner,2955,9.43,27866,https://www.sec.gov/Archives/edgar/data/1391437/0001510281-26-000335.txt
+2026-10-09,2026-10-08,1,AGMB,AgomAb Therapeutics NV,Epstein David R,Director,5000,8.9,44500,https://www.sec.gov/Archives/edgar/data/1445826/0001445826-26-000014.txt
+2026-10-09,2026-10-09,0,NMCO,Nuveen Municipal Credit Opportunities Fund,Hamilton Michael S.,,3000,8.702,26106,https://www.sec.gov/Archives/edgar/data/1508889/0001225208-26-008363.txt
+2026-10-09,2026-10-07,2,GF,NEW GERMANY FUND INC,Saba Capital Management  L.P.,10% Eigner,1223,10.36,12670,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000333.txt
+2026-10-09,2026-10-07,2,ECF,ELLSWORTH GROWTH &amp; INCOME FUND LTD,Saba Capital Management  L.P.,10% Eigner,17548,11.97,210050,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000334.txt
+2026-10-09,2026-10-08,1,UXIN,Uxin Ltd,Dai Kun,Chief Executive Officer,11836,1.1265,13333,https://www.sec.gov/Archives/edgar/data/1729173/0001493152-26-046445.txt
+2026-10-09,2026-10-07,2,SKYA,SkyAI  Inc.,Bastion Trading Ltd,10% Eigner,44000,1.7787,78263,https://www.sec.gov/Archives/edgar/data/1737995/0000921895-26-002775.txt
+2026-10-09,2026-10-09,0,QTEX,QTREX Quantum Ltd.,Ben-Noon Dagi Shahar,Chief Executive Officer,18181,1.67,30362,https://www.sec.gov/Archives/edgar/data/1837493/0001185185-26-004675.txt
+2026-10-09,2026-10-07,2,GGR,Gogoro Inc.,Yin Chung-Yao,Director,10692681,2.48,26517849,https://www.sec.gov/Archives/edgar/data/1886190/0001193125-26-418446.txt
+2026-10-09,2026-10-07,2,GGR,Gogoro Inc.,Yin Chung-Yao,Director,3466310,2.48,8596449,https://www.sec.gov/Archives/edgar/data/1886190/0001193125-26-418446.txt
+2026-10-09,2026-10-08,1,FEAM,5E Advanced Materials  Inc.,Weibel Paul Wesley III,Chief Executive Officer,7175.8193,3.48,24972,https://www.sec.gov/Archives/edgar/data/1888654/0001911537-26-000009.txt
+2026-10-09,2026-10-07,2,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,606912,34.4038,20880079,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-419124.txt
+2026-10-09,2026-01-02,280,N.A.,Calamos Aksia Private Equity &amp; Alternatives Fund,Aksia LLC,,46210.293,11.06,511086,https://www.sec.gov/Archives/edgar/data/1939932/0001939932-26-000012.txt
+2026-10-09,2026-03-02,221,N.A.,Calamos Aksia Private Equity &amp; Alternatives Fund,Aksia LLC,,35842.386,11.12,398567,https://www.sec.gov/Archives/edgar/data/1939932/0001939932-26-000012.txt
+2026-10-09,2026-08-11,59,VDTA,Vertical Data Inc.,Leverton Jaime,Director,85000,3,255000,https://www.sec.gov/Archives/edgar/data/1998054/0001998054-26-000009.txt
