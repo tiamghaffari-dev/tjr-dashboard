@@ -159,6 +159,65 @@ function findOrderBlock(df, bosTs, direction) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// DAS LEG, AUS DEM DAS EQUILIBRIUM ENTSTEHT
+// ---------------------------------------------------------------------------
+// Korrigiert 2026-10-09. Vorher lief das Leg von `recentSweep.level` bis zum
+// Extrem seit dem Sweep - also ueber rund ein Dutzend 5min-Kerzen. Zwei Fehler
+// steckten darin:
+//
+// 1. `recentSweep.level` ist die ALTE Liquiditaetslinie, nicht der Docht, der
+//    sie geholt hat. Fuer den Stop wurde das am 2026-07-22 bereits auf
+//    `.extreme` umgestellt (siehe sweepAnchor), fuer das Leg nie. Die Engine
+//    rechnete also mit zwei verschiedenen Vorstellungen davon, wo derselbe
+//    Sweep lag.
+// 2. Viel schwerer: Das Leg war VIEL zu kurz. Gemessen an 8.177 Sweeps lag es
+//    im Median bei 23 % der 4-Stunden-Spanne und bei 6-11 % der Tagesrange.
+//    Ein Einstieg konnte damit sauber "im Discount" dieses Mini-Legs liegen und
+//    gleichzeitig am HOCH der letzten vier Stunden. Alle sieben Longs, die so
+//    entstanden, endeten im vollen Stop (7 von 7, R6 jedes Mal "ok").
+//
+// TJR spannt das Werkzeug ueber die STRUKTUR: Bootcamp Tag 28 (~12:15) zeigt
+// es auf GBPUSD 15min ueber rund 65 Kerzen, also etwa 16 Stunden, vom Swing-
+// Tief zum Swing-Hoch. Tiam hatte das am 2026-07-13 selbst per Screenshot
+// beschrieben ("gruene Box von Swing-Low bis Swing-High") - umgesetzt war es nie.
+//
+// Jetzt: ein Ende ist der Sweep-Docht, das andere der letzte bestaetigte
+// Gegen-Swing VOR dem Sweep (der Punkt, von dem die Bewegung in den Sweep
+// hineinlief) - oder das Extrem seither, falls das weiter reicht.
+//
+// EHRLICHE EINORDNUNG: Diese Korrektur ist nach der Vorlage gebaut, NICHT weil
+// die Zahlen sie belegen. Fuenf Filtervarianten wurden an echten Daten
+// gegengerechnet, keine erreichte zwei Standardfehler. Bei 85 auswertbaren
+// Trades kann diese Datenmenge einen Effekt dieser Groesse auch gar nicht
+// nachweisen (dafuer braeuchte es ~260). Begruendung ist also: wer TJRs
+// Methode messen will, muss TJRs Methode umsetzen.
+function buildSweepLeg(ltfDf, ltfSwings, recentSweep, wantDir) {
+  const sinceSweep = ltfDf.filter((r) => r.ts >= recentSweep.ts);
+  const sweepEnde = recentSweep.extreme != null ? recentSweep.extreme : recentSweep.level;
+  // Letzter bestaetigter Swing in Gegenrichtung VOR dem Sweep.
+  const gegenTyp = wantDir === "up" ? "H" : "L";
+  const davor = Array.isArray(ltfSwings)
+    ? ltfSwings.filter((sw) => sw.type === gegenTyp && sw.ts < recentSweep.ts)
+    : [];
+  const strukturEnde = davor.length ? davor[davor.length - 1].price : null;
+
+  if (wantDir === "up") {
+    let legLow = sweepEnde;
+    for (const r of sinceSweep) if (r.low < legLow) legLow = r.low;
+    let legHigh = sweepEnde;
+    for (const r of sinceSweep) if (r.high > legHigh) legHigh = r.high;
+    if (strukturEnde !== null && strukturEnde > legHigh) legHigh = strukturEnde;
+    return { legLow, legHigh };
+  }
+  let legHigh = sweepEnde;
+  for (const r of sinceSweep) if (r.high > legHigh) legHigh = r.high;
+  let legLow = sweepEnde;
+  for (const r of sinceSweep) if (r.low < legLow) legLow = r.low;
+  if (strukturEnde !== null && strukturEnde < legLow) legLow = strukturEnde;
+  return { legLow, legHigh };
+}
+
 function premiumDiscountZone(legLow, legHigh, price) {
   const mid = (legLow + legHigh) / 2;
   return { zone: price < mid ? "discount" : "premium", mid };
@@ -429,6 +488,83 @@ function medianDailyRange(htfDf, maxDays = ADR_LOOKBACK_DAYS) {
     .sort((a, b) => a - b);
   if (ranges.length === 0) return null;
   return ranges[Math.floor(ranges.length / 2)];
+}
+
+// ---------------------------------------------------------------------------
+// DIE BEWEGUNG IM HANDELSHORIZONT (nicht am Tag)
+// ---------------------------------------------------------------------------
+// Ergaenzt 2026-10-11, nachdem Tiam zum vierten Mal "das Take Profit ist zu
+// weit weg" gemeldet hat - diesmal an einem GBPUSD-Short mit TP2 bei 44 Pips.
+//
+// Der bisherige Deckel misst die TAGESRANGE (MAX_TP1_ADR_MULT 0.75, TP2 1.25).
+// Die Trades laufen aber im Median nur 1,33 Stunden. Gemessen an echten Kerzen
+// bewegt sich der Kurs in 1-2 Stunden nur 13-24 % der Tagesrange:
+//
+//   Asset    1 Std   2 Std   4 Std   8 Std   (Anteil der Tagesrange)
+//   BTCUSD    14 %    21 %    31 %    46 %
+//   GBPUSD    17 %    24 %    36 %    51 %
+//   GCUSD     21 %    31 %    47 %    69 %
+//
+// Ein TP1 bei 75 % der Tagesrange ist in 1,3 Stunden schlicht nicht erreichbar.
+// Die Folge im echten Log: bei 46 % der Trades lag TP1 WEITER weg als die
+// gesamte Kursspanne waehrend des Trades (hoch und runter zusammen), im Median
+// bei 93 % davon - der Kurs haette die komplette Bewegung in eine Richtung
+// machen muessen, ohne einen Ruecksetzer. Das erklaert, warum TP1 nur in rund
+// 10 % der Faelle erreicht wird und der Teilausstieg praktisch nie anlaeuft.
+//
+// Tiams Formulierung traf es genau: "das Take Profit ist viel eher fuer einen
+// Long-Term-Trade gedacht, nicht fuer einen Short-Time-Trade."
+//
+// GEGENRECHNUNG an 69 validierten Trades (die Simulation reproduziert die
+// echten Ergebnisse exakt): alle fuenf geprueften Faktoren verbessern,
+// +5,2R bis +12,6R. Signifikant ist keiner (max 1,44 SE). Gewaehlt wurde 1.0x -
+// strukturell begruendbar (TP1 hoechstens so weit, wie der Kurs sich in zwei
+// Stunden typischerweise bewegt), NICHT der bestaussehende Wert 0.8x: der ist
+// aus fuenf Versuchen der beste und waere Kurvenanpassung.
+//
+// Der ADR-Deckel bleibt als zusaetzliche Obergrenze - es gewinnt der engere von
+// beiden. Der STOP bleibt unberuehrt (Tiam ausdruecklich: "Das Stop Loss ist
+// nicht schlecht gesetzt, das ist in Ordnung").
+// FAKTOR-WAHL, beim Verifizieren korrigiert: Zuerst stand hier 1.0x ("TP1
+// hoechstens so weit, wie der Kurs in zwei Stunden geht"). An den echten Trades
+// gemessen war das VIEL zu streng: 66 von 70 Zielen waeren gekappt worden, 45
+// davon auf die 1R-Untergrenze, das RR-Median waere von 2,00 auf 1,00 gefallen.
+// Das ist keine Zielkorrektur mehr, sondern macht aus der Strategie ein
+// mechanisches 1:1 - und widerspricht TJR, dessen einziger belegter RR-Wert
+// 5,43 betraegt (Day 53, GBPJPY-Recap).
+//
+// Grund dafuer ist ein tieferliegender Befund: Der Stop ist im Median bereits
+// so gross wie die GANZE 2-Stunden-Bewegung (BTC 100 %, ETH 94 %, GCUSD 98 %,
+// XRP 133 %, GBPUSD 188 %). Jedes 2:1-Ziel verlangt damit eine Bewegung von
+// zwei 2-Stunden-Spannen in 1,33 Stunden Haltedauer, geradeaus. Ob dafuer das
+// Ziel zu weit oder der Stop zu breit ist, ist eine Entscheidung ueber den
+// Charakter der Strategie - die gehoert Tiam, nicht dieser Datei.
+//
+// Deshalb 3.0x: kappt nur die 16 extremsten von 70 Zielen, laesst das RR-Median
+// bei 2,00 (Strategiecharakter unveraendert), drueckt kein einziges Ziel auf
+// die Untergrenze - und bringt in der Gegenrechnung +5,06R, also rund zwei
+// Drittel des maximal messbaren Effekts (+7,34R bei 1.0x). Alle Faktoren
+// zwischen 1.0x und 3.0x verbessern aehnlich (+5,1R bis +7,3R), keiner
+// erreicht zwei Standardfehler (max 1,38). Gewaehlt ist also nicht der beste
+// Messwert, sondern der Eingriff, der am wenigsten veraendert.
+const HORIZONT_BARS = 24;              // 24 x 5min = 2 Stunden
+const MAX_TP1_HORIZONT_MULT = 3.00;
+const MAX_TP2_HORIZONT_MULT = 4.50;
+
+function medianHorizontRange(ltfDf, bars = HORIZONT_BARS) {
+  if (!Array.isArray(ltfDf) || ltfDf.length < bars * 3) return null;
+  const spannen = [];
+  for (let i = 0; i + bars <= ltfDf.length; i += bars) {
+    let hi = -Infinity, lo = Infinity;
+    for (let j = i; j < i + bars; j++) {
+      if (ltfDf[j].high > hi) hi = ltfDf[j].high;
+      if (ltfDf[j].low < lo) lo = ltfDf[j].low;
+    }
+    if (hi > lo) spannen.push(hi - lo);
+  }
+  if (spannen.length === 0) return null;
+  spannen.sort((a, b) => a - b);
+  return spannen[Math.floor(spannen.length / 2)];
 }
 
 function findMultipleKeyLevelTargets(htfSwings, htfDf, wantDir, entry, risk, maxCount = 2, maxDistances = null) {
@@ -737,15 +873,7 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   const ob = findOrderBlock(ltfDf, recentSweep.ts, wantDir);
   const bb = findBreakerBlock(ltfDf, ltfBos, recentSweep.ts, wantDir);
 
-  const sinceSweep = ltfDf.filter(r => r.ts >= recentSweep.ts);
-  let legLow, legHigh;
-  if (wantDir === "up") {
-    legLow = recentSweep.level;
-    legHigh = Math.max(...sinceSweep.map(r => r.high));
-  } else {
-    legHigh = recentSweep.level;
-    legLow = Math.min(...sinceSweep.map(r => r.low));
-  }
+  const { legLow, legHigh } = buildSweepLeg(ltfDf, ltfSwings, recentSweep, wantDir);
 
   const currentPrice = ltfDf[ltfDf.length - 1].close;
   const { zone, mid } = premiumDiscountZone(legLow, legHigh, currentPrice);
@@ -952,14 +1080,36 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   // Verhalten ohne Deckel/Untergrenze.
   const adr = medianDailyRange(htfDf);
   const minStopDist = adr ? adr * MIN_STOP_ADR_MULT : 0;
-  const tp1Cap = adr ? adr * MAX_TP1_ADR_MULT : Infinity;
-  const tp2Cap = adr ? adr * MAX_TP2_ADR_MULT : Infinity;
+  // Zwei Deckel, der ENGERE gewinnt (siehe medianHorizontRange oben): die
+  // Tagesrange als grobe Obergrenze, die 2-Stunden-Bewegung als die
+  // realistische. Faellt einer aus (zu wenig Historie), bleibt der andere.
+  const horizont = medianHorizontRange(ltfDf);
+  const tp1Cap = Math.min(
+    adr ? adr * MAX_TP1_ADR_MULT : Infinity,
+    horizont ? horizont * MAX_TP1_HORIZONT_MULT : Infinity
+  );
+  const tp2Cap = Math.min(
+    adr ? adr * MAX_TP2_ADR_MULT : Infinity,
+    horizont ? horizont * MAX_TP2_HORIZONT_MULT : Infinity
+  );
   const dirSign = wantDir === "up" ? 1 : -1;
 
   const stop = wantDir === "up"
     ? Math.min(structureAnchor * 0.9985, entry - minStopDist)
     : Math.max(structureAnchor * 1.0015, entry + minStopDist);
   const risk = Math.abs(entry - stop);
+
+  // UNTERGRENZE, beim Verifizieren am 2026-10-11 gefunden: Der Horizont-Deckel
+  // ist bei engen Stops schmaler als das Risiko selbst. An Tiams GBPUSD-Short
+  // (15,2 Pips Risiko, Deckel 13,7 Pips) waere TP1 auf RR 0,90 gedrueckt
+  // worden - unter MIN_TRADE_RR, also haette die Engine das ganze Signal
+  // verworfen statt das Ziel realistisch zu setzen. Das waere eine stille
+  // Signalbremse gewesen, kein Ziel-Fix.
+  //
+  // Die Deckel duerfen also nie unter die Mindest-RR druecken. Greift diese
+  // Untergrenze, liegt das Ziel bei genau 1R bzw. 1,5R - knapp, aber handelbar.
+  const tp1CapEff = Math.max(tp1Cap, risk * MIN_TRADE_RR);
+  const tp2CapEff = Math.max(tp2Cap, risk * MIN_TRADE_RR * 1.5);
 
   // Key-Level bis zum WEITEREN (TP2-)Deckel sammeln und erst danach auf die
   // beiden Slots verteilen. Wichtig: ein Level, das fuer TP1 schon zu weit
@@ -968,9 +1118,9 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   // engen TP1-Deckel filtern, fiele so ein Level komplett weg und die
   // strukturelle Zielsetzung (TJRs "take profit at other key levels") waere
   // in der Praxis fast immer durch das generische RR-Ziel ersetzt.
-  const keyLevels = findMultipleKeyLevelTargets(htfKeyLevels, htfDf, wantDir, entry, risk, 2, [tp2Cap, tp2Cap]);
-  const nearLevels = keyLevels.filter((p) => Math.abs(p - entry) <= tp1Cap);
-  const farLevels = keyLevels.filter((p) => Math.abs(p - entry) > tp1Cap);
+  const keyLevels = findMultipleKeyLevelTargets(htfKeyLevels, htfDf, wantDir, entry, risk, 2, [tp2CapEff, tp2CapEff]);
+  const nearLevels = keyLevels.filter((p) => Math.abs(p - entry) <= tp1CapEff);
+  const farLevels = keyLevels.filter((p) => Math.abs(p - entry) > tp1CapEff);
 
   let target, target2, targetSource;
   if (nearLevels.length > 0) {
@@ -981,7 +1131,7 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
     // Kein Key-Level nah genug fuer TP1: klassisches RR-Ziel, aber hart auf
     // den TP1-Deckel begrenzt (lieber ein etwas kleineres, real erreichbares
     // Ziel als ein sauberes 2:1, das im Day-Trading-Horizont nie ankommt).
-    target = entry + dirSign * Math.min(risk * rrTarget, tp1Cap);
+    target = entry + dirSign * Math.min(risk * rrTarget, tp1CapEff);
     target2 = farLevels[0] != null ? farLevels[0] : null;
     targetSource = farLevels.length > 0 ? "rr-capped + key-level TP2" : "fixed-rr-fallback";
   }
@@ -994,7 +1144,7 @@ function buildSignal(htfDf, ltfDf, m1Df, assetClass, rrTarget = 2.0, sweepLookba
   if (Math.abs(target - entry) < risk * MIN_TRADE_RR) {
     result.detail = `Setup verworfen: Stop-Distanz (${(risk / entry * 100).toFixed(2)}%) ist im Verhaeltnis zur `
       + `Tagesrange (${adr ? (adr / entry * 100).toFixed(2) : "?"}%) zu breit - ein im Day-Trading-Horizont `
-      + `erreichbares Ziel (max. ${MAX_TP1_ADR_MULT}x Tagesrange) haette ein RR unter ${MIN_TRADE_RR}.`;
+      + `erreichbares Ziel (gedeckelt auf ${MAX_TP1_ADR_MULT}x Tagesrange bzw. ${MAX_TP1_HORIZONT_MULT}x die 2-Stunden-Bewegung) haette ein RR unter ${MIN_TRADE_RR}.`;
     result.signal = "kein Setup";
     return result;
   }
@@ -1112,15 +1262,7 @@ function buildAnnotations(htfDf, ltfDf, sweepLookbackBars = 40, correlatedLtfDf 
   ann.sweep = recentSweep;
 
   const wantDir = bias === 1 ? "up" : "down";
-  const sinceSweep = ltfDf.filter((r) => r.ts >= recentSweep.ts);
-  let legLow, legHigh;
-  if (wantDir === "up") {
-    legLow = recentSweep.level;
-    legHigh = sinceSweep.length ? Math.max(...sinceSweep.map((r) => r.high)) : recentSweep.level;
-  } else {
-    legHigh = recentSweep.level;
-    legLow = sinceSweep.length ? Math.min(...sinceSweep.map((r) => r.low)) : recentSweep.level;
-  }
+  const { legLow, legHigh } = buildSweepLeg(ltfDf, ltfSwings, recentSweep, wantDir);
   ann.equilibrium = (legLow + legHigh) / 2;
   // Tiam, 2026-07-13: Screenshot von TJRs Fib-Retracement-Equilibrium-Tool
   // geschickt (gruene Box von Swing-Low bis Swing-High, 0.5-Linie
@@ -1220,6 +1362,6 @@ if (typeof module !== "undefined") {
     findProminentHtfSwingLevels, findSessionLevels, findSmtDivergence,
     findMultipleKeyLevelTargets, medianDailyRange, findUnfilledImbalanceLevels, keyLevelNaehe,
     setTuning, getTuning,
-    premiumDiscountZone, buildSignal, buildAnnotations,
+    premiumDiscountZone, buildSweepLeg, medianHorizontRange, buildSignal, buildAnnotations,
   };
 }

@@ -126,19 +126,32 @@ const TJR_RULES = [
     // gueltige Signale blockiert worden, sobald sich der Preis vom Einstieg
     // entfernt - was staendig vorkommt. Jetzt wird die ZONENMITTE gegen das
     // Equilibrium geprueft, so wie TJRs Zitat es meint.
+    // ZWEITE Korrektur, 2026-10-09: Die Pruefung der ZONENMITTE war
+    // tautologisch. buildSignal() laesst Zonen-Kandidaten nur zu, wenn ihre
+    // Mitte im Discount (Long) bzw. Premium (Short) liegt - R6 fragte danach
+    // dasselbe noch einmal. Die Antwort konnte nur "ok" lauten: ueber 85
+    // gewertete Trades stand R6 85x auf "ok" und kein einziges Mal auf
+    // "verletzt". Die einzige blockierende Regel des Systems konnte
+    // strukturell nie ausloesen.
+    //
+    // Jetzt wird der EINSTIEGSPREIS geprueft, nicht die Zone. Das ist weder
+    // tautologisch (der Einstieg kann ueber der Mitte liegen, auch wenn die
+    // Zone darunter beginnt - Zonen ueberlappen das Equilibrium regelmaessig)
+    // noch der alte Fehler von 2026-08-07, der `sig.zone` nahm: das beschreibt
+    // den AKTUELLEN Kurs, der sich nach dem Einstieg beliebig weit entfernt.
+    // Der Einstiegspreis ist genau das, was TJRs Zitat meint.
     blocking: true,
     check: (sig, ctx) => {
       const eq = ctx && ctx.ann && ctx.ann.equilibrium;
-      if (!sig || !Array.isArray(sig.zoneRange) || typeof eq !== "number") {
-        return { status: "unbekannt", detail: "Zonenbereich oder Equilibrium nicht verfuegbar" };
+      if (!sig || typeof sig.entry !== "number" || typeof eq !== "number") {
+        return { status: "unbekannt", detail: "Einstiegspreis oder Equilibrium nicht verfuegbar" };
       }
-      const zoneMid = (sig.zoneRange[0] + sig.zoneRange[1]) / 2;
       const long = sig.bias === "bullish";
-      const lage = zoneMid < eq ? "Discount" : "Premium";
-      const passt = long ? zoneMid < eq : zoneMid > eq;
+      const lage = sig.entry < eq ? "Discount" : "Premium";
+      const passt = long ? sig.entry < eq : sig.entry > eq;
       return passt
-        ? { status: "ok", detail: `Entry-Zone liegt im ${lage} (Mitte ${zoneMid.toFixed(2)} vs. Equilibrium ${eq.toFixed(2)}) - passt zum ${sig.bias}-Bias.` }
-        : { status: "verletzt", detail: `Entry-Zone liegt im ${lage} (Mitte ${zoneMid.toFixed(2)} vs. Equilibrium ${eq.toFixed(2)}), erwartet ${long ? "Discount" : "Premium"} beim ${sig.bias}-Bias.` };
+        ? { status: "ok", detail: `Einstieg ${sig.entry.toFixed(2)} liegt im ${lage} (Equilibrium ${eq.toFixed(2)}) - passt zum ${sig.bias}-Bias.` }
+        : { status: "verletzt", detail: `Einstieg ${sig.entry.toFixed(2)} liegt im ${lage} (Equilibrium ${eq.toFixed(2)}), erwartet ${long ? "Discount" : "Premium"} beim ${sig.bias}-Bias.` };
     },
   },
   {
