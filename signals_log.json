@@ -40351,8 +40351,8 @@
     "target2": 83452.992188,
     "rr2": 2.65,
     "partialExit": true,
-    "trailStop": 82035.545313,
-    "tp1HitTs": null,
+    "trailStop": 83339.976563,
+    "tp1HitTs": 1791718800000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -40395,9 +40395,20 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791719040000,
+    "rMultiple": 2.36,
+    "exitPrice": 83339.976563,
+    "postmortem": {
+      "holdHours": 42.9,
+      "mfeR": 2.41,
+      "maeR": -0.16,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.52,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1791592787600",
@@ -40411,8 +40422,8 @@
     "target2": 83452.992188,
     "rr2": 2.49,
     "partialExit": true,
-    "trailStop": 82097.701563,
-    "tp1HitTs": null,
+    "trailStop": 83339.976563,
+    "tp1HitTs": 1791718800000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -40455,9 +40466,20 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791719040000,
+    "rMultiple": 2.2,
+    "exitPrice": 83339.976563,
+    "postmortem": {
+      "holdHours": 39.1,
+      "mfeR": 2.25,
+      "maeR": -0.06,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.48,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1791592787600",
