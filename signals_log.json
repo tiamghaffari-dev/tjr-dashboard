@@ -41125,9 +41125,26 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791811500000,
+    "rMultiple": -1,
+    "exitPrice": 2507.882427,
+    "postmortem": {
+      "holdHours": 1.9,
+      "mfeR": 0.4,
+      "maeR": -1.11,
+      "towardTargetPct": 27,
+      "stopDistAdr": 0.23,
+      "targetDistAdr": 0.34,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "^GSPC-1791822471471",
@@ -41241,9 +41258,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791811500000,
+    "rMultiple": -1,
+    "exitPrice": 2507.882427,
+    "postmortem": {
+      "holdHours": 0.8,
+      "mfeR": 0.28,
+      "maeR": -1.11,
+      "towardTargetPct": 19,
+      "stopDistAdr": 0.23,
+      "targetDistAdr": 0.34,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 19% entgegen (max +0.3R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "^GSPC-1791824722854",
