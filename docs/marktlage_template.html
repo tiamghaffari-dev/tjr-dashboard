@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marktlage // Übersicht</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(125, 211, 252, 0.11), transparent 42%),
+      radial-gradient(circle at 85% 8%, rgba(88, 101, 242, 0.10), transparent 40%),
+      #05060a;
+    color: #e8eaf0;
+    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  body { padding: 22px 24px 48px; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #7dd3fc; flex-shrink: 0; }
+  h1 {
+    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
+    background: linear-gradient(90deg, #7dd3fc, #a78bfa 55%, #ffd25c 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .tag {
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(125,211,252,0.35);
+    color: #7dd3fc; background: rgba(125,211,252,0.08);
+  }
+  .howto-link {
+    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 6px; text-decoration: none;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
+    color: #9198ad; transition: all 0.15s ease;
+  }
+  .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 16px 0; font-family: -apple-system, sans-serif; }
+  .status-line { color: #6b7185; font-size: 11.5px; margin-bottom: 18px; font-family: -apple-system, sans-serif; }
+
+  .warn {
+    background: linear-gradient(135deg, rgba(125,211,252,0.08), rgba(125,211,252,0.02));
+    border: 1px solid rgba(125,211,252,0.26); border-radius: 12px;
+    padding: 13px 16px; margin-bottom: 18px; font-size: 12.5px; line-height: 1.65;
+    font-family: -apple-system, sans-serif; animation: fadeUp 0.4s ease; color: #bcc6d6;
+  }
+  .warn b { color: #7dd3fc; }
+
+  details.erklaer {
+    border: 1px solid rgba(255,255,255,0.09); border-radius: 11px; margin-bottom: 20px;
+    background: rgba(255,255,255,0.018); font-family: -apple-system, sans-serif;
+  }
+  details.erklaer > summary {
+    cursor: pointer; padding: 11px 15px; font-size: 12px; font-weight: 600; color: #9198ad;
+    list-style: none; user-select: none;
+  }
+  details.erklaer > summary::-webkit-details-marker { display: none; }
+  details.erklaer > summary::before { content: "▸ "; color: #6b7185; }
+  details[open].erklaer > summary::before { content: "▾ "; }
+  details.erklaer > summary:hover { color: #d7dbe8; }
+  .erklaer-body { padding: 0 15px 14px; font-size: 12.3px; line-height: 1.7; color: #9198ad; }
+  .erklaer-body b { color: #c3cadb; }
+  .erklaer-body dt { color: #7dd3fc; font-weight: 600; margin-top: 9px; font-size: 12px; }
+  .erklaer-body dd { margin: 2px 0 0 0; }
+
+  .steuer { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; font-family: -apple-system, sans-serif; }
+  .steuer .lab { font-size: 10.5px; letter-spacing: 0.7px; text-transform: uppercase; color: #6b7185; margin-right: 2px; }
+  .chip {
+    font-size: 11.5px; font-weight: 600; padding: 4px 11px; border-radius: 999px; cursor: pointer;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12); color: #9198ad;
+    transition: all 0.14s ease;
+  }
+  .chip:hover { color: #d7dbe8; border-color: rgba(122,140,255,0.35); }
+  .chip.an { background: rgba(125,211,252,0.13); border-color: rgba(125,211,252,0.45); color: #7dd3fc; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th {
+    text-align: right; padding: 9px 10px; color: #6b7185; font-weight: 600;
+    font-size: 10.5px; letter-spacing: 0.7px; text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.1); font-family: -apple-system, sans-serif;
+    cursor: pointer; user-select: none; white-space: nowrap;
+  }
+  th.links { text-align: left; }
+  th:hover { color: #9fb2ff; }
+  th .pfeil { color: #7dd3fc; font-size: 9px; }
+  td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.045); text-align: right; white-space: nowrap; }
+  td.links { text-align: left; white-space: normal; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  tr.gruppenkopf td {
+    padding: 16px 10px 6px; border-bottom: 1px solid rgba(255,255,255,0.09);
+    font-size: 10.5px; letter-spacing: 1.1px; text-transform: uppercase; color: #6b7185;
+    font-family: -apple-system, sans-serif; text-align: left; background: none;
+  }
+  tr.gruppenkopf:hover td { background: none; }
+  tr.gruppenkopf .gh-hinweis { text-transform: none; letter-spacing: 0; color: #5a6072; font-size: 11px; margin-left: 8px; }
+
+  .wname { font-weight: 600; color: #e8eaf0; }
+  .wsym { color: #6b7185; font-size: 11px; margin-left: 7px; font-family: "SF Mono", Menlo, monospace; }
+  .whinweis { color: #5a6072; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 2px; }
+  .kurs { font-weight: 700; }
+  .einheit { color: #6b7185; font-size: 10.5px; font-weight: 400; margin-left: 3px; }
+  .hoch { color: #39ff88; }
+  .tief { color: #ff6b6b; }
+  .null-wert { color: #5a6072; }
+  .fehlt { color: #5a6072; font-style: italic; font-family: -apple-system, sans-serif; font-size: 11.5px; }
+  .alt-marke {
+    margin-left: 7px; font-size: 9.5px; letter-spacing: 0.4px; padding: 2px 6px; border-radius: 5px;
+    background: rgba(255,210,92,0.10); border: 1px solid rgba(255,210,92,0.33); color: #ffd25c;
+    font-family: -apple-system, sans-serif; vertical-align: middle;
+  }
+  .ausfall {
+    background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(255,107,107,0.02));
+    border: 1px solid rgba(255,107,107,0.28); border-radius: 11px; padding: 11px 15px;
+    margin-bottom: 16px; font-size: 12.3px; line-height: 1.6; color: #d9b4b4;
+    font-family: -apple-system, sans-serif;
+  }
+  .ausfall b { color: #ff8f8f; }
+
+  .tabellen-rahmen { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tabellen-rahmen table { min-width: 660px; }
+
+  /* Auf dem Handy wandert nur die Tabelle seitwaerts, nicht die ganze Seite -
+     sonst stehen Warnhinweis und Erklaerung halb ausserhalb des Bildschirms. */
+  @media (max-width: 680px) {
+    body { padding: 16px 13px 40px; }
+    h1 { font-size: 19px; }
+    th, td { padding: 8px 7px; }
+    .warn, .erklaer-body, .ausfall { font-size: 12px; }
+    .whinweis { font-size: 10.5px; }
+  }
+
+  .fuss { margin-top: 26px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);
+          color: #5a6072; font-size: 11.5px; line-height: 1.7; font-family: -apple-system, sans-serif; }
+  .fuss b { color: #7c8399; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <h1>Marktlage</h1>
+    <span class="tag">nur Beobachtung</span>
+  </div>
+  <a class="howto-link" href="index.html">&larr; TJR-Dashboard</a>
+</div>
+<div class="subtitle">Stand und Veränderung der Märkte, die das Umfeld der sechs gehandelten Werte bilden &mdash; Indizes, Rohstoffe, Zinsen, Sektoren.</div>
+<div class="status-line" id="status"></div>
+
+<div class="warn">
+  <b>Diese Seite bewertet nichts.</b> Sie zeigt, was <i>ist</i> &mdash; keine Prognose, kein „bullisch/bärisch“, keine Empfehlung, kein Signal.<br>
+  <b>Sie ist von der TJR-Engine vollständig getrennt.</b> Eigenes Skript, eigener Workflow, eigene Dateien. Kein Wert von hier fließt in eine Einstiegs-, Stop- oder Ziel-Entscheidung ein. Fällt diese Seite aus, läuft der TJR-Report unverändert weiter.<br>
+  <b>Grün und rot heißen nur „rauf“ und „runter“</b>, nicht gut und schlecht. Ein steigender VIX ist nichts Gutes und nichts Schlechtes &mdash; er ist höher.<br>
+  <b>Tageskurse, kein Live-Tick.</b> Für Minutenentscheidungen ist das zu langsam. Der Zeithorizont hier sind Wochen und Monate.
+</div>
+
+<div id="ausfall-box"></div>
+
+<details class="erklaer">
+  <summary>Was die Spalten bedeuten &mdash; und wie sie gerechnet sind</summary>
+  <div class="erklaer-body">
+    <dl>
+      <dt>Stand</dt>
+      <dd>Der letzte Schlusskurs, den die Datenquelle hergibt. Das Datum steht in der Spalte daneben. Läuft der Handelstag noch, ist das der aktuelle Kurs von heute; nach Börsenschluss der Schlusskurs.</dd>
+      <dt>Tag</dt>
+      <dd>Veränderung gegenüber der <b>vorherigen Handelskerze</b> &mdash; nicht gegenüber „gestern“ im Kalendersinn. Nach einem Wochenende ist der Bezug also Freitag.</dd>
+      <dt>Woche / Monat / Jahr</dt>
+      <dd>Veränderung gegenüber dem letzten Kurs, der <b>7, 30 bzw. 365 Kalendertage</b> oder länger zurückliegt. Bewusst Kalendertage, nicht „5 Kerzen zurück“: Bitcoin handelt sieben Tage pro Woche, der DAX fünf. Mit Kerzenzählung wären die Spalten nicht vergleichbar.</dd>
+      <dt>Ein Strich statt einer Zahl</dt>
+      <dd>Heißt: die Datenreihe ist für diesen Zeitraum zu kurz. Dann steht hier nichts &mdash; lieber eine Lücke als eine Zahl, die aus dem ältesten vorhandenen Kurs geschönt wurde.</dd>
+      <dt><span class="alt-marke">alt</span></dt>
+      <dd>Der letzte Kurs ist mehr als __VERALTET_TAGE__ Tage her. Bei Feiertagen normal, bei längerer Dauer ein Zeichen, dass die Quelle für dieses Symbol hängt.</dd>
+      <dt>Einheiten</dt>
+      <dd>VIX und Dollar-Index sind <b>Punkte</b>, kein Preis. Der US-Zins ist eine <b>Rendite in Prozent</b> &mdash; „+2 %“ in der Tagesspalte heißt dort also: die Rendite ist um 2 % ihres eigenen Werts gestiegen, nicht um 2 Prozentpunkte.</dd>
+    </dl>
+  </div>
+</details>
+
+<div class="steuer">
+  <span class="lab">Gruppe</span>
+  <span id="gruppen-chips"></span>
+</div>
+
+<div class="tabellen-rahmen">
+<table id="tabelle">
+  <thead>
+    <tr>
+      <th class="links" data-sort="name">Wert</th>
+      <th data-sort="stand">Stand</th>
+      <th data-sort="standDatum">vom</th>
+      <th data-sort="tag">Tag</th>
+      <th data-sort="woche">Woche</th>
+      <th data-sort="monat">Monat</th>
+      <th data-sort="jahr">Jahr</th>
+    </tr>
+  </thead>
+  <tbody id="koerper"></tbody>
+</table>
+</div>
+
+<div class="fuss">
+  Quelle: <b>Yahoo Finance</b>, Tageskurse, ohne Gewähr &mdash; dieselbe Quelle, aus der auch der TJR-Report seine Kerzen zieht.
+  Jedes Symbol wurde vor dem Einbau einzeln auf Datenqualität geprüft (Etappe 0, <span id="geprueft-am"></span>).<br>
+  Diese Seite ist <b>keine Anlageberatung</b> und erzeugt keine Handelssignale.
+</div>
+
+<script>
+const DATA = __DATA__;
+
+const ZEIGE = { Index: 1, Rohstoff: 1, Umfeld: 1, Sektor: 1, Einzelwert: 1, Gehandelt: 1 };
+const GRUPPEN_HINWEIS = {
+  Index:      "wie läuft „der Markt“ überhaupt",
+  Rohstoff:   "Öl, Metalle, Gas",
+  Umfeld:     "Nervosität, Zinsen, Dollar",
+  Sektor:     "welcher Teil des US-Markts gerade läuft",
+  Einzelwert: "einzelne Firmen",
+  Gehandelt:  "die Werte, die die Engine wirklich handelt",
+};
+
+let sortFeld = null, sortAb = true;
+
+function zahl(n, stellen) {
+  if (n === null || n === undefined) return "&ndash;";
+  return n.toLocaleString("de-DE", { minimumFractionDigits: stellen, maximumFractionDigits: stellen });
+}
+
+function proz(p) {
+  if (p === null || p === undefined) return '<span class="null-wert">&ndash;</span>';
+  const k = p > 0 ? "hoch" : p < 0 ? "tief" : "null-wert";
+  const vz = p > 0 ? "+" : "";
+  return '<span class="' + k + '">' + vz + p.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' %</span>';
+}
+
+function standStellen(w) {
+  const a = Math.abs(w);
+  if (a >= 10) return 2;
+  if (a >= 1) return 4;
+  return 6;
+}
+
+function zeileHtml(r) {
+  const kopf = '<td class="links"><span class="wname">' + r.name + '</span>'
+    + '<span class="wsym">' + r.symbol + '</span>'
+    + (r.veraltet ? '<span class="alt-marke" title="Letzter Kurs ist ' + r.alterTage + ' Tage her">alt</span>' : "")
+    + (r.hinweis ? '<div class="whinweis">' + r.hinweis + '</div>' : "")
+    + '</td>';
+
+  if (!r.ok) {
+    return '<tr>' + kopf + '<td colspan="6" class="fehlt">keine Daten &mdash; ' + (r.grund || "Abruf fehlgeschlagen") + '</td></tr>';
+  }
+
+  const einheit = r.einheit ? r.einheit : (r.waehrung || "");
+  return '<tr>' + kopf
+    + '<td><span class="kurs">' + zahl(r.stand, standStellen(r.stand)) + '</span><span class="einheit">' + einheit + '</span></td>'
+    + '<td class="null-wert">' + (r.standDatum || "") + '</td>'
+    + '<td>' + proz(r.tag) + '</td>'
+    + '<td>' + proz(r.woche) + '</td>'
+    + '<td>' + proz(r.monat) + '</td>'
+    + '<td>' + proz(r.jahr) + '</td>'
+    + '</tr>';
+}
+
+function zeichne() {
+  const alle = (DATA.eintraege || []).filter(function (r) { return ZEIGE[r.gruppe]; });
+  const koerper = document.getElementById("koerper");
+
+  if (!alle.length) {
+    koerper.innerHTML = '<tr><td colspan="7" class="fehlt" style="text-align:center;padding:40px">Keine Gruppe ausgewählt.</td></tr>';
+    return;
+  }
+
+  let html = "";
+
+  if (sortFeld) {
+    // Sortiert wird quer über alle Gruppen - sonst wäre die Sortierung
+    // innerhalb von Zweier-Gruppen sinnlos. Zeilen ohne Daten landen hinten.
+    const s = alle.slice().sort(function (a, b) {
+      if (a.ok !== b.ok) return a.ok ? -1 : 1;
+      const x = a[sortFeld], y = b[sortFeld];
+      if (x === null || x === undefined) return 1;
+      if (y === null || y === undefined) return -1;
+      const v = (typeof x === "string") ? x.localeCompare(y, "de") : (x - y);
+      return sortAb ? -v : v;
+    });
+    html = s.map(zeileHtml).join("");
+  } else {
+    for (const g of (DATA.gruppen || [])) {
+      const inG = alle.filter(function (r) { return r.gruppe === g; });
+      if (!inG.length) continue;
+      html += '<tr class="gruppenkopf"><td colspan="7">' + g
+        + (GRUPPEN_HINWEIS[g] ? '<span class="gh-hinweis">' + GRUPPEN_HINWEIS[g] + '</span>' : "")
+        + '</td></tr>';
+      html += inG.map(zeileHtml).join("");
+    }
+  }
+
+  koerper.innerHTML = html;
+
+  document.querySelectorAll("th[data-sort]").forEach(function (th) {
+    const eigen = th.querySelector(".pfeil");
+    if (eigen) eigen.remove();
+    if (th.dataset.sort === sortFeld) {
+      th.insertAdjacentHTML("beforeend", ' <span class="pfeil">' + (sortAb ? "▼" : "▲") + "</span>");
+    }
+  });
+}
+
+function chipsZeichnen() {
+  document.getElementById("gruppen-chips").innerHTML =
+    (DATA.gruppen || []).map(function (g) {
+      return '<span class="chip ' + (ZEIGE[g] ? "an" : "") + '" data-gruppe="' + g + '">' + g + "</span>";
+    }).join(" ")
+    + ' <span class="chip" data-gruppe="__alle__">alle</span>'
+    + ' <span class="chip" data-gruppe="__sortaus__">Gruppierung zurück</span>';
+
+  document.querySelectorAll(".chip").forEach(function (c) {
+    c.addEventListener("click", function () {
+      const g = c.dataset.gruppe;
+      if (g === "__alle__") {
+        for (const k in ZEIGE) ZEIGE[k] = 1;
+      } else if (g === "__sortaus__") {
+        sortFeld = null;
+      } else {
+        ZEIGE[g] = ZEIGE[g] ? 0 : 1;
+      }
+      chipsZeichnen();
+      zeichne();
+    });
+  });
+}
+
+document.querySelectorAll("th[data-sort]").forEach(function (th) {
+  th.addEventListener("click", function () {
+    const f = th.dataset.sort;
+    if (f === sortFeld) sortAb = !sortAb; else { sortFeld = f; sortAb = true; }
+    zeichne();
+  });
+});
+
+(function kopf() {
+  const e = DATA.eintraege || [];
+  const ok = e.filter(function (r) { return r.ok; }).length;
+  document.getElementById("status").innerHTML =
+    "Stand " + (DATA.stand || "?") + " &middot; " + ok + " von " + e.length + " Werten abgerufen"
+    + " &middot; Tageskurse, Aktualisierung einmal pro Werktag nach US-Börsenschluss";
+
+  const kaputt = e.filter(function (r) { return !r.ok; });
+  const alt = e.filter(function (r) { return r.ok && r.veraltet; });
+  let box = "";
+  if (kaputt.length) {
+    box += '<div class="ausfall"><b>' + kaputt.length + " von " + e.length + " Werten konnten nicht abgerufen werden.</b> "
+      + "Die restliche Seite ist davon nicht betroffen. Betroffen: "
+      + kaputt.map(function (r) { return r.name + " (" + r.symbol + ")"; }).join(", ") + ".</div>";
+  }
+  if (alt.length) {
+    box += '<div class="ausfall"><b>' + alt.length + " Wert" + (alt.length > 1 ? "e haben" : " hat")
+      + " einen älteren Kurs</b> als " + (DATA.veraltetTage || 4) + " Tage. Bei Feiertagen normal: "
+      + alt.map(function (r) { return r.name + " (" + r.alterTage + " Tage)"; }).join(", ") + ".</div>";
+  }
+  document.getElementById("ausfall-box").innerHTML = box;
+
+  document.getElementById("geprueft-am").textContent = (DATA.symboltestVom || "?").slice(0, 10);
+})();
+
+chipsZeichnen();
+zeichne();
+</script>
+</body>
+</html>

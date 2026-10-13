@@ -1,0 +1,75 @@
+name: Marktlage
+
+# ============================================================================
+# EIGENER WORKFLOW - bewusst nicht Teil von update.yml
+# ============================================================================
+# Dieselbe Begruendung wie bei insider.yml, Tiams Vorgabe vom 13.10.:
+# "Der TJR-Teil des Dashboards darf davon nicht beruehrt werden. Eigener
+#  Workflow, eigene Dateien, eigene concurrency-Gruppe - wie damals bei der
+#  Insider-Seite. Ein Fehler dort darf den TJR-Report nie kippen."
+#
+# 1. Andere Taktung: Tageskurse. Zweimal taeglich genuegt vollkommen - der
+#    TJR-Report laeuft alle 15 Minuten, das waeren ueber 1500 ueberfluessige
+#    Yahoo-Abrufe pro Tag.
+# 2. Eigene concurrency-Gruppe "tjr-marktlage": blockiert "tjr-report" nicht
+#    und wird von ihm nicht blockiert.
+# 3. Die Zeiten liegen bewusst AUSSERHALB des TJR-Fensters (06:00-22:00 UTC).
+#    Damit koennen sich die beiden Laeufe beim Push nicht ins Gehege kommen.
+#    Das `git pull --rebase` unten ist nur das Netz darunter, fuer den Fall,
+#    dass jemand den Lauf von Hand zu einer anderen Zeit startet.
+#
+# Dieser Lauf erzeugt KEINE Signale, KEINE Benachrichtigungen und fasst keine
+# Datei des TJR-Teils an. Er schreibt genau zwei Dateien:
+#   docs/marktlage.html  und  daten/marktlage/stand.json
+# ============================================================================
+
+on:
+  schedule:
+    # 05:30 UTC - vor Beginn des TJR-Fensters, also 07:30 Wien (Sommerzeit).
+    # Damit steht die Uebersicht, bevor Tiam auf den Handelstag schaut.
+    - cron: "30 5 * * 1-6"
+    # 22:40 UTC - nach US-Boersenschluss, wenn die Tagesschlusskurse stehen.
+    # Samstag mit drin, damit der Freitagsschluss sicher erfasst wird.
+    - cron: "40 22 * * 1-6"
+  push:
+    branches: [main]
+    paths:
+      - "marktlage.js"
+      - "marktlage_build.js"
+      - "docs/marktlage_template.html"
+      - ".github/workflows/marktlage.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tjr-marktlage
+  cancel-in-progress: false
+
+jobs:
+  marktlage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Marktlage abrufen und Seite bauen
+        run: node marktlage_build.js
+
+      - name: Ergebnis sichern
+        run: |
+          git config user.name "tjr-bot"
+          git config user.email "actions@github.com"
+          git add docs/marktlage.html daten/marktlage
+          if git diff --quiet --cached; then
+            echo "Nichts geaendert - kein Commit."
+          else
+            git commit -m "Marktlage: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git pull --rebase --autostash -q
+            git push -q && echo "Gepusht."
+          fi
