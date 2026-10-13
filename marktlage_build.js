@@ -24,6 +24,7 @@ const fs = require("fs");
 const path = require("path");
 const ml = require("./marktlage.js");
 const kz = require("./marktlage_kennzahlen.js");
+const hist = require("./marktlage_historie.js");
 
 const BASIS = __dirname;
 const MIN_ANTEIL_OK = 0.6;   // weniger als 60 % brauchbar -> Seite nicht anfassen
@@ -185,12 +186,31 @@ async function main() {
   fs.writeFileSync(path.join(datenOrdner, "stand.json"), JSON.stringify(daten, null, 2), "utf8");
   console.log("  daten/marktlage/stand.json geschrieben");
 
+  /* ----------------------------------------------------------------------
+   * ETAPPE 3 - Tageszeile in die eigene Zeitreihe schreiben.
+   *
+   * Nach stand.json und bewusst in try/catch: schlaegt das fehl, fehlt ein
+   * Tag in der Historie - die Seite selbst wird trotzdem gebaut.
+   * -------------------------------------------------------------------- */
+  let historie = null;
+  try {
+    historie = hist.schreibe(datenOrdner, daten, ml.MARKT_SYMBOL);
+    console.log(historie.ok
+      ? "  Historie: " + (historie.neu ? "neuer Tag " : "Tag aktualisiert ") + historie.handelstag
+        + "  (" + historie.tage + " Tage seit " + historie.seit + ", "
+        + Math.round(historie.bytes / 1024) + " KB)"
+      : "  Historie NICHT geschrieben: " + historie.grund);
+  } catch (e) {
+    historie = { ok: false, grund: String(e && e.message ? e.message : e).slice(0, 150) };
+    console.error("  Historie fehlgeschlagen:", historie.grund);
+  }
+
   const vorlage = fs.readFileSync(path.join(BASIS, "docs", "marktlage_template.html"), "utf8");
   if (vorlage.indexOf("__DATA__") < 0) {
     throw new Error("Vorlage enthaelt keinen __DATA__-Platzhalter");
   }
   const seite = vorlage
-    .replace("__DATA__", sicheresJson(daten))
+    .replace("__DATA__", sicheresJson(Object.assign({}, daten, { historie })))
     .replace(/__VERALTET_TAGE__/g, String(ml.VERALTET_TAGE));
 
   fs.writeFileSync(path.join(BASIS, "docs", "marktlage.html"), seite, "utf8");

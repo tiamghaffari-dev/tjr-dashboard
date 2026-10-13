@@ -309,6 +309,15 @@
   </div>
 </div>
 
+<div class="block">
+  <h2>Was hier mitgeschrieben wird</h2>
+  <div class="block-sub" id="historie-sub"></div>
+  <div class="bedeutung">
+    <p><span class="ja">Heißt:</span> die Werte oben werden Tag für Tag in einer eigenen Datei festgehalten. Irgendwann ist damit die Frage beantwortbar, ob die TJR-Engine in bestimmten Umfeldern besser oder schlechter läuft &mdash; zum Beispiel bei hoher gegen niedrige Schwankung.</p>
+    <p><span class="nein">Heißt nicht:</span> <b>heute beantwortet das niemand.</b> Es wird nichts ausgewertet, nichts verglichen und nichts behauptet. Die Engine liest diese Datei nicht und wird von ihr in keiner Weise beeinflusst &mdash; sie weiß nicht einmal, dass es sie gibt. Bis genug Tage und genug Trades beisammen sind, um eine Auswertung überhaupt vom Zufall unterscheiden zu können, vergehen Monate.</p>
+  </div>
+</div>
+
 <div class="fuss">
   Quelle: <b>Yahoo Finance</b>, Tageskurse, ohne Gewähr &mdash; dieselbe Quelle, aus der auch der TJR-Report seine Kerzen zieht.
   Jedes Symbol wurde vor dem Einbau einzeln auf Datenqualität geprüft (Etappe 0, <span id="geprueft-am"></span>).<br>
@@ -650,7 +659,21 @@ function zeichneTermine() {
   + '<div class="begruendung" style="margin-top:9px">Zeiten in Wiener Ortszeit. Quelle: ForexFactory-Kalender, nur Termine mit hoher erwarteter Wirkung.</div>';
 }
 
-for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine]) {
+/* ---------- 5. Mitschrift ---------- */
+function zeichneHistorie() {
+  const h = DATA.historie;
+  const el = document.getElementById("historie-sub");
+  if (!h || !h.ok) {
+    el.innerHTML = "Für heute konnte nichts mitgeschrieben werden"
+      + (h && h.grund ? ' &mdash; ' + h.grund : "") + ".";
+    return;
+  }
+  const seit = new Date(h.seit + "T12:00:00Z").toLocaleDateString("de-AT", { day: "2-digit", month: "2-digit", year: "numeric" });
+  el.innerHTML = "<b>" + h.tage + (h.tage === 1 ? " Tag" : " Tage") + "</b> gesammelt, seit " + seit
+    + ". Letzter Eintrag: Handelstag " + h.handelstag + ".";
+}
+
+for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine, zeichneHistorie]) {
   try { f(); } catch (e) { console.error("Block fehlgeschlagen:", e); }
 }
 </script>
