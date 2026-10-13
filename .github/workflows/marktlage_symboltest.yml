@@ -1,0 +1,54 @@
+name: Marktlage Symboltest
+
+# ============================================================================
+# ETAPPE 0 des Marktlage-Bereichs - ein reiner Erkundungslauf.
+# ============================================================================
+# Bewusst ein EIGENER Workflow mit EIGENER concurrency-Gruppe, nach demselben
+# Muster wie insider.yml:
+#   1. Der TJR-Report ist das Produktivsystem. Ein Fehler hier darf ihn NIE
+#      kippen - weder durch einen Abbruch noch durch gegenseitiges Blockieren.
+#   2. Kein Zeitplan: dieser Lauf wird von Hand gestartet, wenn man wissen will,
+#      welche Yahoo-Symbole brauchbare Daten liefern. Er gehoert nicht in den
+#      Dauerbetrieb.
+#
+# Der Lauf erzeugt KEINE Signale, KEINE Benachrichtigungen und fasst keine
+# Datei des TJR-Teils an. Er schreibt genau eine Datei: marktlage_symbole.json.
+# ============================================================================
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: marktlage-symboltest
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  symboltest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Symbole pruefen
+        run: node marktlage_symboltest.js
+
+      - name: Ergebnis sichern
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add marktlage_symbole.json
+          # Nur committen, wenn sich wirklich etwas geaendert hat - sonst
+          # erzeugt jeder Lauf einen leeren Commit.
+          if git diff --cached --quiet; then
+            echo "Keine Aenderung, kein Commit."
+          else
+            git commit -m "Marktlage: Symboltest $(date -u +%Y-%m-%d\ %H:%M) UTC"
+            git push
+          fi
