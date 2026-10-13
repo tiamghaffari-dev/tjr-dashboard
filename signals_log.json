@@ -41753,9 +41753,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791891000000,
+    "rMultiple": -1,
+    "exitPrice": 776.075,
+    "postmortem": {
+      "holdHours": 20.3,
+      "mfeR": 1.3,
+      "maeR": -1.02,
+      "towardTargetPct": 69,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.38,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 69% der Zielstrecke (max +1.3R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "ETHUSD-1791840593483",
