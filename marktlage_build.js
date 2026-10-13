@@ -138,6 +138,10 @@ async function main() {
       ? gl.paare.length + " Paare auf " + gl.tage + " gemeinsamen Tagen, " + gl.starkeAnzahl + " deutlich, "
         + gl.paare.filter((p) => p.stufe === "rauschen").length + " Rauschen"
       : "nicht rechenbar - " + gl.grund));
+    if (gl.ok) {
+      console.log("    Schnittmenge insgesamt: " + gl.gemeinsamGesamt + " Tage. Einzeln: "
+        + gl.herkunft.map((h) => h.symbol + " " + h.eigeneTage).join(", "));
+    }
   } catch (e) {
     kennzahlen.gleichlaufFehler = String(e && e.message ? e.message : e).slice(0, 150);
     console.error("  Gleichlauf fehlgeschlagen:", kennzahlen.gleichlaufFehler);

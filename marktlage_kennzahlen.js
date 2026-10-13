@@ -110,7 +110,16 @@ function gemeinsameTage(reihenNachSymbol, symbole) {
   const sortiert = [...(tage || [])].sort();
   const aus = {};
   for (const s of symbole) aus[s] = sortiert.map((d) => karten[s].get(d));
-  return { tage: sortiert, closes: aus };
+
+  // Mitschreiben, wie viele Tage jedes Symbol EINZELN hat und wie viele davon
+  // die Schnittmenge ueberleben. Beim ersten echten Lauf fiel auf, dass die
+  // Schnittmenge deutlich kleiner war als erwartet - ohne diese Zahlen laesst
+  // sich nicht sagen, ob das an einem einzelnen Symbol liegt (dann waere es
+  // ein Datenproblem) oder an normalen Feiertagsunterschieden.
+  const einzeln = {};
+  for (const s of symbole) einzeln[s] = karten[s].size;
+
+  return { tage: sortiert, closes: aus, einzeln };
 }
 
 /* ===========================================================================
@@ -326,10 +335,17 @@ const KORR_STARK = 0.6;
 
 function gleichlauf(reihenNachSymbol, gehandelte) {
   const symbole = gehandelte.map((g) => g.symbol);
-  const { tage, closes } = gemeinsameTage(reihenNachSymbol, symbole);
+  const { tage, closes, einzeln } = gemeinsameTage(reihenNachSymbol, symbole);
   if (tage.length < 30) {
     return { ok: false, grund: "zu wenige gemeinsame Handelstage (" + tage.length + ")" };
   }
+
+  // Wie viele Tage bringt jedes Symbol mit, und wie viele bleiben gemeinsam
+  // uebrig? Ein Symbol, das deutlich weniger Tage hat als die anderen, zieht
+  // die Schnittmenge nach unten - das muss sichtbar sein, sonst steht auf der
+  // Seite eine Korrelation auf duennerer Grundlage als behauptet.
+  const herkunft = symbole.map((s) => ({ symbol: s, eigeneTage: einzeln[s] }));
+  herkunft.sort((a, b) => a.eigeneTage - b.eigeneTage);
 
   const r = {};
   for (const s of symbole) r[s] = renditen(closes[s]).slice(-KORR_FENSTER);
@@ -389,6 +405,8 @@ function gleichlauf(reihenNachSymbol, gehandelte) {
     bisTag: tage[tage.length - 1],
     standardfehler: Math.round(se * 1000) / 1000,
     schwelle,
+    gemeinsamGesamt: tage.length,
+    herkunft,
     paare,
     starkeAnzahl: paare.filter((p) => p.stufe === "stark-mit" || p.stufe === "stark-gegen").length,
   };
