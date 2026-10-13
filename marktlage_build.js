@@ -141,6 +141,11 @@ async function main() {
     if (gl.ok) {
       console.log("    Schnittmenge insgesamt: " + gl.gemeinsamGesamt + " Tage. Einzeln: "
         + gl.herkunft.map((h) => h.symbol + " " + h.eigeneTage + " (ohne: +" + h.ohneDiesen + ")").join(", "));
+      for (const h of gl.herkunft) {
+        console.log("      " + h.symbol.padEnd(10) + " Stempel " + h.stempelzeit
+          + (h.fehlen ? "  | fehlende Tage nach Wochentag: " + JSON.stringify(h.fehlen.nachWochentag)
+             + " | zuletzt: " + h.fehlen.beispiele.join(", ") : ""));
+      }
     }
   } catch (e) {
     kennzahlen.gleichlaufFehler = String(e && e.message ? e.message : e).slice(0, 150);

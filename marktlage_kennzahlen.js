@@ -344,13 +344,54 @@ function gleichlauf(reihenNachSymbol, gehandelte) {
   // uebrig? Ein Symbol, das deutlich weniger Tage hat als die anderen, zieht
   // die Schnittmenge nach unten - das muss sichtbar sein, sonst steht auf der
   // Seite eine Korrelation auf duennerer Grundlage als behauptet.
+  // Zu welcher UTC-Uhrzeit stempelt jedes Symbol seine Tageskerze? Stempelt
+  // eines z.B. um 22:00, faellt die Kerze bei der UTC-Datumsbildung auf den
+  // VORTAG - dann waere es gegenueber den anderen um einen Tag verschoben und
+  // seine Korrelationen waeren systematisch zu niedrig. Genau danach wird hier
+  // gesucht, nachdem GBPUSD=X beim ersten Lauf 28 gemeinsame Tage gekostet hat.
+  const stempelzeit = {};
+  for (const s of symbole) {
+    const zaehler = {};
+    for (const pnkt of (reihenNachSymbol[s] || [])) {
+      const d = new Date(pnkt.ts * 1000);
+      const kl = String(d.getUTCHours()).padStart(2, "0") + ":" + String(d.getUTCMinutes()).padStart(2, "0");
+      zaehler[kl] = (zaehler[kl] || 0) + 1;
+    }
+    const sortiert = Object.entries(zaehler).sort((a, b) => b[1] - a[1]);
+    stempelzeit[s] = sortiert.slice(0, 2).map((e) => e[0] + " (" + e[1] + "x)").join(", ");
+  }
+
+  // Welche Tage fehlen dem jeweiligen Symbol gegenueber den ANDEREN? Verteilen
+  // sie sich gleichmaessig ueber die Wochentage, sind es Feiertage und Luecken.
+  // Haeufen sie sich auf einem Wochentag, steckt ein Versatz dahinter.
+  const WT = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+  function fehlendeTage(s) {
+    const andere = gemeinsameTage(reihenNachSymbol, symbole.filter((x) => x !== s)).tage;
+    const eigene = new Set((reihenNachSymbol[s] || [])
+      .map((pnkt) => new Date(pnkt.ts * 1000).toISOString().slice(0, 10)));
+    const fehlt = andere.filter((d) => !eigene.has(d));
+    const nachWT = {};
+    for (const d of fehlt) {
+      const w = WT[new Date(d + "T12:00:00Z").getUTCDay()];
+      nachWT[w] = (nachWT[w] || 0) + 1;
+    }
+    return { anzahl: fehlt.length, nachWochentag: nachWT, beispiele: fehlt.slice(-8) };
+  }
+
   const herkunft = symbole.map((s) => {
     // Wie viele Tage kaemen dazu, wenn man genau dieses Symbol weglaesst?
     // Das zeigt, WER die Schnittmenge klein macht. Ein Symbol mit einem
     // abweichenden Handelskalender faellt hier sofort auf - bei blossen
     // Tageszahlen je Symbol wuerde man das nicht sehen.
     const ohne = gemeinsameTage(reihenNachSymbol, symbole.filter((x) => x !== s));
-    return { symbol: s, eigeneTage: einzeln[s], ohneDiesen: ohne.tage.length - tage.length };
+    const verlust = ohne.tage.length - tage.length;
+    return {
+      symbol: s, eigeneTage: einzeln[s], ohneDiesen: verlust,
+      stempelzeit: stempelzeit[s],
+      // Die Fehltage nur fuer die Symbole aufschluesseln, die wirklich etwas
+      // kosten - sonst rechnet man fuenfmal umsonst.
+      fehlen: verlust > 0 ? fehlendeTage(s) : null,
+    };
   });
   herkunft.sort((a, b) => b.ohneDiesen - a.ohneDiesen);
 
