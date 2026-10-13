@@ -23,6 +23,7 @@
 const fs = require("fs");
 const path = require("path");
 const ml = require("./marktlage.js");
+const kz = require("./marktlage_kennzahlen.js");
 
 const BASIS = __dirname;
 const MIN_ANTEIL_OK = 0.6;   // weniger als 60 % brauchbar -> Seite nicht anfassen
@@ -96,6 +97,65 @@ async function main() {
     return;
   }
 
+  /* ----------------------------------------------------------------------
+   * ETAPPE 2 - Umfeld-Kennzahlen.
+   *
+   * Jede einzeln in try/catch: eine Kennzahl, die nicht rechenbar ist, darf
+   * weder die anderen noch die Tabelle aus Etappe 1 mitreissen. Auf der Seite
+   * steht dann ehrlich, dass dieser Block fehlt.
+   * -------------------------------------------------------------------- */
+  const reihen = {};
+  for (const e of eintraege) if (e.ok && e.reihe) reihen[e.symbol] = e.reihe;
+
+  const kennzahlen = {};
+
+  try {
+    kennzahlen.nervositaet = kz.nervositaet(reihen, ml.VIX_SYMBOL, ml.GEHANDELT);
+    const n = kennzahlen.nervositaet;
+    console.log("  Nervositaet: VIX " + (n.vix ? n.vix.stand + " (Perzentil " + n.vix.perzentil + ")" : "nicht verfuegbar")
+      + ", " + n.werte.filter((w) => w.stufe === "rauschen").length + " von " + n.werte.length + " Werten unauffaellig");
+  } catch (e) {
+    kennzahlen.nervositaetFehler = String(e && e.message ? e.message : e).slice(0, 150);
+    console.error("  Nervositaet fehlgeschlagen:", kennzahlen.nervositaetFehler);
+  }
+
+  try {
+    const sektoren = ml.SYMBOLE.filter((x) => x.gruppe === "Sektor").map((x) => ({ name: x.name, symbol: x.symbol }));
+    kennzahlen.sektoren = kz.sektorRangliste(reihen, sektoren, ml.MARKT_SYMBOL);
+    const sk = kennzahlen.sektoren;
+    console.log("  Sektoren: " + (sk.ok
+      ? sk.zeilen.length + " verglichen, " + sk.zeilen.filter((z) => z.stufe === "rauschen").length + " davon Rauschen"
+      : "nicht rechenbar - " + sk.grund));
+  } catch (e) {
+    kennzahlen.sektorenFehler = String(e && e.message ? e.message : e).slice(0, 150);
+    console.error("  Sektoren fehlgeschlagen:", kennzahlen.sektorenFehler);
+  }
+
+  try {
+    kennzahlen.gleichlauf = kz.gleichlauf(reihen, ml.GEHANDELT);
+    const gl = kennzahlen.gleichlauf;
+    console.log("  Gleichlauf: " + (gl.ok
+      ? gl.paare.length + " Paare auf " + gl.tage + " gemeinsamen Tagen, " + gl.starkeAnzahl + " deutlich, "
+        + gl.paare.filter((p) => p.stufe === "rauschen").length + " Rauschen"
+      : "nicht rechenbar - " + gl.grund));
+  } catch (e) {
+    kennzahlen.gleichlaufFehler = String(e && e.message ? e.message : e).slice(0, 150);
+    console.error("  Gleichlauf fehlgeschlagen:", kennzahlen.gleichlaufFehler);
+  }
+
+  try {
+    kennzahlen.termine = await kz.termine();
+    console.log("  Termine: " + kennzahlen.termine.kommende.length + " anstehend (Feed: "
+      + kennzahlen.termine.gesamtImFeed + " Eintraege diese Woche)");
+  } catch (e) {
+    kennzahlen.termineFehler = String(e && e.message ? e.message : e).slice(0, 150);
+    console.error("  Terminabruf fehlgeschlagen:", kennzahlen.termineFehler);
+  }
+
+  // Die Rohreihen wieder entfernen: sie haben ihren Zweck erfuellt und wuerden
+  // stand.json um ein Jahr Kurse je Symbol aufblaehen, taeglich neu committet.
+  const schlank = eintraege.map((e) => { const o = { ...e }; delete o.reihe; return o; });
+
   const daten = {
     stand: jetztText(),
     standIso: new Date().toISOString(),
@@ -104,7 +164,8 @@ async function main() {
     symboltestVom: symboltestDatum(),
     anzahl: eintraege.length,
     anzahlOk: ok.length,
-    eintraege,
+    eintraege: schlank,
+    kennzahlen,
   };
 
   // Maschinenlesbarer Stand - fuer spaetere Etappen (z.B. Umfeldwerte neben

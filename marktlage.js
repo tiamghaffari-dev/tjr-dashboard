@@ -61,6 +61,26 @@ const SYMBOLE = [
 
 const GRUPPEN_REIHENFOLGE = ["Index", "Rohstoff", "Umfeld", "Sektor", "Einzelwert", "Gehandelt"];
 
+/* ---------------------------------------------------------------------------
+ * Rollen fuer die Kennzahlen aus Etappe 2.
+ *
+ * GEHANDELT sind exakt die sechs Werte aus ASSETS in build.js - zwei davon
+ * (Gold, S&P 500) stehen oben in anderen Gruppen, weil sie dort als Umfeld
+ * gelesen werden. Fuer den Gleichlauf zaehlt aber, was die Engine WIRKLICH
+ * handelt, darum hier noch einmal ausdruecklich und vollstaendig.
+ * Weicht diese Liste je von ASSETS ab, misst der Gleichlauf das Falsche.
+ * ------------------------------------------------------------------------- */
+const GEHANDELT = [
+  { name: "Bitcoin",  symbol: "BTC-USD" },
+  { name: "Ethereum", symbol: "ETH-USD" },
+  { name: "XRP",      symbol: "XRP-USD" },
+  { name: "GBP/USD",  symbol: "GBPUSD=X" },
+  { name: "S&P 500",  symbol: "^GSPC" },
+  { name: "Gold",     symbol: "GC=F" },
+];
+const VIX_SYMBOL = "^VIX";
+const MARKT_SYMBOL = "^GSPC";   // Massstab fuer den Sektorvergleich (US-Sektor-ETFs)
+
 const PAUSE_MS = 350;        // hoeflich bleiben, kein Hammern auf Yahoo
 const VERSUCHE = 3;          // ein einzelner Aussetzer soll keine Zeile kosten
 const VERALTET_TAGE = 4;     // ab hier wird der Kurs als alt markiert, nicht verschwiegen
@@ -226,6 +246,11 @@ async function holeEintrag(def) {
         ...spalte("monat", veraenderungSeit(roh.reihe, 30), letzter.close),
         ...spalte("jahr", veraenderungSeit(roh.reihe, 365), letzter.close),
         versuche: versuch,
+        // Die Tagesreihe selbst. Wird fuer die Kennzahlen aus Etappe 2
+        // gebraucht (Schwankung, Sektorvergleich, Gleichlauf) und von
+        // marktlage_build.js vor dem Schreiben wieder entfernt - sie gehoert
+        // nicht in stand.json und waere dort 25-mal ein Jahr Kurse.
+        reihe: roh.reihe,
       };
     } catch (e) {
       letzterFehler = e && e.message ? e.message : String(e);
@@ -262,6 +287,9 @@ async function sammle(symbole) {
 module.exports = {
   SYMBOLE,
   GRUPPEN_REIHENFOLGE,
+  GEHANDELT,
+  VIX_SYMBOL,
+  MARKT_SYMBOL,
   VERALTET_TAGE,
   holeReihe,
   veraenderungSeit,
