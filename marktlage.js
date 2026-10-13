@@ -127,6 +127,7 @@ async function holeReihe(symbol) {
   return {
     reihe: ausgerichtet.reihe,
     stempelKorrigiert: ausgerichtet.korrigiert,
+    stempelVerworfen: ausgerichtet.verworfen,
     luecken: kurse.length - reihe.length,
     waehrung: (ergebnis.meta && ergebnis.meta.currency) || null,
     boerse: (ergebnis.meta && ergebnis.meta.exchangeName) || null,
@@ -178,9 +179,25 @@ function stempelVersatzNoetig(reihe) {
   return abends / reihe.length >= ABEND_ANTEIL;
 }
 
-function richteStempelAus(reihe) {
-  if (!stempelVersatzNoetig(reihe)) return { reihe, korrigiert: false };
-  return { reihe: reihe.map((p) => ({ ts: p.ts + VERSATZ_SEKUNDEN, close: p.close })), korrigiert: true };
+function richteStempelAus(reihe, jetztSek) {
+  if (!stempelVersatzNoetig(reihe)) return { reihe, korrigiert: false, verworfen: 0 };
+
+  const jetzt = jetztSek || Math.floor(Date.now() / 1000);
+  const verschoben = reihe.map((p) => ({ ts: p.ts + VERSATZ_SEKUNDEN, close: p.close }));
+
+  // Kerzen, die nach der Verschiebung in der ZUKUNFT liegen, fliegen raus.
+  // Yahoo legt fuer Devisen die Kerze des naechsten Handelstags offenbar schon
+  // an, bevor er begonnen hat - beim ersten Lauf nach dieser Korrektur stand
+  // GBP/USD dadurch auf dem 14.10., waehrend der 13.10. lief (Alter -0,5 Tage).
+  // Ein Kurs mit einem Datum von morgen ist in jedem Fall falsch, egal wie er
+  // zustande kam. Also: raus damit, statt ihn anzuzeigen.
+  const sauber = verschoben.filter((p) => p.ts <= jetzt);
+
+  return {
+    reihe: sauber.length >= 2 ? sauber : verschoben,
+    korrigiert: true,
+    verworfen: verschoben.length - sauber.length,
+  };
 }
 
 /* --------------------------------------------------------------------------
@@ -291,6 +308,7 @@ async function holeEintrag(def) {
         tage: roh.reihe.length,
         luecken: roh.luecken,
         stempelKorrigiert: !!roh.stempelKorrigiert,
+        stempelVerworfen: roh.stempelVerworfen || 0,
         // Zu jeder Prozentzahl wird der Bezugskurs und sein Datum mitgeschrieben.
         // Grund: eine Prozentzahl ohne Bezug kann man nicht nachpruefen - und in
         // diesem Projekt gilt, dass keine Zahl geglaubt wird, die man nicht
