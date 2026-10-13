@@ -140,7 +140,7 @@ async function main() {
       : "nicht rechenbar - " + gl.grund));
     if (gl.ok) {
       console.log("    Schnittmenge insgesamt: " + gl.gemeinsamGesamt + " Tage. Einzeln: "
-        + gl.herkunft.map((h) => h.symbol + " " + h.eigeneTage).join(", "));
+        + gl.herkunft.map((h) => h.symbol + " " + h.eigeneTage + " (ohne: +" + h.ohneDiesen + ")").join(", "));
     }
   } catch (e) {
     kennzahlen.gleichlaufFehler = String(e && e.message ? e.message : e).slice(0, 150);

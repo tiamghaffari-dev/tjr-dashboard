@@ -344,8 +344,15 @@ function gleichlauf(reihenNachSymbol, gehandelte) {
   // uebrig? Ein Symbol, das deutlich weniger Tage hat als die anderen, zieht
   // die Schnittmenge nach unten - das muss sichtbar sein, sonst steht auf der
   // Seite eine Korrelation auf duennerer Grundlage als behauptet.
-  const herkunft = symbole.map((s) => ({ symbol: s, eigeneTage: einzeln[s] }));
-  herkunft.sort((a, b) => a.eigeneTage - b.eigeneTage);
+  const herkunft = symbole.map((s) => {
+    // Wie viele Tage kaemen dazu, wenn man genau dieses Symbol weglaesst?
+    // Das zeigt, WER die Schnittmenge klein macht. Ein Symbol mit einem
+    // abweichenden Handelskalender faellt hier sofort auf - bei blossen
+    // Tageszahlen je Symbol wuerde man das nicht sehen.
+    const ohne = gemeinsameTage(reihenNachSymbol, symbole.filter((x) => x !== s));
+    return { symbol: s, eigeneTage: einzeln[s], ohneDiesen: ohne.tage.length - tage.length };
+  });
+  herkunft.sort((a, b) => b.ohneDiesen - a.ohneDiesen);
 
   const r = {};
   for (const s of symbole) r[s] = renditen(closes[s]).slice(-KORR_FENSTER);
