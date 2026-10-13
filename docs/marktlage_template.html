@@ -217,7 +217,7 @@
   <b>Diese Seite bewertet nichts.</b> Sie zeigt, was <i>ist</i> &mdash; keine Prognose, kein „bullisch/bärisch“, keine Empfehlung, kein Signal.<br>
   <b>Sie ist von der TJR-Engine vollständig getrennt.</b> Eigenes Skript, eigener Workflow, eigene Dateien. Kein Wert von hier fließt in eine Einstiegs-, Stop- oder Ziel-Entscheidung ein. Fällt diese Seite aus, läuft der TJR-Report unverändert weiter.<br>
   <b>Grün und rot heißen nur „rauf“ und „runter“</b>, nicht gut und schlecht. Ein steigender VIX ist nichts Gutes und nichts Schlechtes &mdash; er ist höher.<br>
-  <b>Tageskurse, kein Live-Tick.</b> Für Minutenentscheidungen ist das zu langsam. Der Zeithorizont hier sind Wochen und Monate.
+  <b>Der Stand ist aktuell, alles Gerechnete nicht.</b> Die Kurse in der Spalte „Stand" kommen vom Live-Kurs der Börse. Jede Veränderung und jede Kennzahl darunter rechnet dagegen mit <b>Tagesschlusskursen</b> &mdash; für Minutenentscheidungen ist das zu langsam. Der Zeithorizont hier sind Wochen und Monate.
 </div>
 
 <div id="ausfall-box"></div>
@@ -469,7 +469,7 @@ document.querySelectorAll("th[data-sort]").forEach(function (th) {
   const ok = e.filter(function (r) { return r.ok; }).length;
   document.getElementById("status").innerHTML =
     "Stand " + (DATA.stand || "?") + " &middot; " + ok + " von " + e.length + " Werten abgerufen"
-    + " &middot; Tageskurse, Aktualisierung einmal pro Werktag nach US-Börsenschluss";
+    + " &middot; Aktualisierung zweimal pro Werktag: früh vor Handelsbeginn und nach US-Börsenschluss";
 
   const kaputt = e.filter(function (r) { return !r.ok; });
   const alt = e.filter(function (r) { return r.ok && r.veraltet; });
