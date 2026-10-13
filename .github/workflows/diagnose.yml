@@ -1,0 +1,23 @@
+name: Marktlage Diagnose
+on:
+  workflow_dispatch:
+concurrency:
+  group: marktlage-diagnose
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node marktlage_diagnose.js 2>&1 | tee diagnose_ausgabe.txt
+      - run: |
+          git config user.name "tjr-bot"
+          git config user.email "actions@github.com"
+          git add -f diagnose_ausgabe.txt
+          git commit -q -m "Marktlage: Diagnoseausgabe"
+          git pull --rebase --autostash -q
+          git push -q

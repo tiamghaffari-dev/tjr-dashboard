@@ -35,6 +35,7 @@ on:
     branches: [main]
     paths:
       - "marktlage.js"
+      - "marktlage_kennzahlen.js"
       - "marktlage_build.js"
       - "docs/marktlage_template.html"
       - ".github/workflows/marktlage.yml"
