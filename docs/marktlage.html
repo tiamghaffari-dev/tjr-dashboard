@@ -124,6 +124,12 @@
 
   .tabellen-rahmen { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .tabellen-rahmen table { min-width: 660px; }
+  /* Die Kennzahlen-Tabellen aus Etappe 2 haben nur drei bis vier Spalten.
+     Mit der 660er-Mindestbreite muesste man auf dem Handy seitwaerts
+     scrollen, obwohl der Platz reicht - also fliessend lassen und den
+     Begruendungstext umbrechen. */
+  .tabellen-rahmen.schmal table { min-width: 0; }
+  .tabellen-rahmen.schmal td.links { min-width: 150px; }
 
   /* Auf dem Handy wandert nur die Tabelle seitwaerts, nicht die ganze Seite -
      sonst stehen Warnhinweis und Erklaerung halb ausserhalb des Bildschirms. */
@@ -134,6 +140,60 @@
     .warn, .erklaer-body, .ausfall { font-size: 12px; }
     .whinweis { font-size: 10.5px; }
   }
+
+
+  /* ---------- Etappe 2: Umfeld-Kennzahlen ---------- */
+  .block { margin-top: 34px; }
+  .block > h2 {
+    font-size: 14px; margin: 0 0 3px 0; font-weight: 700; color: #e8eaf0;
+    letter-spacing: 0.3px; font-family: -apple-system, sans-serif;
+  }
+  .block > .block-sub { color: #6b7185; font-size: 11.5px; margin-bottom: 11px; font-family: -apple-system, sans-serif; }
+
+  /* Der Klartext-Kasten: was die Zahl heisst und was sie NICHT heisst.
+     Steht bei jeder Kennzahl, nicht nur bei den komplizierten. */
+  .bedeutung {
+    border-left: 2px solid rgba(125,211,252,0.3); padding: 2px 0 2px 13px; margin: 12px 0 0 0;
+    font-family: -apple-system, sans-serif; font-size: 12.2px; line-height: 1.65; color: #9198ad;
+  }
+  .bedeutung p { margin: 0 0 5px 0; }
+  .bedeutung p:last-child { margin-bottom: 0; }
+  .bedeutung .ja { color: #7dd3fc; font-weight: 600; }
+  .bedeutung .nein { color: #ffa0a0; font-weight: 600; }
+
+  .kacheln { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .kachel {
+    flex: 1 1 165px; background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 12px 14px;
+  }
+  .kachel .k { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: #6b7185; font-family: -apple-system, sans-serif; }
+  .kachel .v { font-size: 21px; font-weight: 700; margin-top: 4px; }
+  .kachel .n { font-size: 11px; color: #6b7185; margin-top: 3px; font-family: -apple-system, sans-serif; line-height: 1.5; }
+
+  /* Rauschen wird bewusst GRAU dargestellt, nicht bunt. Tiams Vorgabe:
+     eine Zahl, die nur Rauschen ist, darf nicht huebsch aussehen. */
+  .stufe { font-size: 10px; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 5px;
+           font-family: -apple-system, sans-serif; white-space: nowrap; }
+  .stufe-rauschen  { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); color: #6b7185; }
+  .stufe-schwach   { background: rgba(255,210,92,0.08); border: 1px solid rgba(255,210,92,0.28); color: #ffd25c; }
+  .stufe-deutlich  { background: rgba(125,211,252,0.12); border: 1px solid rgba(125,211,252,0.4); color: #7dd3fc; }
+  .stufe-hoch      { background: rgba(255,107,107,0.10); border: 1px solid rgba(255,107,107,0.33); color: #ff8f8f; }
+  .stufe-niedrig   { background: rgba(57,255,136,0.08); border: 1px solid rgba(57,255,136,0.28); color: #6be79a; }
+  .stufe-unbekannt { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.18); color: #6b7185; }
+  tr.ist-rauschen td { color: #6b7185; }
+  tr.ist-rauschen .wname { color: #9198ad; font-weight: 500; }
+  .begruendung { color: #6b7185; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 3px; white-space: normal; }
+
+  .termin-liste { font-family: -apple-system, sans-serif; }
+  .termin {
+    display: flex; gap: 13px; align-items: baseline; padding: 9px 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.045); font-size: 12.5px;
+  }
+  .termin .wann { color: #7dd3fc; font-weight: 600; white-space: nowrap; min-width: 128px; }
+  .termin .was { color: #d7dbe8; }
+  .termin .waehr { color: #6b7185; font-size: 11px; }
+  .termin.heute .wann { color: #ffd25c; }
+  .leermeldung { color: #6b7185; font-size: 12.3px; font-family: -apple-system, sans-serif; padding: 12px 0; }
 
   .fuss { margin-top: 26px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);
           color: #5a6072; font-size: 11.5px; line-height: 1.7; font-family: -apple-system, sans-serif; }
@@ -206,6 +266,49 @@
 </table>
 </div>
 
+<!-- ===================== ETAPPE 2: UMFELD-KENNZAHLEN ===================== -->
+
+<div class="block">
+  <h2>Nervosität &mdash; wie stark schwankt es gerade</h2>
+  <div class="block-sub">Gemessene Schwankungsbreite, eingeordnet am eigenen Jahresverlauf. Nicht am absoluten Wert &mdash; „17" sagt ohne Vergleichsmaßstab nichts.</div>
+  <div class="kacheln" id="vix-kacheln"></div>
+  <div class="tabellen-rahmen schmal" id="vola-rahmen"></div>
+  <div class="bedeutung">
+    <p><span class="ja">Heißt:</span> wie weit sich die Kurse in den letzten <span id="vola-fenster">20</span> Handelstagen pro Tag bewegt haben, verglichen mit dem letzten Jahr desselben Werts. Ein großer Wert heißt: größere Tagesausschläge, Stops werden häufiger gestreift.</p>
+    <p><span class="nein">Heißt nicht:</span> keine Richtung. Hohe Schwankung sagt nichts darüber, ob es rauf oder runter geht &mdash; nur, dass die Wege dorthin länger sind. Und: der VIX misst ausschließlich den S&amp;P 500. Über Bitcoin oder GBP/USD sagt er direkt gar nichts, deshalb steht die gemessene Schwankung jedes Werts einzeln daneben.</p>
+  </div>
+</div>
+
+<div class="block">
+  <h2>Sektoren &mdash; wer läuft vorn, wer hinten</h2>
+  <div class="block-sub" id="sektor-sub"></div>
+  <div class="tabellen-rahmen schmal" id="sektor-rahmen"></div>
+  <div class="bedeutung">
+    <p><span class="ja">Heißt:</span> um wie viele Prozentpunkte ein Sektor im letzten Monat besser oder schlechter lief als der Gesamtmarkt. Verglichen wird gegen den S&amp;P 500, nicht gegen null &mdash; sonst stünden bei steigendem Markt einfach alle vorn.</p>
+    <p><span class="nein">Heißt nicht:</span> keine Fortschreibung. Dass ein Sektor den letzten Monat vorn lag, sagt nichts über den nächsten. Grau markierte Zeilen sind <b>Rauschen</b>: ihr Vorsprung liegt innerhalb dessen, was reiner Zufall über einen Monat erzeugt. Die stehen bewusst trotzdem da, damit sichtbar bleibt, wie wenig von so einer Rangliste meistens übrig bleibt.</p>
+  </div>
+</div>
+
+<div class="block">
+  <h2>Gleichlauf der sechs gehandelten Werte</h2>
+  <div class="block-sub" id="gleichlauf-sub"></div>
+  <div class="tabellen-rahmen schmal" id="gleichlauf-rahmen"></div>
+  <div class="bedeutung">
+    <p><span class="ja">Heißt:</span> wie ähnlich sich zwei Werte an denselben Handelstagen bewegt haben. +1 wäre Gleichschritt, &minus;1 exakter Gegenlauf, 0 kein Zusammenhang. <b>Der praktische Punkt:</b> wo der Wert hoch ist, sind zwei gleichzeitige Signale eher <b>eine</b> Wette als zwei &mdash; das Risiko ist dann doppelt so groß wie es aussieht.</p>
+    <p><span class="nein">Heißt nicht:</span> keine Ursache. Dass zwei Werte zusammen laufen, sagt nicht, dass einer den anderen zieht. Gerechnet wird aus <b>Tages</b>schlusskursen &mdash; über den Zeitraum, in dem die Engine tatsächlich handelt (Minuten bis Stunden), sagt das nichts. Und es ist rückwärts gemessen: Zusammenhänge brechen, meist genau dann, wenn es darauf ankäme.</p>
+  </div>
+</div>
+
+<div class="block">
+  <h2>Anstehende Termine</h2>
+  <div class="block-sub">High-Impact-Termine für USD und GBP aus dem ForexFactory-Kalender &mdash; derselbe Feed, den der TJR-Report schon für den Tageshinweis nutzt.</div>
+  <div class="termin-liste" id="termin-liste"></div>
+  <div class="bedeutung">
+    <p><span class="ja">Heißt:</span> zu diesen Zeitpunkten kommen Zahlen heraus, auf die der Markt oft sprunghaft reagiert &mdash; unabhängig davon, wie sauber ein Setup aussieht.</p>
+    <p><span class="nein">Heißt nicht:</span> kein Signal und keine Handlungsanweisung. Die Engine liest diese Liste nicht und blockiert dadurch nichts. Der Feed enthält außerdem nur die <b>laufende Kalenderwoche</b>: eine leere Liste am Freitagabend heißt „diese Woche nichts mehr", nicht „die nächsten Tage sind frei".</p>
+  </div>
+</div>
+
 <div class="fuss">
   Quelle: <b>Yahoo Finance</b>, Tageskurse, ohne Gewähr &mdash; dieselbe Quelle, aus der auch der TJR-Report seine Kerzen zieht.
   Jedes Symbol wurde vor dem Einbau einzeln auf Datenqualität geprüft (Etappe 0, <span id="geprueft-am"></span>).<br>
@@ -213,7 +316,7 @@
 </div>
 
 <script>
-const DATA = {"stand":"2026-10-13 13:46 UTC","standIso":"2026-10-13T13:46:01.030Z","gruppen":["Index","Rohstoff","Umfeld","Sektor","Einzelwert","Gehandelt"],"veraltetTage":4,"symboltestVom":"2026-10-13T13:20:47.983Z","anzahl":25,"anzahlOk":25,"eintraege":[{"gruppe":"Index","name":"MSCI World","symbol":"URTH","hinweis":"ETF auf den Weltindex, in USD","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":209.38,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":252,"luecken":0,"tag":0.22,"tagVon":208.93,"tagVonDatum":"2026-10-12","woche":-0.17,"wocheVon":209.73,"wocheVonDatum":"2026-10-06","monat":0.81,"monatVon":207.69,"monatVonDatum":"2026-09-11","jahr":15.9,"jahrVon":180.65,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"MSCI World (EUR)","symbol":"IWDA.AS","hinweis":"derselbe Weltindex, in Euro notiert","einheit":null,"ok":true,"waehrung":"EUR","boerse":"AMS","stand":131.9,"standDatum":"2026-10-13","alterTage":0.3,"veraltet":false,"tage":254,"luecken":2,"tag":0.17,"tagVon":131.67,"tagVonDatum":"2026-10-09","woche":0.02,"wocheVon":131.87,"wocheVonDatum":"2026-10-06","monat":4.15,"monatVon":126.64,"monatVonDatum":"2026-09-11","jahr":21.28,"jahrVon":108.75,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"S&P 500","symbol":"^GSPC","hinweis":"500 groesste US-Firmen","einheit":null,"ok":true,"waehrung":"USD","boerse":"SNP","stand":7809.82,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":252,"luecken":0,"tag":0.03,"tagVon":7807.24,"tagVonDatum":"2026-10-12","woche":-0.12,"wocheVon":7818.93,"wocheVonDatum":"2026-10-06","monat":2,"monatVon":7656.98,"monatVonDatum":"2026-09-11","jahr":17.36,"jahrVon":6654.72,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"Nasdaq 100","symbol":"^NDX","hinweis":"100 groesste Technologiewerte","einheit":null,"ok":true,"waehrung":"USD","boerse":"NIM","stand":30546.47,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":252,"luecken":0,"tag":-0.39,"tagVon":30664.7,"tagVonDatum":"2026-10-12","woche":-2.17,"wocheVon":31224.47,"wocheVonDatum":"2026-10-06","monat":4.01,"monatVon":29368.44,"monatVonDatum":"2026-09-11","jahr":23.42,"jahrVon":24750.25,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"DAX","symbol":"^GDAXI","hinweis":"40 groesste deutsche Firmen","einheit":null,"ok":true,"waehrung":"EUR","boerse":"GER","stand":25302.55,"standDatum":"2026-10-13","alterTage":0.3,"veraltet":false,"tage":254,"luecken":0,"tag":0.1,"tagVon":25277.68,"tagVonDatum":"2026-10-12","woche":-0.58,"wocheVon":25449.19,"wocheVonDatum":"2026-10-06","monat":-1.04,"monatVon":25568.56,"monatVonDatum":"2026-09-11","jahr":3.75,"jahrVon":24387.93,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"Euro Stoxx 50","symbol":"^STOXX50E","hinweis":"50 groesste Firmen der Eurozone","einheit":null,"ok":true,"waehrung":"EUR","boerse":"ZRH","stand":6183.84,"standDatum":"2026-10-13","alterTage":0.3,"veraltet":false,"tage":251,"luecken":0,"tag":-0.28,"tagVon":6201.21,"tagVonDatum":"2026-10-12","woche":-1.41,"wocheVon":6272.23,"wocheVonDatum":"2026-10-06","monat":-2.23,"monatVon":6325.13,"monatVonDatum":"2026-09-11","jahr":11.06,"jahrVon":5568.19,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Oel WTI","symbol":"CL=F","hinweis":"US-Sorte, Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":93.06,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":252,"luecken":0,"tag":-0.73,"tagVon":93.74,"tagVonDatum":"2026-10-12","woche":4.05,"wocheVon":89.44,"wocheVonDatum":"2026-10-06","monat":-6.99,"monatVon":100.05,"monatVonDatum":"2026-09-11","jahr":56.43,"jahrVon":59.49,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Oel Brent","symbol":"BZ=F","hinweis":"Nordsee-Sorte, Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":105.35,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":252,"luecken":0,"tag":-1.22,"tagVon":106.65,"tagVonDatum":"2026-10-12","woche":4.74,"wocheVon":100.58,"wocheVonDatum":"2026-10-06","monat":0.71,"monatVon":104.61,"monatVonDatum":"2026-09-11","jahr":66.38,"jahrVon":63.32,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Gold","symbol":"GC=F","hinweis":"Terminkontrakt - die Engine handelt denselben Wert","einheit":null,"ok":true,"waehrung":"USD","boerse":"CMX","stand":4209.7,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":252,"luecken":0,"tag":0.46,"tagVon":4190.6,"tagVonDatum":"2026-10-12","woche":0.54,"wocheVon":4187.1,"wocheVonDatum":"2026-10-06","monat":-4.52,"monatVon":4408.9,"monatVonDatum":"2026-09-11","jahr":1.86,"jahrVon":4133,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Silber","symbol":"SI=F","hinweis":"Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"CMX","stand":60.38,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":252,"luecken":0,"tag":0.39,"tagVon":60.14,"tagVonDatum":"2026-10-12","woche":-1.3,"wocheVon":61.17,"wocheVonDatum":"2026-10-06","monat":-6.47,"monatVon":64.55,"monatVonDatum":"2026-09-11","jahr":20.44,"jahrVon":50.13,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Erdgas","symbol":"NG=F","hinweis":"Terminkontrakt, sehr sprunghaft","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":3.21,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":252,"luecken":0,"tag":1.36,"tagVon":3.167,"tagVonDatum":"2026-10-12","woche":3.08,"wocheVon":3.114,"wocheVonDatum":"2026-10-06","monat":13.39,"monatVon":2.831,"monatVonDatum":"2026-09-11","jahr":2.95,"jahrVon":3.118,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Umfeld","name":"VIX","symbol":"^VIX","hinweis":"erwartete Schwankung im S&P 500, in Prozentpunkten - kein Kurs","einheit":"pkt","ok":true,"waehrung":"USD","boerse":"CXI","stand":15.34,"standDatum":"2026-10-13","alterTage":0.3,"veraltet":false,"tage":254,"luecken":8,"tag":0.85,"tagVon":15.21,"tagVonDatum":"2026-10-12","woche":2.2,"wocheVon":15.01,"wocheVonDatum":"2026-10-06","monat":-3.16,"monatVon":15.84,"monatVonDatum":"2026-09-11","jahr":-19.39,"jahrVon":19.03,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Umfeld","name":"US-Zins 10 Jahre","symbol":"^TNX","hinweis":"Rendite zehnjaehriger US-Staatsanleihen in Prozent","einheit":"%","ok":true,"waehrung":"USD","boerse":"CGI","stand":5.198,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":-0.8,"tagVon":5.24,"tagVonDatum":"2026-10-12","woche":-1.35,"wocheVon":5.269,"wocheVonDatum":"2026-10-06","monat":4.48,"monatVon":4.975,"monatVonDatum":"2026-09-11","jahr":28.31,"jahrVon":4.051,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Umfeld","name":"Dollar-Index","symbol":"DX-Y.NYB","hinweis":"Dollar gegen einen Korb anderer Waehrungen","einheit":"pkt","ok":true,"waehrung":"USD","boerse":"NYB","stand":102.17,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":252,"luecken":52,"tag":-0.4,"tagVon":102.58,"tagVonDatum":"2026-10-12","woche":0.34,"wocheVon":101.83,"wocheVonDatum":"2026-10-06","monat":3.08,"monatVon":99.12,"monatVonDatum":"2026-09-11","jahr":2.93,"jahrVon":99.27,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Technologie","symbol":"XLK","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":195.71,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":252,"luecken":0,"tag":-0.33,"tagVon":196.36,"tagVonDatum":"2026-10-12","woche":-3.11,"wocheVon":202,"wocheVonDatum":"2026-10-06","monat":4.28,"monatVon":187.67,"monatVonDatum":"2026-09-11","jahr":37.26,"jahrVon":142.59,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Energie","symbol":"XLE","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":66.71,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":252,"luecken":0,"tag":1.07,"tagVon":66.01,"tagVonDatum":"2026-10-12","woche":4.65,"wocheVon":63.75,"wocheVonDatum":"2026-10-06","monat":2.42,"monatVon":65.14,"monatVonDatum":"2026-09-11","jahr":54.47,"jahrVon":43.19,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Finanzen","symbol":"XLF","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":55.19,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":252,"luecken":0,"tag":0.25,"tagVon":55.05,"tagVonDatum":"2026-10-12","woche":2.18,"wocheVon":54.01,"wocheVonDatum":"2026-10-06","monat":-3.6,"monatVon":57.25,"monatVonDatum":"2026-09-11","jahr":4.8,"jahrVon":52.66,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Rohstoffe/Material","symbol":"XLB","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":49.74,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":252,"luecken":0,"tag":0.6,"tagVon":49.44,"tagVonDatum":"2026-10-12","woche":0.01,"wocheVon":49.73,"wocheVonDatum":"2026-10-06","monat":-2.38,"monatVon":50.95,"monatVonDatum":"2026-09-11","jahr":12.74,"jahrVon":44.12,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Ruestung/Luftfahrt","symbol":"ITA","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"BTS","stand":204.89,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":252,"luecken":0,"tag":-0.55,"tagVon":206.03,"tagVonDatum":"2026-10-12","woche":-1.62,"wocheVon":208.26,"wocheVonDatum":"2026-10-06","monat":-6.45,"monatVon":219.01,"monatVonDatum":"2026-09-11","jahr":-2.02,"jahrVon":209.12,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Einzelwert","name":"Rheinmetall","symbol":"RHM.DE","hinweis":"Ruestung, Frankfurt","einheit":null,"ok":true,"waehrung":"EUR","boerse":"GER","stand":962.4,"standDatum":"2026-10-13","alterTage":0.3,"veraltet":false,"tage":253,"luecken":1,"tag":2.48,"tagVon":939.1,"tagVonDatum":"2026-10-09","woche":0.99,"wocheVon":953,"wocheVonDatum":"2026-10-06","monat":-2.85,"monatVon":990.6,"monatVonDatum":"2026-09-11","jahr":-48.79,"jahrVon":1879.5,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Einzelwert","name":"Tesla","symbol":"TSLA","hinweis":"Nasdaq","einheit":null,"ok":true,"waehrung":"USD","boerse":"NMS","stand":374.89,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":252,"luecken":0,"tag":-0.83,"tagVon":378.03,"tagVonDatum":"2026-10-12","woche":-1.52,"wocheVon":380.68,"wocheVonDatum":"2026-10-06","monat":2.59,"monatVon":365.44,"monatVonDatum":"2026-09-11","jahr":-14,"jahrVon":435.9,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Gehandelt","name":"Bitcoin","symbol":"BTC-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":83278.42,"standDatum":"2026-10-13","alterTage":0.6,"veraltet":false,"tage":366,"luecken":0,"tag":1.85,"tagVon":81762.56,"tagVonDatum":"2026-10-12","woche":-2.66,"wocheVon":85557.56,"wocheVonDatum":"2026-10-06","monat":8.38,"monatVon":76838.16,"monatVonDatum":"2026-09-13","jahr":-27.75,"jahrVon":115271.08,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Gehandelt","name":"Ethereum","symbol":"ETH-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":2509.07,"standDatum":"2026-10-13","alterTage":0.6,"veraltet":false,"tage":366,"luecken":0,"tag":2.65,"tagVon":2444.36,"tagVonDatum":"2026-10-12","woche":-6.99,"wocheVon":2697.52,"wocheVonDatum":"2026-10-06","monat":1.29,"monatVon":2477.02,"monatVonDatum":"2026-09-13","jahr":-40.9,"jahrVon":4245.47,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Gehandelt","name":"XRP","symbol":"XRP-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":1.3651,"standDatum":"2026-10-13","alterTage":0.6,"veraltet":false,"tage":366,"luecken":0,"tag":1.91,"tagVon":1.3395,"tagVonDatum":"2026-10-12","woche":-8.83,"wocheVon":1.4973,"wocheVonDatum":"2026-10-06","monat":1.83,"monatVon":1.3406,"monatVonDatum":"2026-09-13","jahr":-47.63,"jahrVon":2.6065,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Gehandelt","name":"GBP/USD","symbol":"GBPUSD=X","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCY","stand":1.3249,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":259,"luecken":3,"tag":0.15,"tagVon":1.3229,"tagVonDatum":"2026-10-08","woche":0.23,"wocheVon":1.3219,"wocheVonDatum":"2026-10-05","monat":-1.93,"monatVon":1.3509,"monatVonDatum":"2026-09-10","jahr":-0.66,"jahrVon":1.3336,"jahrVonDatum":"2025-10-12","versuche":1}]};
+const DATA = {"stand":"2026-10-13 15:40 UTC","standIso":"2026-10-13T15:40:28.235Z","gruppen":["Index","Rohstoff","Umfeld","Sektor","Einzelwert","Gehandelt"],"veraltetTage":4,"symboltestVom":"2026-10-13T13:20:47.983Z","anzahl":25,"anzahlOk":25,"eintraege":[{"gruppe":"Index","name":"MSCI World","symbol":"URTH","hinweis":"ETF auf den Weltindex, in USD","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":208.7,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":-0.11,"tagVon":208.93,"tagVonDatum":"2026-10-12","woche":-0.49,"wocheVon":209.73,"wocheVonDatum":"2026-10-06","monat":0.48,"monatVon":207.69,"monatVonDatum":"2026-09-11","jahr":15.52,"jahrVon":180.65,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"MSCI World (EUR)","symbol":"IWDA.AS","hinweis":"derselbe Weltindex, in Euro notiert","einheit":null,"ok":true,"waehrung":"EUR","boerse":"AMS","stand":131.79,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":254,"luecken":2,"tag":0.09,"tagVon":131.67,"tagVonDatum":"2026-10-09","woche":-0.06,"wocheVon":131.87,"wocheVonDatum":"2026-10-06","monat":4.07,"monatVon":126.64,"monatVonDatum":"2026-09-11","jahr":21.18,"jahrVon":108.75,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"S&P 500","symbol":"^GSPC","hinweis":"500 groesste US-Firmen","einheit":null,"ok":true,"waehrung":"USD","boerse":"SNP","stand":7787.56,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":-0.25,"tagVon":7807.24,"tagVonDatum":"2026-10-12","woche":-0.4,"wocheVon":7818.93,"wocheVonDatum":"2026-10-06","monat":1.71,"monatVon":7656.98,"monatVonDatum":"2026-09-11","jahr":17.02,"jahrVon":6654.72,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"Nasdaq 100","symbol":"^NDX","hinweis":"100 groesste Technologiewerte","einheit":null,"ok":true,"waehrung":"USD","boerse":"NIM","stand":30421.84,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":-0.79,"tagVon":30664.7,"tagVonDatum":"2026-10-12","woche":-2.57,"wocheVon":31224.47,"wocheVonDatum":"2026-10-06","monat":3.59,"monatVon":29368.44,"monatVonDatum":"2026-09-11","jahr":22.92,"jahrVon":24750.25,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"DAX","symbol":"^GDAXI","hinweis":"40 groesste deutsche Firmen","einheit":null,"ok":true,"waehrung":"EUR","boerse":"GER","stand":25254.37,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":254,"luecken":0,"tag":-0.09,"tagVon":25277.68,"tagVonDatum":"2026-10-12","woche":-0.77,"wocheVon":25449.19,"wocheVonDatum":"2026-10-06","monat":-1.23,"monatVon":25568.56,"monatVonDatum":"2026-09-11","jahr":3.55,"jahrVon":24387.93,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Index","name":"Euro Stoxx 50","symbol":"^STOXX50E","hinweis":"50 groesste Firmen der Eurozone","einheit":null,"ok":true,"waehrung":"EUR","boerse":"ZRH","stand":6166.27,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":251,"luecken":0,"tag":-0.56,"tagVon":6201.21,"tagVonDatum":"2026-10-12","woche":-1.69,"wocheVon":6272.23,"wocheVonDatum":"2026-10-06","monat":-2.51,"monatVon":6325.13,"monatVonDatum":"2026-09-11","jahr":10.74,"jahrVon":5568.19,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Oel WTI","symbol":"CL=F","hinweis":"US-Sorte, Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":94.15,"standDatum":"2026-10-13","alterTage":0.5,"veraltet":false,"tage":252,"luecken":0,"tag":0.44,"tagVon":93.74,"tagVonDatum":"2026-10-12","woche":5.27,"wocheVon":89.44,"wocheVonDatum":"2026-10-06","monat":-5.9,"monatVon":100.05,"monatVonDatum":"2026-09-11","jahr":58.26,"jahrVon":59.49,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Oel Brent","symbol":"BZ=F","hinweis":"Nordsee-Sorte, Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":106.06,"standDatum":"2026-10-13","alterTage":0.5,"veraltet":false,"tage":252,"luecken":0,"tag":-0.55,"tagVon":106.65,"tagVonDatum":"2026-10-12","woche":5.45,"wocheVon":100.58,"wocheVonDatum":"2026-10-06","monat":1.39,"monatVon":104.61,"monatVonDatum":"2026-09-11","jahr":67.5,"jahrVon":63.32,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Gold","symbol":"GC=F","hinweis":"Terminkontrakt - die Engine handelt denselben Wert","einheit":null,"ok":true,"waehrung":"USD","boerse":"CMX","stand":4185,"standDatum":"2026-10-13","alterTage":0.5,"veraltet":false,"tage":252,"luecken":0,"tag":-0.13,"tagVon":4190.6,"tagVonDatum":"2026-10-12","woche":-0.05,"wocheVon":4187.1,"wocheVonDatum":"2026-10-06","monat":-5.08,"monatVon":4408.9,"monatVonDatum":"2026-09-11","jahr":1.26,"jahrVon":4133,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Silber","symbol":"SI=F","hinweis":"Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"CMX","stand":59.58,"standDatum":"2026-10-13","alterTage":0.5,"veraltet":false,"tage":252,"luecken":0,"tag":-0.93,"tagVon":60.14,"tagVonDatum":"2026-10-12","woche":-2.6,"wocheVon":61.17,"wocheVonDatum":"2026-10-06","monat":-7.71,"monatVon":64.55,"monatVonDatum":"2026-09-11","jahr":18.85,"jahrVon":50.13,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Rohstoff","name":"Erdgas","symbol":"NG=F","hinweis":"Terminkontrakt, sehr sprunghaft","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":3.242,"standDatum":"2026-10-13","alterTage":0.5,"veraltet":false,"tage":252,"luecken":0,"tag":2.37,"tagVon":3.167,"tagVonDatum":"2026-10-12","woche":4.11,"wocheVon":3.114,"wocheVonDatum":"2026-10-06","monat":14.52,"monatVon":2.831,"monatVonDatum":"2026-09-11","jahr":3.98,"jahrVon":3.118,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Umfeld","name":"VIX","symbol":"^VIX","hinweis":"erwartete Schwankung im S&P 500, in Prozentpunkten - kein Kurs","einheit":"pkt","ok":true,"waehrung":"USD","boerse":"CXI","stand":15.28,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":254,"luecken":8,"tag":0.46,"tagVon":15.21,"tagVonDatum":"2026-10-12","woche":1.8,"wocheVon":15.01,"wocheVonDatum":"2026-10-06","monat":-3.54,"monatVon":15.84,"monatVonDatum":"2026-09-11","jahr":-19.71,"jahrVon":19.03,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Umfeld","name":"US-Zins 10 Jahre","symbol":"^TNX","hinweis":"Rendite zehnjaehriger US-Staatsanleihen in Prozent","einheit":"%","ok":true,"waehrung":"USD","boerse":"CGI","stand":5.217,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":-0.44,"tagVon":5.24,"tagVonDatum":"2026-10-12","woche":-0.99,"wocheVon":5.269,"wocheVonDatum":"2026-10-06","monat":4.86,"monatVon":4.975,"monatVonDatum":"2026-09-11","jahr":28.78,"jahrVon":4.051,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Umfeld","name":"Dollar-Index","symbol":"DX-Y.NYB","hinweis":"Dollar gegen einen Korb anderer Waehrungen","einheit":"pkt","ok":true,"waehrung":"USD","boerse":"NYB","stand":102.24,"standDatum":"2026-10-13","alterTage":0.5,"veraltet":false,"tage":252,"luecken":52,"tag":-0.33,"tagVon":102.58,"tagVonDatum":"2026-10-12","woche":0.4,"wocheVon":101.83,"wocheVonDatum":"2026-10-06","monat":3.15,"monatVon":99.12,"monatVonDatum":"2026-09-11","jahr":2.99,"jahrVon":99.27,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Technologie","symbol":"XLK","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":194.45,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":-0.97,"tagVon":196.36,"tagVonDatum":"2026-10-12","woche":-3.74,"wocheVon":202,"wocheVonDatum":"2026-10-06","monat":3.61,"monatVon":187.67,"monatVonDatum":"2026-09-11","jahr":36.37,"jahrVon":142.59,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Energie","symbol":"XLE","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":66.95,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":1.42,"tagVon":66.01,"tagVonDatum":"2026-10-12","woche":5.02,"wocheVon":63.75,"wocheVonDatum":"2026-10-06","monat":2.78,"monatVon":65.14,"monatVonDatum":"2026-09-11","jahr":55.01,"jahrVon":43.19,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Finanzen","symbol":"XLF","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":55.17,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":0.23,"tagVon":55.05,"tagVonDatum":"2026-10-12","woche":2.16,"wocheVon":54.01,"wocheVonDatum":"2026-10-06","monat":-3.62,"monatVon":57.25,"monatVonDatum":"2026-09-11","jahr":4.78,"jahrVon":52.66,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Rohstoffe/Material","symbol":"XLB","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":49.4,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":-0.09,"tagVon":49.44,"tagVonDatum":"2026-10-12","woche":-0.67,"wocheVon":49.73,"wocheVonDatum":"2026-10-06","monat":-3.05,"monatVon":50.95,"monatVonDatum":"2026-09-11","jahr":11.97,"jahrVon":44.12,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Sektor","name":"Ruestung/Luftfahrt","symbol":"ITA","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"BTS","stand":202.68,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":-1.63,"tagVon":206.03,"tagVonDatum":"2026-10-12","woche":-2.68,"wocheVon":208.26,"wocheVonDatum":"2026-10-06","monat":-7.46,"monatVon":219.01,"monatVonDatum":"2026-09-11","jahr":-3.08,"jahrVon":209.12,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Einzelwert","name":"Rheinmetall","symbol":"RHM.DE","hinweis":"Ruestung, Frankfurt","einheit":null,"ok":true,"waehrung":"EUR","boerse":"GER","stand":953.6,"standDatum":"2026-10-13","alterTage":0.4,"veraltet":false,"tage":253,"luecken":1,"tag":1.54,"tagVon":939.1,"tagVonDatum":"2026-10-09","woche":0.06,"wocheVon":953,"wocheVonDatum":"2026-10-06","monat":-3.74,"monatVon":990.6,"monatVonDatum":"2026-09-11","jahr":-49.26,"jahrVon":1879.5,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Einzelwert","name":"Tesla","symbol":"TSLA","hinweis":"Nasdaq","einheit":null,"ok":true,"waehrung":"USD","boerse":"NMS","stand":376.52,"standDatum":"2026-10-13","alterTage":0.1,"veraltet":false,"tage":252,"luecken":0,"tag":-0.4,"tagVon":378.03,"tagVonDatum":"2026-10-12","woche":-1.09,"wocheVon":380.68,"wocheVonDatum":"2026-10-06","monat":3.03,"monatVon":365.44,"monatVonDatum":"2026-09-11","jahr":-13.62,"jahrVon":435.9,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Gehandelt","name":"Bitcoin","symbol":"BTC-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":83314.2,"standDatum":"2026-10-13","alterTage":0.7,"veraltet":false,"tage":366,"luecken":0,"tag":1.9,"tagVon":81762.56,"tagVonDatum":"2026-10-12","woche":-2.62,"wocheVon":85557.56,"wocheVonDatum":"2026-10-06","monat":8.43,"monatVon":76838.16,"monatVonDatum":"2026-09-13","jahr":-27.72,"jahrVon":115271.08,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Gehandelt","name":"Ethereum","symbol":"ETH-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":2506.61,"standDatum":"2026-10-13","alterTage":0.7,"veraltet":false,"tage":366,"luecken":0,"tag":2.55,"tagVon":2444.36,"tagVonDatum":"2026-10-12","woche":-7.08,"wocheVon":2697.52,"wocheVonDatum":"2026-10-06","monat":1.19,"monatVon":2477.02,"monatVonDatum":"2026-09-13","jahr":-40.96,"jahrVon":4245.47,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Gehandelt","name":"XRP","symbol":"XRP-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":1.3656,"standDatum":"2026-10-13","alterTage":0.7,"veraltet":false,"tage":366,"luecken":0,"tag":1.95,"tagVon":1.3395,"tagVonDatum":"2026-10-12","woche":-8.8,"wocheVon":1.4973,"wocheVonDatum":"2026-10-06","monat":1.86,"monatVon":1.3406,"monatVonDatum":"2026-09-13","jahr":-47.61,"jahrVon":2.6065,"jahrVonDatum":"2025-10-13","versuche":1},{"gruppe":"Gehandelt","name":"GBP/USD","symbol":"GBPUSD=X","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCY","stand":1.3245,"standDatum":"2026-10-13","alterTage":0,"veraltet":false,"tage":259,"luecken":3,"tag":0.12,"tagVon":1.3229,"tagVonDatum":"2026-10-08","woche":0.2,"wocheVon":1.3219,"wocheVonDatum":"2026-10-05","monat":-1.96,"monatVon":1.3509,"monatVonDatum":"2026-09-10","jahr":-0.69,"jahrVon":1.3336,"jahrVonDatum":"2025-10-12","versuche":1}],"kennzahlen":{"nervositaet":{"vix":{"stand":15.28,"perzentil":15,"jahrTief":13.47,"jahrHoch":31.05,"median":17.16,"tage":254},"fenster":20,"werte":[{"name":"Bitcoin","symbol":"BTC-USD","schwankung":20.3,"jahrMedian":34,"perzentil":7,"stufe":"niedrig","urteil":"Schwankt ruhiger als üblich - niedriger als an 93 % der Tage im letzten Jahr."},{"name":"Ethereum","symbol":"ETH-USD","schwankung":29.1,"jahrMedian":47.5,"perzentil":12,"stufe":"niedrig","urteil":"Schwankt ruhiger als üblich - niedriger als an 88 % der Tage im letzten Jahr."},{"name":"XRP","symbol":"XRP-USD","schwankung":34.4,"jahrMedian":43.7,"perzentil":29,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"GBP/USD","symbol":"GBPUSD=X","schwankung":5.1,"jahrMedian":6,"perzentil":18,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"S&P 500","symbol":"^GSPC","schwankung":9.6,"jahrMedian":12.2,"perzentil":14,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"Gold","symbol":"GC=F","schwankung":17.5,"jahrMedian":23.9,"perzentil":8,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."}]},"sektoren":{"ok":true,"fenster":21,"marktSymbol":"^GSPC","marktRendite":2.2,"vonTag":"2026-09-14","bisTag":"2026-10-13","zeilen":[{"name":"Technologie","symbol":"XLK","rendite":5.52,"vorsprung":3.32,"zufallsbreite":3.1,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±6,2 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Energie","symbol":"XLE","rendite":3.75,"vorsprung":1.55,"zufallsbreite":7.99,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±16,0 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Rohstoffe/Material","symbol":"XLB","rendite":-2.17,"vorsprung":-4.37,"zufallsbreite":4.03,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±8,1 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Finanzen","symbol":"XLF","rendite":-3.25,"vorsprung":-5.45,"zufallsbreite":3.51,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±7,0 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Ruestung/Luftfahrt","symbol":"ITA","rendite":-6.5,"vorsprung":-8.7,"zufallsbreite":3.97,"stufe":"schwach","urteil":"Außerhalb des Zufallsbereichs (±7,9 Punkte), aber nicht weit. Mit Vorsicht lesen."}],"alleRauschen":false},"gleichlauf":{"ok":true,"tage":60,"vonTag":"2026-06-25","bisTag":"2026-10-13","standardfehler":0.132,"schwelle":0.26,"paare":[{"a":"Bitcoin","b":"XRP","aSymbol":"BTC-USD","bSymbol":"XRP-USD","wert":0.92,"stufe":"stark-mit","urteil":"Laufen deutlich miteinander. Zwei Signale gleichzeitig sind hier eher EINE Wette als zwei."},{"a":"Bitcoin","b":"Ethereum","aSymbol":"BTC-USD","bSymbol":"ETH-USD","wert":0.88,"stufe":"stark-mit","urteil":"Laufen deutlich miteinander. Zwei Signale gleichzeitig sind hier eher EINE Wette als zwei."},{"a":"Ethereum","b":"XRP","aSymbol":"ETH-USD","bSymbol":"XRP-USD","wert":0.8,"stufe":"stark-mit","urteil":"Laufen deutlich miteinander. Zwei Signale gleichzeitig sind hier eher EINE Wette als zwei."},{"a":"Bitcoin","b":"Gold","aSymbol":"BTC-USD","bSymbol":"GC=F","wert":0.49,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Ethereum","b":"Gold","aSymbol":"ETH-USD","bSymbol":"GC=F","wert":0.41,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"XRP","b":"Gold","aSymbol":"XRP-USD","bSymbol":"GC=F","wert":0.41,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Ethereum","b":"GBP/USD","aSymbol":"ETH-USD","bSymbol":"GBPUSD=X","wert":0.37,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"GBP/USD","b":"Gold","aSymbol":"GBPUSD=X","bSymbol":"GC=F","wert":0.36,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Bitcoin","b":"S&P 500","aSymbol":"BTC-USD","bSymbol":"^GSPC","wert":0.33,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Bitcoin","b":"GBP/USD","aSymbol":"BTC-USD","bSymbol":"GBPUSD=X","wert":0.32,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"S&P 500","b":"Gold","aSymbol":"^GSPC","bSymbol":"GC=F","wert":0.32,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"XRP","b":"GBP/USD","aSymbol":"XRP-USD","bSymbol":"GBPUSD=X","wert":0.3,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"XRP","b":"S&P 500","aSymbol":"XRP-USD","bSymbol":"^GSPC","wert":0.28,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Ethereum","b":"S&P 500","aSymbol":"ETH-USD","bSymbol":"^GSPC","wert":0.26,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"GBP/USD","b":"S&P 500","aSymbol":"GBPUSD=X","bSymbol":"^GSPC","wert":0.26,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."}],"starkeAnzahl":3},"termine":{"ok":true,"geprueft":"2026-10-13T15:40:28.235Z","gesamtImFeed":110,"kommende":[{"zeitIso":"2026-10-14T08:30:00-04:00","titel":"Core CPI m/m","waehrung":"USD","ts":1791981000000},{"zeitIso":"2026-10-14T08:30:00-04:00","titel":"Core CPI y/y","waehrung":"USD","ts":1791981000000},{"zeitIso":"2026-10-14T08:30:00-04:00","titel":"CPI m/m","waehrung":"USD","ts":1791981000000},{"zeitIso":"2026-10-14T08:30:00-04:00","titel":"CPI y/y","waehrung":"USD","ts":1791981000000},{"zeitIso":"2026-10-15T02:00:00-04:00","titel":"GDP m/m","waehrung":"GBP","ts":1792044000000},{"zeitIso":"2026-10-15T08:30:00-04:00","titel":"Core PPI m/m","waehrung":"USD","ts":1792067400000},{"zeitIso":"2026-10-15T08:30:00-04:00","titel":"Core Retail Sales m/m","waehrung":"USD","ts":1792067400000},{"zeitIso":"2026-10-15T08:30:00-04:00","titel":"PPI m/m","waehrung":"USD","ts":1792067400000},{"zeitIso":"2026-10-15T08:30:00-04:00","titel":"Retail Sales m/m","waehrung":"USD","ts":1792067400000},{"zeitIso":"2026-10-15T22:00:00-04:00","titel":"BOE Gov Bailey Speaks","waehrung":"GBP","ts":1792116000000},{"zeitIso":"2026-10-15T23:30:00-04:00","titel":"Fed Chairman Warsh Speaks","waehrung":"USD","ts":1792121400000}]}}};
 
 const ZEIGE = { Index: 1, Rohstoff: 1, Umfeld: 1, Sektor: 1, Einzelwert: 1, Gehandelt: 1 };
 const GRUPPEN_HINWEIS = {
@@ -379,6 +482,168 @@ document.querySelectorAll("th[data-sort]").forEach(function (th) {
 
 chipsZeichnen();
 zeichne();
+
+/* ===================== ETAPPE 2: UMFELD-KENNZAHLEN =====================
+ * Jeder Block rendert sich eigenstaendig und faengt seine eigenen Fehler ab:
+ * eine fehlende Kennzahl darf die Tabelle aus Etappe 1 und die anderen
+ * Bloecke nicht mitreissen.
+ * ====================================================================== */
+
+const KZ = DATA.kennzahlen || {};
+
+function stufeBadge(stufe, text) {
+  const beschriftung = {
+    rauschen: "Rauschen", schwach: "schwach", deutlich: "deutlich",
+    hoch: "unruhig", niedrig: "ruhig", unbekannt: "unbekannt",
+    "stark-mit": "läuft mit", "stark-gegen": "läuft gegen",
+    "schwach-mit": "schwach mit", "schwach-gegen": "schwach gegen",
+  };
+  const klasse = { "stark-mit": "deutlich", "stark-gegen": "deutlich",
+                   "schwach-mit": "schwach", "schwach-gegen": "schwach" }[stufe] || stufe;
+  return '<span class="stufe stufe-' + klasse + '">' + (text || beschriftung[stufe] || stufe) + "</span>";
+}
+
+function fehlerKasten(wohin, was, grund) {
+  const el = document.getElementById(wohin);
+  if (el) el.innerHTML = '<div class="leermeldung">' + was
+    + (grund ? ' &mdash; ' + grund : "") + '</div>';
+}
+
+/* ---------- 1. Nervosität ---------- */
+function zeichneNervositaet() {
+  const n = KZ.nervositaet;
+  if (!n) { fehlerKasten("vola-rahmen", "Nervositäts-Kennzahlen konnten nicht berechnet werden", KZ.nervositaetFehler); return; }
+
+  document.getElementById("vola-fenster").textContent = n.fenster;
+
+  const kacheln = document.getElementById("vix-kacheln");
+  if (n.vix) {
+    const v = n.vix;
+    // Perzentil in Klartext: "höher als an X % der Tage" ist verständlicher
+    // als die nackte Zahl.
+    kacheln.innerHTML =
+      '<div class="kachel"><div class="k">VIX &mdash; erwartete Schwankung S&amp;P 500</div>'
+      + '<div class="v">' + v.stand.toLocaleString("de-DE") + '</div>'
+      + '<div class="n">höher als an ' + v.perzentil + ' % der Tage im letzten Jahr</div></div>'
+      + '<div class="kachel"><div class="k">Jahresspanne VIX</div>'
+      + '<div class="v" style="font-size:16px">' + v.jahrTief.toLocaleString("de-DE") + ' &ndash; ' + v.jahrHoch.toLocaleString("de-DE") + '</div>'
+      + '<div class="n">üblicher Wert im Jahr: ' + v.median.toLocaleString("de-DE") + ' &middot; ' + v.tage + ' Handelstage</div></div>';
+  } else {
+    kacheln.innerHTML = '<div class="kachel"><div class="k">VIX</div><div class="v" style="font-size:15px;color:#6b7185">nicht verfügbar</div>'
+      + '<div class="n">Die gemessene Schwankung der einzelnen Werte unten steht unabhängig davon.</div></div>';
+  }
+
+  const zeilen = (n.werte || []).map(function (w) {
+    const grau = w.stufe === "rauschen" || w.stufe === "unbekannt";
+    return '<tr class="' + (grau ? "ist-rauschen" : "") + '">'
+      + '<td class="links"><span class="wname">' + w.name + '</span><span class="wsym">' + w.symbol + '</span>'
+      + '<div class="begruendung">' + w.urteil + '</div></td>'
+      + '<td><span class="kurs">' + (w.schwankung === null ? "&ndash;" : w.schwankung.toLocaleString("de-DE")) + '</span><span class="einheit">%</span></td>'
+      + '<td class="null-wert">' + (w.jahrMedian === null ? "&ndash;" : w.jahrMedian.toLocaleString("de-DE") + " %") + '</td>'
+      + '<td>' + stufeBadge(w.stufe) + '</td></tr>';
+  }).join("");
+
+  document.getElementById("vola-rahmen").innerHTML =
+    '<table><thead><tr><th class="links">Wert</th>'
+    + '<th>Schwankung ' + n.fenster + ' Tage</th><th>üblich letztes Jahr</th><th>Einordnung</th>'
+    + '</tr></thead><tbody>' + zeilen + '</tbody></table>';
+}
+
+/* ---------- 2. Sektoren ---------- */
+function zeichneSektoren() {
+  const sk = KZ.sektoren;
+  if (!sk || !sk.ok) {
+    fehlerKasten("sektor-rahmen", "Sektorvergleich nicht rechenbar", (sk && sk.grund) || KZ.sektorenFehler);
+    return;
+  }
+  document.getElementById("sektor-sub").innerHTML =
+    'Letzte ' + sk.fenster + ' Handelstage (' + sk.vonTag + ' bis ' + sk.bisTag + '), verglichen mit dem S&amp;P 500, der im selben Zeitraum '
+    + (sk.marktRendite > 0 ? "+" : "") + sk.marktRendite.toLocaleString("de-DE") + ' % gemacht hat.';
+
+  const zeilen = sk.zeilen.map(function (z, i) {
+    const grau = z.stufe === "rauschen" || z.stufe === "unbekannt";
+    const vk = grau ? "null-wert" : (z.vorsprung > 0 ? "hoch" : "tief");
+    return '<tr class="' + (grau ? "ist-rauschen" : "") + '">'
+      + '<td class="links"><span class="wname">' + (i + 1) + '. ' + z.name + '</span><span class="wsym">' + z.symbol + '</span>'
+      + '<div class="begruendung">' + z.urteil + '</div></td>'
+      + '<td>' + (z.rendite > 0 ? "+" : "") + z.rendite.toLocaleString("de-DE") + ' %</td>'
+      + '<td><span class="' + vk + '">' + (z.vorsprung > 0 ? "+" : "") + z.vorsprung.toLocaleString("de-DE") + ' %</span></td>'
+      + '<td>' + stufeBadge(z.stufe) + '</td></tr>';
+  }).join("");
+
+  const hinweis = sk.alleRauschen
+    ? '<tr><td colspan="4" class="begruendung" style="padding:12px 10px">Diesen Monat ist <b>keiner</b> der Sektoren belastbar vom Gesamtmarkt zu unterscheiden. Die Reihenfolge oben ist dann nur eine Sortierung von Zufallszahlen &mdash; das ist der häufigste Fall und kein Fehler.</td></tr>'
+    : "";
+
+  document.getElementById("sektor-rahmen").innerHTML =
+    '<table><thead><tr><th class="links">Sektor</th><th>Monat</th><th>ggü. Markt</th><th>Einordnung</th>'
+    + '</tr></thead><tbody>' + zeilen + hinweis + '</tbody></table>';
+}
+
+/* ---------- 3. Gleichlauf ---------- */
+function zeichneGleichlauf() {
+  const gl = KZ.gleichlauf;
+  if (!gl || !gl.ok) {
+    fehlerKasten("gleichlauf-rahmen", "Gleichlauf nicht rechenbar", (gl && gl.grund) || KZ.gleichlaufFehler);
+    return;
+  }
+  const stark = gl.paare.filter(function (p) { return p.stufe === "stark-mit"; });
+  document.getElementById("gleichlauf-sub").innerHTML =
+    gl.tage + ' gemeinsame Handelstage (' + gl.vonTag + ' bis ' + gl.bisTag + '). Alles zwischen &minus;'
+    + gl.schwelle.toLocaleString("de-DE") + ' und +' + gl.schwelle.toLocaleString("de-DE")
+    + ' ist bei dieser Datenmenge nicht von „kein Zusammenhang" zu unterscheiden.'
+    + (stark.length
+        ? ' <b>' + stark.length + ' Paar' + (stark.length > 1 ? 'e laufen' : ' läuft') + ' deutlich miteinander</b> &mdash; dort zählen gleichzeitige Signale als eine Position, nicht als mehrere.'
+        : ' Derzeit läuft kein Paar deutlich miteinander.');
+
+  const zeilen = gl.paare.map(function (p) {
+    const grau = p.stufe === "rauschen";
+    const kl = grau ? "null-wert" : (p.wert > 0 ? "hoch" : "tief");
+    return '<tr class="' + (grau ? "ist-rauschen" : "") + '">'
+      + '<td class="links"><span class="wname">' + p.a + ' &amp; ' + p.b + '</span>'
+      + '<div class="begruendung">' + p.urteil + '</div></td>'
+      + '<td><span class="kurs ' + kl + '">' + (p.wert > 0 ? "+" : "") + p.wert.toLocaleString("de-DE", { minimumFractionDigits: 2 }) + '</span></td>'
+      + '<td>' + stufeBadge(p.stufe) + '</td></tr>';
+  }).join("");
+
+  document.getElementById("gleichlauf-rahmen").innerHTML =
+    '<table><thead><tr><th class="links">Paar</th><th>Gleichlauf</th><th>Einordnung</th>'
+    + '</tr></thead><tbody>' + zeilen + '</tbody></table>';
+}
+
+/* ---------- 4. Termine ---------- */
+function zeichneTermine() {
+  const t = KZ.termine;
+  const el = document.getElementById("termin-liste");
+  if (!t || !t.ok) {
+    el.innerHTML = '<div class="leermeldung">Terminkalender nicht abrufbar'
+      + (KZ.termineFehler ? ' &mdash; ' + KZ.termineFehler : "")
+      + '. Der TJR-Report holt denselben Feed unabhängig davon selbst.</div>';
+    return;
+  }
+  if (!t.kommende.length) {
+    el.innerHTML = '<div class="leermeldung">Für den Rest dieser Kalenderwoche stehen keine High-Impact-Termine für USD oder GBP mehr an. '
+      + 'Nächste Woche erscheint hier wieder etwas, sobald der Feed umspringt.</div>';
+    return;
+  }
+  const heuteWien = new Date().toLocaleDateString("de-AT", { timeZone: "Europe/Vienna" });
+  el.innerHTML = t.kommende.map(function (e) {
+    const d = new Date(e.zeitIso);
+    const wann = d.toLocaleString("de-AT", {
+      timeZone: "Europe/Vienna", weekday: "short", day: "2-digit", month: "2-digit",
+      hour: "2-digit", minute: "2-digit",
+    });
+    const istHeute = d.toLocaleDateString("de-AT", { timeZone: "Europe/Vienna" }) === heuteWien;
+    return '<div class="termin' + (istHeute ? " heute" : "") + '">'
+      + '<span class="wann">' + wann + '</span>'
+      + '<span class="was">' + e.titel + ' <span class="waehr">' + e.waehrung + '</span></span></div>';
+  }).join("")
+  + '<div class="begruendung" style="margin-top:9px">Zeiten in Wiener Ortszeit. Quelle: ForexFactory-Kalender, nur Termine mit hoher erwarteter Wirkung.</div>';
+}
+
+for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine]) {
+  try { f(); } catch (e) { console.error("Block fehlgeschlagen:", e); }
+}
 </script>
 </body>
 </html>
