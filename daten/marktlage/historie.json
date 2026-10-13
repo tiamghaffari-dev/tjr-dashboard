@@ -1,0 +1,87 @@
+{
+  "2026-10-13": {
+    "handelstag": "2026-10-13",
+    "geschriebenAm": "2026-10-13T19:53:32.531Z",
+    "kurse": {
+      "URTH": 209.27,
+      "IWDA.AS": 131.73,
+      "^GSPC": 7808,
+      "^NDX": 30553.58,
+      "^GDAXI": 25259.9,
+      "^STOXX50E": 6167.01,
+      "CL=F": 94.48,
+      "BZ=F": 105.97,
+      "GC=F": 4188.4,
+      "SI=F": 59.53,
+      "NG=F": 3.316,
+      "^VIX": 15.33,
+      "^TNX": 5.217,
+      "DX-Y.NYB": 102.19,
+      "XLK": 196,
+      "XLE": 67.22,
+      "XLF": 54.89,
+      "XLB": 49.75,
+      "ITA": 204.36,
+      "RHM.DE": 953.4,
+      "TSLA": 376.69,
+      "BTC-USD": 83141.98,
+      "ETH-USD": 2503.89,
+      "XRP-USD": 1.3697,
+      "GBPUSD=X": 1.3255
+    },
+    "vix": 15.33,
+    "vixPerzentil": 17,
+    "schwankung": {
+      "BTC-USD": 20.1,
+      "ETH-USD": 29,
+      "XRP-USD": 34.7,
+      "GBPUSD=X": 5.1,
+      "^GSPC": 9.5,
+      "GC=F": 17.5
+    },
+    "schwankungStufe": {
+      "BTC-USD": "niedrig",
+      "ETH-USD": "niedrig",
+      "XRP-USD": "rauschen",
+      "GBPUSD=X": "rauschen",
+      "^GSPC": "rauschen",
+      "GC=F": "rauschen"
+    },
+    "sektorVorsprung": {
+      "XLK": 3.89,
+      "XLE": 1.7,
+      "XLB": -3.94,
+      "XLF": -6.23,
+      "ITA": -8.19
+    },
+    "sektorStufe": {
+      "XLK": "rauschen",
+      "XLE": "rauschen",
+      "XLB": "rauschen",
+      "XLF": "rauschen",
+      "ITA": "schwach"
+    },
+    "sektorMarktRendite": 2.47,
+    "sektorAllesRauschen": false,
+    "gleichlauf": {
+      "BTC-USD|XRP-USD": 0.9,
+      "BTC-USD|ETH-USD": 0.87,
+      "ETH-USD|XRP-USD": 0.78,
+      "BTC-USD|GC=F": 0.48,
+      "ETH-USD|GC=F": 0.47,
+      "XRP-USD|GC=F": 0.44,
+      "^GSPC|GC=F": 0.39,
+      "BTC-USD|^GSPC": 0.34,
+      "ETH-USD|^GSPC": 0.28,
+      "XRP-USD|^GSPC": 0.27,
+      "GBPUSD=X|^GSPC": -0.1,
+      "XRP-USD|GBPUSD=X": 0.08,
+      "BTC-USD|GBPUSD=X": 0.07,
+      "GBPUSD=X|GC=F": -0.03,
+      "ETH-USD|GBPUSD=X": 0
+    },
+    "gleichlaufStark": 3,
+    "gleichlaufTage": 60,
+    "termineHeute": 0
+  }
+}
