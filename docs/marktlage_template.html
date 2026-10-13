@@ -370,7 +370,16 @@ function zeileHtml(r) {
   const einheit = r.einheit ? r.einheit : (r.waehrung || "");
   return '<tr>' + kopf
     + '<td><span class="kurs">' + zahl(r.stand, standStellen(r.stand)) + '</span><span class="einheit">' + einheit + '</span></td>'
-    + '<td class="null-wert">' + (r.standDatum || "") + '</td>'
+    // Steht der Kurs aus dem Live-Feld, die Tagesreihe aber endet frueher,
+    // dann gehoeren Stand und Veraenderungsspalten zu verschiedenen Tagen.
+    // Das muss dastehen, sonst liest man eine "Tag"-Zahl, die vier Tage alt
+    // ist, als die von heute. Betrifft derzeit GBP/USD: Yahoos Tagesreihe
+    // fuer Devisen hinkt dort zwei Sitzungen hinterher.
+    + '<td class="null-wert">' + (r.standDatum || "")
+      + ((r.letzteKerzeDatum && r.letzteKerzeDatum !== r.standDatum)
+          ? '<div class="begruendung" title="Stand aus dem Live-Kurs; die Veränderungs-Spalten rechnen mit der Tagesreihe">Reihe bis ' + r.letzteKerzeDatum + '</div>'
+          : "")
+      + '</td>'
     + '<td>' + proz(r.tag, r.tagVon, r.tagVonDatum) + '</td>'
     + '<td>' + proz(r.woche, r.wocheVon, r.wocheVonDatum) + '</td>'
     + '<td>' + proz(r.monat, r.monatVon, r.monatVonDatum) + '</td>'

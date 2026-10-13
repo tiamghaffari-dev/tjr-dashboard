@@ -124,13 +124,35 @@ async function holeReihe(symbol) {
 
   const ausgerichtet = richteStempelAus(reihe);
 
+  // Der LIVE-Kurs aus dem meta-Block. Der haengt an keiner Tageskerze und hat
+  // darum auch kein Datumsproblem - genau deshalb wird er fuer die ANZEIGE
+  // bevorzugt. Noetig wurde das durch GBPUSD=X: Yahoos Tagesreihe fuer Devisen
+  // hinkt dort zwei Sitzungen hinterher, der Live-Kurs aber nicht. Die
+  // Veraenderungs-Spalten und alle Kennzahlen rechnen weiterhin ausschliesslich
+  // mit der Tagesreihe - der Live-Kurs faerbt keine Statistik ein.
+  //
+  // Drei Bedingungen, damit ein kaputtes Feld nicht schlimmer ist als keines:
+  // echte positive Zahl, nicht aus der Zukunft, nicht aelter als die Reihe.
+  const meta = ergebnis.meta || {};
+  const lp = meta.regularMarketPrice;
+  const lt = meta.regularMarketTime;
+  const jetztSek = Math.floor(Date.now() / 1000);
+  let live = null;
+  if (typeof lp === "number" && isFinite(lp) && lp > 0
+      && typeof lt === "number" && isFinite(lt)
+      && lt <= jetztSek + 300
+      && lt >= ausgerichtet.reihe[ausgerichtet.reihe.length - 1].ts) {
+    live = { close: lp, ts: lt };
+  }
+
   return {
     reihe: ausgerichtet.reihe,
+    live,
     stempelKorrigiert: ausgerichtet.korrigiert,
     stempelVerworfen: ausgerichtet.verworfen,
     luecken: kurse.length - reihe.length,
-    waehrung: (ergebnis.meta && ergebnis.meta.currency) || null,
-    boerse: (ergebnis.meta && ergebnis.meta.exchangeName) || null,
+    waehrung: meta.currency || null,
+    boerse: meta.exchangeName || null,
   };
 }
 
@@ -286,7 +308,10 @@ async function holeEintrag(def) {
   for (let versuch = 1; versuch <= VERSUCHE; versuch++) {
     try {
       const roh = await holeReihe(def.symbol);
-      const letzter = roh.reihe[roh.reihe.length - 1];
+      const letzteKerze = roh.reihe[roh.reihe.length - 1];
+      // Stand und Datum aus dem Live-Kurs, wenn es ihn gibt; alles Gerechnete
+      // bleibt bei der Tagesreihe.
+      const letzter = roh.live || letzteKerze;
       const alterTage = (Date.now() / 1000 - letzter.ts) / 86400;
 
       return {
@@ -305,6 +330,8 @@ async function holeEintrag(def) {
         standDatum: datumIso(letzter.ts),
         alterTage: rund(alterTage, 1),
         veraltet: alterTage > VERALTET_TAGE,
+        standAusLivekurs: !!roh.live,
+        letzteKerzeDatum: datumIso(letzteKerze.ts),
         tage: roh.reihe.length,
         luecken: roh.luecken,
         stempelKorrigiert: !!roh.stempelKorrigiert,
