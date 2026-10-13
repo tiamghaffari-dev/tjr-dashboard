@@ -176,6 +176,8 @@
       <dd>Heißt: die Datenreihe ist für diesen Zeitraum zu kurz. Dann steht hier nichts &mdash; lieber eine Lücke als eine Zahl, die aus dem ältesten vorhandenen Kurs geschönt wurde.</dd>
       <dt><span class="alt-marke">alt</span></dt>
       <dd>Der letzte Kurs ist mehr als __VERALTET_TAGE__ Tage her. Bei Feiertagen normal, bei längerer Dauer ein Zeichen, dass die Quelle für dieses Symbol hängt.</dd>
+      <dt>Nachrechnen</dt>
+      <dd>Mit der Maus über einer Prozentzahl steht, gegen welchen Kurs und welches Datum gerechnet wurde. Jede Zahl auf dieser Seite ist damit nachprüfbar.</dd>
       <dt>Einheiten</dt>
       <dd>VIX und Dollar-Index sind <b>Punkte</b>, kein Preis. Der US-Zins ist eine <b>Rendite in Prozent</b> &mdash; „+2 %“ in der Tagesspalte heißt dort also: die Rendite ist um 2 % ihres eigenen Werts gestiegen, nicht um 2 Prozentpunkte.</dd>
     </dl>
@@ -230,11 +232,18 @@ function zahl(n, stellen) {
   return n.toLocaleString("de-DE", { minimumFractionDigits: stellen, maximumFractionDigits: stellen });
 }
 
-function proz(p) {
-  if (p === null || p === undefined) return '<span class="null-wert">&ndash;</span>';
+function proz(p, vonKurs, vonDatum) {
+  if (p === null || p === undefined) {
+    return '<span class="null-wert" title="Datenreihe reicht für diesen Zeitraum nicht zurück">&ndash;</span>';
+  }
   const k = p > 0 ? "hoch" : p < 0 ? "tief" : "null-wert";
   const vz = p > 0 ? "+" : "";
-  return '<span class="' + k + '">' + vz + p.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' %</span>';
+  // Der Tooltip nennt den Bezugskurs - eine Prozentzahl, die man nicht
+  // nachrechnen kann, ist in diesem Projekt keine brauchbare Zahl.
+  const tip = (vonKurs !== null && vonKurs !== undefined)
+    ? ' title="gerechnet gegen ' + vonKurs.toLocaleString("de-DE") + ' vom ' + (vonDatum || "?") + '"'
+    : "";
+  return '<span class="' + k + '"' + tip + '>' + vz + p.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' %</span>';
 }
 
 function standStellen(w) {
@@ -259,10 +268,10 @@ function zeileHtml(r) {
   return '<tr>' + kopf
     + '<td><span class="kurs">' + zahl(r.stand, standStellen(r.stand)) + '</span><span class="einheit">' + einheit + '</span></td>'
     + '<td class="null-wert">' + (r.standDatum || "") + '</td>'
-    + '<td>' + proz(r.tag) + '</td>'
-    + '<td>' + proz(r.woche) + '</td>'
-    + '<td>' + proz(r.monat) + '</td>'
-    + '<td>' + proz(r.jahr) + '</td>'
+    + '<td>' + proz(r.tag, r.tagVon, r.tagVonDatum) + '</td>'
+    + '<td>' + proz(r.woche, r.wocheVon, r.wocheVonDatum) + '</td>'
+    + '<td>' + proz(r.monat, r.monatVon, r.monatVonDatum) + '</td>'
+    + '<td>' + proz(r.jahr, r.jahrVon, r.jahrVonDatum) + '</td>'
     + '</tr>';
 }
 

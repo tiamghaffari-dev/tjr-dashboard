@@ -175,6 +175,16 @@ function datumIso(ts) {
   return new Date(ts * 1000).toISOString().slice(0, 10);
 }
 
+/* Eine Veraenderungsspalte in die flache Form bringen, die die Seite erwartet:
+ * den Prozentwert und - zum Nachrechnen - den Bezugskurs mit seinem Datum. */
+function spalte(name, v, letzterKurs) {
+  const o = {};
+  o[name] = v ? rund(v.prozent, 2) : null;
+  o[name + "Von"] = v ? rund(v.vonKurs, nachkommastellen(v.vonKurs)) : null;
+  o[name + "VonDatum"] = v ? datumIso(v.vonTs) : null;
+  return o;
+}
+
 /* --------------------------------------------------------------------------
  * Eine Zeile der Uebersicht bauen. Schlaegt der Abruf fehl, kommt eine Zeile
  * mit ok:false zurueck - die Seite zeigt dann "keine Daten" an dieser Stelle
@@ -207,11 +217,14 @@ async function holeEintrag(def) {
         veraltet: alterTage > VERALTET_TAGE,
         tage: roh.reihe.length,
         luecken: roh.luecken,
-        tag: rund((tagesVeraenderung(roh.reihe) || {}).prozent, 2),
-        tagBezugDatum: (() => { const v = tagesVeraenderung(roh.reihe); return v ? datumIso(v.vonTs) : null; })(),
-        woche: rund((veraenderungSeit(roh.reihe, 7) || {}).prozent, 2),
-        monat: rund((veraenderungSeit(roh.reihe, 30) || {}).prozent, 2),
-        jahr: rund((veraenderungSeit(roh.reihe, 365) || {}).prozent, 2),
+        // Zu jeder Prozentzahl wird der Bezugskurs und sein Datum mitgeschrieben.
+        // Grund: eine Prozentzahl ohne Bezug kann man nicht nachpruefen - und in
+        // diesem Projekt gilt, dass keine Zahl geglaubt wird, die man nicht
+        // gegenrechnen kann. Auf der Seite haengen sie als Tooltip an der Zahl.
+        ...spalte("tag", tagesVeraenderung(roh.reihe), letzter.close),
+        ...spalte("woche", veraenderungSeit(roh.reihe, 7), letzter.close),
+        ...spalte("monat", veraenderungSeit(roh.reihe, 30), letzter.close),
+        ...spalte("jahr", veraenderungSeit(roh.reihe, 365), letzter.close),
         versuche: versuch,
       };
     } catch (e) {
@@ -254,6 +267,7 @@ module.exports = {
   veraenderungSeit,
   tagesVeraenderung,
   nachkommastellen,
+  spalte,
   holeEintrag,
   sammle,
 };
