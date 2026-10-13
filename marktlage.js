@@ -122,12 +122,65 @@ async function holeReihe(symbol) {
   }
   if (reihe.length < 2) throw new Error("zu wenige Kurse (" + reihe.length + ")");
 
+  const ausgerichtet = richteStempelAus(reihe);
+
   return {
-    reihe,
+    reihe: ausgerichtet.reihe,
+    stempelKorrigiert: ausgerichtet.korrigiert,
     luecken: kurse.length - reihe.length,
     waehrung: (ergebnis.meta && ergebnis.meta.currency) || null,
     boerse: (ergebnis.meta && ergebnis.meta.exchangeName) || null,
   };
+}
+
+/* --------------------------------------------------------------------------
+ * ZEITSTEMPEL-VERSATZ AUSGLEICHEN
+ *
+ * Gefunden am 13.10.2026 beim Nachpruefen der Korrelationen: GBPUSD=X kostete
+ * 28 der gemeinsamen Handelstage, alle anderen Symbole null. Die fehlenden
+ * Tage waren 27 Freitage und 1 Montag - kein Feiertagsmuster, sondern ein
+ * systematischer Versatz.
+ *
+ * Ursache: der Devisen-Handelstag beginnt am ABEND davor (17:00 New York).
+ * Yahoo stempelt die Tageskerze entsprechend auf 23:00 oder 00:00 UTC. Beim
+ * Datum nach UTC landet die FREITAGS-Kerze damit auf Donnerstag - GBP/USD lag
+ * gegenueber den anderen fuenf Werten um einen Tag verschoben, und seine
+ * Korrelationen waren dadurch systematisch zu niedrig.
+ *
+ * Die Korrektur haengt nicht an einer Symbolliste, sondern misst sich selbst:
+ * liegt die haeufigste Stempel-Uhrzeit eines Symbols am Abend (ab 20:00 UTC),
+ * werden ALLE seine Stempel um 12 Stunden verschoben. Dadurch rutscht eine
+ * 23:00-Kerze auf den naechsten Tag (11:00) und eine 00:00-Kerze bleibt auf
+ * ihrem eigenen (12:00) - beide Schreibweisen, die Yahoo bei GBPUSD=X mischt,
+ * landen damit auf dem richtigen Handelstag.
+ *
+ * Nur das DATUM wird dadurch richtig. Die Kurse selbst sind unveraendert, und
+ * die Spalten Tag/Woche/Monat/Jahr aus Etappe 1 rechnen ohnehin innerhalb
+ * einer Reihe - die waren nie falsch, nur ihr angezeigtes Datum war es.
+ * -------------------------------------------------------------------------- */
+const ABEND_AB_UTC = 20;
+const VERSATZ_SEKUNDEN = 12 * 3600;
+const ABEND_ANTEIL = 0.2;
+
+/* Ausgeloest wird die Korrektur ueber den ANTEIL der Abendstempel, nicht ueber
+ * den haeufigsten Stempel. Grund: GBPUSD=X mischt 23:00 und 00:00 (Sommer-
+ * gegen Winterzeit), aktuell 150 zu 108. Haenge die Entscheidung am
+ * haeufigsten Wert, dann kippt sie lautlos, sobald das Verhaeltnis sich dreht -
+ * und der Fehler waere stillschweigend zurueck, ohne dass irgendwo etwas
+ * rot wird. Ein Anteil von einem Fuenftel ist dagegen stabil: ein Symbol ohne
+ * Abendstempel kommt nie in die Naehe, eines mit Abendstempeln nie darunter. */
+function stempelVersatzNoetig(reihe) {
+  if (!reihe.length) return false;
+  let abends = 0;
+  for (const p of reihe) {
+    if (new Date(p.ts * 1000).getUTCHours() >= ABEND_AB_UTC) abends++;
+  }
+  return abends / reihe.length >= ABEND_ANTEIL;
+}
+
+function richteStempelAus(reihe) {
+  if (!stempelVersatzNoetig(reihe)) return { reihe, korrigiert: false };
+  return { reihe: reihe.map((p) => ({ ts: p.ts + VERSATZ_SEKUNDEN, close: p.close })), korrigiert: true };
 }
 
 /* --------------------------------------------------------------------------
@@ -237,6 +290,7 @@ async function holeEintrag(def) {
         veraltet: alterTage > VERALTET_TAGE,
         tage: roh.reihe.length,
         luecken: roh.luecken,
+        stempelKorrigiert: !!roh.stempelKorrigiert,
         // Zu jeder Prozentzahl wird der Bezugskurs und sein Datum mitgeschrieben.
         // Grund: eine Prozentzahl ohne Bezug kann man nicht nachpruefen - und in
         // diesem Projekt gilt, dass keine Zahl geglaubt wird, die man nicht
@@ -296,6 +350,8 @@ module.exports = {
   tagesVeraenderung,
   nachkommastellen,
   spalte,
+  stempelVersatzNoetig,
+  richteStempelAus,
   holeEintrag,
   sammle,
 };
