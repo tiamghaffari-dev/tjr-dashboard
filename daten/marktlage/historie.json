@@ -1,43 +1,43 @@
 {
   "2026-10-13": {
     "handelstag": "2026-10-13",
-    "geschriebenAm": "2026-10-14T01:24:12.194Z",
+    "geschriebenAm": "2026-10-14T10:28:16.877Z",
     "kurse": {
       "URTH": 209.16,
-      "IWDA.AS": 131.73,
+      "IWDA.AS": 132.28,
       "^GSPC": 7805.45,
       "^NDX": 30569.48,
-      "^GDAXI": 25259.9,
-      "^STOXX50E": 6167.01,
-      "CL=F": 95.28,
-      "BZ=F": 107,
-      "GC=F": 4176,
-      "SI=F": 59.2,
-      "NG=F": 3.328,
-      "^VIX": 15.27,
+      "^GDAXI": 25405.4,
+      "^STOXX50E": 6206.42,
+      "CL=F": 95.27,
+      "BZ=F": 106.46,
+      "GC=F": 4166.9,
+      "SI=F": 58.79,
+      "NG=F": 3.3,
+      "^VIX": 15.22,
       "^TNX": 5.217,
-      "DX-Y.NYB": 102.17,
+      "DX-Y.NYB": 102.23,
       "XLK": 196.28,
       "XLE": 67.2,
       "XLF": 54.82,
       "XLB": 49.72,
       "ITA": 204,
-      "RHM.DE": 953.4,
+      "RHM.DE": 981.2,
       "TSLA": 375.23,
-      "BTC-USD": 83310.36,
-      "ETH-USD": 2504.1,
-      "XRP-USD": 1.3703,
-      "GBPUSD=X": 1.3261
+      "BTC-USD": 83269.33,
+      "ETH-USD": 2497.54,
+      "XRP-USD": 1.3663,
+      "GBPUSD=X": 1.3265
     },
-    "vix": 15.27,
+    "vix": 15.22,
     "vixPerzentil": 15,
     "schwankung": {
-      "BTC-USD": 20.3,
-      "ETH-USD": 29,
-      "XRP-USD": 34.7,
+      "BTC-USD": 20,
+      "ETH-USD": 28.6,
+      "XRP-USD": 33,
       "GBPUSD=X": 5.1,
       "^GSPC": 9.5,
-      "GC=F": 17.5
+      "GC=F": 16.6
     },
     "schwankungStufe": {
       "BTC-USD": "niedrig",
@@ -48,11 +48,11 @@
       "GC=F": "rauschen"
     },
     "sektorVorsprung": {
-      "XLK": 2.67,
-      "XLE": -0.63,
-      "XLB": -4.93,
-      "XLF": -5.81,
-      "ITA": -7.89
+      "XLK": 4.08,
+      "XLE": 1.7,
+      "XLB": -3.96,
+      "XLF": -6.31,
+      "ITA": -8.33
     },
     "sektorStufe": {
       "XLK": "rauschen",
@@ -61,7 +61,7 @@
       "XLF": "rauschen",
       "ITA": "schwach"
     },
-    "sektorMarktRendite": 1.96,
+    "sektorMarktRendite": 2.43,
     "sektorAllesRauschen": false,
     "gleichlauf": {
       "BTC-USD|XRP-USD": 0.9,
@@ -72,13 +72,13 @@
       "XRP-USD|GC=F": 0.44,
       "^GSPC|GC=F": 0.39,
       "BTC-USD|^GSPC": 0.34,
-      "ETH-USD|^GSPC": 0.27,
-      "XRP-USD|^GSPC": 0.26,
+      "ETH-USD|^GSPC": 0.28,
+      "XRP-USD|^GSPC": 0.27,
       "GBPUSD=X|^GSPC": -0.1,
       "XRP-USD|GBPUSD=X": 0.08,
       "BTC-USD|GBPUSD=X": 0.07,
-      "GBPUSD=X|GC=F": -0.03,
-      "ETH-USD|GBPUSD=X": -0.01
+      "GBPUSD=X|GC=F": -0.02,
+      "ETH-USD|GBPUSD=X": 0
     },
     "gleichlaufStark": 3,
     "gleichlaufTage": 60,
