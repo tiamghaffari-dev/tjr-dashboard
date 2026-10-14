@@ -37636,9 +37636,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791928500000,
+    "rMultiple": -1,
+    "exitPrice": 1.326719,
+    "postmortem": {
+      "holdHours": 125,
+      "mfeR": 0.75,
+      "maeR": -1.01,
+      "towardTargetPct": 61,
+      "stopDistAdr": 0.63,
+      "targetDistAdr": 0.77,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.7R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 61% der Zielstrecke (max +0.8R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "ETHUSD-1791493678049",
@@ -42454,10 +42476,27 @@
     "beobachtung": false,
     "beobachtungGrund": null,
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "loss",
+    "resolvedTs": 1791932100000,
+    "rMultiple": -1,
+    "benachrichtigt": true,
+    "exitPrice": 1.327158,
+    "postmortem": {
+      "holdHours": 12,
+      "mfeR": 0.31,
+      "maeR": -1.02,
+      "towardTargetPct": 29,
+      "stopDistAdr": 0.39,
+      "targetDistAdr": 0.42,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "XRPUSD-1791904089425",
@@ -42514,9 +42553,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791950700000,
+    "rMultiple": -1,
+    "exitPrice": 1.38274,
+    "postmortem": {
+      "holdHours": 16.9,
+      "mfeR": 1.6,
+      "maeR": -1.13,
+      "towardTargetPct": 50,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.68,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.6R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war richtig",
+          "text": "Die Richtung stimmte am Ende (+0.5R netto) - verloren wurde dieser Trade an der Ausfuehrung (Stop/Timing), nicht an der Analyse."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng · Analyse: These war richtig"
+    }
   },
   {
     "id": "ETHUSD-1791905043315",
@@ -42530,8 +42591,8 @@
     "target2": 2483.610107,
     "rr2": 2.7,
     "partialExit": true,
-    "trailStop": 2531.182031,
-    "tp1HitTs": null,
+    "trailStop": 2485.860107,
+    "tp1HitTs": 1791957600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -42573,9 +42634,20 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791957900000,
+    "rMultiple": 2.52,
+    "exitPrice": 2485.860107,
+    "postmortem": {
+      "holdHours": 18.7,
+      "mfeR": 2.93,
+      "maeR": -0.58,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.6,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1791905043315",
@@ -42632,9 +42704,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791950700000,
+    "rMultiple": -1,
+    "exitPrice": 1.38174,
+    "postmortem": {
+      "holdHours": 16.7,
+      "mfeR": 1.48,
+      "maeR": -1.24,
+      "towardTargetPct": 48,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.65,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.5R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng · Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1791909847796",
@@ -42691,9 +42785,26 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791950700000,
+    "rMultiple": -1,
+    "exitPrice": 1.379967,
+    "postmortem": {
+      "holdHours": 15.3,
+      "mfeR": 0.96,
+      "maeR": -1.39,
+      "towardTargetPct": 42,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.57,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.0R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng"
+    }
   },
   {
     "id": "BTCUSD-1791910485880",
@@ -42906,8 +43017,8 @@
     "target2": 4165.899902,
     "rr2": 1.08,
     "partialExit": true,
-    "trailStop": 4194.240039,
-    "tp1HitTs": null,
+    "trailStop": 4166.399902,
+    "tp1HitTs": 1791947700000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -42949,9 +43060,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791948000000,
+    "rMultiple": 1.04,
+    "exitPrice": 4166.399902,
+    "postmortem": {
+      "holdHours": 13.9,
+      "mfeR": 1.06,
+      "maeR": -0.95,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.21,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1791920840723",
@@ -43149,9 +43282,26 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791934500000,
+    "rMultiple": -1,
+    "exitPrice": 2518.695898,
+    "postmortem": {
+      "holdHours": 7.6,
+      "mfeR": 0.87,
+      "maeR": -1.1,
+      "towardTargetPct": 57,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.36,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "zu eng",
+          "text": "Der Preis hat das urspruengliche Ziel nach dem Stop-Out doch noch erreicht (innerhalb 48h). Die Richtungs-These war also richtig - nur der Stop lag im Rauschbereich und wurde vorher abgeraeumt."
+        }
+      ],
+      "summary": "Stop-Loss: zu eng"
+    }
   },
   {
     "id": "ETHUSD-1791922746078",
@@ -43208,9 +43358,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791934500000,
+    "rMultiple": -1,
+    "exitPrice": 2518.945898,
+    "postmortem": {
+      "holdHours": 7.3,
+      "mfeR": 0.89,
+      "maeR": -1.08,
+      "towardTargetPct": 76,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.28,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "zu eng",
+          "text": "Der Preis hat das urspruengliche Ziel nach dem Stop-Out doch noch erreicht (innerhalb 48h). Die Richtungs-These war also richtig - nur der Stop lag im Rauschbereich und wurde vorher abgeraeumt."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 76% der Zielstrecke (max +0.9R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: zu eng · Take-Profit: zu weit"
+    }
   },
   {
     "id": "ETHUSD-1791923379795",
@@ -43267,9 +43439,36 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791934200000,
+    "rMultiple": -1,
+    "exitPrice": 2517.935889,
+    "postmortem": {
+      "holdHours": 7,
+      "mfeR": 0.81,
+      "maeR": -1.03,
+      "towardTargetPct": 74,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.26,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "zu eng",
+          "text": "Der Preis hat das urspruengliche Ziel nach dem Stop-Out doch noch erreicht (innerhalb 48h). Die Richtungs-These war also richtig - nur der Stop lag im Rauschbereich und wurde vorher abgeraeumt."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 74% der Zielstrecke (max +0.8R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Entry: zu frueh"
+    }
   },
   {
     "id": "BTCUSD-1791923970406",
@@ -43283,8 +43482,8 @@
     "target2": 84070.101563,
     "rr2": 2.05,
     "partialExit": true,
-    "trailStop": 82732.865625,
-    "tp1HitTs": null,
+    "trailStop": 83747.328125,
+    "tp1HitTs": 1791934200000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -43327,9 +43526,20 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791934800000,
+    "rMultiple": 1.31,
+    "exitPrice": 83747.328125,
+    "postmortem": {
+      "holdHours": 7,
+      "mfeR": 1.64,
+      "maeR": -0.25,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.33,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1791923970406",
@@ -43386,9 +43596,36 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791934500000,
+    "rMultiple": -1,
+    "exitPrice": 2519.251855,
+    "postmortem": {
+      "holdHours": 6.9,
+      "mfeR": 0.94,
+      "maeR": -1.06,
+      "towardTargetPct": 77,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.29,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "zu eng",
+          "text": "Der Preis hat das urspruengliche Ziel nach dem Stop-Out doch noch erreicht (innerhalb 48h). Die Richtungs-These war also richtig - nur der Stop lag im Rauschbereich und wurde vorher abgeraeumt."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 77% der Zielstrecke (max +0.9R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1791923970406",
@@ -43445,9 +43682,26 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791950700000,
+    "rMultiple": -1,
+    "exitPrice": 1.38004,
+    "postmortem": {
+      "holdHours": 11.4,
+      "mfeR": 1.21,
+      "maeR": -1.45,
+      "towardTargetPct": 53,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.48,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.3R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng"
+    }
   },
   {
     "id": "ETHUSD-1791925233583",
@@ -43504,9 +43758,36 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791950700000,
+    "rMultiple": -1,
+    "exitPrice": 2521.462061,
+    "postmortem": {
+      "holdHours": 11.1,
+      "mfeR": 1.11,
+      "maeR": -1.24,
+      "towardTargetPct": 80,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.33,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "zu eng",
+          "text": "Der Preis hat das urspruengliche Ziel nach dem Stop-Out doch noch erreicht (innerhalb 48h). Die Richtungs-These war also richtig - nur der Stop lag im Rauschbereich und wurde vorher abgeraeumt."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 80% der Zielstrecke (max +1.1R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war richtig",
+          "text": "Die Richtung stimmte am Ende (+0.6R netto) - verloren wurde dieser Trade an der Ausfuehrung (Stop/Timing), nicht an der Analyse."
+        }
+      ],
+      "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Analyse: These war richtig"
+    }
   },
   {
     "id": "ETHUSD-1791926497673",
@@ -43563,9 +43844,36 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791934500000,
+    "rMultiple": -1,
+    "exitPrice": 2519.251855,
+    "postmortem": {
+      "holdHours": 6.2,
+      "mfeR": 0.94,
+      "maeR": -1.06,
+      "towardTargetPct": 77,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.29,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "zu eng",
+          "text": "Der Preis hat das urspruengliche Ziel nach dem Stop-Out doch noch erreicht (innerhalb 48h). Die Richtungs-These war also richtig - nur der Stop lag im Rauschbereich und wurde vorher abgeraeumt."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 77% der Zielstrecke (max +0.9R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: zu eng · Take-Profit: zu weit · Entry: zu frueh"
+    }
   },
   {
     "id": "BTCUSD-1791935803954",
@@ -43579,8 +43887,8 @@
     "target2": 84067.6875,
     "rr2": 2.2,
     "partialExit": true,
-    "trailStop": 82663.460938,
-    "tp1HitTs": null,
+    "trailStop": 83751.929688,
+    "tp1HitTs": 1791934200000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -43623,9 +43931,20 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791934800000,
+    "rMultiple": 1.48,
+    "exitPrice": 83751.929688,
+    "postmortem": {
+      "holdHours": 3.7,
+      "mfeR": 1.8,
+      "maeR": -0.01,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.37,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1791936781479",
@@ -43682,9 +44001,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791934500000,
+    "rMultiple": -1,
+    "exitPrice": 2518.316016,
+    "postmortem": {
+      "holdHours": 3.4,
+      "mfeR": 0.65,
+      "maeR": -1.13,
+      "towardTargetPct": 58,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.27,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "zu eng",
+          "text": "Der Preis hat das urspruengliche Ziel nach dem Stop-Out doch noch erreicht (innerhalb 48h). Die Richtungs-These war also richtig - nur der Stop lag im Rauschbereich und wurde vorher abgeraeumt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 1.0R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: zu eng · Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1791937095768",
@@ -43741,9 +44082,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1791950700000,
+    "rMultiple": -1,
+    "exitPrice": 1.37832,
+    "postmortem": {
+      "holdHours": 7.8,
+      "mfeR": 1.01,
+      "maeR": -1.65,
+      "towardTargetPct": 49,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.44,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.1R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 1.0R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1791938667894",
@@ -43757,8 +44120,8 @@
     "target2": 2485.860107,
     "rr2": 2.21,
     "partialExit": true,
-    "trailStop": 2527.735938,
-    "tp1HitTs": null,
+    "trailStop": 2490.610107,
+    "tp1HitTs": 1791957600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -43800,8 +44163,25 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "15m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791957900000,
+    "rMultiple": 2.03,
+    "exitPrice": 2485.860107,
+    "postmortem": {
+      "holdHours": 9.3,
+      "mfeR": 2.62,
+      "maeR": -0.85,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.44,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        }
+      ],
+      "summary": "Stop-Loss: knapp"
+    }
   }
 ]
