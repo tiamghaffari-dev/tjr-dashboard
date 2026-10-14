@@ -44418,8 +44418,8 @@
     "target2": 770.434998,
     "rr2": 1.78,
     "partialExit": true,
-    "trailStop": 774.66025,
-    "tp1HitTs": null,
+    "trailStop": 770.434998,
+    "tp1HitTs": 1791978000000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "SMT",
@@ -44462,9 +44462,20 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791978300000,
+    "rMultiple": 1.78,
+    "exitPrice": 770.434998,
+    "postmortem": {
+      "holdHours": 1.2,
+      "mfeR": 1.83,
+      "maeR": -0.2,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.26,
+      "targetDistAdr": 0.46,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1791989230284",
@@ -44478,8 +44489,8 @@
     "target2": 770.434998,
     "rr2": 1.56,
     "partialExit": true,
-    "trailStop": 774.66025,
-    "tp1HitTs": null,
+    "trailStop": 770.434998,
+    "tp1HitTs": 1791978000000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "SMT",
@@ -44522,8 +44533,19 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1791978300000,
+    "rMultiple": 1.56,
+    "exitPrice": 770.434998,
+    "postmortem": {
+      "holdHours": 1,
+      "mfeR": 1.61,
+      "maeR": 0.19,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.28,
+      "targetDistAdr": 0.44,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
