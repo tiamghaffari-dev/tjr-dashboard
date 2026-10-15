@@ -45925,8 +45925,8 @@
     "target2": 1.328515,
     "rr2": 3.78,
     "partialExit": true,
-    "trailStop": 1.322865,
-    "tp1HitTs": null,
+    "trailStop": 1.32758,
+    "tp1HitTs": 1792071600000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -45970,9 +45970,20 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792071808000,
+    "rMultiple": 2.99,
+    "exitPrice": 1.32758,
+    "postmortem": {
+      "holdHours": 4.9,
+      "mfeR": 3,
+      "maeR": 0.09,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.6,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1792068461028",
@@ -46067,8 +46078,8 @@
     "target2": 1.328515,
     "rr2": 3.69,
     "partialExit": true,
-    "trailStop": 1.32297,
-    "tp1HitTs": null,
+    "trailStop": 1.32758,
+    "tp1HitTs": 1792071600000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -46112,9 +46123,20 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792071808000,
+    "rMultiple": 2.9,
+    "exitPrice": 1.32758,
+    "postmortem": {
+      "holdHours": 4.6,
+      "mfeR": 2.92,
+      "maeR": 0.22,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.58,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1792069730258",
