@@ -183,3 +183,146 @@ function zeileZuZeitpunkt(historie, epochMs, maxRueck) {
 }
 
 module.exports = { DATEI, baueZeile, schreibe, zeileZuZeitpunkt };
+
+/* ===========================================================================
+ * RUECKWIRKEND NACHRECHNEN
+ * ===========================================================================
+ * Die Historie faengt erst am 13.10.2026 an. Tiams abgeschlossene Trades
+ * reichen aber bis Mitte Juli zurueck - wartet man auf neue Daten, ist die
+ * Frage "laufen Signale in bestimmten Umfeldern besser" erst in Monaten
+ * ueberhaupt stellbar. Yahoo liefert ein Jahr Tageskurse; damit laesst sich
+ * das Umfeld jedes vergangenen Handelstags nachrechnen.
+ *
+ * DIE EINE REGEL, DIE HIER ALLES ENTSCHEIDET: KEIN BLICK IN DIE ZUKUNFT.
+ *
+ * Fuer den Tag D wird die Kursreihe hart bei D abgeschnitten und danach
+ * EXAKT DIESELBEN Funktionen aufgerufen wie im Live-Betrieb. Damit kann kein
+ * Wert aus der Zukunft einfliessen - weder in ein Perzentil noch in eine
+ * Korrelation. Wuerde man stattdessen die volle Reihe nehmen und nur das
+ * Fenster verschieben, haette der 15. Juli ein VIX-Perzentil, das September
+ * schon kennt. Genau so entstehen Rueckrechnungen, die grossartig aussehen
+ * und nichts wert sind.
+ *
+ * Was nicht nachrechenbar ist, wird auch nicht erfunden: der
+ * ForexFactory-Feed enthaelt nur die laufende Woche, fuer vergangene Tage
+ * gibt es keine Termine. Diese Zeilen haben darum KEIN Feld `termineHeute` -
+ * nicht etwa eine 0, die man spaeter als "keine Termine" fehlliest.
+ *
+ * Jede nachgerechnete Zeile traegt quelle:"nachgerechnet" und die Zahl der
+ * Handelstage, die ihr an Vorlauf zur Verfuegung standen.
+ * ===========================================================================
+ */
+
+const MIN_VORLAUF = 120;   // Handelstage, die vor einem nachgerechneten Tag liegen muessen
+
+function schneideAb(reihenNachSymbol, bisTs) {
+  const aus = {};
+  for (const s of Object.keys(reihenNachSymbol)) {
+    aus[s] = reihenNachSymbol[s].filter((p) => p.ts <= bisTs);
+  }
+  return aus;
+}
+
+/* Baut fuer einen Stichtag dasselbe Objekt, das der Live-Lauf an baueZeile
+ * uebergibt - nur eben aus abgeschnittenen Reihen. */
+function standFuerTag(reihenNachSymbol, bisTs, symbolDefs, ml, kz) {
+  const reihen = schneideAb(reihenNachSymbol, bisTs);
+
+  const eintraege = [];
+  for (const def of symbolDefs) {
+    const r = reihen[def.symbol];
+    if (!r || !r.length) { eintraege.push({ symbol: def.symbol, ok: false, grund: "keine Daten bis zum Stichtag" }); continue; }
+    const letzter = r[r.length - 1];
+    eintraege.push({
+      symbol: def.symbol,
+      ok: true,
+      stand: Math.round(letzter.close * 1e4) / 1e4,
+      standDatum: new Date(letzter.ts * 1000).toISOString().slice(0, 10),
+    });
+  }
+
+  const sektoren = symbolDefs.filter((x) => x.gruppe === "Sektor").map((x) => ({ name: x.name, symbol: x.symbol }));
+  const kennzahlen = {};
+  try { kennzahlen.nervositaet = kz.nervositaet(reihen, ml.VIX_SYMBOL, ml.GEHANDELT); } catch (e) { /* Zeile bleibt ohne */ }
+  try { kennzahlen.sektoren = kz.sektorRangliste(reihen, sektoren, ml.MARKT_SYMBOL); } catch (e) { /* dito */ }
+  try { kennzahlen.gleichlauf = kz.gleichlauf(reihen, ml.GEHANDELT); } catch (e) { /* dito */ }
+  // termine bewusst NICHT - fuer vergangene Tage gibt es den Feed nicht.
+
+  return {
+    standIso: new Date(bisTs * 1000).toISOString(),
+    eintraege,
+    kennzahlen,
+  };
+}
+
+/* Alle Handelstage des Marktsymbols nachrechnen, die noch fehlen.
+ * Bestehende Zeilen werden NICHT ueberschrieben: eine live geschriebene
+ * Zeile kennt die Termine des Tages, eine nachgerechnete nicht - die
+ * schlechtere darf die bessere nicht verdraengen. */
+function rechneNach(ordner, reihenNachSymbol, symbolDefs, ml, kz, optionen) {
+  const o = optionen || {};
+  const marktReihe = reihenNachSymbol[ml.MARKT_SYMBOL] || [];
+  if (marktReihe.length < MIN_VORLAUF + 5) {
+    return { ok: false, grund: "Marktreihe zu kurz (" + marktReihe.length + " Tage)" };
+  }
+
+  const ziel = path.join(ordner, DATEI);
+  let bestand = {};
+  if (fs.existsSync(ziel)) {
+    try {
+      bestand = JSON.parse(fs.readFileSync(ziel, "utf8"));
+    } catch (e) {
+      return { ok: false, grund: "Historie nicht lesbar, NICHT angefasst: " + e.message };
+    }
+    if (!bestand || typeof bestand !== "object" || Array.isArray(bestand)) {
+      return { ok: false, grund: "Historie hat unerwartete Form, NICHT angefasst" };
+    }
+  }
+
+  const abTs = o.abIso ? Math.floor(new Date(o.abIso + "T23:59:59Z").getTime() / 1000) : 0;
+
+  let geschrieben = 0, uebersprungenVorhanden = 0, uebersprungenVorlauf = 0;
+  const geschriebeneTage = [];
+
+  for (let i = 0; i < marktReihe.length; i++) {
+    const p = marktReihe[i];
+    const tag = new Date(p.ts * 1000).toISOString().slice(0, 10);
+    if (p.ts < abTs) continue;
+    if (bestand[tag]) { uebersprungenVorhanden++; continue; }
+    if (i < MIN_VORLAUF) { uebersprungenVorlauf++; continue; }
+
+    const daten = standFuerTag(reihenNachSymbol, p.ts, symbolDefs, ml, kz);
+    const zeile = baueZeile(daten, ml.MARKT_SYMBOL);
+    if (!zeile) continue;
+
+    zeile.quelle = "nachgerechnet";
+    zeile.vorlaufTage = i;
+    zeile.geschriebenAm = new Date().toISOString();
+    bestand[tag] = zeile;
+    geschrieben++;
+    geschriebeneTage.push(tag);
+  }
+
+  const sortiert = {};
+  for (const k of Object.keys(bestand).sort()) sortiert[k] = bestand[k];
+  fs.mkdirSync(ordner, { recursive: true });
+  fs.writeFileSync(ziel, JSON.stringify(sortiert, null, 2), "utf8");
+
+  const alle = Object.keys(sortiert);
+  return {
+    ok: true,
+    geschrieben,
+    uebersprungenVorhanden,
+    uebersprungenVorlauf,
+    von: geschriebeneTage[0] || null,
+    bis: geschriebeneTage[geschriebeneTage.length - 1] || null,
+    tageGesamt: alle.length,
+    seit: alle[0],
+    bytes: fs.statSync(ziel).size,
+  };
+}
+
+module.exports.MIN_VORLAUF = MIN_VORLAUF;
+module.exports.schneideAb = schneideAb;
+module.exports.standFuerTag = standFuerTag;
+module.exports.rechneNach = rechneNach;
