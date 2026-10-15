@@ -25,6 +25,7 @@ const path = require("path");
 const ml = require("./marktlage.js");
 const kz = require("./marktlage_kennzahlen.js");
 const hist = require("./marktlage_historie.js");
+const lang = require("./marktlage_langfrist.js");
 
 const BASIS = __dirname;
 const MIN_ANTEIL_OK = 0.6;   // weniger als 60 % brauchbar -> Seite nicht anfassen
@@ -258,6 +259,28 @@ async function main() {
   console.log("  daten/marktlage/stand.json geschrieben");
 
   /* ----------------------------------------------------------------------
+   * LANGFRIST - rollierende Renditen nach Haltedauer.
+   *
+   * Eigener Abruf mit Monatskerzen ueber die volle Historie. Faellt er aus,
+   * fehlt nur dieser Block.
+   * -------------------------------------------------------------------- */
+  let langfrist = null;
+  try {
+    langfrist = await lang.sammle([
+      { name: "MSCI World", symbol: "URTH", hinweis: "Weltindex, erst seit 2012 als ETF handelbar" },
+      { name: "S&P 500", symbol: "^GSPC", hinweis: "500 groesste US-Firmen, mit Abstand die laengste Historie" },
+    ]);
+    for (const e of langfrist) {
+      console.log("  Langfrist " + e.symbol.padEnd(8) + (e.ok
+        ? e.monate + " Monate (" + e.von + " bis " + e.bis + "), "
+          + e.zeilen.map((z) => z.jahre + "J").join("/")
+        : "FEHLER: " + e.grund));
+    }
+  } catch (e) {
+    console.error("  Langfrist fehlgeschlagen:", e.message);
+  }
+
+  /* ----------------------------------------------------------------------
    * STAND DER AUSWERTUNG - die Erinnerung auf der Seite.
    *
    * Tiam wollte keine Terminerinnerung, sondern eine auf der Webseite. Eine
@@ -299,7 +322,7 @@ async function main() {
     throw new Error("Vorlage enthaelt keinen __DATA__-Platzhalter");
   }
   const seite = vorlage
-    .replace("__DATA__", sicheresJson(Object.assign({}, daten, { historie, auswertung })))
+    .replace("__DATA__", sicheresJson(Object.assign({}, daten, { historie, auswertung, langfrist })))
     .replace(/__VERALTET_TAGE__/g, String(ml.VERALTET_TAGE));
 
   fs.writeFileSync(path.join(BASIS, "docs", "marktlage.html"), seite, "utf8");

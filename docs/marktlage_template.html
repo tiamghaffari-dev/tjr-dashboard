@@ -142,6 +142,27 @@
   .nebenziel { font-size: 12px; color: #6b7185; font-family: -apple-system, sans-serif; margin-top: 10px; line-height: 1.6; }
   .nebenziel b { color: #9198ad; }
 
+  /* Langfrist-Block */
+  .lf-wahl { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 12px; font-family: -apple-system, sans-serif; }
+  .lf-spanne { position: relative; height: 22px; min-width: 190px; }
+  .lf-bar { position: absolute; top: 7px; height: 8px; border-radius: 4px; }
+  .lf-bar.minus { background: linear-gradient(90deg, rgba(255,107,107,0.75), rgba(255,107,107,0.35)); }
+  .lf-bar.plus  { background: linear-gradient(90deg, rgba(57,255,136,0.35), rgba(57,255,136,0.75)); }
+  .lf-null { position: absolute; top: 2px; width: 1px; height: 18px; background: rgba(255,255,255,0.3); }
+  .lf-mittel { position: absolute; top: 3px; width: 2px; height: 16px; background: #e8eaf0; border-radius: 1px; }
+  .lf-quelle { color: #5a6072; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 8px; }
+
+  .merk {
+    border: 1px solid rgba(255,255,255,0.09); border-radius: 11px; background: rgba(255,255,255,0.018);
+    padding: 13px 16px; margin-top: 14px; font-family: -apple-system, sans-serif;
+    font-size: 12.3px; line-height: 1.65; color: #9198ad;
+  }
+  .merk dt { color: #7dd3fc; font-weight: 600; margin-top: 10px; font-size: 12px; }
+  .merk dt:first-child { margin-top: 0; }
+  .merk dd { margin: 2px 0 0 0; }
+  .merk b { color: #c3cadb; }
+  .merk .statisch { color: #ffd25c; font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 8px; }
+
   .tabellen-rahmen { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .tabellen-rahmen table { min-width: 660px; }
   /* Die Kennzahlen-Tabellen aus Etappe 2 haben nur drei bis vier Spalten.
@@ -326,6 +347,39 @@
   <div class="bedeutung">
     <p><span class="ja">Heißt:</span> zu diesen Zeitpunkten kommen Zahlen heraus, auf die der Markt oft sprunghaft reagiert &mdash; unabhängig davon, wie sauber ein Setup aussieht.</p>
     <p><span class="nein">Heißt nicht:</span> kein Signal und keine Handlungsanweisung. Die Engine liest diese Liste nicht und blockiert dadurch nichts. Der Feed enthält außerdem nur die <b>laufende Kalenderwoche</b>: eine leere Liste am Freitagabend heißt „diese Woche nichts mehr", nicht „die nächsten Tage sind frei".</p>
+  </div>
+</div>
+
+<div class="block">
+  <h2>Haltedauer &mdash; wie stark der Horizont die Spanne bestimmt</h2>
+  <div class="block-sub" id="lf-sub"></div>
+  <div class="lf-wahl" id="lf-wahl"></div>
+  <div class="tabellen-rahmen schmal" id="lf-rahmen"></div>
+  <div class="bedeutung">
+    <p><span class="ja">Heißt:</span> alle überlappenden Zeitfenster der verfügbaren Historie, jeweils als Rendite pro Jahr. Über ein Jahr lag zwischen bestem und schlechtestem Fenster ein riesiger Abstand; je länger das Fenster, desto enger wird er. Das ist der einzige Zusammenhang auf dieser Seite, der mit <b>langfristigem Anlegen</b> zu tun hat &mdash; und er handelt von der Haltedauer, nicht vom Einstiegszeitpunkt.</p>
+    <p><span class="nein">Heißt nicht:</span> <b>keine Zusage und keine Prognose.</b> „In 15-Jahres-Fenstern war bisher keines im Minus" ist eine Aussage über die Vergangenheit eines Index, nicht über die Zukunft. Die Fenster überlappen sich stark, sind also nicht unabhängig voneinander &mdash; echte unabhängige 20-Jahres-Zeiträume gibt es in hundert Jahren Börsengeschichte nur fünf. Und: dieser Block sagt nichts darüber, ob <i>heute</i> ein guter Tag zum Kaufen ist. Genau das ist der Unterschied zwischen Haltedauer und Markt-Timing.</p>
+  </div>
+</div>
+
+<div class="block">
+  <h2>Worauf es bei breiten ETFs ankommt</h2>
+  <div class="block-sub">Feste Merkmale eines Fonds &mdash; sie ändern sich nicht täglich und stehen deshalb hier als Merkliste, nicht als Live-Anzeige.</div>
+  <div class="merk">
+    <span class="statisch">Statisch &mdash; wird nicht automatisch aktualisiert</span>
+    <dl>
+      <dt>Tracking Difference (TD)</dt>
+      <dd>Der tatsächliche Abstand zwischen Fondsrendite und Indexrendite pro Jahr. <b>Die aussagekräftigste Zahl</b>, weil sie alles enthält: laufende Kosten, Handelskosten im Fonds, Quellensteuer auf Dividenden, Erträge aus Wertpapierleihe. Ein Fonds mit 0,20&nbsp;% Kosten und 0,10&nbsp;% TD ist in der Praxis günstiger als einer mit 0,07&nbsp;% Kosten und 0,25&nbsp;% TD. Nachzusehen bei justETF oder trackingdifferences.com, nicht im Kurs.</dd>
+      <dt>TER (laufende Kosten)</dt>
+      <dd>Wird dem Fondsvermögen laufend entnommen, nicht separat abgebucht. Bekannt im Voraus &mdash; eine der wenigen sicheren Größen überhaupt. Aber <b>nicht die ganzen Kosten</b>: Handelskosten im Fonds stehen nicht drin.</dd>
+      <dt>Replikationsart</dt>
+      <dd><b>Physisch voll</b> (kauft alle Indexwerte), <b>Sampling</b> (kauft eine repräsentative Auswahl, günstiger bei breiten Indizes) oder <b>synthetisch/Swap</b> (tauscht die Rendite mit einem Partner). Swap bringt bei US-Aktien einen Quellensteuer-Vorteil, dafür einen Vertragspartner als zusätzliches Risiko &mdash; bei UCITS auf 10&nbsp;% des Fondsvermögens begrenzt, in der Praxis meist weit darunter.</dd>
+      <dt>Fondsgröße und Alter</dt>
+      <dd>Zählt vor allem fürs <b>Überleben</b>: kleine Fonds werden geschlossen oder verschmolzen, und das zwingt zu einem Verkauf zu einem Zeitpunkt, den man sich nicht ausgesucht hat &mdash; in Österreich mit sofortiger Steuer auf den Gewinn. Unter etwa 100&nbsp;Mio.&nbsp;€ gilt das Risiko als erhöht. Unter drei Jahren Alter gibt es noch keine belastbare Tracking Difference.</dd>
+      <dt>Ausschüttend oder thesaurierend &mdash; und der österreichische Sonderfall</dt>
+      <dd>Thesaurierend legt die Dividenden im Fonds wieder an, ausschüttend zahlt sie aus. <b>In Österreich wird beides jährlich besteuert:</b> bei thesaurierenden Fonds über die „ausschüttungsgleichen Erträge" (ordentliche Erträge plus 60&nbsp;% der realisierten Kursgewinne), 27,5&nbsp;% KESt, auch wenn nichts aufs Konto kommt. Die versteuerten Beträge erhöhen den Einstandswert, es wird also nicht doppelt besteuert. Wichtiger als die Frage thesaurierend/ausschüttend ist, dass der Fonds ein <b>Meldefonds</b> ist &mdash; sonst greift eine deutlich nachteiligere Pauschalbesteuerung. Fast alle großen UCITS-ETFs sind Meldefonds. Österreich kennt keinen Freibetrag und keinen Verlustvortrag ins Folgejahr. <b>Steuerrecht ändert sich &mdash; das vor einer Entscheidung beim BMF oder einer Steuerberatung gegenprüfen.</b></dd>
+      <dt>Was mehr ausmacht als alle fünf zusammen</dt>
+      <dd>Welcher <b>Index</b> es ist. MSCI World (ca. 1.400 Titel, Industrieländer), FTSE All-World oder MSCI ACWI (mit Schwellenländern), mit oder ohne kleine Firmen. Der Unterschied zwischen zwei Indizes ist größer als der zwischen 0,12&nbsp;% und 0,20&nbsp;% Kosten.</dd>
+    </dl>
   </div>
 </div>
 
@@ -740,7 +794,72 @@ function zeichneAuswertung() {
   el.innerHTML = html;
 }
 
-for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine, zeichneHistorie, zeichneAuswertung]) {
+/* ---------- 7. Haltedauer ---------- */
+let lfGewaehlt = 0;
+
+function zeichneLangfrist() {
+  const lf = (DATA.langfrist || []).filter(function (x) { return x.ok; });
+  const sub = document.getElementById("lf-sub");
+  const rahmen = document.getElementById("lf-rahmen");
+  const wahl = document.getElementById("lf-wahl");
+  if (!lf.length) {
+    sub.textContent = "Langfrist-Daten konnten nicht geladen werden.";
+    wahl.innerHTML = ""; rahmen.innerHTML = "";
+    return;
+  }
+  if (lfGewaehlt >= lf.length) lfGewaehlt = 0;
+  const e = lf[lfGewaehlt];
+
+  wahl.innerHTML = lf.map(function (x, i) {
+    return '<span class="chip ' + (i === lfGewaehlt ? "an" : "") + '" data-lf="' + i + '">' + x.name + "</span>";
+  }).join(" ");
+  wahl.querySelectorAll("[data-lf]").forEach(function (c) {
+    c.addEventListener("click", function () { lfGewaehlt = Number(c.dataset.lf); zeichneLangfrist(); });
+  });
+
+  const vonJ = e.von.slice(0, 4), bisJ = e.bis.slice(0, 4);
+  sub.innerHTML = "<b>" + e.name + "</b> &mdash; " + Math.floor(e.monate / 12) + " Jahre Historie ("
+    + vonJ + " bis " + bisJ + "). Jede Zeile fasst <b>alle</b> überlappenden Fenster dieser Länge zusammen."
+    + (e.hinweis ? ' <span class="null-wert">' + e.hinweis + "</span>" : "");
+
+  // Gemeinsame Skala ueber alle Zeilen, sonst sind die Balken nicht vergleichbar.
+  let min = 0, max = 0;
+  for (const z of e.zeilen) { min = Math.min(min, z.schlechtester); max = Math.max(max, z.bester); }
+  const spanne = (max - min) || 1;
+  const pos = function (w) { return ((w - min) / spanne) * 100; };
+
+  const zeilen = e.zeilen.map(function (z) {
+    const a = pos(Math.min(z.schlechtester, 0)), b = pos(Math.max(z.bester, 0));
+    const nullP = pos(0), mitP = pos(z.mittel);
+    const balken = '<div class="lf-spanne">'
+      + (z.schlechtester < 0 ? '<div class="lf-bar minus" style="left:' + a + '%;width:' + (nullP - a) + '%"></div>' : "")
+      + (z.bester > 0 ? '<div class="lf-bar plus" style="left:' + nullP + '%;width:' + (b - nullP) + '%"></div>' : "")
+      + '<div class="lf-null" style="left:' + nullP + '%"></div>'
+      + '<div class="lf-mittel" style="left:' + mitP + '%" title="Mittelwert ' + z.mittel + ' % pro Jahr"></div>'
+      + "</div>";
+    const f = function (x) { return (x > 0 ? "+" : "") + String(x).replace(".", ","); };
+    return "<tr>"
+      + '<td class="links"><span class="wname">' + z.jahre + " Jahr" + (z.jahre > 1 ? "e" : "") + "</span>"
+      + '<div class="begruendung">' + z.fenster + " Fenster &middot; "
+      + (z.anteilVerlust > 0
+          ? String(z.anteilVerlust).replace(".", ",") + " % davon im Minus"
+          : "<b>keines im Minus</b>")
+      + "</div></td>"
+      + '<td><span class="tief">' + f(z.schlechtester) + " %</span></td>"
+      + '<td><span class="kurs">' + f(z.mittel) + " %</span></td>"
+      + '<td><span class="hoch">' + f(z.bester) + " %</span></td>"
+      + "<td>" + balken + "</td></tr>";
+  }).join("");
+
+  rahmen.innerHTML = '<table><thead><tr><th class="links">Haltedauer</th>'
+    + "<th>schlechtestes</th><th>Mittelwert</th><th>bestes</th>"
+    + '<th class="links">Spanne</th></tr></thead><tbody>' + zeilen + "</tbody></table>"
+    + '<div class="lf-quelle">Alle Werte als Rendite <b>pro Jahr</b>, damit verschiedene Fensterlängen vergleichbar sind. '
+    + "Ohne Dividenden, ohne Kosten, ohne Steuern &mdash; ein realer Depotwert läge darunter. "
+    + "Der helle Strich im Balken ist der Mittelwert.</div>";
+}
+
+for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine, zeichneHistorie, zeichneAuswertung, zeichneLangfrist]) {
   try { f(); } catch (e) { console.error("Block fehlgeschlagen:", e); }
 }
 </script>

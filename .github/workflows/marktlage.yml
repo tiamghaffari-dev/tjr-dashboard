@@ -37,6 +37,7 @@ on:
       - "marktlage.js"
       - "marktlage_kennzahlen.js"
       - "marktlage_historie.js"
+      - "marktlage_langfrist.js"
       - "marktlage_build.js"
       - "docs/marktlage_template.html"
       - ".github/workflows/marktlage.yml"
