@@ -60,6 +60,89 @@ const CHART_HISTORY_CANDLES = CHART_HISTORY_DAYS * CANDLES_PER_DAY_5M;
 const CHART_DAILY_CANDLES = 180;
 const CHART_WEEKLY_CANDLES = 60;
 
+// ---------------------------------------------------------------------------
+// UMFELD ZUM EINSTIEGSZEITPUNKT (Marktlage-Bereich, seit 2026-10-15)
+// ---------------------------------------------------------------------------
+// Tiams Vorgabe im Wortlaut: "das ist eine Anzeige, KEIN zweiter Signalgeber.
+// Die Marktlage darf ein Signal nicht erzeugen, nicht blockieren und nicht die
+// Zielsetzung aendern." Genau so ist es gebaut:
+//
+//  - Es wird KEIN Netzaufruf gemacht. Gelesen wird ausschliesslich die lokale
+//    Datei daten/marktlage/historie.json, die der eigene Marktlage-Workflow
+//    schreibt. Ein Yahoo-Ausfall kann den TJR-Lauf also nicht treffen.
+//  - Sogar das require() steckt in einem try/catch: selbst ein kaputtes
+//    Marktlage-Modul darf den Report nicht aufhalten.
+//  - Das Umfeld wird NUR in logNewSignal angehaengt - also erst, nachdem das
+//    Signal vollstaendig feststeht. Es gibt keinen Pfad, auf dem ein
+//    Umfeldwert in buildSignal, in eine Regelpruefung oder in Ziel und Stop
+//    gelangen koennte.
+//  - Faellt irgendetwas davon aus, steht umfeld:null im Log. Ein fehlender
+//    Wert ist "unbekannt", niemals "neutral".
+//
+// Bestehende Eintraege bleiben unveraendert und haben kein Feld - die
+// Auswertung muss sie getrennt zaehlen, nicht als unauffaelliges Umfeld.
+let histModul = null;
+try {
+  histModul = require("./marktlage_historie.js");
+} catch (e) {
+  console.error("Marktlage-Modul nicht ladbar, Umfeld wird nicht mitgeschrieben:", e.message);
+}
+
+const UMFELD_HISTORIE_PATH = path.join(__dirname, "daten", "marktlage", "historie.json");
+let umfeldHistorie = null;
+
+function ladeUmfeldHistorie() {
+  if (!histModul) return;
+  try {
+    if (!fs.existsSync(UMFELD_HISTORIE_PATH)) {
+      console.log("Umfeld-Historie noch nicht vorhanden - Signale werden ohne Umfeld geloggt.");
+      return;
+    }
+    const roh = JSON.parse(fs.readFileSync(UMFELD_HISTORIE_PATH, "utf8"));
+    if (roh && typeof roh === "object" && !Array.isArray(roh)) {
+      umfeldHistorie = roh;
+      const tage = Object.keys(roh);
+      console.log(`Umfeld-Historie geladen: ${tage.length} Handelstage (${tage[0]} bis ${tage[tage.length - 1]}).`);
+    }
+  } catch (e) {
+    console.error("Umfeld-Historie nicht lesbar (wird ignoriert):", e.message);
+  }
+}
+
+// TJR-Symbol -> Yahoo-Symbol des Marktlage-Bereichs. Ohne diese Zuordnung
+// bekaeme jeder Trade die Schwankungsbreite eines fremden Werts.
+const UMFELD_SYMBOL = {
+  BTCUSD: "BTC-USD", ETHUSD: "ETH-USD", XRPUSD: "XRP-USD",
+  GBPUSD: "GBPUSD=X", "^GSPC": "^GSPC", GCUSD: "GC=F",
+};
+
+function umfeldFuerSignal(assetSymbol, firedAtTs) {
+  if (!umfeldHistorie || !histModul) return null;
+  try {
+    const zeile = histModul.zeileZuZeitpunkt(umfeldHistorie, firedAtTs);
+    if (!zeile) return null;
+    const y = UMFELD_SYMBOL[assetSymbol] || null;
+    const w = (y && zeile.schwankung) ? zeile.schwankung[y] : null;
+    const st = (y && zeile.schwankungStufe) ? zeile.schwankungStufe[y] : null;
+    return {
+      handelstag: zeile.handelstag,
+      // "nachgerechnet" heisst: aus den Kursen dieses Tages rekonstruiert,
+      // ohne Blick in die Zukunft. "live" heisst: am Tag selbst geschrieben.
+      quelle: zeile.quelle || "live",
+      vix: typeof zeile.vix === "number" ? zeile.vix : null,
+      vixPerzentil: typeof zeile.vixPerzentil === "number" ? zeile.vixPerzentil : null,
+      schwankung: typeof w === "number" ? w : null,
+      schwankungStufe: st || null,
+      sektorAllesRauschen: typeof zeile.sektorAllesRauschen === "boolean" ? zeile.sektorAllesRauschen : null,
+      // null heisst UNBEKANNT (nachgerechnete Tage haben keinen Terminfeed),
+      // nicht "keine Termine".
+      termineHeute: typeof zeile.termineHeute === "number" ? zeile.termineHeute : null,
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
 const ASSETS = [
   { name: "Bitcoin", symbol: "BTCUSD", display: "BTCUSD", icon: "₿" },
   { name: "Ethereum", symbol: "ETHUSD", display: "ETHUSD", icon: "Ξ" },
@@ -1033,6 +1116,9 @@ function logNewSignal(signalsLog, asset, sig, ann, firedAtTs, ruleCheck, dailyBi
     // Aus welchem Raster stammt das Signal: "5m" (Standard) oder "15m"
     // (Rueckfall, Bootcamp Day 35). Macht beide Gruppen getrennt auswertbar.
     signalTf: sig.signalTf || "5m",
+    // Umfeld zum Einstiegszeitpunkt - reine Beobachtung, siehe Kommentar bei
+    // umfeldFuerSignal(). Hat auf dieses Signal keinerlei Einfluss gehabt.
+    umfeld: umfeldFuerSignal(asset.symbol, firedAtTs),
     status: "open", resolvedTs: null, rMultiple: null,
   });
 }
@@ -1226,6 +1312,11 @@ function renderFromTemplate(templateFile, outFile, payload) {
 }
 
 async function main() {
+  // Rein lesend und gekapselt. Steht bewusst GANZ AM ANFANG und vollstaendig
+  // getrennt von allem, was ein Signal berechnet - das Umfeld wird spaeter
+  // nur an fertige Signale angehaengt.
+  ladeUmfeldHistorie();
+
   // ==========================================================================
   // SELBSTJUSTIERUNG ZUERST - hier stand frueher ein schwerer Fehler.
   // ==========================================================================
@@ -1308,6 +1399,13 @@ async function main() {
   for (const item of assets) {
     if (item.error) continue;
     item.aiNote = computeMarketContextOpinion(item.asset, item.sig, item.ltf, item.htfRecent, item.weeklyTrend, news);
+    // Umfeld fuer die ANZEIGE. Dieselbe Funktion wie beim Loggen, derselbe
+    // Nullfall. Wird nur an ein bereits fertiges Analyse-Ergebnis gehaengt.
+    item.umfeld = umfeldFuerSignal(item.asset.symbol, Date.now());
+    // Anzahl heutiger High-Impact-Termine kommt live aus dem News-Abruf, den
+    // der Report ohnehin macht - fuer HEUTE ist das die bessere Quelle als
+    // die Historie, die erst am Abend geschrieben wird.
+    if (item.umfeld && newsOk) item.umfeld.termineHeute = news.length;
   }
   console.log(`Kontext-Einschaetzung (regelbasiert, kein API-Call): ${assets.filter((a) => a.aiNote).length}/${assets.length} Assets.`);
 

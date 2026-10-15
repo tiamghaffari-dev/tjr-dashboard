@@ -250,6 +250,22 @@
     background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.25);
   }
   .ai-note .ai-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; color: #a78bfa; margin-bottom: 3px; text-transform: uppercase; }
+  /* Umfeld-Zeile (Marktlage-Bereich, seit 15.10.2026). Bewusst anders
+     eingefaerbt als alles, was zur Entscheidung gehoert - blau statt lila,
+     und ohne Rahmen-Akzent: das hier ist Beiwerk, keine Begruendung. */
+  .umfeld-note {
+    font-size: 11.5px; line-height: 1.55; color: #bcc6d6; margin: 8px 0 0;
+    padding: 8px 10px; border-radius: 8px; font-family: -apple-system, sans-serif;
+    background: rgba(125,211,252,0.055); border: 1px solid rgba(125,211,252,0.18);
+  }
+  .umfeld-note .u-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; color: #7dd3fc; margin-bottom: 3px; text-transform: uppercase; }
+  .umfeld-note .u-teil { display: inline-block; margin-right: 14px; }
+  .umfeld-note b { color: #dbe3ef; font-weight: 600; }
+  .umfeld-note .u-grau { color: #6b7185; }
+  .umfeld-note .u-fuss { display: block; margin-top: 4px; color: #6b7185; font-size: 10.5px; }
+  .umfeld-note a { color: #7dd3fc; text-decoration: none; }
+  .umfeld-note a:hover { text-decoration: underline; }
+
   .err { color: #ff8080; font-size: 12px; font-family: -apple-system, sans-serif; }
   ::selection { background: rgba(122,140,255,0.35); }
 
@@ -773,12 +789,59 @@ function renderAssetContent(item) {
   renderChart(item);
   seedLiveBuffer(item);
   connectLiveFeed(item);
-  if (item.aiNote) {
-    const aiEl = document.getElementById("ai-" + assetId(item.asset));
-    if (aiEl) {
-      aiEl.innerHTML = `<div class="ai-note"><span class="ai-label">KI-Einschätzung (ergänzend, ersetzt nicht die Regel-Engine)</span>${item.aiNote}</div>`;
+  const aiEl = document.getElementById("ai-" + assetId(item.asset));
+  if (aiEl) {
+    let html = "";
+    if (item.aiNote) {
+      html += `<div class="ai-note"><span class="ai-label">KI-Einschätzung (ergänzend, ersetzt nicht die Regel-Engine)</span>${item.aiNote}</div>`;
     }
+    html += umfeldHtml(item);
+    aiEl.innerHTML = html;
   }
+}
+
+// Umfeld zum Zeitpunkt der Analyse - reine Zusatzinformation.
+//
+// Tiam, 15.10.2026, woertlich: "das ist eine Anzeige, KEIN zweiter
+// Signalgeber. TJRs Strategie handelt nach Struktur, nicht nach Makro-Meinung.
+// Die Marktlage darf ein Signal nicht erzeugen, nicht blockieren und nicht die
+// Zielsetzung aendern." Diese Zeile steht deshalb UNTER dem Signal, sagt
+// nichts ueber gut oder schlecht und enthaelt keine Empfehlung.
+function umfeldHtml(item) {
+  const u = item.umfeld;
+  if (!u) return "";
+  const teile = [];
+
+  if (u.schwankung !== null && u.schwankung !== undefined) {
+    const wort = { niedrig: "ruhiger als üblich", hoch: "unruhiger als üblich",
+                   rauschen: "im üblichen Bereich", unbekannt: "nicht einzuordnen" }[u.schwankungStufe] || u.schwankungStufe;
+    teile.push(`<span class="u-teil">Schwankung: <b>${String(u.schwankung).replace(".", ",")} %</b> &mdash; ${wort}</span>`);
+  }
+  if (u.vix !== null && u.vix !== undefined) {
+    teile.push(`<span class="u-teil">VIX: <b>${String(u.vix).replace(".", ",")}</b>`
+      + (u.vixPerzentil !== null && u.vixPerzentil !== undefined
+          ? ` <span class="u-grau">(höher als an ${u.vixPerzentil} % der Tage im Jahr)</span>` : "") + `</span>`);
+  }
+  if (u.sektorAllesRauschen === true) {
+    teile.push(`<span class="u-teil">Sektoren: <span class="u-grau">keiner belastbar vom Markt zu unterscheiden</span></span>`);
+  } else if (u.sektorAllesRauschen === false) {
+    teile.push(`<span class="u-teil">Sektoren: <b>Unterschiede messbar</b></span>`);
+  }
+  // null heisst UNBEKANNT (nachgerechneter Tag ohne Terminfeed), nicht "keine".
+  if (typeof u.termineHeute === "number") {
+    teile.push(u.termineHeute > 0
+      ? `<span class="u-teil">Termine heute: <b>${u.termineHeute}</b></span>`
+      : `<span class="u-teil">Termine heute: <span class="u-grau">keine</span></span>`);
+  } else {
+    teile.push(`<span class="u-teil">Termine: <span class="u-grau">unbekannt</span></span>`);
+  }
+
+  if (!teile.length) return "";
+  return `<div class="umfeld-note"><span class="u-label">Umfeld &mdash; nur Beobachtung, nicht Teil der Entscheidung</span>`
+    + teile.join("")
+    + `<span class="u-fuss">Diese Werte haben das Signal oben weder erzeugt noch verhindert noch verändert. `
+    + `Sie werden mitgeschrieben, damit sich später messen lässt, ob Signale in bestimmten Umfeldern besser laufen. `
+    + `<a href="marktlage.html">Marktlage ansehen</a></span></div>`;
 }
 
 function selectAsset(id) {
