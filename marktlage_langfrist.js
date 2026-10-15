@@ -27,9 +27,16 @@
 const HORIZONTE = [1, 5, 10, 15, 20];
 const PAUSE_MS = 400;
 
+/* Mit range=max duennt Yahoo lange Reihen aus: fuer den S&P 500 kamen 168
+ * Punkte fuer 501 Monate zurueck (34 %), faktisch Quartalsdaten unter dem
+ * Etikett "monatlich". Mit ausdruecklichem Zeitraum statt range=max liefert
+ * dieselbe Schnittstelle die vollstaendige Monatsreihe. */
+const AB_SEKUNDEN = Math.floor(Date.UTC(1960, 0, 1) / 1000);
+
 async function holeMonatsreihe(symbol) {
   const url = "https://query1.finance.yahoo.com/v8/finance/chart/"
-    + encodeURIComponent(symbol) + "?interval=1mo&range=max";
+    + encodeURIComponent(symbol) + "?interval=1mo"
+    + "&period1=" + AB_SEKUNDEN + "&period2=" + Math.floor(Date.now() / 1000);
   const antwort = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (compatible; tjr-dashboard marktlage)" },
     signal: AbortSignal.timeout(25000),
