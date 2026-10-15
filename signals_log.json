@@ -45675,8 +45675,8 @@
     "target2": 80144.648438,
     "rr2": 2.28,
     "partialExit": true,
-    "trailStop": 81302.723438,
-    "tp1HitTs": null,
+    "trailStop": 80144.648438,
+    "tp1HitTs": 1792056300000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -45719,9 +45719,20 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792056600000,
+    "rMultiple": 2.28,
+    "exitPrice": 80144.648438,
+    "postmortem": {
+      "holdHours": 1.1,
+      "mfeR": 2.68,
+      "maeR": -0.09,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.46,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1792067159639",
@@ -45959,9 +45970,31 @@
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792055700000,
+    "rMultiple": -1,
+    "exitPrice": 4184.840137,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 0.58,
+      "maeR": -1.37,
+      "towardTargetPct": 21,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.55,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 21% entgegen (max +0.6R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "GBPUSD-1792069730258",
@@ -46079,8 +46112,30 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "5m",
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792055700000,
+    "rMultiple": -1,
+    "exitPrice": 4185.439746,
+    "postmortem": {
+      "holdHours": 0.1,
+      "mfeR": 0.32,
+      "maeR": -1.33,
+      "towardTargetPct": 12,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.55,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 12% entgegen (max +0.3R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   }
 ]
