@@ -47156,9 +47156,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": null
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792070400000,
+    "rMultiple": -1,
+    "exitPrice": 1.3453,
+    "postmortem": {
+      "holdHours": 1,
+      "mfeR": 0.45,
+      "maeR": -1.02,
+      "towardTargetPct": 43,
+      "stopDistAdr": 0.19,
+      "targetDistAdr": 0.2,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.6R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "XRPUSD-1792081784878",
@@ -47226,8 +47243,30 @@
       "sektorAllesRauschen": true,
       "termineHeute": 2
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792070100000,
+    "rMultiple": -1,
+    "exitPrice": 1.3426,
+    "postmortem": {
+      "holdHours": 0.8,
+      "mfeR": 0.22,
+      "maeR": -1.12,
+      "towardTargetPct": 10,
+      "stopDistAdr": 0.19,
+      "targetDistAdr": 0.44,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 10% entgegen (max +0.2R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   }
 ]
