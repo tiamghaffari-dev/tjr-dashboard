@@ -204,6 +204,41 @@ if (ro && rb) {
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * Eigenen Stand festhalten. Die Marktlage-Seite liest diese Datei und zeigt
+ * an, wann zuletzt ausgewertet wurde und was dabei herauskam - damit Tiam
+ * nicht raten muss, ob sich ein neuer Durchlauf schon lohnt.
+ * ------------------------------------------------------------------------- */
+(function schreibeStand() {
+  const fs = require("fs");
+  const ordner = path.join(__dirname, "daten", "marktlage");
+  const mitUmfeld = offiziell.filter((s) => umfeldVon(s));
+  const gesamt = ew(mitUmfeld.map((s) => s.rMultiple));
+  const mitTermin = mitUmfeld.filter((s) => {
+    const u = umfeldVon(s);
+    return u && typeof u.zeile.termineHeute === "number";
+  });
+  const stand = {
+    gelaufenAm: new Date().toISOString(),
+    offizielleTrades: offiziell.length,
+    mitUmfeld: mitUmfeld.length,
+    mitBekanntenTerminen: mitTermin.length,
+    beobachtungsTrades: beobachtet.length,
+    erwartungswert: gesamt ? Math.round(gesamt.ew * 1000) / 1000 : null,
+    standardfehler: gesamt && gesamt.se != null ? Math.round(gesamt.se * 1000) / 1000 : null,
+    // Ergebnis in einem Satz. Wird von Hand gepflegt, wenn sich das Urteil
+    // aendert - eine Maschine soll hier nicht selbst "haelt stand" behaupten.
+    ergebnis: "nichts hat die Streuung überlebt",
+  };
+  try {
+    fs.mkdirSync(ordner, { recursive: true });
+    fs.writeFileSync(path.join(ordner, "auswertung_stand.json"), JSON.stringify(stand, null, 2), "utf8");
+    console.log("\nStand geschrieben: daten/marktlage/auswertung_stand.json");
+  } catch (e) {
+    console.error("\nStand nicht schreibbar (egal):", e.message);
+  }
+})();
+
 console.log("\n" + "=".repeat(92));
 console.log("WICHTIG ZUR LESART");
 console.log("=".repeat(92));

@@ -122,6 +122,26 @@
   }
   .ausfall b { color: #ff8f8f; }
 
+  /* Fortschritt bis zur naechsten Auswertung */
+  .fortschritt { margin: 14px 0 4px; font-family: -apple-system, sans-serif; }
+  .fortschritt .zahl { font-size: 23px; font-weight: 700; color: #e8eaf0; }
+  .fortschritt .von { font-size: 13px; color: #6b7185; font-weight: 400; }
+  .balken { height: 7px; border-radius: 4px; background: rgba(255,255,255,0.07); overflow: hidden; margin: 9px 0 7px; max-width: 520px; }
+  .balken > div { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #7dd3fc, #a78bfa); transition: width 0.4s ease; }
+  .balken.voll > div { background: linear-gradient(90deg, #39ff88, #6be79a); }
+  /* Nicht als Nachfahre von .fortschritt schreiben - eine dieser Zeilen steht
+     ausserhalb davon und stuende sonst in der Monospace-Schrift der Seite. */
+  .wann { font-size: 12.3px; color: #9198ad; line-height: 1.6; font-family: -apple-system, sans-serif; }
+  .wann b { color: #c3cadb; }
+  .bereit {
+    background: linear-gradient(135deg, rgba(57,255,136,0.10), rgba(57,255,136,0.02));
+    border: 1px solid rgba(57,255,136,0.32); border-radius: 11px; padding: 11px 15px; margin-top: 12px;
+    font-size: 12.8px; line-height: 1.6; color: #b9e8cc; font-family: -apple-system, sans-serif;
+  }
+  .bereit b { color: #6be79a; }
+  .nebenziel { font-size: 12px; color: #6b7185; font-family: -apple-system, sans-serif; margin-top: 10px; line-height: 1.6; }
+  .nebenziel b { color: #9198ad; }
+
   .tabellen-rahmen { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .tabellen-rahmen table { min-width: 660px; }
   /* Die Kennzahlen-Tabellen aus Etappe 2 haben nur drei bis vier Spalten.
@@ -310,8 +330,9 @@
 </div>
 
 <div class="block">
-  <h2>Was hier mitgeschrieben wird</h2>
+  <h2>Was hier mitgeschrieben wird &mdash; und wann es sich auswerten lässt</h2>
   <div class="block-sub" id="historie-sub"></div>
+  <div id="auswertung-stand"></div>
   <div class="bedeutung">
     <p><span class="ja">Heißt:</span> die Werte oben werden Tag für Tag in einer eigenen Datei festgehalten. Irgendwann ist damit die Frage beantwortbar, ob die TJR-Engine in bestimmten Umfeldern besser oder schlechter läuft &mdash; zum Beispiel bei hoher gegen niedrige Schwankung.</p>
     <p><span class="nein">Heißt nicht:</span> <b>heute beantwortet das niemand.</b> Es wird nichts ausgewertet, nichts verglichen und nichts behauptet. Die Engine liest diese Datei nicht und wird von ihr in keiner Weise beeinflusst &mdash; sie weiß nicht einmal, dass es sie gibt. Bis genug Tage und genug Trades beisammen sind, um eine Auswertung überhaupt vom Zufall unterscheiden zu können, vergehen Monate.</p>
@@ -673,7 +694,53 @@ function zeichneHistorie() {
     + ". Letzter Eintrag: Handelstag " + h.handelstag + ".";
 }
 
-for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine, zeichneHistorie]) {
+/* ---------- 6. Wann lohnt sich die naechste Auswertung? ----------
+ * Das ist die Erinnerung, die Tiam wollte - und sie zaehlt bewusst TRADES
+ * statt Wochen. Ob ein neuer Durchlauf etwas bringt, haengt nicht daran, wie
+ * viel Zeit vergangen ist, sondern wie viele abgeschlossene Trades
+ * dazugekommen sind. */
+function zeichneAuswertung() {
+  const a = DATA.auswertung;
+  const el = document.getElementById("auswertung-stand");
+  if (!a) { el.innerHTML = ""; return; }
+
+  const anteil = Math.min(100, Math.round(a.trades / a.zielTrades * 100));
+  let html = '<div class="fortschritt">'
+    + '<span class="zahl">' + a.trades + '</span> <span class="von">von ' + a.zielTrades + ' abgeschlossenen Trades mit Umfeld</span>'
+    + '<div class="balken' + (a.bereit ? " voll" : "") + '"><div style="width:' + anteil + '%"></div></div>';
+
+  if (a.letzte) {
+    const d = new Date(a.letzte.gelaufenAm);
+    const wann = isNaN(d) ? "?" : d.toLocaleDateString("de-AT", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const ew = typeof a.letzte.erwartungswert === "number"
+      ? (a.letzte.erwartungswert > 0 ? "+" : "") + a.letzte.erwartungswert.toFixed(2).replace(".", ",") : "?";
+    const se = typeof a.letzte.standardfehler === "number"
+      ? a.letzte.standardfehler.toFixed(2).replace(".", ",") : "?";
+    html += '<div class="wann">Zuletzt ausgewertet am <b>' + wann + '</b> mit ' + a.letzte.mitUmfeld
+      + ' Trades: Erwartungswert <b>' + ew + ' R</b> (±' + se + ') &mdash; ' + a.letzte.ergebnis + '.</div>';
+  } else {
+    html += '<div class="wann">Noch nie ausgewertet.</div>';
+  }
+  html += "</div>";
+
+  html += a.bereit
+    ? '<div class="bereit"><b>Jetzt lohnt sich ein neuer Durchlauf.</b> Es sind genug Trades beisammen, '
+      + 'dass ein mittelgroßer Unterschied zwischen den Umfeldern auffallen würde. Sag Claude Bescheid &mdash; '
+      + 'die Auswertung läuft fertig im Projekt (<code>umfeld_auswertung.js</code>).</div>'
+    : '<div class="wann" style="margin-top:8px">Ab <b>' + a.zielTrades + '</b> Trades lohnt sich der nächste Durchlauf. '
+      + 'Dann fällt der Standardfehler von rund 0,12 auf 0,09 &mdash; vorher würde auch ein echter Unterschied '
+      + 'in der Streuung untergehen. Es fehlen noch <b>' + (a.zielTrades - a.trades) + '</b>.</div>';
+
+  html += '<div class="nebenziel">Termine-Einteilung: <b>' + a.mitTerminen + ' von ' + a.zielTermine + '</b> Trades mit bekanntem Terminstand. '
+    + (a.termineBereit
+        ? 'Reicht für eine Auswertung.'
+        : 'Diese Zahl wächst nur mit neuen Handelstagen &mdash; rückwirkend gibt es keinen Terminkalender.')
+    + '</div>';
+
+  el.innerHTML = html;
+}
+
+for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine, zeichneHistorie, zeichneAuswertung]) {
   try { f(); } catch (e) { console.error("Block fehlgeschlagen:", e); }
 }
 </script>

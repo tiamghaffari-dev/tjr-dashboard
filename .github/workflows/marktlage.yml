@@ -72,6 +72,15 @@ jobs:
             echo "Nichts geaendert - kein Commit."
           else
             git commit -m "Marktlage: $(date -u +'%Y-%m-%d %H:%M UTC')"
-            git pull --rebase --autostash -q
-            git push -q && echo "Gepusht."
+            # Mit Wiederholung: der TJR-Report pusht in dasselbe Repo. Am
+            # 15.10. ist genau das passiert - der Bau lief durch, nur das
+            # Pushen scheiterte am Rennen, und der Lauf stand rot da.
+            for i in 1 2 3; do
+              git pull --rebase --autostash -q || true
+              if git push -q; then echo "Gepusht."; exit 0; fi
+              echo "Push-Versuch $i fehlgeschlagen, neuer Versuch."
+              sleep 7
+            done
+            echo "Push nach 3 Versuchen fehlgeschlagen."
+            exit 1
           fi

@@ -55,6 +55,77 @@ function symboltestDatum() {
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * Wie weit ist die Umfeld-Auswertung?
+ *
+ * Die Schwellen sind nicht gegriffen:
+ *  - 200 abgeschlossene Trades ist Tiams eigenes Ziel. Der Standardfehler des
+ *    Erwartungswerts faellt damit von rund 0,12 auf 0,09 - und die kleinste
+ *    Untergruppe (bei der ersten Auswertung n=15) waechst auf etwa 26. Erst
+ *    dann hat ein mittelgrosser Unterschied ueberhaupt eine Chance aufzufallen.
+ *  - 30 Trades mit BEKANNTEM Terminstand sind das Minimum, um ueberhaupt in
+ *    zwei Gruppen zu teilen. Rueckwirkend geht das nicht, weil es fuer
+ *    nachgerechnete Tage keinen Terminfeed gibt - diese Zahl waechst nur mit
+ *    neuen Handelstagen.
+ * ------------------------------------------------------------------------- */
+const ZIEL_TRADES = 200;
+const ZIEL_TERMINE = 30;
+
+function baueAuswertungsstand() {
+  const hist = (() => {
+    try {
+      return JSON.parse(fs.readFileSync(path.join(BASIS, "daten", "marktlage", "historie.json"), "utf8"));
+    } catch (e) { return null; }
+  })();
+  if (!hist) return null;
+
+  let log;
+  try {
+    log = JSON.parse(fs.readFileSync(path.join(BASIS, "signals_log.json"), "utf8"));
+  } catch (e) {
+    return null;
+  }
+  if (!Array.isArray(log)) return null;
+
+  const fertig = log.filter((s) =>
+    (s.status === "win" || s.status === "loss") && typeof s.rMultiple === "number" && !s.beobachtung);
+
+  let mitUmfeld = 0, mitTermin = 0;
+  for (const s of fertig) {
+    const zeile = s.umfeld || hist_zeile(hist, s.entryTs);
+    if (!zeile) continue;
+    mitUmfeld++;
+    const t = s.umfeld ? s.umfeld.termineHeute : zeile.termineHeute;
+    if (typeof t === "number") mitTermin++;
+  }
+
+  let letzte = null;
+  try {
+    letzte = JSON.parse(fs.readFileSync(path.join(BASIS, "daten", "marktlage", "auswertung_stand.json"), "utf8"));
+  } catch (e) { /* noch nie gelaufen */ }
+
+  return {
+    trades: mitUmfeld,
+    zielTrades: ZIEL_TRADES,
+    mitTerminen: mitTermin,
+    zielTermine: ZIEL_TERMINE,
+    bereit: mitUmfeld >= ZIEL_TRADES,
+    termineBereit: mitTermin >= ZIEL_TERMINE,
+    letzte,
+  };
+}
+
+function hist_zeile(hist, epochMs) {
+  try {
+    return hist && typeof epochMs === "number" ? requireHist().zeileZuZeitpunkt(hist, epochMs) : null;
+  } catch (e) { return null; }
+}
+let _histModul = null;
+function requireHist() {
+  if (!_histModul) _histModul = require("./marktlage_historie.js");
+  return _histModul;
+}
+
 async function main() {
   console.log("Marktlage-Lauf, " + ml.SYMBOLE.length + " Werte ...");
 
@@ -187,6 +258,24 @@ async function main() {
   console.log("  daten/marktlage/stand.json geschrieben");
 
   /* ----------------------------------------------------------------------
+   * STAND DER AUSWERTUNG - die Erinnerung auf der Seite.
+   *
+   * Tiam wollte keine Terminerinnerung, sondern eine auf der Webseite. Eine
+   * nach Datum waere hier auch die schlechtere: ob sich ein neuer Durchlauf
+   * lohnt, haengt nicht daran, wie viele Wochen vergangen sind, sondern wie
+   * viele abgeschlossene Trades dazugekommen sind. Darum zaehlt diese
+   * Anzeige Trades, nicht Tage.
+   *
+   * Rein lesend: signals_log.json wird nur gezaehlt, nie geschrieben.
+   * -------------------------------------------------------------------- */
+  let auswertung = null;
+  try {
+    auswertung = baueAuswertungsstand();
+  } catch (e) {
+    console.error("  Auswertungsstand nicht ermittelbar (egal):", e.message);
+  }
+
+  /* ----------------------------------------------------------------------
    * ETAPPE 3 - Tageszeile in die eigene Zeitreihe schreiben.
    *
    * Nach stand.json und bewusst in try/catch: schlaegt das fehl, fehlt ein
@@ -210,7 +299,7 @@ async function main() {
     throw new Error("Vorlage enthaelt keinen __DATA__-Platzhalter");
   }
   const seite = vorlage
-    .replace("__DATA__", sicheresJson(Object.assign({}, daten, { historie })))
+    .replace("__DATA__", sicheresJson(Object.assign({}, daten, { historie, auswertung })))
     .replace(/__VERALTET_TAGE__/g, String(ml.VERALTET_TAGE));
 
   fs.writeFileSync(path.join(BASIS, "docs", "marktlage.html"), seite, "utf8");
