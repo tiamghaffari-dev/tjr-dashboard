@@ -818,9 +818,16 @@ function zeichneLangfrist() {
   });
 
   const vonJ = e.von.slice(0, 4), bisJ = e.bis.slice(0, 4);
-  sub.innerHTML = "<b>" + e.name + "</b> &mdash; " + Math.floor(e.monate / 12) + " Jahre Historie ("
+  const jahreSpanne = Math.floor((e.spanneMonate || e.monate) / 12);
+  sub.innerHTML = "<b>" + e.name + "</b> &mdash; " + jahreSpanne + " Jahre Historie ("
     + vonJ + " bis " + bisJ + "). Jede Zeile fasst <b>alle</b> überlappenden Fenster dieser Länge zusammen."
-    + (e.hinweis ? ' <span class="null-wert">' + e.hinweis + "</span>" : "");
+    + (e.hinweis ? ' <span class="null-wert">' + e.hinweis + "</span>" : "")
+    // Eine lückenhafte Quelle darf nicht als vollständige Historie durchgehen.
+    + (typeof e.dichte === "number" && e.dichte < 90
+        ? '<br><span class="null-wert">Die Quelle liefert für diesen Zeitraum nur '
+          + e.monate + " von " + e.spanneMonate + " Monaten (" + e.dichte
+          + " %). Fenster ohne passenden Endpunkt werden übersprungen, nicht gedehnt.</span>"
+        : "");
 
   // Gemeinsame Skala ueber alle Zeilen, sonst sind die Balken nicht vergleichbar.
   let min = 0, max = 0;

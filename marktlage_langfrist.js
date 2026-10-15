@@ -67,17 +67,49 @@ async function holeMonatsreihe(symbol) {
 
 /* Rollierende Fenster. Es werden ALLE ueberlappenden Fenster gezaehlt, nicht
  * nur die, die auf einen Jahreswechsel fallen - sonst haengt das Ergebnis
- * davon ab, in welchem Monat man zu zaehlen beginnt. */
+ * davon ab, in welchem Monat man zu zaehlen beginnt.
+ *
+ * GERECHNET WIRD UEBER ZEITSTEMPEL, NICHT UEBER INDEXPOSITIONEN.
+ *
+ * Die erste Fassung nahm "i + 60 Eintraege" als fuenf Jahre an. Beim ersten
+ * echten Lauf kam fuer den S&P 500 ein Mittelwert von 26 % pro Jahr ueber
+ * zehn Jahre heraus - eine Zahl, die es nicht gibt. Ursache: Yahoos
+ * max-Reihe hatte Luecken (168 Eintraege fuer den Zeitraum 1984-2026 statt
+ * rund 500). "60 Eintraege weiter" waren dort in Wahrheit fuenfzehn Jahre,
+ * annualisiert wurden sie aber als fuenf. Das Ergebnis sah voellig plausibel
+ * aus und war grober Unsinn.
+ *
+ * Jetzt wird zu jedem Startpunkt der Eintrag gesucht, der dem Zieldatum am
+ * naechsten liegt, und mit der TATSAECHLICH verstrichenen Zeit annualisiert.
+ * Liegt kein Eintrag nah genug am Zieldatum (mehr als 45 Tage daneben), wird
+ * das Fenster verworfen statt gedehnt. */
+const JAHR_SEK = 365.2425 * 86400;
+const TOLERANZ_SEK = 45 * 86400;
+
 function rollierend(reihe, jahre) {
-  const monate = jahre * 12;
-  if (reihe.length <= monate) return null;
+  if (reihe.length < 5) return null;
+  const spanneJahre = (reihe[reihe.length - 1].ts - reihe[0].ts) / JAHR_SEK;
+  if (spanneJahre < jahre * 1.05) return null;
 
   const renditen = [];
-  for (let i = 0; i + monate < reihe.length; i++) {
-    const von = reihe[i].close, bis = reihe[i + monate].close;
-    if (von <= 0) continue;
-    // Annualisiert, damit Fenster verschiedener Laenge vergleichbar sind.
-    renditen.push((Math.pow(bis / von, 1 / jahre) - 1) * 100);
+  let j = 0;
+  for (let i = 0; i < reihe.length; i++) {
+    const zielTs = reihe[i].ts + jahre * JAHR_SEK;
+    if (zielTs > reihe[reihe.length - 1].ts) break;
+
+    // Zeiger mitlaufen lassen statt jedes Mal zu suchen.
+    if (j < i) j = i;
+    while (j + 1 < reihe.length && Math.abs(reihe[j + 1].ts - zielTs) < Math.abs(reihe[j].ts - zielTs)) j++;
+
+    if (Math.abs(reihe[j].ts - zielTs) > TOLERANZ_SEK) continue;
+    const von = reihe[i].close, bis = reihe[j].close;
+    if (von <= 0 || bis <= 0) continue;
+
+    // Mit der WIRKLICH verstrichenen Zeit annualisieren, nicht mit der
+    // gewuenschten - sonst schleicht sich genau der Fehler wieder ein.
+    const echteJahre = (reihe[j].ts - reihe[i].ts) / JAHR_SEK;
+    if (echteJahre <= 0) continue;
+    renditen.push((Math.pow(bis / von, 1 / echteJahre) - 1) * 100);
   }
   if (renditen.length < 5) return null;
 
@@ -111,10 +143,15 @@ async function sammle(symbole) {
         if (z) zeilen.push(z);
       }
       if (!zeilen.length) throw new Error("keine auswertbaren Fenster");
+      const spanneMonate = Math.round((reihe[reihe.length - 1].ts - reihe[0].ts) / JAHR_SEK * 12);
       aus.push({
         name: s.name, symbol: s.symbol, hinweis: s.hinweis || null,
         ok: true,
         monate: reihe.length,
+        // Wie dicht ist die Reihe wirklich? Steht auf der Seite, damit eine
+        // lueckenhafte Quelle nicht als vollstaendige Historie durchgeht.
+        spanneMonate,
+        dichte: spanneMonate > 0 ? Math.round(reihe.length / spanneMonate * 100) : null,
         von: new Date(reihe[0].ts * 1000).toISOString().slice(0, 7),
         bis: new Date(reihe[reihe.length - 1].ts * 1000).toISOString().slice(0, 7),
         zeilen,
