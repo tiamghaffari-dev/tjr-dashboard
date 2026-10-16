@@ -46924,8 +46924,8 @@
     "target2": 1.328515,
     "rr2": 1.06,
     "partialExit": true,
-    "trailStop": 1.322639,
-    "tp1HitTs": null,
+    "trailStop": 1.328515,
+    "tp1HitTs": 1792107900000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -46979,9 +46979,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": null
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792108200000,
+    "rMultiple": 1.06,
+    "exitPrice": 1.328515,
+    "postmortem": {
+      "holdHours": 12,
+      "mfeR": 1.7,
+      "maeR": -0.25,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.48,
+      "targetDistAdr": 0.51,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.1R, der Preis lief danach aber noch bis +3.3R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "BTCUSD-1792080214346",
@@ -46995,8 +47012,8 @@
     "target2": 81476.242188,
     "rr2": 1.86,
     "partialExit": true,
-    "trailStop": 82730.070313,
-    "tp1HitTs": null,
+    "trailStop": 81661.882813,
+    "tp1HitTs": 1792107600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -47049,9 +47066,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": null
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792107900000,
+    "rMultiple": 1.44,
+    "exitPrice": 81661.882813,
+    "postmortem": {
+      "holdHours": 11.7,
+      "mfeR": 1.6,
+      "maeR": -0.57,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.36,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1792080214346",
@@ -47135,8 +47169,8 @@
     "target2": 81476.242188,
     "rr2": 1.71,
     "partialExit": true,
-    "trailStop": 82664.78125,
-    "tp1HitTs": null,
+    "trailStop": 81661.882813,
+    "tp1HitTs": 1792107600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -47189,9 +47223,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": null
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792107900000,
+    "rMultiple": 1.29,
+    "exitPrice": 81661.882813,
+    "postmortem": {
+      "holdHours": 11.4,
+      "mfeR": 1.45,
+      "maeR": -0.72,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.32,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.7R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1792081156144",
@@ -47573,8 +47629,8 @@
     "target2": 81476.242188,
     "rr2": 1.87,
     "partialExit": true,
-    "trailStop": 82732.703125,
-    "tp1HitTs": null,
+    "trailStop": 81661.882813,
+    "tp1HitTs": 1792107600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -47627,9 +47683,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 2
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792107900000,
+    "rMultiple": 1.44,
+    "exitPrice": 81661.882813,
+    "postmortem": {
+      "holdHours": 8.8,
+      "mfeR": 1.6,
+      "maeR": -0.48,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.36,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "^GSPC-1792090696518",
@@ -47740,8 +47813,8 @@
     "target2": 81476.242188,
     "rr2": 1.83,
     "partialExit": true,
-    "trailStop": 82718.0625,
-    "tp1HitTs": null,
+    "trailStop": 81661.882813,
+    "tp1HitTs": 1792107600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -47794,9 +47867,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 2
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792107900000,
+    "rMultiple": 1.41,
+    "exitPrice": 81661.882813,
+    "postmortem": {
+      "holdHours": 8.2,
+      "mfeR": 1.57,
+      "maeR": -0.5,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.35,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1792102088678",
@@ -47810,8 +47894,8 @@
     "target2": 81476.242188,
     "rr2": 2.06,
     "partialExit": true,
-    "trailStop": 82816.007813,
-    "tp1HitTs": null,
+    "trailStop": 81661.882813,
+    "tp1HitTs": 1792107600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -47864,9 +47948,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 2
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792107900000,
+    "rMultiple": 1.63,
+    "exitPrice": 81661.882813,
+    "postmortem": {
+      "holdHours": 5.6,
+      "mfeR": 1.79,
+      "maeR": -0.28,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.41,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1792104654678",
@@ -47934,9 +48029,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 2
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792094400000,
+    "rMultiple": -1,
+    "exitPrice": 4172.332198,
+    "postmortem": {
+      "holdHours": 1.1,
+      "mfeR": -0.09,
+      "maeR": -1,
+      "towardTargetPct": 0,
+      "stopDistAdr": 0.26,
+      "targetDistAdr": 0.44,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "vermutlich zu eng",
+          "text": "Nach dem Stop-Out lief der Preis noch bis +1.6R in Zielrichtung, ohne das Ziel ganz zu erreichen. Ein etwas weiterer Stop haette den Trade zumindest gerettet."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 0% entgegen (max -0.1R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war richtig",
+          "text": "Die Richtung stimmte am Ende (+0.8R netto) - verloren wurde dieser Trade an der Ausfuehrung (Stop/Timing), nicht an der Analyse."
+        }
+      ],
+      "summary": "Stop-Loss: vermutlich zu eng · Take-Profit: nicht ursaechlich · Analyse: These war richtig"
+    }
   },
   {
     "id": "XRPUSD-1792104971252",
@@ -48004,8 +48126,35 @@
       "sektorAllesRauschen": true,
       "termineHeute": 2
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792107600000,
+    "rMultiple": -1,
+    "exitPrice": 1.32598,
+    "postmortem": {
+      "holdHours": 4.7,
+      "mfeR": 0.02,
+      "maeR": -1.31,
+      "towardTargetPct": 2,
+      "stopDistAdr": 0.3,
+      "targetDistAdr": 0.39,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max +0.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 2% entgegen (max +0.0R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Entry: zu frueh"
+    }
   }
 ]
