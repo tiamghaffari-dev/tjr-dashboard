@@ -471,30 +471,74 @@ function gleichlauf(reihenNachSymbol, gehandelte) {
  * das heisst dann "diese Woche nichts mehr", nicht "die naechsten Tage frei".
  * =========================================================================== */
 
-const KALENDER_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.json";
-const KALENDER_WAEHRUNGEN = ["USD", "GBP"];
+/* Zwei Feeds statt einem.
+ *
+ * Gefunden am 18.10. beim Nachschauen: Samstagabend stand auf der Seite
+ * "0 anstehende Termine". Formal richtig - der thisweek-Feed enthaelt nur die
+ * laufende Kalenderwoche, und die war vorbei. Praktisch heisst das aber, dass
+ * die Seite genau am Wochenende blind ist, also dann, wenn man sich die
+ * kommende Woche anschaut. Mit dem nextweek-Feed dazu faellt diese Luecke weg.
+ *
+ * EUR ist neu dabei: DAX und Euro Stoxx stehen oben auf der Seite, und
+ * EZB-Entscheidungen bewegen ueber den Dollar auch GBP/USD. Bei "High" bleibt
+ * es trotzdem - der Feed hat ueber 100 Eintraege pro Woche, mit mittlerer
+ * Wirkung waere die Liste unlesbar. */
+const KALENDER_URLS = [
+  "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+  "https://nfs.faireconomy.media/ff_calendar_nextweek.json",
+];
+const KALENDER_URL = KALENDER_URLS[0];   // Rueckwaertskompatibel
+const KALENDER_WAEHRUNGEN = ["USD", "GBP", "EUR"];
 
-async function termine() {
-  const antwort = await fetch(KALENDER_URL, {
+async function holeKalender(url) {
+  const antwort = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (compatible; tjr-dashboard marktlage)" },
     signal: AbortSignal.timeout(20000),
   });
   if (!antwort.ok) throw new Error("HTTP " + antwort.status);
   const roh = await antwort.json();
   if (!Array.isArray(roh)) throw new Error("unerwartetes Format");
+  return roh;
+}
+
+async function termine() {
+  const roh = [];
+  const fehler = [];
+  for (const url of KALENDER_URLS) {
+    try {
+      const teil = await holeKalender(url);
+      for (const e of teil) roh.push(e);
+    } catch (e) {
+      // Faellt EIN Feed aus, bleibt der andere nutzbar. Nur wenn beide
+      // scheitern, gibt es gar keine Termine - und dann sagt die Seite das
+      // auch, statt eine leere Liste als "keine Termine" auszugeben.
+      fehler.push(url.split("/").pop() + ": " + (e && e.message ? e.message : e));
+    }
+  }
+  if (!roh.length) throw new Error(fehler.join(" | ") || "beide Feeds leer");
 
   const jetzt = Date.now();
+  const gesehen = new Set();
   const kommend = roh
     .filter((e) => KALENDER_WAEHRUNGEN.includes(e.country) && e.impact === "High")
     .map((e) => ({ zeitIso: e.date, titel: e.title, waehrung: e.country, ts: new Date(e.date).getTime() }))
     .filter((e) => isFinite(e.ts) && e.ts >= jetzt - 2 * 3600 * 1000)  // 2h Nachlauf
+    .filter((e) => {
+      // Die beiden Feeds koennen sich am Wochenwechsel ueberlappen.
+      const schluessel = e.ts + "|" + e.waehrung + "|" + e.titel;
+      if (gesehen.has(schluessel)) return false;
+      gesehen.add(schluessel);
+      return true;
+    })
     .sort((a, b) => a.ts - b.ts);
 
   return {
     ok: true,
     geprueft: new Date().toISOString(),
     gesamtImFeed: roh.length,
-    kommende: kommend.slice(0, 20),
+    feedFehler: fehler.length ? fehler : null,
+    waehrungen: KALENDER_WAEHRUNGEN,
+    kommende: kommend.slice(0, 25),
   };
 }
 
