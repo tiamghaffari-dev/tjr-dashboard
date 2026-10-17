@@ -342,11 +342,11 @@
 
 <div class="block">
   <h2>Anstehende Termine</h2>
-  <div class="block-sub">High-Impact-Termine für USD und GBP aus dem ForexFactory-Kalender &mdash; derselbe Feed, den der TJR-Report schon für den Tageshinweis nutzt.</div>
+  <div class="block-sub">Termine mit hoher erwarteter Wirkung für <b>USD, GBP und EUR</b> aus dem ForexFactory-Kalender &mdash; diese und nächste Woche &mdash; derselbe Feed, den der TJR-Report schon für den Tageshinweis nutzt.</div>
   <div class="termin-liste" id="termin-liste"></div>
   <div class="bedeutung">
     <p><span class="ja">Heißt:</span> zu diesen Zeitpunkten kommen Zahlen heraus, auf die der Markt oft sprunghaft reagiert &mdash; unabhängig davon, wie sauber ein Setup aussieht.</p>
-    <p><span class="nein">Heißt nicht:</span> kein Signal und keine Handlungsanweisung. Die Engine liest diese Liste nicht und blockiert dadurch nichts. Der Feed enthält außerdem nur die <b>laufende Kalenderwoche</b>: eine leere Liste am Freitagabend heißt „diese Woche nichts mehr", nicht „die nächsten Tage sind frei".</p>
+    <p><span class="nein">Heißt nicht:</span> kein Signal und keine Handlungsanweisung. Die Engine liest diese Liste nicht und blockiert dadurch nichts. <b>Und sie ist nicht vollständig:</b> drin sind geplante Wirtschaftstermine und Auftritte von Notenbankern. Nicht drin sind politische Äußerungen &mdash; die kommen meist ohne Ankündigung und stehen in keinem Kalender. Eine leere Liste heißt also „keine geplanten Termine", nicht „nichts wird passieren".</p>
   </div>
 </div>
 
@@ -715,8 +715,8 @@ function zeichneTermine() {
     return;
   }
   if (!t.kommende.length) {
-    el.innerHTML = '<div class="leermeldung">Für den Rest dieser Kalenderwoche stehen keine High-Impact-Termine für USD oder GBP mehr an. '
-      + 'Nächste Woche erscheint hier wieder etwas, sobald der Feed umspringt.</div>';
+    el.innerHTML = '<div class="leermeldung">Für diese und die kommende Woche stehen keine Termine mit hoher erwarteter Wirkung an. '
+      + 'Das heißt nicht, dass nichts passiert &mdash; ungeplante Ereignisse stehen in keinem Kalender.</div>';
     return;
   }
   const heuteWien = new Date().toLocaleDateString("de-AT", { timeZone: "Europe/Vienna" });
@@ -731,7 +731,7 @@ function zeichneTermine() {
       + '<span class="wann">' + wann + '</span>'
       + '<span class="was">' + e.titel + ' <span class="waehr">' + e.waehrung + '</span></span></div>';
   }).join("")
-  + '<div class="begruendung" style="margin-top:9px">Zeiten in Wiener Ortszeit. Quelle: ForexFactory-Kalender, nur Termine mit hoher erwarteter Wirkung.</div>';
+  + '<div class="begruendung" style="margin-top:9px">Zeiten in Wiener Ortszeit. Quelle: ForexFactory-Kalender (' + (t.waehrungen || ["USD","GBP"]).join(", ") + '), diese und nächste Woche, nur hohe erwartete Wirkung.' + (t.feedFehler ? ' <span class="tief">Ein Feed war nicht erreichbar &mdash; die Liste kann unvollständig sein.</span>' : "") + '</div>';
 }
 
 /* ---------- 5. Mitschrift ---------- */
