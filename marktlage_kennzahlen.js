@@ -471,21 +471,27 @@ function gleichlauf(reihenNachSymbol, gehandelte) {
  * das heisst dann "diese Woche nichts mehr", nicht "die naechsten Tage frei".
  * =========================================================================== */
 
-/* Zwei Feeds statt einem.
+/* Nur EIN Feed - und das ist eine gepruefte Einschraenkung, keine Faulheit.
  *
- * Gefunden am 18.10. beim Nachschauen: Samstagabend stand auf der Seite
- * "0 anstehende Termine". Formal richtig - der thisweek-Feed enthaelt nur die
- * laufende Kalenderwoche, und die war vorbei. Praktisch heisst das aber, dass
- * die Seite genau am Wochenende blind ist, also dann, wenn man sich die
- * kommende Woche anschaut. Mit dem nextweek-Feed dazu faellt diese Luecke weg.
+ * Am 18.10. stand samstagabends "0 anstehende Termine" auf der Seite. Formal
+ * richtig: der Feed enthaelt nur die laufende Kalenderwoche, und die war
+ * vorbei. Praktisch heisst das, dass die Seite am Wochenende blind ist -
+ * ausgerechnet dann, wenn man auf die kommende Woche schaut.
  *
- * EUR ist neu dabei: DAX und Euro Stoxx stehen oben auf der Seite, und
- * EZB-Entscheidungen bewegen ueber den Dollar auch GBP/USD. Bei "High" bleibt
- * es trotzdem - der Feed hat ueber 100 Eintraege pro Woche, mit mittlerer
- * Wirkung waere die Liste unlesbar. */
+ * Der naheliegende Versuch, zusaetzlich ff_calendar_nextweek.json zu holen,
+ * ist gescheitert: die Adresse liefert HTTP 404, diesen Feed gibt es beim
+ * Anbieter nicht. Die Liste unten ist trotzdem eine Liste geblieben, samt
+ * Entdopplung und Ausfallschutz - faellt ein Feed aus, bleibt der andere
+ * nutzbar, fallen alle aus, gibt es einen Fehler statt einer leeren Liste,
+ * die wie "keine Termine" aussieht. Kommt irgendwann eine brauchbare zweite
+ * Quelle dazu, steht sie hier und der Rest funktioniert unveraendert.
+ *
+ * EUR ist dagegen neu und funktioniert: DAX und Euro Stoxx stehen oben auf
+ * derselben Seite, und EZB-Entscheidungen wirken ueber den Dollar auch auf
+ * GBP/USD. Bei "High" bleibt es trotzdem - der Feed hat ueber 100 Eintraege
+ * pro Woche, mit mittlerer Wirkung waere die Liste unlesbar. */
 const KALENDER_URLS = [
   "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
-  "https://nfs.faireconomy.media/ff_calendar_nextweek.json",
 ];
 const KALENDER_URL = KALENDER_URLS[0];   // Rueckwaertskompatibel
 const KALENDER_WAEHRUNGEN = ["USD", "GBP", "EUR"];
