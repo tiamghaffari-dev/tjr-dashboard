@@ -35,16 +35,16 @@ const WERTE = [
   { thema: "Breit gestreut", name: "MSCI World",        symbol: "EUNL.DE", kaufbar: true },
   { thema: "Breit gestreut", name: "FTSE All-World",    symbol: "VWCE.DE", kaufbar: true },
   { thema: "Breit gestreut", name: "MSCI ACWI",         symbol: "IUSQ.DE", kaufbar: true },
-  { thema: "Breit gestreut", name: "Schwellenlaender",  symbol: "EUNM.DE", kaufbar: true },
+  { thema: "Breit gestreut", name: "Schwellenländer",     symbol: "EUNM.DE", kaufbar: true },
 
-  { thema: "Ruestung", name: "VanEck Defense",          symbol: "DFEN.DE", kaufbar: true },
-  { thema: "Ruestung", name: "WisdomTree Europa Def.",  symbol: "WDEF.MI", kaufbar: true },
-  { thema: "Ruestung", name: "Rheinmetall",             symbol: "RHM.DE",  kaufbar: true },
-  { thema: "Ruestung", name: "Hensoldt",                symbol: "HAG.DE",  kaufbar: true },
-  { thema: "Ruestung", name: "Thales",                  symbol: "HO.PA",   kaufbar: true },
-  { thema: "Ruestung", name: "US-Ruestung (Vergleich)", symbol: "ITA",     kaufbar: false },
+  { thema: "Rüstung", name: "VanEck Defense",          symbol: "DFEN.DE", kaufbar: true },
+  { thema: "Rüstung", name: "WisdomTree Europa Def.",  symbol: "WDEF.MI", kaufbar: true },
+  { thema: "Rüstung", name: "Rheinmetall",             symbol: "RHM.DE",  kaufbar: true },
+  { thema: "Rüstung", name: "Hensoldt",                symbol: "HAG.DE",  kaufbar: true },
+  { thema: "Rüstung", name: "Thales",                  symbol: "HO.PA",   kaufbar: true },
+  { thema: "Rüstung", name: "US-Rüstung (Vergleich)", symbol: "ITA",     kaufbar: false },
 
-  { thema: "Energie", name: "Europa Oel & Gas",         symbol: "EXH1.DE", kaufbar: true },
+  { thema: "Energie", name: "Europa Öl & Gas",            symbol: "EXH1.DE", kaufbar: true },
   { thema: "Energie", name: "US-Energie (Vergleich)",   symbol: "XLE",     kaufbar: false },
 
   { thema: "Technik", name: "S&P 500 Technologie",      symbol: "QDVE.DE", kaufbar: true },
@@ -78,7 +78,7 @@ function dz(x, n) { return Number(x).toFixed(n).replace(".", ","); }
 const MASSSTAB_EUR = "EUNL.DE";      // iShares Core MSCI World, Xetra, EUR
 const MASSSTAB_USD = "URTH";         // iShares MSCI World ETF, USD
 const MASSSTAB = MASSSTAB_EUR;       // fuer die Anzeige
-const THEMEN = ["Breit gestreut", "Ruestung", "Energie", "Technik", "Einzelwert", "Krypto"];
+const THEMEN = ["Breit gestreut", "Rüstung", "Energie", "Technik", "Einzelwert", "Krypto"];
 const PAUSE_MS = 350;
 const JAHR_SEK = 365.2425 * 86400;
 const VOL_FENSTER = 60;              // ~3 Monate, passt zur Haltedauer von Monaten

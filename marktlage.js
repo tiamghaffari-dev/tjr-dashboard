@@ -24,10 +24,10 @@ const SYMBOLE = [
   // --- breite Indizes: wie laeuft "der Markt" ueberhaupt ---
   { gruppe: "Index",      name: "MSCI World",        symbol: "URTH",      hinweis: "ETF auf den Weltindex, in USD" },
   { gruppe: "Index",      name: "MSCI World (EUR)",  symbol: "IWDA.AS",   hinweis: "derselbe Weltindex, in Euro notiert" },
-  { gruppe: "Index",      name: "S&P 500",           symbol: "^GSPC",     hinweis: "500 groesste US-Firmen" },
-  { gruppe: "Index",      name: "Nasdaq 100",        symbol: "^NDX",      hinweis: "100 groesste Technologiewerte" },
-  { gruppe: "Index",      name: "DAX",               symbol: "^GDAXI",    hinweis: "40 groesste deutsche Firmen" },
-  { gruppe: "Index",      name: "Euro Stoxx 50",     symbol: "^STOXX50E", hinweis: "50 groesste Firmen der Eurozone", waehrung: "EUR" },
+  { gruppe: "Index",      name: "S&P 500",           symbol: "^GSPC",     hinweis: "500 größte US-Firmen" },
+  { gruppe: "Index",      name: "Nasdaq 100",        symbol: "^NDX",      hinweis: "100 größte Technologiewerte" },
+  { gruppe: "Index",      name: "DAX",               symbol: "^GDAXI",    hinweis: "40 größte deutsche Firmen" },
+  { gruppe: "Index",      name: "Euro Stoxx 50",     symbol: "^STOXX50E", hinweis: "50 größte Firmen der Eurozone", waehrung: "EUR" },
 
   // --- Rohstoffe ---
   { gruppe: "Rohstoff",   name: "Oel WTI",           symbol: "CL=F",      hinweis: "US-Sorte, Terminkontrakt" },
@@ -38,18 +38,18 @@ const SYMBOLE = [
 
   // --- Umfeld: Nervositaet, Zinsen, Dollar ---
   { gruppe: "Umfeld",     name: "VIX",               symbol: "^VIX",      hinweis: "erwartete Schwankung im S&P 500, in Prozentpunkten - kein Kurs", einheit: "pkt" },
-  { gruppe: "Umfeld",     name: "US-Zins 10 Jahre",  symbol: "^TNX",      hinweis: "Rendite zehnjaehriger US-Staatsanleihen in Prozent", einheit: "%" },
-  { gruppe: "Umfeld",     name: "Dollar-Index",      symbol: "DX-Y.NYB",  hinweis: "Dollar gegen einen Korb anderer Waehrungen", einheit: "pkt" },
+  { gruppe: "Umfeld",     name: "US-Zins 10 Jahre",  symbol: "^TNX",      hinweis: "Rendite zehnjähriger US-Staatsanleihen in Prozent", einheit: "%" },
+  { gruppe: "Umfeld",     name: "Dollar-Index",      symbol: "DX-Y.NYB",  hinweis: "Dollar gegen einen Korb anderer Währungen", einheit: "pkt" },
 
   // --- Sektoren: welcher Teil des Marktes laeuft gerade ---
   { gruppe: "Sektor",     name: "Technologie",       symbol: "XLK",       hinweis: "US-Sektor-ETF" },
   { gruppe: "Sektor",     name: "Energie",           symbol: "XLE",       hinweis: "US-Sektor-ETF" },
   { gruppe: "Sektor",     name: "Finanzen",          symbol: "XLF",       hinweis: "US-Sektor-ETF" },
   { gruppe: "Sektor",     name: "Rohstoffe/Material",symbol: "XLB",       hinweis: "US-Sektor-ETF" },
-  { gruppe: "Sektor",     name: "Ruestung/Luftfahrt",symbol: "ITA",       hinweis: "US-Sektor-ETF" },
+  { gruppe: "Sektor",     name: "Rüstung/Luftfahrt",symbol: "ITA",       hinweis: "US-Sektor-ETF" },
 
   // --- Einzelwerte, die Tiam ausdruecklich sehen wollte ---
-  { gruppe: "Einzelwert", name: "Rheinmetall",       symbol: "RHM.DE",    hinweis: "Ruestung, Frankfurt" },
+  { gruppe: "Einzelwert", name: "Rheinmetall",       symbol: "RHM.DE",    hinweis: "Rüstung, Frankfurt" },
   { gruppe: "Einzelwert", name: "Tesla",             symbol: "TSLA",      hinweis: "Nasdaq" },
 
   // --- die sechs Werte, die die Engine wirklich handelt ---

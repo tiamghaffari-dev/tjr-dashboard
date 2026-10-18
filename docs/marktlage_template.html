@@ -3,1003 +3,844 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Marktlage // Übersicht</title>
+<title>Marktlage</title>
 <style>
-  :root { color-scheme: dark; }
+  /* ===================================================================
+     UMBAU 18.10.2026 - Tiam: "zu viel Text, zu klein, zu kompliziert.
+     Man soll vieles auf den ersten Blick erkennen."
+
+     Die alte Seite war ueber mehrere Sitzungen gewachsen: neun Bloecke,
+     jeder mit eigenem Erklaerkasten. Einzeln sinnvoll, zusammen eine Wand.
+
+     Drei Regeln fuer den Umbau:
+       1. Oben steht ein LAGEBERICHT in ganzen Saetzen. Wer nichts
+          anklickt, hat in zehn Sekunden verstanden, was los ist.
+       2. Alles Weitere ist ZUGEKLAPPT. Die Zahlen sind nicht weg, sie
+          draengen sich nur nicht mehr auf.
+       3. Groesser: Grundschrift 16px statt 12,5px.
+
+     Die Saetze oben kommen aus denselben Daten wie die Tabellen darunter,
+     samt Rauschpruefung - andere Darstellung, nicht andere Aussage.
+     =================================================================== */
+  :root {
+    color-scheme: dark;
+    --grund:   #0a0c11;
+    --rand:    rgba(255,255,255,0.09);
+    --schrift: #e9ecf2;
+    --leise:   #8c94a6;
+    --leiser:  #656d7e;
+    --rauf:    #4ade80;
+    --runter:  #f87171;
+    --akzent:  #7dd3fc;
+    --warn:    #fbbf24;
+  }
   * { box-sizing: border-box; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  html, body {
-    margin: 0; padding: 0; min-height: 100%;
+  html { font-size: 16px; }
+  body {
+    margin: 0; padding: 0; background: var(--grund); color: var(--schrift);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-size: 1rem; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .seite { max-width: 760px; margin: 0 auto; padding: 28px 20px 64px; }
+
+  /* ---------- Kopf ---------- */
+  .kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  h1 { font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .zurueck {
+    font-size: 0.875rem; color: var(--leise); text-decoration: none;
+    padding: 6px 12px; border: 1px solid var(--rand); border-radius: 999px; white-space: nowrap;
+  }
+  .zurueck:hover { color: var(--schrift); border-color: rgba(125,211,252,0.4); }
+  .stand { color: var(--leiser); font-size: 0.8125rem; margin-top: 5px; }
+
+  /* ---------- Lagebericht: der Kern der Seite ---------- */
+  .lage { margin: 32px 0 0; }
+  .lage p {
+    font-size: 1.375rem; line-height: 1.5; margin: 0 0 15px;
+    letter-spacing: -0.005em; max-width: 34em;
+  }
+  .lage p:last-child { margin-bottom: 0; }
+  .lage b { font-weight: 650; }
+  .lage .rauf { color: var(--rauf); }
+  .lage .runter { color: var(--runter); }
+  .lage .ruhig { color: var(--akzent); }
+
+  .hinweis-klein {
+    margin-top: 24px; color: var(--leiser); font-size: 0.8125rem; line-height: 1.65;
+    border-left: 2px solid var(--rand); padding-left: 14px; max-width: 46em;
+  }
+
+  /* ---------- Aufklappbare Abschnitte ---------- */
+  .mehr { margin-top: 36px; }
+  .mehr > h2 {
+    font-size: 0.8125rem; font-weight: 600; color: var(--leiser);
+    margin: 0 0 10px; letter-spacing: 0.02em;
+  }
+  details.ab { border-top: 1px solid var(--rand); }
+  details.ab:last-of-type { border-bottom: 1px solid var(--rand); }
+  details.ab > summary {
+    cursor: pointer; list-style: none; padding: 16px 2px;
+    display: flex; align-items: center; gap: 14px;
+    font-size: 1.0625rem; font-weight: 500;
+  }
+  details.ab > summary::-webkit-details-marker { display: none; }
+  details.ab > summary:hover { color: var(--akzent); }
+  details.ab > summary:focus-visible { outline: 2px solid var(--akzent); outline-offset: 3px; border-radius: 4px; }
+  details.ab > summary > span:first-child { flex: 1 1 auto; }
+  .sum-wert { color: var(--leise); font-size: 0.9375rem; font-weight: 400; text-align: right; }
+  .pfeil { color: var(--leiser); flex-shrink: 0; transition: transform 0.18s ease; }
+  details.ab[open] > summary .pfeil { transform: rotate(90deg); }
+  .inhalt { padding: 2px 2px 26px; }
+
+  /* ---------- Tabellen ---------- */
+  /* Waagrechter Schatten am rechten Rand, solange noch etwas zu sehen ist -
+     ohne den sieht eine abgeschnittene Tabelle am Handy kaputt aus statt
+     scrollbar. Reines CSS, kein Skript. */
+  .rahmen {
+    overflow-x: auto;
     background:
-      radial-gradient(circle at 15% 0%, rgba(125, 211, 252, 0.11), transparent 42%),
-      radial-gradient(circle at 85% 8%, rgba(88, 101, 242, 0.10), transparent 40%),
-      #05060a;
-    color: #e8eaf0;
-    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+      linear-gradient(to right, var(--grund) 30%, rgba(10,12,17,0)) left center / 28px 100% no-repeat local,
+      linear-gradient(to left,  var(--grund) 30%, rgba(10,12,17,0)) right center / 28px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, rgba(255,255,255,0.14), rgba(255,255,255,0)) left center / 14px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, rgba(255,255,255,0.14), rgba(255,255,255,0)) right center / 14px 100% no-repeat scroll;
   }
-  body { padding: 22px 24px 48px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+  th {
+    text-align: right; padding: 8px 10px 8px 0; color: var(--leiser);
+    font-weight: 500; font-size: 0.8125rem; white-space: nowrap;
+    border-bottom: 1px solid var(--rand);
+  }
+  th:first-child { text-align: left; }
+  td { padding: 11px 10px 11px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+       text-align: right; white-space: nowrap; vertical-align: top; }
+  td:first-child { text-align: left; white-space: normal; }
+  .nam { font-weight: 500; }
+  .sym { color: var(--leiser); font-size: 0.8125rem; margin-left: 7px; }
+  .unter { color: var(--leiser); font-size: 0.8125rem; line-height: 1.45; margin-top: 3px; white-space: normal; }
+  .zahl { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+  .rauf { color: var(--rauf); }
+  .runter { color: var(--runter); }
+  .still { color: var(--leiser); }
+  .kopfzeile td {
+    padding: 22px 0 7px; color: var(--leiser); font-size: 0.8125rem;
+    font-weight: 600; border-bottom: 1px solid var(--rand); text-align: left;
+  }
+  tr.leise td, tr.leise .nam { color: var(--leiser); }
 
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
-  .brand { display: flex; align-items: center; gap: 10px; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; background: #7dd3fc; flex-shrink: 0; }
-  h1 {
-    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
-    background: linear-gradient(90deg, #7dd3fc, #a78bfa 55%, #ffd25c 90%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
+  /* ---------- Marken ---------- */
+  .marke {
+    display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 999px;
+    border: 1px solid var(--rand); color: var(--leiser); white-space: nowrap;
   }
-  .tag {
-    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(125,211,252,0.35);
-    color: #7dd3fc; background: rgba(125,211,252,0.08);
-  }
-  .howto-link {
-    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
-    padding: 4px 10px; border-radius: 6px; text-decoration: none;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
-    color: #9198ad; transition: all 0.15s ease;
-  }
-  .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
-  .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 16px 0; font-family: -apple-system, sans-serif; }
-  .status-line { color: #6b7185; font-size: 11.5px; margin-bottom: 18px; font-family: -apple-system, sans-serif; }
+  .m-rauf   { color: var(--rauf);   border-color: rgba(74,222,128,0.35); }
+  .m-runter { color: var(--runter); border-color: rgba(248,113,113,0.35); }
+  .m-warn   { color: var(--warn);   border-color: rgba(251,191,36,0.35); }
+  .m-akz    { color: var(--akzent); border-color: rgba(125,211,252,0.35); }
 
-  .warn {
-    background: linear-gradient(135deg, rgba(125,211,252,0.08), rgba(125,211,252,0.02));
-    border: 1px solid rgba(125,211,252,0.26); border-radius: 12px;
-    padding: 13px 16px; margin-bottom: 18px; font-size: 12.5px; line-height: 1.65;
-    font-family: -apple-system, sans-serif; animation: fadeUp 0.4s ease; color: #bcc6d6;
-  }
-  .warn b { color: #7dd3fc; }
+  /* ---------- Spannenbalken ---------- */
+  .spanne { position: relative; height: 6px; border-radius: 3px; margin-top: 8px;
+            background: rgba(255,255,255,0.07); max-width: 150px; }
+  .spanne > i { position: absolute; top: -3px; width: 3px; height: 12px;
+                border-radius: 2px; background: var(--schrift); }
+  .spanne-text { display: flex; justify-content: space-between; max-width: 150px;
+                 color: var(--leiser); font-size: 0.6875rem; margin-top: 4px; }
 
-  details.erklaer {
-    border: 1px solid rgba(255,255,255,0.09); border-radius: 11px; margin-bottom: 20px;
-    background: rgba(255,255,255,0.018); font-family: -apple-system, sans-serif;
-  }
+  /* ---------- "Was heisst das": zweite Ebene ---------- */
+  details.erklaer { margin-top: 18px; }
   details.erklaer > summary {
-    cursor: pointer; padding: 11px 15px; font-size: 12px; font-weight: 600; color: #9198ad;
-    list-style: none; user-select: none;
+    cursor: pointer; list-style: none; color: var(--leiser); font-size: 0.875rem; padding: 4px 0;
   }
   details.erklaer > summary::-webkit-details-marker { display: none; }
-  details.erklaer > summary::before { content: "▸ "; color: #6b7185; }
-  details[open].erklaer > summary::before { content: "▾ "; }
-  details.erklaer > summary:hover { color: #d7dbe8; }
-  .erklaer-body { padding: 0 15px 14px; font-size: 12.3px; line-height: 1.7; color: #9198ad; }
-  .erklaer-body b { color: #c3cadb; }
-  .erklaer-body dt { color: #7dd3fc; font-weight: 600; margin-top: 9px; font-size: 12px; }
-  .erklaer-body dd { margin: 2px 0 0 0; }
-
-  .steuer { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; font-family: -apple-system, sans-serif; }
-  .steuer .lab { font-size: 10.5px; letter-spacing: 0.7px; text-transform: uppercase; color: #6b7185; margin-right: 2px; }
-  .chip {
-    font-size: 11.5px; font-weight: 600; padding: 4px 11px; border-radius: 999px; cursor: pointer;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12); color: #9198ad;
-    transition: all 0.14s ease;
+  details.erklaer > summary::before { content: "+ "; }
+  details.erklaer[open] > summary::before { content: "\2212 "; }
+  details.erklaer > summary:hover { color: var(--schrift); }
+  details.erklaer > summary:focus-visible { outline: 2px solid var(--akzent); outline-offset: 3px; border-radius: 4px; }
+  .erklaer-text {
+    color: var(--leise); font-size: 0.875rem; line-height: 1.7; max-width: 44em; padding: 6px 0 2px;
   }
-  .chip:hover { color: #d7dbe8; border-color: rgba(122,140,255,0.35); }
-  .chip.an { background: rgba(125,211,252,0.13); border-color: rgba(125,211,252,0.45); color: #7dd3fc; }
+  .erklaer-text p { margin: 0 0 11px; }
+  .erklaer-text p:last-child { margin-bottom: 0; }
+  .erklaer-text b { color: var(--schrift); font-weight: 600; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  th {
-    text-align: right; padding: 9px 10px; color: #6b7185; font-weight: 600;
-    font-size: 10.5px; letter-spacing: 0.7px; text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,255,255,0.1); font-family: -apple-system, sans-serif;
-    cursor: pointer; user-select: none; white-space: nowrap;
+  .fuss { margin-top: 46px; padding-top: 18px; border-top: 1px solid var(--rand);
+          color: var(--leiser); font-size: 0.8125rem; line-height: 1.7; }
+
+  .filter { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 18px; }
+  .knopf {
+    font-size: 0.875rem; padding: 6px 13px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--rand); color: var(--leise); background: none; font-family: inherit;
   }
-  th.links { text-align: left; }
-  th:hover { color: #9fb2ff; }
-  th .pfeil { color: #7dd3fc; font-size: 9px; }
-  td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.045); text-align: right; white-space: nowrap; }
-  td.links { text-align: left; white-space: normal; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
+  .knopf:hover { color: var(--schrift); }
+  .knopf.an { background: rgba(125,211,252,0.12); border-color: rgba(125,211,252,0.45); color: var(--akzent); }
 
-  tr.gruppenkopf td {
-    padding: 16px 10px 6px; border-bottom: 1px solid rgba(255,255,255,0.09);
-    font-size: 10.5px; letter-spacing: 1.1px; text-transform: uppercase; color: #6b7185;
-    font-family: -apple-system, sans-serif; text-align: left; background: none;
+  .leer { color: var(--leiser); font-size: 0.9375rem; padding: 14px 0; }
+
+  .balken { position: relative; height: 8px; border-radius: 4px; margin-top: 12px;
+            background: rgba(255,255,255,0.07); }
+  .balken > i { position: absolute; left: 0; top: 0; height: 8px; border-radius: 4px; display: block; }
+
+  @media (max-width: 620px) {
+    html { font-size: 15.5px; }
+    .seite { padding: 22px 16px 56px; }
+    .lage p { font-size: 1.1875rem; }
+    /* Sechs Spalten auf 390px sind nicht lesbar, und seitwaerts wischen ist
+       keine Antwort fuer jemanden, der die Seite auf einen Blick verstehen
+       will. Darum wird am Handy jede Zeile zu einem Block: Name oben, die
+       Zahlen darunter als beschriftete Paare. Keine Spalte faellt weg. */
+    .rahmen { overflow-x: visible; background: none; }
+    table.stapel { min-width: 0; }
+    table.stapel thead { display: none; }
+    table.stapel tbody, table.stapel tr { display: block; }
+    table.stapel tr { padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    table.stapel tr:last-child { border-bottom: none; }
+    table.stapel td { display: inline-block; border: none; padding: 4px 16px 0 0;
+                      text-align: left; white-space: nowrap; }
+    table.stapel td:first-child { display: block; padding: 0 0 2px; white-space: normal; }
+    table.stapel td[data-k]::before {
+      content: attr(data-k) " "; color: var(--leiser); font-size: 0.75rem;
+    }
+    table.stapel tr.kopfzeile { padding: 20px 0 0; border-bottom: none; }
+    table.stapel tr.kopfzeile td { display: block; padding: 0 0 6px;
+                                   border-bottom: 1px solid var(--rand); }
+    .sum-wert { display: none; }
   }
-  tr.gruppenkopf:hover td { background: none; }
-  tr.gruppenkopf .gh-hinweis { text-transform: none; letter-spacing: 0; color: #5a6072; font-size: 11px; margin-left: 8px; }
-
-  .wname { font-weight: 600; color: #e8eaf0; }
-  .wsym { color: #6b7185; font-size: 11px; margin-left: 7px; font-family: "SF Mono", Menlo, monospace; }
-  .whinweis { color: #5a6072; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 2px; }
-  .kurs { font-weight: 700; }
-  .einheit { color: #6b7185; font-size: 10.5px; font-weight: 400; margin-left: 3px; }
-  .hoch { color: #39ff88; }
-  .tief { color: #ff6b6b; }
-  .null-wert { color: #5a6072; }
-  .fehlt { color: #5a6072; font-style: italic; font-family: -apple-system, sans-serif; font-size: 11.5px; }
-  .alt-marke {
-    margin-left: 7px; font-size: 9.5px; letter-spacing: 0.4px; padding: 2px 6px; border-radius: 5px;
-    background: rgba(255,210,92,0.10); border: 1px solid rgba(255,210,92,0.33); color: #ffd25c;
-    font-family: -apple-system, sans-serif; vertical-align: middle;
-  }
-  .ausfall {
-    background: linear-gradient(135deg, rgba(255,107,107,0.08), rgba(255,107,107,0.02));
-    border: 1px solid rgba(255,107,107,0.28); border-radius: 11px; padding: 11px 15px;
-    margin-bottom: 16px; font-size: 12.3px; line-height: 1.6; color: #d9b4b4;
-    font-family: -apple-system, sans-serif;
-  }
-  .ausfall b { color: #ff8f8f; }
-
-  /* Fortschritt bis zur naechsten Auswertung */
-  .fortschritt { margin: 14px 0 4px; font-family: -apple-system, sans-serif; }
-  .fortschritt .zahl { font-size: 23px; font-weight: 700; color: #e8eaf0; }
-  .fortschritt .von { font-size: 13px; color: #6b7185; font-weight: 400; }
-  .balken { height: 7px; border-radius: 4px; background: rgba(255,255,255,0.07); overflow: hidden; margin: 9px 0 7px; max-width: 520px; }
-  .balken > div { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #7dd3fc, #a78bfa); transition: width 0.4s ease; }
-  .balken.voll > div { background: linear-gradient(90deg, #39ff88, #6be79a); }
-  /* Nicht als Nachfahre von .fortschritt schreiben - eine dieser Zeilen steht
-     ausserhalb davon und stuende sonst in der Monospace-Schrift der Seite. */
-  .wann { font-size: 12.3px; color: #9198ad; line-height: 1.6; font-family: -apple-system, sans-serif; }
-  .wann b { color: #c3cadb; }
-  .bereit {
-    background: linear-gradient(135deg, rgba(57,255,136,0.10), rgba(57,255,136,0.02));
-    border: 1px solid rgba(57,255,136,0.32); border-radius: 11px; padding: 11px 15px; margin-top: 12px;
-    font-size: 12.8px; line-height: 1.6; color: #b9e8cc; font-family: -apple-system, sans-serif;
-  }
-  .bereit b { color: #6be79a; }
-  .nebenziel { font-size: 12px; color: #6b7185; font-family: -apple-system, sans-serif; margin-top: 10px; line-height: 1.6; }
-  .nebenziel b { color: #9198ad; }
-
-  /* Langfrist-Block */
-  .lf-wahl { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 12px; font-family: -apple-system, sans-serif; }
-  .lf-spanne { position: relative; height: 22px; min-width: 190px; }
-  .lf-bar { position: absolute; top: 7px; height: 8px; border-radius: 4px; }
-  .lf-bar.minus { background: linear-gradient(90deg, rgba(255,107,107,0.75), rgba(255,107,107,0.35)); }
-  .lf-bar.plus  { background: linear-gradient(90deg, rgba(57,255,136,0.35), rgba(57,255,136,0.75)); }
-  .lf-null { position: absolute; top: 2px; width: 1px; height: 18px; background: rgba(255,255,255,0.3); }
-  .lf-mittel { position: absolute; top: 3px; width: 2px; height: 16px; background: #e8eaf0; border-radius: 1px; }
-  .lf-quelle { color: #5a6072; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 8px; }
-
-  .merk {
-    border: 1px solid rgba(255,255,255,0.09); border-radius: 11px; background: rgba(255,255,255,0.018);
-    padding: 13px 16px; margin-top: 14px; font-family: -apple-system, sans-serif;
-    font-size: 12.3px; line-height: 1.65; color: #9198ad;
-  }
-  .merk dt { color: #7dd3fc; font-weight: 600; margin-top: 10px; font-size: 12px; }
-  .merk dt:first-child { margin-top: 0; }
-  .merk dd { margin: 2px 0 0 0; }
-  .merk b { color: #c3cadb; }
-  .merk .statisch { color: #ffd25c; font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 8px; }
-
-  /* Beobachtungsliste */
-  .bl-pos { position: relative; height: 16px; width: 112px; margin-top: 5px; }
-  .bl-bahn { position: absolute; top: 6px; left: 0; right: 0; height: 4px; border-radius: 2px;
-             background: linear-gradient(90deg, rgba(255,107,107,0.4), rgba(255,255,255,0.15), rgba(57,255,136,0.4)); }
-  .bl-punkt { position: absolute; top: 2px; width: 3px; height: 12px; border-radius: 2px; background: #e8eaf0; }
-  .bl-skala { color: #5a6072; font-size: 9.5px; font-family: -apple-system, sans-serif; display: flex; justify-content: space-between; margin-top: 1px; }
-  .bl-fonds { color: #5a6072; font-size: 10.5px; font-family: -apple-system, sans-serif; margin-top: 3px; }
-  .nicht-kaufbar {
-    margin-left: 7px; font-size: 9.5px; letter-spacing: 0.4px; padding: 2px 6px; border-radius: 5px;
-    background: rgba(255,210,92,0.09); border: 1px solid rgba(255,210,92,0.3); color: #ffd25c;
-    font-family: -apple-system, sans-serif; vertical-align: middle;
-  }
-  .stufe-besser    { background: rgba(57,255,136,0.08); border: 1px solid rgba(57,255,136,0.3); color: #6be79a; }
-  .stufe-schlechter{ background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.3); color: #ff8f8f; }
-  .stufe-massstab  { background: rgba(167,139,250,0.10); border: 1px solid rgba(167,139,250,0.3); color: #b9a6fb; }
-  .stufe-nicht     { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.16); color: #6b7185; }
-
-  .tabellen-rahmen { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .tabellen-rahmen table { min-width: 660px; }
-  /* Die Kennzahlen-Tabellen aus Etappe 2 haben nur drei bis vier Spalten.
-     Mit der 660er-Mindestbreite muesste man auf dem Handy seitwaerts
-     scrollen, obwohl der Platz reicht - also fliessend lassen und den
-     Begruendungstext umbrechen. */
-  .tabellen-rahmen.schmal table { min-width: 0; }
-  .tabellen-rahmen.schmal td.links { min-width: 150px; }
-
-  /* Auf dem Handy wandert nur die Tabelle seitwaerts, nicht die ganze Seite -
-     sonst stehen Warnhinweis und Erklaerung halb ausserhalb des Bildschirms. */
-  @media (max-width: 680px) {
-    body { padding: 16px 13px 40px; }
-    h1 { font-size: 19px; }
-    th, td { padding: 8px 7px; }
-    .warn, .erklaer-body, .ausfall { font-size: 12px; }
-    .whinweis { font-size: 10.5px; }
-  }
-
-
-  /* ---------- Etappe 2: Umfeld-Kennzahlen ---------- */
-  .block { margin-top: 34px; }
-  .block > h2 {
-    font-size: 14px; margin: 0 0 3px 0; font-weight: 700; color: #e8eaf0;
-    letter-spacing: 0.3px; font-family: -apple-system, sans-serif;
-  }
-  .block > .block-sub { color: #6b7185; font-size: 11.5px; margin-bottom: 11px; font-family: -apple-system, sans-serif; }
-
-  /* Der Klartext-Kasten: was die Zahl heisst und was sie NICHT heisst.
-     Steht bei jeder Kennzahl, nicht nur bei den komplizierten. */
-  .bedeutung {
-    border-left: 2px solid rgba(125,211,252,0.3); padding: 2px 0 2px 13px; margin: 12px 0 0 0;
-    font-family: -apple-system, sans-serif; font-size: 12.2px; line-height: 1.65; color: #9198ad;
-  }
-  .bedeutung p { margin: 0 0 5px 0; }
-  .bedeutung p:last-child { margin-bottom: 0; }
-  .bedeutung .ja { color: #7dd3fc; font-weight: 600; }
-  .bedeutung .nein { color: #ffa0a0; font-weight: 600; }
-
-  .kacheln { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
-  .kachel {
-    flex: 1 1 165px; background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 12px 14px;
-  }
-  .kachel .k { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: #6b7185; font-family: -apple-system, sans-serif; }
-  .kachel .v { font-size: 21px; font-weight: 700; margin-top: 4px; }
-  .kachel .n { font-size: 11px; color: #6b7185; margin-top: 3px; font-family: -apple-system, sans-serif; line-height: 1.5; }
-
-  /* Rauschen wird bewusst GRAU dargestellt, nicht bunt. Tiams Vorgabe:
-     eine Zahl, die nur Rauschen ist, darf nicht huebsch aussehen. */
-  .stufe { font-size: 10px; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 5px;
-           font-family: -apple-system, sans-serif; white-space: nowrap; }
-  .stufe-rauschen  { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); color: #6b7185; }
-  .stufe-schwach   { background: rgba(255,210,92,0.08); border: 1px solid rgba(255,210,92,0.28); color: #ffd25c; }
-  .stufe-deutlich  { background: rgba(125,211,252,0.12); border: 1px solid rgba(125,211,252,0.4); color: #7dd3fc; }
-  .stufe-hoch      { background: rgba(255,107,107,0.10); border: 1px solid rgba(255,107,107,0.33); color: #ff8f8f; }
-  .stufe-niedrig   { background: rgba(57,255,136,0.08); border: 1px solid rgba(57,255,136,0.28); color: #6be79a; }
-  .stufe-unbekannt { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.18); color: #6b7185; }
-  tr.ist-rauschen td { color: #6b7185; }
-  tr.ist-rauschen .wname { color: #9198ad; font-weight: 500; }
-  .begruendung { color: #6b7185; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 3px; white-space: normal; }
-
-  .termin-liste { font-family: -apple-system, sans-serif; }
-  .termin {
-    display: flex; gap: 13px; align-items: baseline; padding: 9px 2px;
-    border-bottom: 1px solid rgba(255,255,255,0.045); font-size: 12.5px;
-  }
-  .termin .wann { color: #7dd3fc; font-weight: 600; white-space: nowrap; min-width: 128px; }
-  .termin .was { color: #d7dbe8; }
-  .termin .waehr { color: #6b7185; font-size: 11px; }
-  .termin.heute .wann { color: #ffd25c; }
-  .leermeldung { color: #6b7185; font-size: 12.3px; font-family: -apple-system, sans-serif; padding: 12px 0; }
-
-  .fuss { margin-top: 26px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);
-          color: #5a6072; font-size: 11.5px; line-height: 1.7; font-family: -apple-system, sans-serif; }
-  .fuss b { color: #7c8399; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
+<div class="seite">
 
-<div class="topbar">
-  <div class="brand">
-    <span class="dot"></span>
-    <h1>Marktlage</h1>
-    <span class="tag">nur Beobachtung</span>
+  <div class="kopf">
+    <div>
+      <h1>Marktlage</h1>
+      <div class="stand" id="stand"></div>
+    </div>
+    <a class="zurueck" href="index.html">TJR-Dashboard</a>
   </div>
-  <a class="howto-link" href="index.html">&larr; TJR-Dashboard</a>
-</div>
-<div class="subtitle">Stand und Veränderung der Märkte, die das Umfeld der sechs gehandelten Werte bilden &mdash; Indizes, Rohstoffe, Zinsen, Sektoren.</div>
-<div class="status-line" id="status"></div>
 
-<div class="warn">
-  <b>Diese Seite bewertet nichts.</b> Sie zeigt, was <i>ist</i> &mdash; keine Prognose, kein „bullisch/bärisch“, keine Empfehlung, kein Signal.<br>
-  <b>Sie ist von der TJR-Engine vollständig getrennt.</b> Eigenes Skript, eigener Workflow, eigene Dateien. Kein Wert von hier fließt in eine Einstiegs-, Stop- oder Ziel-Entscheidung ein. Fällt diese Seite aus, läuft der TJR-Report unverändert weiter.<br>
-  <b>Grün und rot heißen nur „rauf“ und „runter“</b>, nicht gut und schlecht. Ein steigender VIX ist nichts Gutes und nichts Schlechtes &mdash; er ist höher.<br>
-  <b>Der Stand ist aktuell, alles Gerechnete nicht.</b> Die Kurse in der Spalte „Stand" kommen vom Live-Kurs der Börse. Jede Veränderung und jede Kennzahl darunter rechnet dagegen mit <b>Tagesschlusskursen</b> &mdash; für Minutenentscheidungen ist das zu langsam. Der Zeithorizont hier sind Wochen und Monate.
-</div>
+  <!-- Der Lagebericht. Das ist die Seite; alles darunter ist Nachschlagewerk. -->
+  <div class="lage" id="lage"></div>
 
-<div id="ausfall-box"></div>
-
-<details class="erklaer">
-  <summary>Was die Spalten bedeuten &mdash; und wie sie gerechnet sind</summary>
-  <div class="erklaer-body">
-    <dl>
-      <dt>Stand</dt>
-      <dd>Der letzte Schlusskurs, den die Datenquelle hergibt. Das Datum steht in der Spalte daneben. Läuft der Handelstag noch, ist das der aktuelle Kurs von heute; nach Börsenschluss der Schlusskurs.</dd>
-      <dt>Tag</dt>
-      <dd>Veränderung gegenüber der <b>vorherigen Handelskerze</b> &mdash; nicht gegenüber „gestern“ im Kalendersinn. Nach einem Wochenende ist der Bezug also Freitag.</dd>
-      <dt>Woche / Monat / Jahr</dt>
-      <dd>Veränderung gegenüber dem letzten Kurs, der <b>7, 30 bzw. 365 Kalendertage</b> oder länger zurückliegt. Bewusst Kalendertage, nicht „5 Kerzen zurück“: Bitcoin handelt sieben Tage pro Woche, der DAX fünf. Mit Kerzenzählung wären die Spalten nicht vergleichbar.</dd>
-      <dt>Ein Strich statt einer Zahl</dt>
-      <dd>Heißt: die Datenreihe ist für diesen Zeitraum zu kurz. Dann steht hier nichts &mdash; lieber eine Lücke als eine Zahl, die aus dem ältesten vorhandenen Kurs geschönt wurde.</dd>
-      <dt><span class="alt-marke">alt</span></dt>
-      <dd>Der letzte Kurs ist mehr als __VERALTET_TAGE__ Tage her. Bei Feiertagen normal, bei längerer Dauer ein Zeichen, dass die Quelle für dieses Symbol hängt.</dd>
-      <dt>Nachrechnen</dt>
-      <dd>Mit der Maus über einer Prozentzahl steht, gegen welchen Kurs und welches Datum gerechnet wurde. Jede Zahl auf dieser Seite ist damit nachprüfbar.</dd>
-      <dt>Einheiten</dt>
-      <dd>VIX und Dollar-Index sind <b>Punkte</b>, kein Preis. Der US-Zins ist eine <b>Rendite in Prozent</b> &mdash; „+2 %“ in der Tagesspalte heißt dort also: die Rendite ist um 2 % ihres eigenen Werts gestiegen, nicht um 2 Prozentpunkte.</dd>
-    </dl>
+  <div class="hinweis-klein">
+    Diese Seite beschreibt nur, was ist &mdash; keine Prognose, keine Empfehlung, kein Kaufsignal.
+    Und sie ist von der TJR-Engine getrennt: kein Wert von hier erzeugt oder blockiert einen Trade.
   </div>
-</details>
 
-<div class="steuer">
-  <span class="lab">Gruppe</span>
-  <span id="gruppen-chips"></span>
-</div>
+  <div class="mehr">
+    <h2>Zum Nachschauen</h2>
 
-<div class="tabellen-rahmen">
-<table id="tabelle">
-  <thead>
-    <tr>
-      <th class="links" data-sort="name">Wert</th>
-      <th data-sort="stand">Stand</th>
-      <th data-sort="standDatum">vom</th>
-      <th data-sort="tag">Tag</th>
-      <th data-sort="woche">Woche</th>
-      <th data-sort="monat">Monat</th>
-      <th data-sort="jahr">Jahr</th>
-    </tr>
-  </thead>
-  <tbody id="koerper"></tbody>
-</table>
-</div>
+    <details class="ab" id="ab-gehandelt">
+      <summary><span>Die sechs Werte, die die Engine handelt</span>
+        <span class="sum-wert" id="sum-gehandelt"></span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-gehandelt"></div>
+    </details>
 
-<!-- ===================== ETAPPE 2: UMFELD-KENNZAHLEN ===================== -->
+    <details class="ab" id="ab-maerkte">
+      <summary><span>Alle M&auml;rkte im &Uuml;berblick</span>
+        <span class="sum-wert" id="sum-maerkte"></span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-maerkte"></div>
+    </details>
 
-<div class="block">
-  <h2>Nervosität &mdash; wie stark schwankt es gerade</h2>
-  <div class="block-sub">Gemessene Schwankungsbreite, eingeordnet am eigenen Jahresverlauf. Nicht am absoluten Wert &mdash; „17" sagt ohne Vergleichsmaßstab nichts.</div>
-  <div class="kacheln" id="vix-kacheln"></div>
-  <div class="tabellen-rahmen schmal" id="vola-rahmen"></div>
-  <div class="bedeutung">
-    <p><span class="ja">Heißt:</span> wie weit sich die Kurse in den letzten <span id="vola-fenster">20</span> Handelstagen pro Tag bewegt haben, verglichen mit dem letzten Jahr desselben Werts. Ein großer Wert heißt: größere Tagesausschläge, Stops werden häufiger gestreift.</p>
-    <p><span class="nein">Heißt nicht:</span> keine Richtung. Hohe Schwankung sagt nichts darüber, ob es rauf oder runter geht &mdash; nur, dass die Wege dorthin länger sind. Und: der VIX misst ausschließlich den S&amp;P 500. Über Bitcoin oder GBP/USD sagt er direkt gar nichts, deshalb steht die gemessene Schwankung jedes Werts einzeln daneben.</p>
+    <details class="ab" id="ab-beobachtung">
+      <summary><span>Beobachtungsliste &mdash; Themen zum Anlegen</span>
+        <span class="sum-wert" id="sum-beobachtung"></span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-beobachtung"></div>
+    </details>
+
+    <details class="ab" id="ab-termine">
+      <summary><span>Anstehende Termine</span>
+        <span class="sum-wert" id="sum-termine"></span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-termine"></div>
+    </details>
+
+    <details class="ab" id="ab-haltedauer">
+      <summary><span>Was die Haltedauer ausmacht</span>
+        <span class="sum-wert" id="sum-haltedauer"></span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-haltedauer"></div>
+    </details>
+
+    <details class="ab" id="ab-etf">
+      <summary><span>Worauf es bei breiten ETFs ankommt</span>
+        <span class="sum-wert">Merkliste</span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-etf"></div>
+    </details>
+
+    <details class="ab" id="ab-mitschrift">
+      <summary><span>Was hier mitgeschrieben wird</span>
+        <span class="sum-wert" id="sum-mitschrift"></span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-mitschrift"></div>
+    </details>
   </div>
-</div>
 
-<div class="block">
-  <h2>Sektoren &mdash; wer läuft vorn, wer hinten</h2>
-  <div class="block-sub" id="sektor-sub"></div>
-  <div class="tabellen-rahmen schmal" id="sektor-rahmen"></div>
-  <div class="bedeutung">
-    <p><span class="ja">Heißt:</span> um wie viele Prozentpunkte ein Sektor im letzten Monat besser oder schlechter lief als der Gesamtmarkt. Verglichen wird gegen den S&amp;P 500, nicht gegen null &mdash; sonst stünden bei steigendem Markt einfach alle vorn.</p>
-    <p><span class="nein">Heißt nicht:</span> keine Fortschreibung. Dass ein Sektor den letzten Monat vorn lag, sagt nichts über den nächsten. Grau markierte Zeilen sind <b>Rauschen</b>: ihr Vorsprung liegt innerhalb dessen, was reiner Zufall über einen Monat erzeugt. Die stehen bewusst trotzdem da, damit sichtbar bleibt, wie wenig von so einer Rangliste meistens übrig bleibt.</p>
+  <div class="fuss">
+    Kurse von Yahoo Finance, Termine vom ForexFactory-Kalender &mdash; ohne Gew&auml;hr.
+    Aktualisierung zweimal pro Werktag.<span id="fuss-geprueft"></span><br>
+    Keine Anlageberatung.
   </div>
-</div>
 
-<div class="block">
-  <h2>Gleichlauf der sechs gehandelten Werte</h2>
-  <div class="block-sub" id="gleichlauf-sub"></div>
-  <div class="tabellen-rahmen schmal" id="gleichlauf-rahmen"></div>
-  <div class="bedeutung">
-    <p><span class="ja">Heißt:</span> wie ähnlich sich zwei Werte an denselben Handelstagen bewegt haben. +1 wäre Gleichschritt, &minus;1 exakter Gegenlauf, 0 kein Zusammenhang. <b>Der praktische Punkt:</b> wo der Wert hoch ist, sind zwei gleichzeitige Signale eher <b>eine</b> Wette als zwei &mdash; das Risiko ist dann doppelt so groß wie es aussieht.</p>
-    <p><span class="nein">Heißt nicht:</span> keine Ursache. Dass zwei Werte zusammen laufen, sagt nicht, dass einer den anderen zieht. Gerechnet wird aus <b>Tages</b>schlusskursen &mdash; über den Zeitraum, in dem die Engine tatsächlich handelt (Minuten bis Stunden), sagt das nichts. Und es ist rückwärts gemessen: Zusammenhänge brechen, meist genau dann, wenn es darauf ankäme.</p>
-  </div>
-</div>
-
-<div class="block">
-  <h2>Anstehende Termine</h2>
-  <div class="block-sub">Termine mit hoher erwarteter Wirkung für <b>USD, GBP und EUR</b> aus dem ForexFactory-Kalender &mdash; derselbe Feed, den der TJR-Report schon für den Tageshinweis nutzt.</div>
-  <div class="termin-liste" id="termin-liste"></div>
-  <div class="bedeutung">
-    <p><span class="ja">Heißt:</span> zu diesen Zeitpunkten kommen Zahlen heraus, auf die der Markt oft sprunghaft reagiert &mdash; unabhängig davon, wie sauber ein Setup aussieht.</p>
-    <p><span class="nein">Heißt nicht:</span> kein Signal und keine Handlungsanweisung. Die Engine liest diese Liste nicht und blockiert dadurch nichts. <b>Und sie ist in zwei Richtungen unvollständig:</b> der Feed reicht nur bis zum Ende der <b>laufenden Kalenderwoche</b> &mdash; am Wochenende steht hier also wenig, auch wenn Montag etwas ansteht. Und drin sind ohnehin nur geplante Wirtschaftstermine und Auftritte von Notenbankern. Nicht drin sind politische Äußerungen &mdash; die kommen meist ohne Ankündigung und stehen in keinem Kalender. Eine leere Liste heißt also „keine geplanten Termine", nicht „nichts wird passieren".</p>
-  </div>
-</div>
-
-<div class="block">
-  <h2>Beobachtungsliste &mdash; wo die Themen gerade stehen</h2>
-  <div class="block-sub" id="bl-sub"></div>
-  <div class="lf-wahl" id="bl-wahl"></div>
-  <div class="tabellen-rahmen" id="bl-rahmen"></div>
-  <div class="bedeutung">
-    <p><span class="ja">Heißt:</span> eine Standortbestimmung für Haltedauern von Monaten. Wo steht ein Wert in seiner Jahresspanne, wie lief er über 1, 3, 6 und 12 Monate, wie stark schwankt er &mdash; und läuft er besser als ein breiter Welt-ETF, oder sieht es nur so aus. Der Vergleich zum Markt hat dieselbe Rausch-Prüfung wie der Sektorblock: was im Zufallsbereich liegt, wird grau als <b>Rauschen</b> ausgewiesen.</p>
-    <p><span class="nein">Heißt nicht:</span> <b>hier steht nirgends, wann man einsteigen soll.</b> Das wäre eine Vorhersage, und die kann niemand liefern &mdash; auch keine KI, die das behauptet. Ein Wert nahe am Jahrestief ist nicht „billig", er kann monatelang weiter fallen; einer am Hoch ist nicht „zu teuer".</p>
-    <p><b>Das Beispiel, das alles dazu sagt:</b> Rheinmetall stand im April 2026 bei 1.550&nbsp;€, im Juli bei 976&nbsp;€ &mdash; während die These „es wird aufgerüstet, also steigt die Rüstung" durchgehend stimmte und in jeder Zeitung stand. Kurse bewegen sich auf <i>Überraschungen</i>, nicht auf Tatsachen. Was du in den Nachrichten liest, steht längst im Preis.</p>
-  </div>
-</div>
-
-<div class="block">
-  <h2>Haltedauer &mdash; wie stark der Horizont die Spanne bestimmt</h2>
-  <div class="block-sub" id="lf-sub"></div>
-  <div class="lf-wahl" id="lf-wahl"></div>
-  <div class="tabellen-rahmen schmal" id="lf-rahmen"></div>
-  <div class="bedeutung">
-    <p><span class="ja">Heißt:</span> alle überlappenden Zeitfenster der verfügbaren Historie, jeweils als Rendite pro Jahr. Über ein Jahr lag zwischen bestem und schlechtestem Fenster ein riesiger Abstand; je länger das Fenster, desto enger wird er. Das ist der einzige Zusammenhang auf dieser Seite, der mit <b>langfristigem Anlegen</b> zu tun hat &mdash; und er handelt von der Haltedauer, nicht vom Einstiegszeitpunkt.</p>
-    <p><span class="nein">Heißt nicht:</span> <b>keine Zusage und keine Prognose.</b> „In 15-Jahres-Fenstern war bisher keines im Minus" ist eine Aussage über die Vergangenheit eines Index, nicht über die Zukunft. Die Fenster überlappen sich stark, sind also nicht unabhängig voneinander &mdash; echte unabhängige 20-Jahres-Zeiträume gibt es in hundert Jahren Börsengeschichte nur fünf. Und: dieser Block sagt nichts darüber, ob <i>heute</i> ein guter Tag zum Kaufen ist. Genau das ist der Unterschied zwischen Haltedauer und Markt-Timing.</p>
-  </div>
-</div>
-
-<div class="block">
-  <h2>Worauf es bei breiten ETFs ankommt</h2>
-  <div class="block-sub">Feste Merkmale eines Fonds &mdash; sie ändern sich nicht täglich und stehen deshalb hier als Merkliste, nicht als Live-Anzeige.</div>
-  <div class="merk">
-    <span class="statisch">Statisch &mdash; wird nicht automatisch aktualisiert</span>
-    <dl>
-      <dt>Tracking Difference (TD)</dt>
-      <dd>Der tatsächliche Abstand zwischen Fondsrendite und Indexrendite pro Jahr. <b>Die aussagekräftigste Zahl</b>, weil sie alles enthält: laufende Kosten, Handelskosten im Fonds, Quellensteuer auf Dividenden, Erträge aus Wertpapierleihe. Ein Fonds mit 0,20&nbsp;% Kosten und 0,10&nbsp;% TD ist in der Praxis günstiger als einer mit 0,07&nbsp;% Kosten und 0,25&nbsp;% TD. Nachzusehen bei justETF oder trackingdifferences.com, nicht im Kurs.</dd>
-      <dt>TER (laufende Kosten)</dt>
-      <dd>Wird dem Fondsvermögen laufend entnommen, nicht separat abgebucht. Bekannt im Voraus &mdash; eine der wenigen sicheren Größen überhaupt. Aber <b>nicht die ganzen Kosten</b>: Handelskosten im Fonds stehen nicht drin.</dd>
-      <dt>Replikationsart</dt>
-      <dd><b>Physisch voll</b> (kauft alle Indexwerte), <b>Sampling</b> (kauft eine repräsentative Auswahl, günstiger bei breiten Indizes) oder <b>synthetisch/Swap</b> (tauscht die Rendite mit einem Partner). Swap bringt bei US-Aktien einen Quellensteuer-Vorteil, dafür einen Vertragspartner als zusätzliches Risiko &mdash; bei UCITS auf 10&nbsp;% des Fondsvermögens begrenzt, in der Praxis meist weit darunter.</dd>
-      <dt>Fondsgröße und Alter</dt>
-      <dd>Zählt vor allem fürs <b>Überleben</b>: kleine Fonds werden geschlossen oder verschmolzen, und das zwingt zu einem Verkauf zu einem Zeitpunkt, den man sich nicht ausgesucht hat &mdash; in Österreich mit sofortiger Steuer auf den Gewinn. Unter etwa 100&nbsp;Mio.&nbsp;€ gilt das Risiko als erhöht. Unter drei Jahren Alter gibt es noch keine belastbare Tracking Difference.</dd>
-      <dt>Ausschüttend oder thesaurierend &mdash; und der österreichische Sonderfall</dt>
-      <dd>Thesaurierend legt die Dividenden im Fonds wieder an, ausschüttend zahlt sie aus. <b>In Österreich wird beides jährlich besteuert:</b> bei thesaurierenden Fonds über die „ausschüttungsgleichen Erträge" (ordentliche Erträge plus 60&nbsp;% der realisierten Kursgewinne), 27,5&nbsp;% KESt, auch wenn nichts aufs Konto kommt. Die versteuerten Beträge erhöhen den Einstandswert, es wird also nicht doppelt besteuert. Wichtiger als die Frage thesaurierend/ausschüttend ist, dass der Fonds ein <b>Meldefonds</b> ist &mdash; sonst greift eine deutlich nachteiligere Pauschalbesteuerung. Fast alle großen UCITS-ETFs sind Meldefonds. Österreich kennt keinen Freibetrag und keinen Verlustvortrag ins Folgejahr. <b>Steuerrecht ändert sich &mdash; das vor einer Entscheidung beim BMF oder einer Steuerberatung gegenprüfen.</b></dd>
-      <dt>Was mehr ausmacht als alle fünf zusammen</dt>
-      <dd>Welcher <b>Index</b> es ist. MSCI World (ca. 1.400 Titel, Industrieländer), FTSE All-World oder MSCI ACWI (mit Schwellenländern), mit oder ohne kleine Firmen. Der Unterschied zwischen zwei Indizes ist größer als der zwischen 0,12&nbsp;% und 0,20&nbsp;% Kosten.</dd>
-    </dl>
-  </div>
-</div>
-
-<div class="block">
-  <h2>Was hier mitgeschrieben wird &mdash; und wann es sich auswerten lässt</h2>
-  <div class="block-sub" id="historie-sub"></div>
-  <div id="auswertung-stand"></div>
-  <div class="bedeutung">
-    <p><span class="ja">Heißt:</span> die Werte oben werden Tag für Tag in einer eigenen Datei festgehalten. Irgendwann ist damit die Frage beantwortbar, ob die TJR-Engine in bestimmten Umfeldern besser oder schlechter läuft &mdash; zum Beispiel bei hoher gegen niedrige Schwankung.</p>
-    <p><span class="nein">Heißt nicht:</span> <b>heute beantwortet das niemand.</b> Es wird nichts ausgewertet, nichts verglichen und nichts behauptet. Die Engine liest diese Datei nicht und wird von ihr in keiner Weise beeinflusst &mdash; sie weiß nicht einmal, dass es sie gibt. Bis genug Tage und genug Trades beisammen sind, um eine Auswertung überhaupt vom Zufall unterscheiden zu können, vergehen Monate.</p>
-  </div>
-</div>
-
-<div class="fuss">
-  Quelle: <b>Yahoo Finance</b>, Tageskurse, ohne Gewähr &mdash; dieselbe Quelle, aus der auch der TJR-Report seine Kerzen zieht.
-  Jedes Symbol wurde vor dem Einbau einzeln auf Datenqualität geprüft (Etappe 0, <span id="geprueft-am"></span>).<br>
-  Diese Seite ist <b>keine Anlageberatung</b> und erzeugt keine Handelssignale.
 </div>
 
 <script>
 const DATA = __DATA__;
+const VERALTET_TAGE = DATA.veraltetTage || 4;
 
-const ZEIGE = { Index: 1, Rohstoff: 1, Umfeld: 1, Sektor: 1, Einzelwert: 1, Gehandelt: 1 };
-const GRUPPEN_HINWEIS = {
-  Index:      "wie läuft „der Markt“ überhaupt",
-  Rohstoff:   "Öl, Metalle, Gas",
-  Umfeld:     "Nervosität, Zinsen, Dollar",
-  Sektor:     "welcher Teil des US-Markts gerade läuft",
-  Einzelwert: "einzelne Firmen",
-  Gehandelt:  "die Werte, die die Engine wirklich handelt",
-};
+/* ====================================================================
+   Werkzeug
+   ==================================================================== */
+const el = (id) => document.getElementById(id);
+const dz = (x, n) => (typeof x === "number" && isFinite(x))
+  ? x.toLocaleString("de-DE", { minimumFractionDigits: n, maximumFractionDigits: n }) : "-";
+const proz = (x, n) => (typeof x === "number" && isFinite(x))
+  ? (x > 0 ? "+" : "") + dz(x, n === undefined ? 1 : n) + " %" : "-";
+const farbe = (x) => (x > 0 ? "rauf" : x < 0 ? "runter" : "still");
 
-let sortFeld = null, sortAb = true;
-
-function zahl(n, stellen) {
-  if (n === null || n === undefined) return "&ndash;";
-  return n.toLocaleString("de-DE", { minimumFractionDigits: stellen, maximumFractionDigits: stellen });
+function pr(x, n) {
+  if (typeof x !== "number" || !isFinite(x)) return '<span class="still">&ndash;</span>';
+  return '<span class="zahl ' + farbe(x) + '">' + proz(x, n) + "</span>";
 }
-
-function proz(p, vonKurs, vonDatum) {
-  if (p === null || p === undefined) {
-    return '<span class="null-wert" title="Datenreihe reicht für diesen Zeitraum nicht zurück">&ndash;</span>';
-  }
-  const k = p > 0 ? "hoch" : p < 0 ? "tief" : "null-wert";
-  const vz = p > 0 ? "+" : "";
-  // Der Tooltip nennt den Bezugskurs - eine Prozentzahl, die man nicht
-  // nachrechnen kann, ist in diesem Projekt keine brauchbare Zahl.
-  const tip = (vonKurs !== null && vonKurs !== undefined)
-    ? ' title="gerechnet gegen ' + vonKurs.toLocaleString("de-DE") + ' vom ' + (vonDatum || "?") + '"'
-    : "";
-  return '<span class="' + k + '"' + tip + '>' + vz + p.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' %</span>';
+function kursText(wert, einheit) {
+  if (typeof wert !== "number" || !isFinite(wert)) return '<span class="still">&ndash;</span>';
+  const n = Math.abs(wert) >= 100 ? 2 : Math.abs(wert) >= 1 ? 2 : 4;
+  return '<span class="zahl">' + dz(wert, n) + "</span>"
+    + (einheit ? ' <span class="still">' + einheit + "</span>" : "");
 }
-
-function standStellen(w) {
-  const a = Math.abs(w);
-  if (a >= 10) return 2;
-  if (a >= 1) return 4;
-  return 6;
-}
-
-function zeileHtml(r) {
-  const kopf = '<td class="links"><span class="wname">' + r.name + '</span>'
-    + '<span class="wsym">' + r.symbol + '</span>'
-    + (r.veraltet ? '<span class="alt-marke" title="Letzter Kurs ist ' + r.alterTage + ' Tage her">alt</span>' : "")
-    + (r.hinweis ? '<div class="whinweis">' + r.hinweis + '</div>' : "")
-    + '</td>';
-
-  if (!r.ok) {
-    return '<tr>' + kopf + '<td colspan="6" class="fehlt">keine Daten &mdash; ' + (r.grund || "Abruf fehlgeschlagen") + '</td></tr>';
-  }
-
-  const einheit = r.einheit ? r.einheit : (r.waehrung || "");
-  return '<tr>' + kopf
-    + '<td><span class="kurs">' + zahl(r.stand, standStellen(r.stand)) + '</span><span class="einheit">' + einheit + '</span></td>'
-    // Steht der Kurs aus dem Live-Feld, die Tagesreihe aber endet frueher,
-    // dann gehoeren Stand und Veraenderungsspalten zu verschiedenen Tagen.
-    // Das muss dastehen, sonst liest man eine "Tag"-Zahl, die vier Tage alt
-    // ist, als die von heute. Betrifft derzeit GBP/USD: Yahoos Tagesreihe
-    // fuer Devisen hinkt dort zwei Sitzungen hinterher.
-    + '<td class="null-wert">' + (r.standDatum || "")
-      + ((r.letzteKerzeDatum && r.letzteKerzeDatum !== r.standDatum)
-          ? '<div class="begruendung" title="Stand aus dem Live-Kurs; die Veränderungs-Spalten rechnen mit der Tagesreihe">Reihe bis ' + r.letzteKerzeDatum + '</div>'
-          : "")
-      + '</td>'
-    + '<td>' + proz(r.tag, r.tagVon, r.tagVonDatum) + '</td>'
-    + '<td>' + proz(r.woche, r.wocheVon, r.wocheVonDatum) + '</td>'
-    + '<td>' + proz(r.monat, r.monatVon, r.monatVonDatum) + '</td>'
-    + '<td>' + proz(r.jahr, r.jahrVon, r.jahrVonDatum) + '</td>'
-    + '</tr>';
-}
-
-function zeichne() {
-  const alle = (DATA.eintraege || []).filter(function (r) { return ZEIGE[r.gruppe]; });
-  const koerper = document.getElementById("koerper");
-
-  if (!alle.length) {
-    koerper.innerHTML = '<tr><td colspan="7" class="fehlt" style="text-align:center;padding:40px">Keine Gruppe ausgewählt.</td></tr>';
-    return;
-  }
-
-  let html = "";
-
-  if (sortFeld) {
-    // Sortiert wird quer über alle Gruppen - sonst wäre die Sortierung
-    // innerhalb von Zweier-Gruppen sinnlos. Zeilen ohne Daten landen hinten.
-    const s = alle.slice().sort(function (a, b) {
-      if (a.ok !== b.ok) return a.ok ? -1 : 1;
-      const x = a[sortFeld], y = b[sortFeld];
-      if (x === null || x === undefined) return 1;
-      if (y === null || y === undefined) return -1;
-      const v = (typeof x === "string") ? x.localeCompare(y, "de") : (x - y);
-      return sortAb ? -v : v;
-    });
-    html = s.map(zeileHtml).join("");
-  } else {
-    for (const g of (DATA.gruppen || [])) {
-      const inG = alle.filter(function (r) { return r.gruppe === g; });
-      if (!inG.length) continue;
-      html += '<tr class="gruppenkopf"><td colspan="7">' + g
-        + (GRUPPEN_HINWEIS[g] ? '<span class="gh-hinweis">' + GRUPPEN_HINWEIS[g] + '</span>' : "")
-        + '</td></tr>';
-      html += inG.map(zeileHtml).join("");
-    }
-  }
-
-  koerper.innerHTML = html;
-
-  document.querySelectorAll("th[data-sort]").forEach(function (th) {
-    const eigen = th.querySelector(".pfeil");
-    if (eigen) eigen.remove();
-    if (th.dataset.sort === sortFeld) {
-      th.insertAdjacentHTML("beforeend", ' <span class="pfeil">' + (sortAb ? "▼" : "▲") + "</span>");
-    }
-  });
-}
-
-function chipsZeichnen() {
-  document.getElementById("gruppen-chips").innerHTML =
-    (DATA.gruppen || []).map(function (g) {
-      return '<span class="chip ' + (ZEIGE[g] ? "an" : "") + '" data-gruppe="' + g + '">' + g + "</span>";
-    }).join(" ")
-    + ' <span class="chip" data-gruppe="__alle__">alle</span>'
-    + ' <span class="chip" data-gruppe="__sortaus__">Gruppierung zurück</span>';
-
-  document.querySelectorAll(".chip").forEach(function (c) {
-    c.addEventListener("click", function () {
-      const g = c.dataset.gruppe;
-      if (g === "__alle__") {
-        for (const k in ZEIGE) ZEIGE[k] = 1;
-      } else if (g === "__sortaus__") {
-        sortFeld = null;
-      } else {
-        ZEIGE[g] = ZEIGE[g] ? 0 : 1;
-      }
-      chipsZeichnen();
-      zeichne();
-    });
-  });
-}
-
-document.querySelectorAll("th[data-sort]").forEach(function (th) {
-  th.addEventListener("click", function () {
-    const f = th.dataset.sort;
-    if (f === sortFeld) sortAb = !sortAb; else { sortFeld = f; sortAb = true; }
-    zeichne();
-  });
-});
-
-(function kopf() {
-  const e = DATA.eintraege || [];
-  const ok = e.filter(function (r) { return r.ok; }).length;
-  document.getElementById("status").innerHTML =
-    "Stand " + (DATA.stand || "?") + " &middot; " + ok + " von " + e.length + " Werten abgerufen"
-    + " &middot; Aktualisierung zweimal pro Werktag: früh vor Handelsbeginn und nach US-Börsenschluss";
-
-  const kaputt = e.filter(function (r) { return !r.ok; });
-  const alt = e.filter(function (r) { return r.ok && r.veraltet; });
-  let box = "";
-  if (kaputt.length) {
-    box += '<div class="ausfall"><b>' + kaputt.length + " von " + e.length + " Werten konnten nicht abgerufen werden.</b> "
-      + "Die restliche Seite ist davon nicht betroffen. Betroffen: "
-      + kaputt.map(function (r) { return r.name + " (" + r.symbol + ")"; }).join(", ") + ".</div>";
-  }
-  if (alt.length) {
-    box += '<div class="ausfall"><b>' + alt.length + " Wert" + (alt.length > 1 ? "e haben" : " hat")
-      + " einen älteren Kurs</b> als " + (DATA.veraltetTage || 4) + " Tage. Bei Feiertagen normal: "
-      + alt.map(function (r) { return r.name + " (" + r.alterTage + " Tage)"; }).join(", ") + ".</div>";
-  }
-  document.getElementById("ausfall-box").innerHTML = box;
-
-  document.getElementById("geprueft-am").textContent = (DATA.symboltestVom || "?").slice(0, 10);
-})();
-
-chipsZeichnen();
-zeichne();
-
-/* ===================== ETAPPE 2: UMFELD-KENNZAHLEN =====================
- * Jeder Block rendert sich eigenstaendig und faengt seine eigenen Fehler ab:
- * eine fehlende Kennzahl darf die Tabelle aus Etappe 1 und die anderen
- * Bloecke nicht mitreissen.
- * ====================================================================== */
-
-const KZ = DATA.kennzahlen || {};
-
-function stufeBadge(stufe, text) {
-  const beschriftung = {
-    rauschen: "Rauschen", schwach: "schwach", deutlich: "deutlich",
-    hoch: "unruhig", niedrig: "ruhig", unbekannt: "unbekannt",
-    "stark-mit": "läuft mit", "stark-gegen": "läuft gegen",
-    "schwach-mit": "schwach mit", "schwach-gegen": "schwach gegen",
-  };
-  const klasse = { "stark-mit": "deutlich", "stark-gegen": "deutlich",
-                   "schwach-mit": "schwach", "schwach-gegen": "schwach" }[stufe] || stufe;
-  return '<span class="stufe stufe-' + klasse + '">' + (text || beschriftung[stufe] || stufe) + "</span>";
-}
-
-function fehlerKasten(wohin, was, grund) {
-  const el = document.getElementById(wohin);
-  if (el) el.innerHTML = '<div class="leermeldung">' + was
-    + (grund ? ' &mdash; ' + grund : "") + '</div>';
-}
-
-/* ---------- 1. Nervosität ---------- */
-function zeichneNervositaet() {
-  const n = KZ.nervositaet;
-  if (!n) { fehlerKasten("vola-rahmen", "Nervositäts-Kennzahlen konnten nicht berechnet werden", KZ.nervositaetFehler); return; }
-
-  document.getElementById("vola-fenster").textContent = n.fenster;
-
-  const kacheln = document.getElementById("vix-kacheln");
-  if (n.vix) {
-    const v = n.vix;
-    // Perzentil in Klartext: "höher als an X % der Tage" ist verständlicher
-    // als die nackte Zahl.
-    kacheln.innerHTML =
-      '<div class="kachel"><div class="k">VIX &mdash; erwartete Schwankung S&amp;P 500</div>'
-      + '<div class="v">' + v.stand.toLocaleString("de-DE") + '</div>'
-      + '<div class="n">höher als an ' + v.perzentil + ' % der Tage im letzten Jahr</div></div>'
-      + '<div class="kachel"><div class="k">Jahresspanne VIX</div>'
-      + '<div class="v" style="font-size:16px">' + v.jahrTief.toLocaleString("de-DE") + ' &ndash; ' + v.jahrHoch.toLocaleString("de-DE") + '</div>'
-      + '<div class="n">üblicher Wert im Jahr: ' + v.median.toLocaleString("de-DE") + ' &middot; ' + v.tage + ' Handelstage</div></div>';
-  } else {
-    kacheln.innerHTML = '<div class="kachel"><div class="k">VIX</div><div class="v" style="font-size:15px;color:#6b7185">nicht verfügbar</div>'
-      + '<div class="n">Die gemessene Schwankung der einzelnen Werte unten steht unabhängig davon.</div></div>';
-  }
-
-  const zeilen = (n.werte || []).map(function (w) {
-    const grau = w.stufe === "rauschen" || w.stufe === "unbekannt";
-    return '<tr class="' + (grau ? "ist-rauschen" : "") + '">'
-      + '<td class="links"><span class="wname">' + w.name + '</span><span class="wsym">' + w.symbol + '</span>'
-      + '<div class="begruendung">' + w.urteil + '</div></td>'
-      + '<td><span class="kurs">' + (w.schwankung === null ? "&ndash;" : w.schwankung.toLocaleString("de-DE")) + '</span><span class="einheit">%</span></td>'
-      + '<td class="null-wert">' + (w.jahrMedian === null ? "&ndash;" : w.jahrMedian.toLocaleString("de-DE") + " %") + '</td>'
-      + '<td>' + stufeBadge(w.stufe) + '</td></tr>';
-  }).join("");
-
-  document.getElementById("vola-rahmen").innerHTML =
-    '<table><thead><tr><th class="links">Wert</th>'
-    + '<th>Schwankung ' + n.fenster + ' Tage</th><th>üblich letztes Jahr</th><th>Einordnung</th>'
-    + '</tr></thead><tbody>' + zeilen + '</tbody></table>';
-}
-
-/* ---------- 2. Sektoren ---------- */
-function zeichneSektoren() {
-  const sk = KZ.sektoren;
-  if (!sk || !sk.ok) {
-    fehlerKasten("sektor-rahmen", "Sektorvergleich nicht rechenbar", (sk && sk.grund) || KZ.sektorenFehler);
-    return;
-  }
-  document.getElementById("sektor-sub").innerHTML =
-    'Letzte ' + sk.fenster + ' Handelstage (' + sk.vonTag + ' bis ' + sk.bisTag + '), verglichen mit dem S&amp;P 500, der im selben Zeitraum '
-    + (sk.marktRendite > 0 ? "+" : "") + sk.marktRendite.toLocaleString("de-DE") + ' % gemacht hat.';
-
-  const zeilen = sk.zeilen.map(function (z, i) {
-    const grau = z.stufe === "rauschen" || z.stufe === "unbekannt";
-    const vk = grau ? "null-wert" : (z.vorsprung > 0 ? "hoch" : "tief");
-    return '<tr class="' + (grau ? "ist-rauschen" : "") + '">'
-      + '<td class="links"><span class="wname">' + (i + 1) + '. ' + z.name + '</span><span class="wsym">' + z.symbol + '</span>'
-      + '<div class="begruendung">' + z.urteil + '</div></td>'
-      + '<td>' + (z.rendite > 0 ? "+" : "") + z.rendite.toLocaleString("de-DE") + ' %</td>'
-      + '<td><span class="' + vk + '">' + (z.vorsprung > 0 ? "+" : "") + z.vorsprung.toLocaleString("de-DE") + ' %</span></td>'
-      + '<td>' + stufeBadge(z.stufe) + '</td></tr>';
-  }).join("");
-
-  const hinweis = sk.alleRauschen
-    ? '<tr><td colspan="4" class="begruendung" style="padding:12px 10px">Diesen Monat ist <b>keiner</b> der Sektoren belastbar vom Gesamtmarkt zu unterscheiden. Die Reihenfolge oben ist dann nur eine Sortierung von Zufallszahlen &mdash; das ist der häufigste Fall und kein Fehler.</td></tr>'
-    : "";
-
-  document.getElementById("sektor-rahmen").innerHTML =
-    '<table><thead><tr><th class="links">Sektor</th><th>Monat</th><th>ggü. Markt</th><th>Einordnung</th>'
-    + '</tr></thead><tbody>' + zeilen + hinweis + '</tbody></table>';
-}
-
-/* ---------- 3. Gleichlauf ---------- */
-function zeichneGleichlauf() {
-  const gl = KZ.gleichlauf;
-  if (!gl || !gl.ok) {
-    fehlerKasten("gleichlauf-rahmen", "Gleichlauf nicht rechenbar", (gl && gl.grund) || KZ.gleichlaufFehler);
-    return;
-  }
-  const stark = gl.paare.filter(function (p) { return p.stufe === "stark-mit"; });
-  document.getElementById("gleichlauf-sub").innerHTML =
-    gl.tage + ' gemeinsame Handelstage (' + gl.vonTag + ' bis ' + gl.bisTag + '). Alles zwischen &minus;'
-    + gl.schwelle.toLocaleString("de-DE") + ' und +' + gl.schwelle.toLocaleString("de-DE")
-    + ' ist bei dieser Datenmenge nicht von „kein Zusammenhang" zu unterscheiden.'
-    + (stark.length
-        ? ' <b>' + stark.length + ' Paar' + (stark.length > 1 ? 'e laufen' : ' läuft') + ' deutlich miteinander</b> &mdash; dort zählen gleichzeitige Signale als eine Position, nicht als mehrere.'
-        : ' Derzeit läuft kein Paar deutlich miteinander.');
-
-  const zeilen = gl.paare.map(function (p) {
-    const grau = p.stufe === "rauschen";
-    const kl = grau ? "null-wert" : (p.wert > 0 ? "hoch" : "tief");
-    return '<tr class="' + (grau ? "ist-rauschen" : "") + '">'
-      + '<td class="links"><span class="wname">' + p.a + ' &amp; ' + p.b + '</span>'
-      + '<div class="begruendung">' + p.urteil + '</div></td>'
-      + '<td><span class="kurs ' + kl + '">' + (p.wert > 0 ? "+" : "") + p.wert.toLocaleString("de-DE", { minimumFractionDigits: 2 }) + '</span></td>'
-      + '<td>' + stufeBadge(p.stufe) + '</td></tr>';
-  }).join("");
-
-  document.getElementById("gleichlauf-rahmen").innerHTML =
-    '<table><thead><tr><th class="links">Paar</th><th>Gleichlauf</th><th>Einordnung</th>'
-    + '</tr></thead><tbody>' + zeilen + '</tbody></table>';
-}
-
-/* ---------- 4. Termine ---------- */
-function zeichneTermine() {
-  const t = KZ.termine;
-  const el = document.getElementById("termin-liste");
-  if (!t || !t.ok) {
-    el.innerHTML = '<div class="leermeldung">Terminkalender nicht abrufbar'
-      + (KZ.termineFehler ? ' &mdash; ' + KZ.termineFehler : "")
-      + '. Der TJR-Report holt denselben Feed unabhängig davon selbst.</div>';
-    return;
-  }
-  if (!t.kommende.length) {
-    el.innerHTML = '<div class="leermeldung">Für den Rest dieser Kalenderwoche stehen keine Termine mit hoher erwarteter Wirkung an. '
-      + 'Das heißt nicht, dass nichts passiert &mdash; ungeplante Ereignisse stehen in keinem Kalender.</div>';
-    return;
-  }
-  const heuteWien = new Date().toLocaleDateString("de-AT", { timeZone: "Europe/Vienna" });
-  el.innerHTML = t.kommende.map(function (e) {
-    const d = new Date(e.zeitIso);
-    const wann = d.toLocaleString("de-AT", {
-      timeZone: "Europe/Vienna", weekday: "short", day: "2-digit", month: "2-digit",
-      hour: "2-digit", minute: "2-digit",
-    });
-    const istHeute = d.toLocaleDateString("de-AT", { timeZone: "Europe/Vienna" }) === heuteWien;
-    return '<div class="termin' + (istHeute ? " heute" : "") + '">'
-      + '<span class="wann">' + wann + '</span>'
-      + '<span class="was">' + e.titel + ' <span class="waehr">' + e.waehrung + '</span></span></div>';
-  }).join("")
-  + '<div class="begruendung" style="margin-top:9px">Zeiten in Wiener Ortszeit. Quelle: ForexFactory-Kalender (' + (t.waehrungen || ["USD","GBP"]).join(", ") + '), laufende Kalenderwoche, nur hohe erwartete Wirkung.' + (t.feedFehler ? ' <span class="tief">Ein Feed war nicht erreichbar &mdash; die Liste kann unvollständig sein.</span>' : "") + '</div>';
-}
-
-/* ---------- 5. Mitschrift ---------- */
-function zeichneHistorie() {
-  const h = DATA.historie;
-  const el = document.getElementById("historie-sub");
-  if (!h || !h.ok) {
-    el.innerHTML = "Für heute konnte nichts mitgeschrieben werden"
-      + (h && h.grund ? ' &mdash; ' + h.grund : "") + ".";
-    return;
-  }
-  const seit = new Date(h.seit + "T12:00:00Z").toLocaleDateString("de-AT", { day: "2-digit", month: "2-digit", year: "numeric" });
-  el.innerHTML = "<b>" + h.tage + (h.tage === 1 ? " Tag" : " Tage") + "</b> gesammelt, seit " + seit
-    + ". Letzter Eintrag: Handelstag " + h.handelstag + ".";
-}
-
-/* ---------- 6. Wann lohnt sich die naechste Auswertung? ----------
- * Das ist die Erinnerung, die Tiam wollte - und sie zaehlt bewusst TRADES
- * statt Wochen. Ob ein neuer Durchlauf etwas bringt, haengt nicht daran, wie
- * viel Zeit vergangen ist, sondern wie viele abgeschlossene Trades
- * dazugekommen sind. */
-function zeichneAuswertung() {
-  const a = DATA.auswertung;
-  const el = document.getElementById("auswertung-stand");
-  if (!a) { el.innerHTML = ""; return; }
-
-  const anteil = Math.min(100, Math.round(a.trades / a.zielTrades * 100));
-  let html = '<div class="fortschritt">'
-    + '<span class="zahl">' + a.trades + '</span> <span class="von">von ' + a.zielTrades + ' abgeschlossenen Trades mit Umfeld</span>'
-    + '<div class="balken' + (a.bereit ? " voll" : "") + '"><div style="width:' + anteil + '%"></div></div>';
-
-  if (a.letzte) {
-    const d = new Date(a.letzte.gelaufenAm);
-    const wann = isNaN(d) ? "?" : d.toLocaleDateString("de-AT", { day: "2-digit", month: "2-digit", year: "numeric" });
-    const ew = typeof a.letzte.erwartungswert === "number"
-      ? (a.letzte.erwartungswert > 0 ? "+" : "") + a.letzte.erwartungswert.toFixed(2).replace(".", ",") : "?";
-    const se = typeof a.letzte.standardfehler === "number"
-      ? a.letzte.standardfehler.toFixed(2).replace(".", ",") : "?";
-    html += '<div class="wann">Zuletzt ausgewertet am <b>' + wann + '</b> mit ' + a.letzte.mitUmfeld
-      + ' Trades: Erwartungswert <b>' + ew + ' R</b> (±' + se + ') &mdash; ' + a.letzte.ergebnis + '.</div>';
-  } else {
-    html += '<div class="wann">Noch nie ausgewertet.</div>';
-  }
-  html += "</div>";
-
-  html += a.bereit
-    ? '<div class="bereit"><b>Jetzt lohnt sich ein neuer Durchlauf.</b> Es sind genug Trades beisammen, '
-      + 'dass ein mittelgroßer Unterschied zwischen den Umfeldern auffallen würde. Sag Claude Bescheid &mdash; '
-      + 'die Auswertung läuft fertig im Projekt (<code>umfeld_auswertung.js</code>).</div>'
-    : '<div class="wann" style="margin-top:8px">Ab <b>' + a.zielTrades + '</b> Trades lohnt sich der nächste Durchlauf. '
-      + 'Dann fällt der Standardfehler von rund 0,12 auf 0,09 &mdash; vorher würde auch ein echter Unterschied '
-      + 'in der Streuung untergehen. Es fehlen noch <b>' + (a.zielTrades - a.trades) + '</b>.</div>';
-
-  html += '<div class="nebenziel">Termine-Einteilung: <b>' + a.mitTerminen + ' von ' + a.zielTermine + '</b> Trades mit bekanntem Terminstand. '
-    + (a.termineBereit
-        ? 'Reicht für eine Auswertung.'
-        : 'Diese Zahl wächst nur mit neuen Handelstagen &mdash; rückwirkend gibt es keinen Terminkalender.')
-    + '</div>';
-
-  el.innerHTML = html;
-}
-
-/* ---------- 7. Haltedauer ---------- */
-let lfGewaehlt = 0;
-
-function zeichneLangfrist() {
-  const lf = (DATA.langfrist || []).filter(function (x) { return x.ok; });
-  const sub = document.getElementById("lf-sub");
-  const rahmen = document.getElementById("lf-rahmen");
-  const wahl = document.getElementById("lf-wahl");
-  if (!lf.length) {
-    sub.textContent = "Langfrist-Daten konnten nicht geladen werden.";
-    wahl.innerHTML = ""; rahmen.innerHTML = "";
-    return;
-  }
-  if (lfGewaehlt >= lf.length) lfGewaehlt = 0;
-  const e = lf[lfGewaehlt];
-
-  wahl.innerHTML = lf.map(function (x, i) {
-    return '<span class="chip ' + (i === lfGewaehlt ? "an" : "") + '" data-lf="' + i + '">' + x.name + "</span>";
-  }).join(" ");
-  wahl.querySelectorAll("[data-lf]").forEach(function (c) {
-    c.addEventListener("click", function () { lfGewaehlt = Number(c.dataset.lf); zeichneLangfrist(); });
-  });
-
-  const vonJ = e.von.slice(0, 4), bisJ = e.bis.slice(0, 4);
-  const jahreSpanne = Math.floor((e.spanneMonate || e.monate) / 12);
-  sub.innerHTML = "<b>" + e.name + "</b> &mdash; " + jahreSpanne + " Jahre Historie ("
-    + vonJ + " bis " + bisJ + "). Jede Zeile fasst <b>alle</b> überlappenden Fenster dieser Länge zusammen."
-    + (e.hinweis ? ' <span class="null-wert">' + e.hinweis + "</span>" : "")
-    // Eine lückenhafte Quelle darf nicht als vollständige Historie durchgehen.
-    + (typeof e.dichte === "number" && e.dichte < 90
-        ? '<br><span class="null-wert">Die Quelle liefert für diesen Zeitraum nur '
-          + e.monate + " von " + e.spanneMonate + " Monaten (" + e.dichte
-          + " %). Fenster ohne passenden Endpunkt werden übersprungen, nicht gedehnt.</span>"
-        : "");
-
-  // Gemeinsame Skala ueber alle Zeilen, sonst sind die Balken nicht vergleichbar.
-  let min = 0, max = 0;
-  for (const z of e.zeilen) { min = Math.min(min, z.schlechtester); max = Math.max(max, z.bester); }
-  const spanne = (max - min) || 1;
-  const pos = function (w) { return ((w - min) / spanne) * 100; };
-
-  const zeilen = e.zeilen.map(function (z) {
-    const a = pos(Math.min(z.schlechtester, 0)), b = pos(Math.max(z.bester, 0));
-    const nullP = pos(0), mitP = pos(z.mittel);
-    const balken = '<div class="lf-spanne">'
-      + (z.schlechtester < 0 ? '<div class="lf-bar minus" style="left:' + a + '%;width:' + (nullP - a) + '%"></div>' : "")
-      + (z.bester > 0 ? '<div class="lf-bar plus" style="left:' + nullP + '%;width:' + (b - nullP) + '%"></div>' : "")
-      + '<div class="lf-null" style="left:' + nullP + '%"></div>'
-      + '<div class="lf-mittel" style="left:' + mitP + '%" title="Mittelwert ' + z.mittel + ' % pro Jahr"></div>'
-      + "</div>";
-    const f = function (x) { return (x > 0 ? "+" : "") + String(x).replace(".", ","); };
-    return "<tr>"
-      + '<td class="links"><span class="wname">' + z.jahre + " Jahr" + (z.jahre > 1 ? "e" : "") + "</span>"
-      + '<div class="begruendung">' + z.fenster + " Fenster &middot; "
-      + (z.anteilVerlust > 0
-          ? String(z.anteilVerlust).replace(".", ",") + " % davon im Minus"
-          : "<b>keines im Minus</b>")
-      + "</div></td>"
-      + '<td><span class="tief">' + f(z.schlechtester) + " %</span></td>"
-      + '<td><span class="kurs">' + f(z.mittel) + " %</span></td>"
-      + '<td><span class="hoch">' + f(z.bester) + " %</span></td>"
-      + "<td>" + balken + "</td></tr>";
-  }).join("");
-
-  rahmen.innerHTML = '<table><thead><tr><th class="links">Haltedauer</th>'
-    + "<th>schlechtestes</th><th>Mittelwert</th><th>bestes</th>"
-    + '<th class="links">Spanne</th></tr></thead><tbody>' + zeilen + "</tbody></table>"
-    + '<div class="lf-quelle">Alle Werte als Rendite <b>pro Jahr</b>, damit verschiedene Fensterlängen vergleichbar sind. '
-    + "Ohne Dividenden, ohne Kosten, ohne Steuern &mdash; ein realer Depotwert läge darunter. "
-    + "Der helle Strich im Balken ist der Mittelwert.</div>";
-}
-
-/* ---------- 8. Beobachtungsliste ---------- */
-let blThema = "alle";
-
-function zeichneBeobachtung() {
+function beo(symbol) {
   const b = DATA.beobachtung;
-  const sub = document.getElementById("bl-sub");
-  const wahl = document.getElementById("bl-wahl");
-  const rahmen = document.getElementById("bl-rahmen");
-  if (!b || !b.eintraege || !b.eintraege.length) {
-    sub.textContent = "Beobachtungsliste konnte nicht geladen werden.";
-    wahl.innerHTML = ""; rahmen.innerHTML = "";
-    return;
+  if (!b || !b.eintraege) return null;
+  return b.eintraege.find((e) => e.symbol === symbol && e.ok) || null;
+}
+function undListe(xs) {
+  if (xs.length <= 1) return xs[0] || "";
+  return xs.slice(0, -1).join(", ") + " und " + xs[xs.length - 1];
+}
+/* Das Datum des Laufs, nicht das des Browsers - sonst wechselt der Hinweis
+   je nachdem, wann die Seite geoeffnet wird. */
+function heute() {
+  return String(DATA.standIso || "").slice(0, 10);
+}
+function erklaerBox(titel, inhalt) {
+  return '<details class="erklaer"><summary>' + titel + "</summary>"
+    + '<div class="erklaer-text">' + inhalt + "</div></details>";
+}
+
+/* ====================================================================
+   DER LAGEBERICHT
+
+   Jeder Satz kommt aus denselben Daten wie die Tabellen darunter, samt
+   Rauschpruefung. Wo nichts Belastbares da ist, steht das auch so - ein
+   Satz wie "kein Sektor hebt sich ab" ist eine vollwertige Auskunft.
+   ==================================================================== */
+function lagebericht() {
+  const s = [];
+
+  /* 1. Der breite Markt. Die Frage, die am meisten zaehlt. */
+  const welt = beo("EUNL.DE") || beo("VWCE.DE") || beo("URTH");
+  if (welt && typeof welt.jahr1 === "number") {
+    let wo = "";
+    const sp = welt.spanne;
+    if (sp && typeof sp.inSpanne === "number") {
+      if (sp.inSpanne >= 90) wo = " und steht <b>nahe seinem Jahreshoch</b>";
+      else if (sp.inSpanne <= 15) wo = " und steht <b>nahe seinem Jahrestief</b>";
+      else if (typeof sp.vomHoch === "number")
+        wo = " und steht <b>" + dz(Math.abs(sp.vomHoch), 0) + " % unter seinem Jahreshoch</b>";
+    }
+    s.push("Der Weltmarkt liegt <b class=\"" + farbe(welt.jahr1) + "\">" + proz(welt.jahr1, 0)
+      + "</b> &uuml;ber dem Stand von vor einem Jahr" + wo + ".");
   }
 
-  sub.innerHTML = "Vergleichsmaßstab ist derselbe Weltindex in zwei Notierungen: <b>"
-    + (b.massstabName || b.massstab) + "</b> für Werte in Euro, <b>"
-    + (b.massstabUsdName || b.massstabUsd) + "</b> für Werte in Dollar &mdash; "
-    + "so misst der Vergleich nie den Wechselkurs mit. "
-    + "Der Markt-Vergleich läuft über " + b.relTage + " Handelstage, die Schwankung über " + b.volFenster + ". "
-    + '<span class="null-wert">Mit <span class="nicht-kaufbar">US-ETF</span> markierte Zeilen sind für EU-Privatanleger normalerweise nicht kaufbar &mdash; sie stehen nur als Vergleich für das Thema.</span>';
+  /* 2. Nervositaet - nicht die VIX-Zahl, sondern was sie bedeutet. */
+  const n = DATA.kennzahlen && DATA.kennzahlen.nervositaet;
+  if (n && n.vix && typeof n.vix.perzentil === "number") {
+    const p = n.vix.perzentil;
+    const wort = p <= 25 ? '<b class="ruhig">ruhiger als &uuml;blich</b>'
+               : p >= 75 ? '<b class="runter">unruhiger als &uuml;blich</b>'
+               : "<b>so unruhig wie &uuml;blich</b>";
+    s.push("An den B&ouml;rsen geht es gerade " + wort
+      + " zu &ndash; die erwartete Schwankung liegt h&ouml;her als an <b>" + dz(p, 0)
+      + " %</b> der Tage im letzten Jahr.");
+  }
 
-  const themen = ["alle"].concat(b.themen.filter(function (t) {
-    return b.eintraege.some(function (e) { return e.thema === t; });
-  }));
-  wahl.innerHTML = themen.map(function (t) {
-    return '<span class="chip ' + (t === blThema ? "an" : "") + '" data-bl="' + t + '">' + t + "</span>";
-  }).join(" ");
-  wahl.querySelectorAll("[data-bl]").forEach(function (c) {
-    c.addEventListener("click", function () { blThema = c.dataset.bl; zeichneBeobachtung(); });
-  });
+  /* 3. Sektoren - meistens ist die ehrliche Antwort "nichts Belastbares". */
+  const sk = DATA.kennzahlen && DATA.kennzahlen.sektoren;
+  if (sk && sk.ok && sk.zeilen) {
+    const auf = sk.zeilen.filter((z) => z.stufe === "deutlich" || z.stufe === "schwach");
+    if (!auf.length) {
+      s.push("<b>Kein Sektor</b> hebt sich diesen Monat belastbar vom Gesamtmarkt ab &ndash; "
+        + "was wie ein Trend aussieht, ist bei diesen Abst&auml;nden meist Zufall.");
+    } else {
+      const vorn = auf.filter((z) => z.vorsprung > 0).map((z) => z.name);
+      const hint = auf.filter((z) => z.vorsprung < 0).map((z) => z.name);
+      const teile = [];
+      if (vorn.length) teile.push("l&auml;uft <b class=\"rauf\">" + vorn.join(" und ") + "</b> vorn");
+      if (hint.length) teile.push("<b class=\"runter\">" + hint.join(" und ") + "</b> hinterher");
+      s.push("Von den Sektoren " + teile.join(", und es l&auml;uft ")
+        + " &ndash; alle anderen sind nicht vom Markt zu unterscheiden.");
+    }
+  }
 
-  const f = function (v) {
-    if (v === null || v === undefined) return '<span class="null-wert">&ndash;</span>';
-    const k = v > 0 ? "hoch" : v < 0 ? "tief" : "null-wert";
-    return '<span class="' + k + '">' + (v > 0 ? "+" : "") + String(v).replace(".", ",") + " %</span>";
+  /* 4. Gleichlauf - die wichtigste Auskunft fuer sein Risiko. */
+  const gl = DATA.kennzahlen && DATA.kennzahlen.gleichlauf;
+  if (gl && gl.ok && gl.paare) {
+    const stark = gl.paare.filter((p) => p.stufe === "stark-mit");
+    if (stark.length) {
+      const namen = [];
+      for (const p of stark) {
+        if (namen.indexOf(p.a) < 0) namen.push(p.a);
+        if (namen.indexOf(p.b) < 0) namen.push(p.b);
+      }
+      s.push("<b>" + undListe(namen) + "</b> laufen fast im Gleichschritt &ndash; mehrere Signale darin "
+        + "gleichzeitig sind <b>eine Wette, nicht mehrere</b>.");
+    } else {
+      s.push("Deine sechs gehandelten Werte laufen gerade <b>unabh&auml;ngig voneinander</b>.");
+    }
+  }
+
+  /* 5. Termine - nur der naechste, in Klartext. */
+  const t = DATA.kennzahlen && DATA.kennzahlen.termine;
+  if (t && t.ok) {
+    if (!t.kommende || !t.kommende.length) {
+      s.push("F&uuml;r den Rest der Woche stehen <b>keine gro&szlig;en Termine</b> an.");
+    } else {
+      const e = t.kommende[0];
+      const wann = new Date(e.zeitIso).toLocaleString("de-AT",
+        { timeZone: "Europe/Vienna", weekday: "long", hour: "2-digit", minute: "2-digit" });
+      s.push("N&auml;chster gro&szlig;er Termin: <b>" + terminName(e) + "</b> am " + wann
+        + (t.kommende.length > 1 ? ", danach noch " + (t.kommende.length - 1) + " weitere" : "") + ".");
+    }
+  }
+
+  if (!s.length) s.push("Heute konnten nicht genug Kurse abgerufen werden f&uuml;r einen Lagebericht.");
+  el("lage").innerHTML = s.map((x) => "<p>" + x + "</p>").join("");
+}
+
+/* ====================================================================
+   Abschnitt 1: die sechs gehandelten Werte
+   ==================================================================== */
+const GEHANDELT_REIHE = ["BTC-USD", "ETH-USD", "XRP-USD", "GBPUSD=X", "^GSPC", "GC=F"];
+
+function gehandelt() {
+  const alle = DATA.eintraege || [];
+  const sortiert = GEHANDELT_REIHE.map((s) => alle.find((e) => e.symbol === s && e.ok)).filter(Boolean);
+  if (!sortiert.length) { el("in-gehandelt").innerHTML = '<div class="leer">Keine Daten.</div>'; return; }
+
+  const hoch = sortiert.filter((e) => typeof e.tag === "number" && e.tag > 0).length;
+  el("sum-gehandelt").textContent = hoch + " von " + sortiert.length + " heute im Plus";
+
+  const n = DATA.kennzahlen && DATA.kennzahlen.nervositaet;
+  const schw = {};
+  if (n) for (const w of (n.werte || [])) schw[w.symbol] = w;
+
+  const wortVon = { niedrig: "ruhig", hoch: "unruhig", rauschen: "normal", unbekannt: "-" };
+  const klasseVon = { niedrig: "m-rauf", hoch: "m-runter", rauschen: "", unbekannt: "" };
+
+  const zeilen = sortiert.map((e) => {
+    const s = schw[e.symbol];
+    return "<tr><td><span class=\"nam\">" + e.name + "</span>"
+      + (e.standAusLivekurs && e.letzteKerzeDatum && e.letzteKerzeDatum !== heute()
+          ? '<div class="unter">Kurs von jetzt, Ver&auml;nderungen bis ' + e.letzteKerzeDatum + "</div>" : "")
+      + '</td><td data-k="Kurs">' + kursText(e.stand, e.einheit || e.waehrung) + "</td>"
+      + '<td data-k="heute">' + pr(e.tag) + '</td><td data-k="Woche">' + pr(e.woche)
+      + '</td><td data-k="Jahr">' + pr(e.jahr) + "</td>"
+      + '<td><span class="marke ' + ((s && klasseVon[s.stufe]) || "") + '">'
+      + ((s && wortVon[s.stufe]) || "-") + "</span></td></tr>";
+  }).join("");
+
+  el("in-gehandelt").innerHTML = '<div class="rahmen"><table class="stapel"><thead><tr>'
+    + "<th>Wert</th><th>Kurs</th><th>heute</th><th>Woche</th><th>Jahr</th><th>Schwankung</th>"
+    + "</tr></thead><tbody>" + zeilen + "</tbody></table></div>"
+    + gleichlaufTeil()
+    + erklaerBox("Was die Spalte Schwankung sagt",
+        "<p><b>ruhig</b> oder <b>unruhig</b> hei&szlig;t: die Tagesausschl&auml;ge der letzten "
+        + ((n && n.fenster) || 20) + " Handelstage, verglichen mit dem letzten Jahr desselben Werts. "
+        + "Steht <b>normal</b> da, ist der Unterschied kleiner als die Messungenauigkeit &ndash; "
+        + "dann ist es keine Auff&auml;lligkeit, sondern Rauschen.</p>"
+        + "<p>Das sagt nichts &uuml;ber die Richtung. Hohe Schwankung hei&szlig;t nur: gr&ouml;&szlig;ere "
+        + "Ausschl&auml;ge in beide Richtungen, Stops werden h&auml;ufiger gestreift.</p>");
+}
+
+/* Gleichlauf der sechs Werte. Steht bei den gehandelten Werten, weil es
+   genau darum geht: wie viele echte Wetten die sechs eigentlich sind. */
+function gleichlaufTeil() {
+  const gl = DATA.kennzahlen && DATA.kennzahlen.gleichlauf;
+  if (!gl || !gl.ok || !gl.paare || !gl.paare.length) return "";
+
+  const wortVon = {
+    "stark-mit": "im Gleichschritt", "stark-gegen": "gegenl\u00e4ufig",
+    "schwach-mit": "leicht gleichl\u00e4ufig", "schwach-gegen": "leicht gegenl\u00e4ufig",
+    "rauschen": "kein Zusammenhang",
+  };
+  const klasseVon = {
+    "stark-mit": "m-runter", "stark-gegen": "m-akz",
+    "schwach-mit": "", "schwach-gegen": "", "rauschen": "",
   };
 
-  const stufenKlasse = {
-    "rauschen": "rauschen", "besser": "besser", "deutlich besser": "besser",
-    "schlechter": "schlechter", "deutlich schlechter": "schlechter",
-    "massstab": "massstab", "nicht vergleichbar": "nicht", "unbekannt": "unbekannt",
-  };
-  const stufenText = { "massstab": "Vergleichsmaßstab", "nicht vergleichbar": "nicht vergleichbar" };
+  const zeilen = gl.paare.map((p) => {
+    const leise = p.stufe === "rauschen";
+    return "<tr" + (leise ? ' class="leise"' : "") + ">"
+      + "<td>" + p.a + " &amp; " + p.b + "</td>"
+      + '<td class="zahl" data-k="Wert">' + dz(p.wert, 2) + "</td>"
+      + '<td><span class="marke ' + (klasseVon[p.stufe] || "") + '">' + (wortVon[p.stufe] || "-")
+      + "</span></td></tr>";
+  }).join("");
+
+  return '<h3 style="font-size:0.9375rem;font-weight:600;color:var(--leiser);margin:30px 0 8px">'
+    + "Laufen sie miteinander?</h3>"
+    + '<div class="rahmen"><table class="stapel"><thead><tr><th>Paar</th><th>Wert</th><th>Einordnung</th>'
+    + "</tr></thead><tbody>" + zeilen + "</tbody></table></div>"
+    + erklaerBox("Wie das zu lesen ist",
+        "<p>Der Wert geht von <b>&minus;1</b> (perfekt gegenl&auml;ufig) &uuml;ber <b>0</b> (gar kein "
+        + "Zusammenhang) bis <b>+1</b> (perfekter Gleichschritt), gemessen &uuml;ber die letzten "
+        + gl.tage + " gemeinsamen Handelstage. Die Messungenauigkeit liegt bei &plusmn;"
+        + dz(gl.standardfehler, 2) + " &ndash; alles darunter ist als <b>kein Zusammenhang</b> "
+        + "eingeordnet, auch wenn eine Zahl dasteht.</p>"
+        + "<p>Praktisch hei&szlig;t das: Werte im Gleichschritt sind <b>nicht zwei Positionen, sondern "
+        + "eine gr&ouml;&szlig;ere</b>. Wer in dreien davon gleichzeitig drin ist, hat dreifaches Risiko "
+        + "auf dieselbe Bewegung &ndash; nicht gestreutes Risiko.</p>"
+        + "<p>Das ist eine R&uuml;ckschau, keine Zusage. In einem Einbruch laufen fast alle Werte "
+        + "pl&ouml;tzlich miteinander, auch die, die vorher unabh&auml;ngig waren.</p>");
+}
+
+/* ====================================================================
+   Abschnitt 2: alle Maerkte
+   ==================================================================== */
+function maerkte() {
+  const alle = DATA.eintraege || [];
+  el("sum-maerkte").textContent = (DATA.anzahlOk || 0) + " Werte";
 
   let html = "";
-  const gefiltert = b.eintraege.filter(function (e) { return blThema === "alle" || e.thema === blThema; });
-
-  for (const thema of b.themen) {
-    const drin = gefiltert.filter(function (e) { return e.thema === thema; });
+  for (const g of (DATA.gruppen || [])) {
+    const drin = alle.filter((e) => e.gruppe === g);
     if (!drin.length) continue;
-    html += '<tr class="gruppenkopf"><td colspan="7">' + thema + "</td></tr>";
-
+    html += '<tr class="kopfzeile"><td colspan="5">' + g + "</td></tr>";
     for (const e of drin) {
       if (!e.ok) {
-        html += '<tr><td class="links"><span class="wname">' + e.name + '</span><span class="wsym">' + e.symbol + "</span></td>"
-          + '<td colspan="6" class="fehlt">keine Daten &mdash; ' + (e.grund || "Abruf fehlgeschlagen") + "</td></tr>";
+        html += "<tr><td><span class=\"nam\">" + e.name
+          + '</span></td><td colspan="4" class="still">keine Daten</td></tr>';
         continue;
       }
+      html += "<tr" + (e.veraltet ? ' class="leise"' : "") + ">"
+        + "<td><span class=\"nam\">" + e.name + '</span><span class="sym">' + e.symbol + "</span>"
+        + (e.veraltet ? '<div class="unter">Stand ' + e.standDatum + ", "
+            + dz(e.alterTage, 0) + " Tage alt</div>" : "")
+        + '</td><td data-k="Stand">' + kursText(e.stand, e.einheit || e.waehrung) + "</td>"
+        + '<td data-k="heute">' + pr(e.tag) + '</td><td data-k="Monat">' + pr(e.monat)
+        + '</td><td data-k="Jahr">' + pr(e.jahr) + "</td></tr>";
+    }
+  }
+  el("in-maerkte").innerHTML = '<div class="rahmen"><table class="stapel"><thead><tr>'
+    + "<th>Wert</th><th>Stand</th><th>heute</th><th>Monat</th><th>Jahr</th>"
+    + "</tr></thead><tbody>" + html + "</tbody></table></div>"
+    + erklaerBox("Wie das gerechnet ist",
+        "<p>Ver&auml;nderungen &uuml;ber <b>Kalendertage</b>, nicht &uuml;ber Handelstage: Bitcoin handelt "
+        + "sieben Tage pro Woche, der DAX f&uuml;nf. Sonst w&auml;ren die Spalten nicht vergleichbar.</p>"
+        + "<p>Ein Strich hei&szlig;t: die Datenreihe reicht f&uuml;r diesen Zeitraum nicht zur&uuml;ck. "
+        + "Lieber eine L&uuml;cke als eine gesch&ouml;nte Zahl. Grau hei&szlig;t: &auml;lter als "
+        + VERALTET_TAGE + " Tage.</p>");
+}
+
+/* ====================================================================
+   Abschnitt 3: Beobachtungsliste
+   ==================================================================== */
+let blThema = "alle";
+
+function beobachtung() {
+  const b = DATA.beobachtung;
+  if (!b || !b.eintraege) { el("in-beobachtung").innerHTML = '<div class="leer">Nicht geladen.</div>'; return; }
+  const ok = b.eintraege.filter((e) => e.ok);
+  el("sum-beobachtung").textContent = ok.length + " Werte";
+
+  const themen = ["alle"].concat((b.themen || []).filter((t) => ok.some((e) => e.thema === t)));
+  const knoepfe = '<div class="filter">' + themen.map((t) =>
+    '<button class="knopf ' + (t === blThema ? "an" : "") + '" data-bl="' + t + '">' + t + "</button>")
+    .join("") + "</div>";
+
+  const markeText = {
+    "rauschen": "wie der Markt", "besser": "besser", "deutlich besser": "deutlich besser",
+    "schlechter": "schlechter", "deutlich schlechter": "deutlich schlechter",
+    "massstab": "Vergleichsma&szlig;stab", "nicht vergleichbar": "-", "unbekannt": "-",
+  };
+
+  let html = "";
+  for (const thema of (b.themen || [])) {
+    const drin = ok.filter((e) => e.thema === thema && (blThema === "alle" || e.thema === blThema));
+    if (!drin.length) continue;
+    html += '<tr class="kopfzeile"><td colspan="4">' + thema + "</td></tr>";
+    for (const e of drin) {
       const r = e.relativ || {};
-      const grau = r.stufe === "rauschen" || r.stufe === "nicht vergleichbar" || r.stufe === "unbekannt";
+      const leise = !r.stufe || r.stufe === "rauschen" || r.stufe === "nicht vergleichbar"
+                 || r.stufe === "unbekannt";
+      const kl = /besser/.test(r.stufe || "") ? "m-rauf"
+               : /schlechter/.test(r.stufe || "") ? "m-runter"
+               : r.stufe === "massstab" ? "m-akz" : "";
 
-      // Position in der Jahresspanne als kleiner Balken - sagt, wo man in der
-      // bisherigen Spanne steht, nicht ob etwas billig oder teuer ist.
-      let pos = "";
-      if (e.spanne) {
-        pos = '<div class="bl-pos" title="Jahrestief ' + e.spanne.tief + ' / Jahreshoch ' + e.spanne.hoch + '">'
-          + '<div class="bl-bahn"></div><div class="bl-punkt" style="left:' + Math.max(0, Math.min(99, e.spanne.inSpanne)) + '%"></div></div>'
-          + '<div class="bl-skala" style="width:112px"><span>Tief</span><span>Hoch</span></div>';
-      }
-
-      html += "<tr" + (grau ? ' class="ist-rauschen"' : "") + ">"
-        + '<td class="links"><span class="wname">' + e.name + "</span>"
-        + '<span class="wsym">' + e.symbol + "</span>"
-        + (e.kaufbar === false ? '<span class="nicht-kaufbar">US-ETF</span>' : "")
-        + (e.langname ? '<div class="bl-fonds">' + e.langname + "</div>" : "")
-        + pos
-        + (r.grund ? '<div class="begruendung">' + r.grund + "</div>" : "")
-        + "</td>"
-        + '<td><span class="kurs">' + (e.kurs === null ? "&ndash;" : e.kurs.toLocaleString("de-DE"))
-        + '</span><span class="einheit">' + (e.waehrung || "") + "</span>"
-        + (e.spanne ? '<div class="begruendung">' + (e.spanne.vomHoch === 0 ? "am Jahreshoch"
-            : String(e.spanne.vomHoch).replace(".", ",") + " % vom Jahreshoch") + "</div>" : "")
-        + "</td>"
-        + "<td>" + f(e.monat1) + "</td>"
-        + "<td>" + f(e.monat3) + "</td>"
-        + "<td>" + f(e.monat6) + "</td>"
-        + "<td>" + f(e.jahr1) + "</td>"
-        + '<td><span class="null-wert">' + (e.schwankung === null ? "&ndash;" : String(e.schwankung).replace(".", ",") + " %") + "</span>"
-        + '<div style="margin-top:4px">' + '<span class="stufe stufe-' + (stufenKlasse[r.stufe] || "unbekannt") + '">'
-        + (stufenText[r.stufe] || r.stufe || "?") + "</span></div></td>"
-        + "</tr>";
+      html += "<tr><td><span class=\"nam\">" + e.name + "</span>"
+        + (e.kaufbar === false ? ' <span class="marke m-warn">nicht in der EU kaufbar</span>' : "")
+        + (!leise ? ' <span class="marke ' + kl + '">' + (markeText[r.stufe] || r.stufe) + "</span>" : "")
+        + (e.langname ? '<div class="unter">' + e.langname + "</div>" : "")
+        + (e.spanne && typeof e.spanne.inSpanne === "number"
+            ? '<div class="spanne"><i style="left:' + Math.max(0, Math.min(97, e.spanne.inSpanne))
+              + '%"></i></div><div class="spanne-text"><span>Jahrestief</span><span>Jahreshoch</span></div>'
+            : "")
+        + '</td><td data-k="Kurs">' + kursText(e.kurs, e.waehrung) + "</td>"
+        + '<td data-k="3 Monate">' + pr(e.monat3) + '</td><td data-k="1 Jahr">'
+        + pr(e.jahr1) + "</td></tr>";
     }
   }
 
-  rahmen.innerHTML = '<table><thead><tr><th class="links">Wert</th><th>Kurs</th>'
-    + "<th>1 Mon.</th><th>3 Mon.</th><th>6 Mon.</th><th>1 Jahr</th>"
-    + "<th>Schwankung<br>ggü. Markt</th></tr></thead><tbody>" + html + "</tbody></table>"
-    + '<div class="lf-quelle">Der Balken unter dem Namen zeigt die Lage in der <b>52-Wochen-Spanne</b>: ganz links am Jahrestief, ganz rechts am Jahreshoch. '
-    + "Der Fondsname darunter ist zum Nachschlagen im Broker gedacht &mdash; prüf dort die genaue Anteilsklasse (ausschüttend oder thesaurierend), "
-    + "die Namen ähneln sich stark.</div>";
+  el("in-beobachtung").innerHTML = knoepfe
+    + '<div class="rahmen"><table class="stapel"><thead><tr>'
+    + "<th>Wert</th><th>Kurs</th><th>3 Monate</th><th>1 Jahr</th>"
+    + "</tr></thead><tbody>" + html + "</tbody></table></div>"
+    + erklaerBox("Was das ist &ndash; und was nicht",
+        "<p>Eine Standortbestimmung f&uuml;r Haltedauern von Monaten. Der Balken unter dem Namen zeigt, wo "
+        + "der Wert in seiner <b>Jahresspanne</b> steht: links am Tief, rechts am Hoch. Eine Marke steht nur "
+        + "dort, wo der Abstand zum Weltmarkt gr&ouml;&szlig;er ist als die Messungenauigkeit &ndash; bei den "
+        + "meisten Werten ist er das nicht.</p>"
+        + "<p><b>Hier steht nirgends, wann man einsteigen soll.</b> Das w&auml;re eine Vorhersage. Ein Wert "
+        + "nahe am Jahrestief ist nicht \"billig\" &ndash; er kann monatelang weiter fallen.</p>"
+        + "<p>Das Beispiel dazu aus den eigenen Daten: <b>Rheinmetall</b> stand im April 2026 bei 1.550 &euro;, "
+        + "im Juli bei 976 &euro; &ndash; w&auml;hrend \"es wird aufger&uuml;stet\" durchgehend stimmte und in "
+        + "jeder Zeitung stand. Kurse bewegen sich auf <b>&Uuml;berraschungen</b>, nicht auf Tatsachen. Was in "
+        + "den Nachrichten steht, steht l&auml;ngst im Preis.</p>"
+        + "<p>Der Fondsname unter jedem Wert ist zum Nachschlagen im Broker gedacht &ndash; pr&uuml;f dort die "
+        + "genaue Anteilsklasse, die Namen &auml;hneln sich stark.</p>");
+
+  el("in-beobachtung").querySelectorAll("[data-bl]").forEach((k) => {
+    k.addEventListener("click", () => { blThema = k.dataset.bl; beobachtung(); });
+  });
 }
 
-for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine, zeichneHistorie, zeichneAuswertung, zeichneLangfrist, zeichneBeobachtung]) {
-  try { f(); } catch (e) { console.error("Block fehlgeschlagen:", e); }
+/* Die Kalendertitel kommen als Haendler-Kuerzel herein ("CPI y/y", "NFP").
+   Hier werden die haeufigen in Klartext uebersetzt; alles Unbekannte bleibt
+   im Original stehen, statt falsch geraten zu werden. */
+const TERMIN_REGION = { USD: "US-", GBP: "britische ", EUR: "Eurozone: ", CAD: "kanadische ", JPY: "japanische " };
+const TERMIN_WORTE = [
+  [/^Core CPI/i,                        "Inflationsrate ohne Energie und Lebensmittel"],
+  [/^CPI/i,                             "Inflationsrate"],
+  [/^Core PCE/i,                        "Inflationsma&szlig; der Notenbank (PCE)"],
+  [/^(Core )?PPI/i,                     "Erzeugerpreise"],
+  [/Non-?Farm Employment Change/i,      "Arbeitsmarktbericht"],
+  [/^Unemployment Rate/i,               "Arbeitslosenquote"],
+  [/^Average (Hourly )?Earnings/i,      "Lohnentwicklung"],
+  [/Unemployment Claims|Claimant Count/i, "Antr&auml;ge auf Arbeitslosengeld"],
+  [/Federal Funds Rate|Interest Rate Decision|Main Refinancing Rate|Official Bank Rate|Cash Rate/i,
+                                        "Zinsentscheid"],
+  [/^FOMC (Statement|Economic Projections)/i, "Notenbank-Erkl&auml;rung"],
+  [/Press Conference/i,                 "Pressekonferenz der Notenbank"],
+  [/Meeting Minutes|FOMC Meeting/i,     "Sitzungsprotokoll der Notenbank"],
+  [/(Powell|Lagarde|Bailey|Chair|Gov |President).*Speaks/i, "Rede der Notenbankspitze"],
+  [/Core Retail Sales/i,                "Einzelhandelsums&auml;tze ohne Autos"],
+  [/Retail Sales/i,                     "Einzelhandelsums&auml;tze"],
+  [/GDP/i,                              "Wirtschaftsleistung (BIP)"],
+  [/ISM Manufacturing/i,                "Stimmung in der US-Industrie (ISM)"],
+  [/ISM Services/i,                     "Stimmung im US-Dienstleistungssektor (ISM)"],
+  [/Manufacturing PMI/i,                "Stimmung in der Industrie"],
+  [/Services PMI/i,                     "Stimmung im Dienstleistungssektor"],
+  [/Consumer Confidence|Consumer Sentiment/i, "Verbrauchervertrauen"],
+  [/Crude Oil Inventories/i,            "US-&Ouml;llagerbest&auml;nde"],
+];
+
+function terminName(e) {
+  const t = String(e.titel || "");
+  for (const [muster, wort] of TERMIN_WORTE) {
+    if (muster.test(t)) {
+      const vorn = TERMIN_REGION[e.waehrung] || "";
+      const name = vorn + wort;
+      return /^[A-Z]/.test(vorn) || !vorn ? name : name.charAt(0).toUpperCase() + name.slice(1);
+    }
+  }
+  return t;
 }
+
+/* ====================================================================
+   Abschnitt 4: Termine
+   ==================================================================== */
+function termine() {
+  const t = DATA.kennzahlen && DATA.kennzahlen.termine;
+  if (!t || !t.ok) {
+    el("sum-termine").textContent = "nicht abrufbar";
+    el("in-termine").innerHTML = '<div class="leer">Der Terminkalender war beim letzten Lauf nicht erreichbar.</div>';
+    return;
+  }
+  const k = t.kommende || [];
+  el("sum-termine").textContent = k.length ? k.length + " diese Woche" : "keine mehr diese Woche";
+
+  const html = !k.length
+    ? '<div class="leer">F&uuml;r den Rest der Kalenderwoche stehen keine Termine mit hoher erwarteter '
+      + "Wirkung an.</div>"
+    : '<div class="rahmen"><table><tbody>' + k.map((e) =>
+        "<tr><td><span class=\"nam\">" + terminName(e) + "</span>"
+        + (terminName(e) !== e.titel ? '<span class="sym">' + e.titel + "</span>" : "")
+        + '<span class="sym">' + e.waehrung + "</span></td>"
+        + '<td class="still">' + new Date(e.zeitIso).toLocaleString("de-AT", { timeZone: "Europe/Vienna",
+            weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
+        + "</td></tr>").join("") + "</tbody></table></div>";
+
+  el("in-termine").innerHTML = html
+    + erklaerBox("Was hier drinsteht &ndash; und was nicht",
+        "<p>Zeiten in Wiener Ortszeit. Zu diesen Zeitpunkten kommen Zahlen heraus, auf die der Markt oft "
+        + "sprunghaft reagiert &ndash; unabh&auml;ngig davon, wie sauber ein Setup aussieht.</p>"
+        + "<p><b>Die Liste ist in zwei Richtungen unvollst&auml;ndig.</b> Sie reicht nur bis zum Ende der "
+        + "laufenden Woche. Und drin sind nur geplante Wirtschaftstermine und Auftritte von Notenbankern "
+        + "&ndash; politische &Auml;u&szlig;erungen kommen ohne Ank&uuml;ndigung und stehen in keinem Kalender.</p>"
+        + "<p>Die Engine liest diese Liste nicht und blockiert dadurch nichts.</p>");
+}
+
+/* ====================================================================
+   Abschnitt 5: Haltedauer
+   ==================================================================== */
+let lfWahl = 0;
+
+function haltedauer() {
+  const lf = (DATA.langfrist || []).filter((x) => x.ok && x.zeilen && x.zeilen.length);
+  if (!lf.length) { el("in-haltedauer").innerHTML = '<div class="leer">Nicht geladen.</div>'; return; }
+  if (lfWahl >= lf.length) lfWahl = 0;
+  const e = lf[lfWahl];
+  const lang = e.zeilen[e.zeilen.length - 1];
+
+  el("sum-haltedauer").innerHTML = lang && lang.anteilVerlust === 0
+    ? "&uuml;ber " + lang.jahre + " Jahre nie im Minus" : "";
+
+  const knoepfe = lf.length > 1 ? '<div class="filter">' + lf.map((x, i) =>
+    '<button class="knopf ' + (i === lfWahl ? "an" : "") + '" data-lf="' + i + '">' + x.name + "</button>")
+    .join("") + "</div>" : "";
+
+  const zeilen = e.zeilen.map((z) =>
+    "<tr><td><span class=\"nam\">" + z.jahre + " Jahr" + (z.jahre > 1 ? "e" : "") + "</span>"
+    + '<div class="unter">' + z.fenster + " Zeitfenster, "
+    + (z.anteilVerlust > 0 ? dz(z.anteilVerlust, 1) + " % davon im Minus" : "<b>keines im Minus</b>")
+    + '</div></td><td data-k="schlechtestes">' + pr(z.schlechtester)
+    + '</td><td data-k="Mittel">' + pr(z.mittel)
+    + '</td><td data-k="bestes">' + pr(z.bester) + "</td></tr>").join("");
+
+  el("in-haltedauer").innerHTML = knoepfe
+    + '<div class="rahmen"><table class="stapel"><thead><tr>'
+    + "<th>Haltedauer</th><th>schlechtestes</th><th>Mittel</th><th>bestes</th>"
+    + "</tr></thead><tbody>" + zeilen + "</tbody></table></div>"
+    + '<div class="unter" style="margin-top:12px">' + e.name + ", "
+    + Math.floor((e.spanneMonate || e.monate) / 12) + " Jahre Historie ("
+    + String(e.von).slice(0, 4) + "&ndash;" + String(e.bis).slice(0, 4)
+    + "). Alle Werte als Rendite <b>pro Jahr</b>.</div>"
+    + erklaerBox("Warum das die wichtigste Tabelle der Seite ist", haltedauerText(e));
+
+  el("in-haltedauer").querySelectorAll("[data-lf]").forEach((k) => {
+    k.addEventListener("click", () => { lfWahl = Number(k.dataset.lf); haltedauer(); });
+  });
+}
+
+/* Der Erklaertext richtet sich nach den Zeilen, die wirklich dastehen -
+   sonst redet er von 20-Jahres-Fenstern, waehrend die Tabelle bei 10 endet. */
+function haltedauerText(e) {
+  const kurz = e.zeilen[0], lang = e.zeilen[e.zeilen.length - 1];
+  const spanneKurz = Math.round(kurz.bester - kurz.schlechtester);
+  const spanneLang = Math.round(lang.bester - lang.schlechtester);
+  const unabhaengig = Math.floor(100 / lang.jahre);
+
+  let t = "<p>Je l&auml;nger das Fenster, desto enger die Spanne. &Uuml;ber " + kurz.jahre + " Jahr"
+    + (kurz.jahre > 1 ? "e" : "") + " liegen zwischen bestem und schlechtestem Fenster <b>" + spanneKurz
+    + " Punkte</b>, &uuml;ber " + lang.jahre + " Jahre nur noch <b>" + spanneLang + "</b>. "
+    + "<b>Der Hebel, den du in der Hand hast, ist die Haltedauer &ndash; nicht der Einstiegstag.</b></p>";
+
+  if (lang.anteilVerlust === 0) {
+    t += "<p><b>Keine Zusage.</b> \"In " + lang.jahre + "-Jahres-Fenstern war keines im Minus\" ist eine "
+      + "Aussage &uuml;ber die Vergangenheit, keine &uuml;ber die Zukunft. Die Fenster &uuml;berlappen sich "
+      + "stark &ndash; echte unabh&auml;ngige Zeitr&auml;ume dieser L&auml;nge g&auml;be es in hundert Jahren "
+      + "B&ouml;rsengeschichte nur " + unabhaengig + ".</p>";
+  }
+  t += "<p>Ohne Dividenden, ohne Kosten, ohne Steuern. Ein echter Depotwert l&auml;ge darunter. Die Reihe "
+    + "reicht " + Math.floor((e.spanneMonate || e.monate) / 12) + " Jahre zur&uuml;ck &ndash; l&auml;ngere "
+    + "Haltedauern lassen sich daraus nicht rechnen.</p>";
+  return t;
+}
+
+/* ====================================================================
+   Abschnitt 6: ETF-Merkliste (statisch)
+   ==================================================================== */
+function etfListe() {
+  el("in-etf").innerHTML = '<div class="erklaer-text">'
+    + "<p><b>Tracking Difference</b> &ndash; der tats&auml;chliche Abstand zwischen Fonds- und Indexrendite pro "
+    + "Jahr. Die aussagekr&auml;ftigste Zahl, weil alles drinsteckt: Kosten, Handelskosten im Fonds, "
+    + "Quellensteuer, Wertpapierleihe. Ein Fonds mit 0,20 % Kosten und 0,10 % TD ist g&uuml;nstiger als einer "
+    + "mit 0,07 % Kosten und 0,25 % TD. Nachzusehen bei justETF, nicht im Kurs.</p>"
+    + "<p><b>TER</b> &ndash; die laufenden Kosten, werden dem Fondsverm&ouml;gen entnommen. Im Voraus bekannt, "
+    + "aber nicht die ganzen Kosten.</p>"
+    + "<p><b>Replikationsart</b> &ndash; physisch voll (kauft alles), Sampling (Auswahl, bei breiten Indizes "
+    + "g&uuml;nstiger) oder synthetisch per Swap. Swap bringt bei US-Aktien einen Quellensteuer-Vorteil, "
+    + "daf&uuml;r einen Vertragspartner als Risiko.</p>"
+    + "<p><b>Fondsgr&ouml;&szlig;e</b> &ndash; z&auml;hlt f&uuml;rs &Uuml;berleben. Kleine Fonds werden "
+    + "geschlossen, und das zwingt zum Verkauf zu einem Zeitpunkt, den man sich nicht ausgesucht hat. Unter "
+    + "etwa 100 Mio. &euro; gilt das Risiko als erh&ouml;ht.</p>"
+    + "<p><b>F&uuml;r &Ouml;sterreich wichtig:</b> Thesaurierende Fonds werden hier <b>j&auml;hrlich</b> "
+    + "besteuert, &uuml;ber die aussch&uuml;ttungsgleichen Ertr&auml;ge &ndash; 27,5 % KESt, auch wenn nichts "
+    + "aufs Konto kommt. Die versteuerten Betr&auml;ge erh&ouml;hen den Einstandswert, es wird also nicht "
+    + "doppelt besteuert. Wichtiger als thesaurierend gegen aussch&uuml;ttend ist, dass der Fonds ein "
+    + "<b>Meldefonds</b> ist, sonst greift eine deutlich nachteiligere Pauschalbesteuerung. Kein Freibetrag, "
+    + "kein Verlustvortrag. Deutsche Finanz-Videos reden &uuml;ber Vorabpauschale und Teilfreistellung &ndash; "
+    + "beides gibt es in &Ouml;sterreich nicht. <b>Vor einer Entscheidung beim BMF oder einer Steuerberatung "
+    + "gegenpr&uuml;fen.</b></p>"
+    + "<p><b>Was mehr ausmacht als alles davor:</b> welcher Index. MSCI World (Industriel&auml;nder) gegen "
+    + "FTSE All-World oder ACWI (mit Schwellenl&auml;ndern), mit oder ohne kleine Firmen. Der Unterschied "
+    + "zwischen zwei Indizes ist gr&ouml;&szlig;er als der zwischen 0,12 % und 0,20 % Kosten.</p>"
+    + '<p class="still">Diese Liste &auml;ndert sich nicht automatisch &ndash; sie ist zum Nachlesen da.</p>'
+    + "</div>";
+}
+
+/* ====================================================================
+   Abschnitt 7: Mitschrift und Auswertungsstand
+   ==================================================================== */
+function mitschrift() {
+  const a = DATA.auswertung, h = DATA.historie;
+  if (!a) { el("in-mitschrift").innerHTML = '<div class="leer">Nicht geladen.</div>'; return; }
+
+  el("sum-mitschrift").textContent = a.trades + " von " + a.zielTrades + " Trades";
+  const anteil = Math.max(2, Math.min(100, Math.round(a.trades / a.zielTrades * 100)));
+
+  let html = '<div class="zahl" style="font-size:1.75rem;font-weight:650;line-height:1.3">' + a.trades
+    + ' <span style="font-size:0.9375rem;font-weight:400;color:var(--leiser)">von ' + a.zielTrades
+    + " abgeschlossenen Trades mit Umfeld</span></div>"
+    + '<div class="balken"><i style="width:' + anteil + "%;background:"
+    + (a.bereit ? "var(--rauf)" : "var(--akzent)") + '"></i></div>';
+
+  if (a.letzte) {
+    html += '<p style="margin-top:18px;color:var(--leise);font-size:0.9375rem">Zuletzt ausgewertet am <b>'
+      + new Date(a.letzte.gelaufenAm).toLocaleDateString("de-AT",
+          { day: "2-digit", month: "2-digit", year: "numeric" })
+      + "</b> mit " + a.letzte.mitUmfeld + " Trades: Erwartungswert <b>"
+      + dz(a.letzte.erwartungswert, 2) + " R</b> (&plusmn;" + dz(a.letzte.standardfehler, 2) + ") &ndash; "
+      + a.letzte.ergebnis + ".</p>";
+  }
+  html += '<p style="color:var(--leise);font-size:0.9375rem">' + (a.bereit
+    ? '<b class="rauf">Jetzt lohnt sich ein neuer Durchlauf.</b> Es sind genug Trades beisammen, dass ein '
+      + "mittelgro&szlig;er Unterschied auffallen w&uuml;rde."
+    : "Ab <b>" + a.zielTrades + "</b> Trades lohnt sich der n&auml;chste Durchlauf &ndash; dann f&auml;llt der "
+      + "Standardfehler von rund 0,12 auf 0,09. Es fehlen noch <b>" + (a.zielTrades - a.trades) + "</b>.")
+    + "</p>";
+
+  el("in-mitschrift").innerHTML = html
+    + erklaerBox("Was mitgeschrieben wird",
+        "<p>Die Werte dieser Seite werden Tag f&uuml;r Tag festgehalten"
+        + (h && h.ok ? " &ndash; bisher <b>" + h.tage + " Handelstage</b> seit " + h.seit : "")
+        + ". Irgendwann ist damit die Frage beantwortbar, ob die TJR-Engine in bestimmten Umfeldern besser "
+        + "l&auml;uft.</p>"
+        + "<p><b>Heute beantwortet das niemand.</b> Es wird nichts behauptet, solange ein Unterschied nicht "
+        + "gr&ouml;&szlig;er ist als die Streuung. Die Engine liest diese Datei nicht und wird von ihr nicht "
+        + "beeinflusst.</p>");
+}
+
+/* ==================================================================== */
+(function start() {
+  el("stand").textContent = "Stand " + (DATA.stand || "?") + ", "
+    + (DATA.anzahlOk || 0) + " von " + (DATA.anzahl || 0) + " Werten abgerufen";
+  if (DATA.symboltestVom) {
+    el("fuss-geprueft").innerHTML = " Jedes Symbol wurde vor dem Einbau einzeln auf Datenqualit&auml;t "
+      + "gepr&uuml;ft (" + String(DATA.symboltestVom).slice(0, 10) + ").";
+  }
+  for (const f of [lagebericht, gehandelt, maerkte, beobachtung, termine, haltedauer, etfListe, mitschrift]) {
+    try { f(); } catch (e) { console.error("Block fehlgeschlagen:", f.name, e); }
+  }
+})();
 </script>
 </body>
 </html>
