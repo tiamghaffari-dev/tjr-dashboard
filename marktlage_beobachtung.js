@@ -60,6 +60,10 @@ const WERTE = [
   { thema: "Krypto", name: "XRP",                       symbol: "XRP-USD", kaufbar: true },
 ];
 
+/* Deutsche Kommas in den Begruendungstexten - sie stehen so auf der Seite,
+ * neben Zahlen, die ueberall sonst mit Komma geschrieben sind. */
+function dz(x, n) { return Number(x).toFixed(n).replace(".", ","); }
+
 const MASSSTAB = "EUNL.DE";          // Welt-ETF in EUR als Vergleich
 const THEMEN = ["Breit gestreut", "Ruestung", "Energie", "Technik", "Einzelwert", "Krypto"];
 const PAUSE_MS = 350;
@@ -159,14 +163,14 @@ function relativ(reihe, massstabReihe, gleicheWaehrung) {
   let stufe, grund;
   if (z < 2) {
     stufe = "rauschen";
-    grund = "Vorsprung " + (vorsprung > 0 ? "+" : "") + vorsprung.toFixed(1) + " Punkte liegt im Zufallsbereich (±"
-      + (2 * zufallsbreite).toFixed(1) + ") – kein belastbarer Unterschied zum breiten Markt";
+    grund = "Vorsprung " + (vorsprung > 0 ? "+" : "") + dz(vorsprung, 1) + " Punkte liegt im Zufallsbereich (±"
+      + dz(2 * zufallsbreite, 1) + ") – kein belastbarer Unterschied zum breiten Markt";
   } else if (z < 3) {
     stufe = vorsprung > 0 ? "besser" : "schlechter";
-    grund = "außerhalb des Zufallsbereichs (±" + (2 * zufallsbreite).toFixed(1) + " Punkte), aber nicht weit";
+    grund = "außerhalb des Zufallsbereichs (±" + dz(2 * zufallsbreite, 1) + " Punkte), aber nicht weit";
   } else {
     stufe = vorsprung > 0 ? "deutlich besser" : "deutlich schlechter";
-    grund = "klar außerhalb des Zufallsbereichs (±" + (2 * zufallsbreite).toFixed(1) + " Punkte)";
+    grund = "klar außerhalb des Zufallsbereichs (±" + dz(2 * zufallsbreite, 1) + " Punkte)";
   }
   return { vorsprung: rund(vorsprung, 1), zufallsbreite: rund(2 * zufallsbreite, 1), stufe, grund };
 }
