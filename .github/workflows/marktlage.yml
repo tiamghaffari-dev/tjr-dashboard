@@ -77,12 +77,18 @@ jobs:
             # Mit Wiederholung: der TJR-Report pusht in dasselbe Repo. Am
             # 15.10. ist genau das passiert - der Bau lief durch, nur das
             # Pushen scheiterte am Rennen, und der Lauf stand rot da.
-            for i in 1 2 3; do
-              git pull --rebase --autostash -q || true
-              if git push -q; then echo "Gepusht."; exit 0; fi
-              echo "Push-Versuch $i fehlgeschlagen, neuer Versuch."
-              sleep 7
+            # Fuenf Versuche mit wachsender Pause. Drei mit je 7 Sekunden
+            # haben am 18.10. nicht gereicht: zwei Pushes 31 Sekunden
+            # auseinander hatten zwei Laeufe ausgeloest, die sich gegenseitig
+            # ueberholt haben. Der TJR-Report schreibt ins selbe Repo, also
+            # gibt es hier bis zu drei Schreiber gleichzeitig.
+            for i in 1 2 3 4 5; do
+              git fetch -q origin main || true
+              git rebase -q origin/main || { git rebase --abort 2>/dev/null; true; }
+              if git push -q; then echo "Gepusht (Versuch $i)."; exit 0; fi
+              echo "Push-Versuch $i fehlgeschlagen, warte $((i * 8)) Sekunden."
+              sleep $((i * 8))
             done
-            echo "Push nach 3 Versuchen fehlgeschlagen."
+            echo "Push nach 5 Versuchen fehlgeschlagen."
             exit 1
           fi
