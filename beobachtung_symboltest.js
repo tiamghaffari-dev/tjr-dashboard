@@ -13,15 +13,20 @@ const KANDIDATEN = [
 
   // --- Ruestung ---
   { thema: "Ruestung", name: "Rheinmetall",            symbol: "RHM.DE" },
-  { thema: "Ruestung", name: "VanEck Defense",         symbol: "DFNS.DE" },
-  { thema: "Ruestung", name: "VanEck Defense (AS)",    symbol: "DFNS.AS" },
-  { thema: "Ruestung", name: "WisdomTree Europe Def.", symbol: "WDEF.DE" },
+  // Zweite Runde: DFEN ist laut Deutsche Boerse das Xetra-Kuerzel des
+  // VanEck Defense UCITS ETF (ISIN IE000YYE6WK5). Die erste Runde hatte
+  // DFNS/WDEF geraten - beide 404.
+  { thema: "Ruestung", name: "VanEck Defense",         symbol: "DFEN.DE" },
+  { thema: "Ruestung", name: "VanEck Defense (AS)",    symbol: "DFEN.AS" },
+  { thema: "Ruestung", name: "WisdomTree Europe Def.", symbol: "WDEF.MI" },
+  { thema: "Ruestung", name: "Global X Defence Tech",  symbol: "ARMY.DE" },
+  { thema: "Ruestung", name: "Thales",                 symbol: "HO.PA" },
+  { thema: "Ruestung", name: "BAE Systems",            symbol: "BA.L" },
   { thema: "Ruestung", name: "US Aerospace/Defense",   symbol: "ITA" },
   { thema: "Ruestung", name: "Hensoldt",               symbol: "HAG.DE" },
 
   // --- Energie ---
   { thema: "Energie", name: "STOXX Europe Oil & Gas",  symbol: "EXH1.DE" },
-  { thema: "Energie", name: "MSCI World Energy",       symbol: "WNRG.DE" },
   { thema: "Energie", name: "US Energie-Sektor",       symbol: "XLE" },
 
   // --- Technologie ---
