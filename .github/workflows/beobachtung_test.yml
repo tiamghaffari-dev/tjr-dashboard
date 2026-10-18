@@ -1,0 +1,29 @@
+name: Beobachtung Symboltest
+on:
+  workflow_dispatch:
+concurrency:
+  group: beobachtung-symboltest
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node beobachtung_symboltest.js 2>&1 | tee beobachtung_test.txt
+      - name: Ergebnis sichern
+        run: |
+          git config user.name "tjr-bot"
+          git config user.email "actions@github.com"
+          git add -f beobachtung_test.txt
+          git commit -q -m "Beobachtung: Symboltest-Ergebnis" || echo "nichts"
+          for i in 1 2 3; do
+            git pull --rebase --autostash -q || true
+            if git push -q; then echo "Gepusht."; break; fi
+            sleep 6
+          done
