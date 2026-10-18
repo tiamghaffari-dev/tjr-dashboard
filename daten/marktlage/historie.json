@@ -11350,7 +11350,7 @@
   },
   "2026-10-16": {
     "handelstag": "2026-10-16",
-    "geschriebenAm": "2026-10-18T18:44:27.319Z",
+    "geschriebenAm": "2026-10-18T19:36:54.244Z",
     "kurse": {
       "URTH": 206.34,
       "IWDA.AS": 130.55,
@@ -11373,17 +11373,17 @@
       "ITA": 209.07,
       "RHM.DE": 1090.2,
       "TSLA": 354.72,
-      "BTC-USD": 81002.56,
-      "ETH-USD": 2360.15,
-      "XRP-USD": 1.2715,
-      "GBPUSD=X": 1.3309
+      "BTC-USD": 80805.58,
+      "ETH-USD": 2340.73,
+      "XRP-USD": 1.2618,
+      "GBPUSD=X": 1.3313
     },
     "vix": 19.99,
     "vixPerzentil": 81,
     "schwankung": {
-      "BTC-USD": 20.9,
-      "ETH-USD": 30.7,
-      "XRP-USD": 31.6,
+      "BTC-USD": 21,
+      "ETH-USD": 31.2,
+      "XRP-USD": 32,
       "GBPUSD=X": 5,
       "^GSPC": 10.5,
       "GC=F": 18.3
