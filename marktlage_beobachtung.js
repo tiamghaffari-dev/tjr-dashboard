@@ -64,7 +64,20 @@ const WERTE = [
  * neben Zahlen, die ueberall sonst mit Komma geschrieben sind. */
 function dz(x, n) { return Number(x).toFixed(n).replace(".", ","); }
 
-const MASSSTAB = "EUNL.DE";          // Welt-ETF in EUR als Vergleich
+/* ZWEI Massstaebe, ausgewaehlt nach Waehrung des jeweiligen Werts.
+ *
+ * Mit nur einem EUR-Massstab standen beim ersten Lauf sieben von 21 Werten
+ * auf "nicht vergleichbar" - alles in Dollar notierte, also die US-ETFs,
+ * Tesla und die komplette Kryptoliste. Die Begruendung war richtig (sonst
+ * misst man den Wechselkurs mit), aber als Ergebnis unbrauchbar.
+ *
+ * Mit einem zweiten Massstab in USD bekommt jeder Wert einen Vergleich in
+ * seiner eigenen Waehrung. Beides ist derselbe Weltindex, nur in anderer
+ * Notierung - die Aussage "laeuft besser als der breite Markt" bleibt damit
+ * dieselbe, ohne dass ein Wechselkurs hineinspielt. */
+const MASSSTAB_EUR = "EUNL.DE";      // iShares Core MSCI World, Xetra, EUR
+const MASSSTAB_USD = "URTH";         // iShares MSCI World ETF, USD
+const MASSSTAB = MASSSTAB_EUR;       // fuer die Anzeige
 const THEMEN = ["Breit gestreut", "Ruestung", "Energie", "Technik", "Einzelwert", "Krypto"];
 const PAUSE_MS = 350;
 const JAHR_SEK = 365.2425 * 86400;
@@ -177,7 +190,12 @@ function relativ(reihe, massstabReihe, gleicheWaehrung) {
 
 async function sammle() {
   const reihen = {}, meta = {};
-  for (const w of WERTE) {
+  // Der USD-Massstab steht nicht in WERTE (er soll keine eigene Zeile
+  // bekommen), muss aber mitgeholt werden.
+  const abzurufen = WERTE.concat(
+    WERTE.some((w) => w.symbol === MASSSTAB_USD) ? [] : [{ symbol: MASSSTAB_USD, nurMassstab: true }]
+  );
+  for (const w of abzurufen) {
     try {
       const r = await holeReihe(w.symbol);
       reihen[w.symbol] = r.reihe;
@@ -188,8 +206,18 @@ async function sammle() {
     await schlafe(PAUSE_MS);
   }
 
-  const massstab = reihen[MASSSTAB] || null;
-  const massstabWaehrung = (meta[MASSSTAB] && meta[MASSSTAB].waehrung) || null;
+  const massstaebe = {
+    EUR: { reihe: reihen[MASSSTAB_EUR] || null, symbol: MASSSTAB_EUR,
+           waehrung: (meta[MASSSTAB_EUR] && meta[MASSSTAB_EUR].waehrung) || null },
+    USD: { reihe: reihen[MASSSTAB_USD] || null, symbol: MASSSTAB_USD,
+           waehrung: (meta[MASSSTAB_USD] && meta[MASSSTAB_USD].waehrung) || null },
+  };
+  function massstabFuer(waehrung) {
+    for (const k of Object.keys(massstaebe)) {
+      if (massstaebe[k].waehrung && massstaebe[k].waehrung === waehrung) return massstaebe[k];
+    }
+    return null;
+  }
 
   const eintraege = WERTE.map((w) => {
     const m = meta[w.symbol] || {};
@@ -213,20 +241,32 @@ async function sammle() {
       monat6: rund(seit(reihe, 182), 1),
       jahr1: rund(seit(reihe, 365), 1),
       schwankung: rund(kz.schwankung(closes, VOL_FENSTER), 1),
-      relativ: w.symbol === MASSSTAB
-        ? { stufe: "massstab", grund: "Das ist der Vergleichsmaßstab selbst." }
-        : relativ(reihe, massstab, m.waehrung === massstabWaehrung),
+      relativ: (() => {
+        if (w.symbol === MASSSTAB_EUR || w.symbol === MASSSTAB_USD) {
+          return { stufe: "massstab", grund: "Das ist der Vergleichsmaßstab selbst." };
+        }
+        const ms = massstabFuer(m.waehrung);
+        if (!ms || !ms.reihe) {
+          return { stufe: "nicht vergleichbar",
+                   grund: "kein Vergleichsindex in " + (m.waehrung || "dieser Währung") + " verfügbar – ein Vergleich würde den Wechselkurs mitmessen" };
+        }
+        const r = relativ(reihe, ms.reihe, true);
+        r.gegen = ms.symbol;
+        return r;
+      })(),
     };
   });
 
   return {
     themen: THEMEN,
-    massstab: MASSSTAB,
-    massstabName: (meta[MASSSTAB] && meta[MASSSTAB].langname) || MASSSTAB,
+    massstab: MASSSTAB_EUR,
+    massstabName: (meta[MASSSTAB_EUR] && meta[MASSSTAB_EUR].langname) || MASSSTAB_EUR,
+    massstabUsd: MASSSTAB_USD,
+    massstabUsdName: (meta[MASSSTAB_USD] && meta[MASSSTAB_USD].langname) || MASSSTAB_USD,
     relTage: REL_TAGE,
     volFenster: VOL_FENSTER,
     eintraege,
   };
 }
 
-module.exports = { WERTE, THEMEN, MASSSTAB, REL_TAGE, VOL_FENSTER, holeReihe, seit, spanne52, relativ, sammle };
+module.exports = { WERTE, THEMEN, MASSSTAB, MASSSTAB_EUR, MASSSTAB_USD, REL_TAGE, VOL_FENSTER, holeReihe, seit, spanne52, relativ, sammle };

@@ -909,7 +909,10 @@ function zeichneBeobachtung() {
     return;
   }
 
-  sub.innerHTML = "Vergleichsmaßstab ist <b>" + (b.massstabName || b.massstab) + "</b>. "
+  sub.innerHTML = "Vergleichsmaßstab ist derselbe Weltindex in zwei Notierungen: <b>"
+    + (b.massstabName || b.massstab) + "</b> für Werte in Euro, <b>"
+    + (b.massstabUsdName || b.massstabUsd) + "</b> für Werte in Dollar &mdash; "
+    + "so misst der Vergleich nie den Wechselkurs mit. "
     + "Der Markt-Vergleich läuft über " + b.relTage + " Handelstage, die Schwankung über " + b.volFenster + ". "
     + '<span class="null-wert">Mit <span class="nicht-kaufbar">US-ETF</span> markierte Zeilen sind für EU-Privatanleger normalerweise nicht kaufbar &mdash; sie stehen nur als Vergleich für das Thema.</span>';
 
