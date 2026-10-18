@@ -1,0 +1,228 @@
+"use strict";
+/* ===========================================================================
+ * marktlage_beobachtung.js - Beobachtungsliste
+ * ===========================================================================
+ * Tiams Wunsch vom 18.10.: eine Seite, die ihm bei Themen wie Ruestung,
+ * Energie oder Technik zeigt, wo die Dinge stehen - fuer Haltedauern von
+ * Monaten, nicht Minuten.
+ *
+ * WAS DIESER BLOCK NICHT TUT: er sagt nicht, wann man einsteigen soll. Das
+ * waere eine Vorhersage, und die kann niemand liefern - auch keine KI. Was
+ * hier steht, ist eine Standortbestimmung: wie weit ist ein Wert von seinem
+ * Hoch und seinem Tief entfernt, wie lief er ueber mehrere Zeitraeume, wie
+ * stark schwankt er, und laeuft er besser oder schlechter als der breite
+ * Markt. Daraus eine Entscheidung zu machen ist Tiams Sache.
+ *
+ * Das Lehrbeispiel dafuer steht in seinen eigenen Daten: Rheinmetall, April
+ * 2026 bei 1550 EUR, Juli bei 976 EUR. Die These "Krieg, also steigt die
+ * Ruestung" stimmte die ganze Zeit - der Kurs fiel trotzdem um 37 %. Richtig
+ * liegen und Geld verdienen sind zwei verschiedene Dinge.
+ *
+ * SYMBOLE: jedes einzelne wurde mit beobachtung_symboltest.js geprueft. Dabei
+ * ist auch aufgefallen, dass ARMY.DE kein Ruestungs-ETF ist, sondern ein
+ * Optionsprodukt auf ARM Holdings - nach dem Kuerzel geraten waere das falsch
+ * auf der Seite gelandet. Wer hier etwas ergaenzt, testet es vorher dort.
+ * ===========================================================================
+ */
+
+const kz = require("./marktlage_kennzahlen.js");
+
+/* `kaufbar` meint: als UCITS-Papier an einer europaeischen Boerse handelbar,
+ * also ueberhaupt auffindbar bei einem Broker wie Trade Republic. US-ETFs wie
+ * XLE, XLK und ITA sind fuer EU-Privatanleger normalerweise NICHT kaufbar -
+ * die stehen hier nur als Vergleichsmassstab fuer das Thema. */
+const WERTE = [
+  { thema: "Breit gestreut", name: "MSCI World",        symbol: "EUNL.DE", kaufbar: true },
+  { thema: "Breit gestreut", name: "FTSE All-World",    symbol: "VWCE.DE", kaufbar: true },
+  { thema: "Breit gestreut", name: "MSCI ACWI",         symbol: "IUSQ.DE", kaufbar: true },
+  { thema: "Breit gestreut", name: "Schwellenlaender",  symbol: "EUNM.DE", kaufbar: true },
+
+  { thema: "Ruestung", name: "VanEck Defense",          symbol: "DFEN.DE", kaufbar: true },
+  { thema: "Ruestung", name: "WisdomTree Europa Def.",  symbol: "WDEF.MI", kaufbar: true },
+  { thema: "Ruestung", name: "Rheinmetall",             symbol: "RHM.DE",  kaufbar: true },
+  { thema: "Ruestung", name: "Hensoldt",                symbol: "HAG.DE",  kaufbar: true },
+  { thema: "Ruestung", name: "Thales",                  symbol: "HO.PA",   kaufbar: true },
+  { thema: "Ruestung", name: "US-Ruestung (Vergleich)", symbol: "ITA",     kaufbar: false },
+
+  { thema: "Energie", name: "Europa Oel & Gas",         symbol: "EXH1.DE", kaufbar: true },
+  { thema: "Energie", name: "US-Energie (Vergleich)",   symbol: "XLE",     kaufbar: false },
+
+  { thema: "Technik", name: "S&P 500 Technologie",      symbol: "QDVE.DE", kaufbar: true },
+  { thema: "Technik", name: "Welt Technologie",         symbol: "XDWT.DE", kaufbar: true },
+  { thema: "Technik", name: "Nasdaq 100",               symbol: "EQQQ.DE", kaufbar: true },
+  { thema: "Technik", name: "US-Technik (Vergleich)",   symbol: "XLK",     kaufbar: false },
+
+  { thema: "Einzelwert", name: "Tesla",                 symbol: "TSLA",    kaufbar: true },
+
+  { thema: "Krypto", name: "Bitcoin",                   symbol: "BTC-USD", kaufbar: true },
+  { thema: "Krypto", name: "Ethereum",                  symbol: "ETH-USD", kaufbar: true },
+  { thema: "Krypto", name: "Solana",                    symbol: "SOL-USD", kaufbar: true },
+  { thema: "Krypto", name: "XRP",                       symbol: "XRP-USD", kaufbar: true },
+];
+
+const MASSSTAB = "EUNL.DE";          // Welt-ETF in EUR als Vergleich
+const THEMEN = ["Breit gestreut", "Ruestung", "Energie", "Technik", "Einzelwert", "Krypto"];
+const PAUSE_MS = 350;
+const JAHR_SEK = 365.2425 * 86400;
+const VOL_FENSTER = 60;              // ~3 Monate, passt zur Haltedauer von Monaten
+
+function schlafe(ms) { return new Promise((r) => setTimeout(r, ms)); }
+function rund(x, n) { return (typeof x === "number" && isFinite(x)) ? Math.round(x * Math.pow(10, n)) / Math.pow(10, n) : null; }
+
+async function holeReihe(symbol) {
+  const url = "https://query1.finance.yahoo.com/v8/finance/chart/"
+    + encodeURIComponent(symbol) + "?interval=1d&range=2y";
+  const a = await fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; tjr-dashboard beobachtung)" },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!a.ok) throw new Error("HTTP " + a.status);
+  const d = await a.json();
+  const e = d && d.chart && d.chart.result && d.chart.result[0];
+  if (!e) throw new Error("kein Ergebnis");
+
+  const ts = e.timestamp || [];
+  const q = (e.indicators && e.indicators.quote && e.indicators.quote[0]) || {};
+  const reihe = [];
+  for (let i = 0; i < (q.close || []).length; i++) {
+    if (typeof q.close[i] === "number" && isFinite(q.close[i]) && typeof ts[i] === "number") {
+      reihe.push({ ts: ts[i], close: q.close[i], hoch: q.high ? q.high[i] : null, tief: q.low ? q.low[i] : null });
+    }
+  }
+  if (reihe.length < 80) throw new Error("zu wenige Kurse (" + reihe.length + ")");
+
+  const m = e.meta || {};
+  return { reihe, langname: m.longName || m.shortName || null, waehrung: m.currency || null,
+           livekurs: (typeof m.regularMarketPrice === "number" && m.regularMarketPrice > 0) ? m.regularMarketPrice : null };
+}
+
+/* Veraenderung ueber einen echten Zeitraum - Bezug ist der letzte Kurs am
+ * oder vor dem Stichtag. Kalendertage, nicht Kerzenzahl: Krypto handelt
+ * sieben Tage, Aktien fuenf. */
+function seit(reihe, tage) {
+  const letzter = reihe[reihe.length - 1];
+  const stichtag = letzter.ts - tage * 86400;
+  let bezug = null;
+  for (const p of reihe) { if (p.ts <= stichtag) bezug = p; else break; }
+  if (!bezug || bezug.close <= 0 || bezug.ts === letzter.ts) return null;
+  return ((letzter.close - bezug.close) / bezug.close) * 100;
+}
+
+/* Abstand zum Hoch und Tief der letzten 52 Wochen. Sagt nichts darueber, ob
+ * etwas "billig" ist - ein Wert kann monatelang am Tief stehen und weiter
+ * fallen. Es sagt nur, wo man sich in der bisherigen Spanne befindet. */
+function spanne52(reihe) {
+  const ab = reihe[reihe.length - 1].ts - JAHR_SEK;
+  const jahr = reihe.filter((p) => p.ts >= ab);
+  if (jahr.length < 50) return null;
+  let hoch = -Infinity, tief = Infinity;
+  for (const p of jahr) {
+    const h = (typeof p.hoch === "number" && isFinite(p.hoch)) ? p.hoch : p.close;
+    const t = (typeof p.tief === "number" && isFinite(p.tief)) ? p.tief : p.close;
+    if (h > hoch) hoch = h;
+    if (t < tief) tief = t;
+  }
+  const jetzt = reihe[reihe.length - 1].close;
+  if (!isFinite(hoch) || !isFinite(tief) || hoch <= tief) return null;
+  return {
+    hoch: rund(hoch, 2), tief: rund(tief, 2),
+    vomHoch: rund((jetzt - hoch) / hoch * 100, 1),
+    ueberTief: rund((jetzt - tief) / tief * 100, 1),
+    // Wo in der Spanne: 0 = am Jahrestief, 100 = am Jahreshoch.
+    inSpanne: rund((jetzt - tief) / (hoch - tief) * 100, 0),
+  };
+}
+
+/* Vorsprung gegenueber dem breiten Markt ueber drei Monate, MIT Rauschurteil -
+ * dieselbe Rechnung wie beim Sektorblock. Nur fuer Werte in derselben
+ * Waehrung wie der Massstab: sonst misst man den Wechselkurs mit und nennt
+ * es Staerke. */
+const REL_TAGE = 90;
+
+function relativ(reihe, massstabReihe, gleicheWaehrung) {
+  if (!gleicheWaehrung || !massstabReihe) return { stufe: "nicht vergleichbar", grund: "andere Währung als der Vergleichsindex – ein Vergleich würde den Wechselkurs mitmessen" };
+  const a = kz.gemeinsameTage({ x: reihe, y: massstabReihe }, ["x", "y"]);
+  if (a.tage.length < REL_TAGE + 10) return { stufe: "unbekannt", grund: "zu wenige gemeinsame Handelstage" };
+
+  const rx = kz.renditen(a.closes.x).slice(-REL_TAGE);
+  const ry = kz.renditen(a.closes.y).slice(-REL_TAGE);
+  if (rx.length < REL_TAGE || ry.length < REL_TAGE) return { stufe: "unbekannt", grund: "zu kurze Reihe" };
+
+  const summe = (arr) => (Math.exp(arr.reduce((s, v) => s + v, 0)) - 1) * 100;
+  const vorsprung = summe(rx) - summe(ry);
+  const diff = rx.map((v, i) => v - ry[i]);
+  const streuung = kz.stdabw(diff);
+  if (streuung === null || streuung <= 0) return { stufe: "unbekannt", grund: "keine Streuung messbar" };
+  const zufallsbreite = streuung * Math.sqrt(REL_TAGE) * 100;
+
+  const z = Math.abs(vorsprung) / zufallsbreite;
+  let stufe, grund;
+  if (z < 2) {
+    stufe = "rauschen";
+    grund = "Vorsprung " + (vorsprung > 0 ? "+" : "") + vorsprung.toFixed(1) + " Punkte liegt im Zufallsbereich (±"
+      + (2 * zufallsbreite).toFixed(1) + ") – kein belastbarer Unterschied zum breiten Markt";
+  } else if (z < 3) {
+    stufe = vorsprung > 0 ? "besser" : "schlechter";
+    grund = "außerhalb des Zufallsbereichs (±" + (2 * zufallsbreite).toFixed(1) + " Punkte), aber nicht weit";
+  } else {
+    stufe = vorsprung > 0 ? "deutlich besser" : "deutlich schlechter";
+    grund = "klar außerhalb des Zufallsbereichs (±" + (2 * zufallsbreite).toFixed(1) + " Punkte)";
+  }
+  return { vorsprung: rund(vorsprung, 1), zufallsbreite: rund(2 * zufallsbreite, 1), stufe, grund };
+}
+
+async function sammle() {
+  const reihen = {}, meta = {};
+  for (const w of WERTE) {
+    try {
+      const r = await holeReihe(w.symbol);
+      reihen[w.symbol] = r.reihe;
+      meta[w.symbol] = r;
+    } catch (e) {
+      meta[w.symbol] = { fehler: String(e && e.message ? e.message : e).slice(0, 100) };
+    }
+    await schlafe(PAUSE_MS);
+  }
+
+  const massstab = reihen[MASSSTAB] || null;
+  const massstabWaehrung = (meta[MASSSTAB] && meta[MASSSTAB].waehrung) || null;
+
+  const eintraege = WERTE.map((w) => {
+    const m = meta[w.symbol] || {};
+    if (!reihen[w.symbol]) {
+      return { ...w, ok: false, grund: m.fehler || "keine Daten" };
+    }
+    const reihe = reihen[w.symbol];
+    const closes = reihe.map((p) => p.close);
+    const letzter = m.livekurs || reihe[reihe.length - 1].close;
+
+    return {
+      ...w,
+      ok: true,
+      langname: m.langname,
+      waehrung: m.waehrung,
+      kurs: rund(letzter, letzter >= 100 ? 2 : 4),
+      stand: new Date(reihe[reihe.length - 1].ts * 1000).toISOString().slice(0, 10),
+      spanne: spanne52(reihe),
+      monat1: rund(seit(reihe, 30), 1),
+      monat3: rund(seit(reihe, 91), 1),
+      monat6: rund(seit(reihe, 182), 1),
+      jahr1: rund(seit(reihe, 365), 1),
+      schwankung: rund(kz.schwankung(closes, VOL_FENSTER), 1),
+      relativ: w.symbol === MASSSTAB
+        ? { stufe: "massstab", grund: "Das ist der Vergleichsmaßstab selbst." }
+        : relativ(reihe, massstab, m.waehrung === massstabWaehrung),
+    };
+  });
+
+  return {
+    themen: THEMEN,
+    massstab: MASSSTAB,
+    massstabName: (meta[MASSSTAB] && meta[MASSSTAB].langname) || MASSSTAB,
+    relTage: REL_TAGE,
+    volFenster: VOL_FENSTER,
+    eintraege,
+  };
+}
+
+module.exports = { WERTE, THEMEN, MASSSTAB, REL_TAGE, VOL_FENSTER, holeReihe, seit, spanne52, relativ, sammle };

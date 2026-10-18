@@ -26,6 +26,7 @@ const ml = require("./marktlage.js");
 const kz = require("./marktlage_kennzahlen.js");
 const hist = require("./marktlage_historie.js");
 const lang = require("./marktlage_langfrist.js");
+const beob = require("./marktlage_beobachtung.js");
 
 const BASIS = __dirname;
 const MIN_ANTEIL_OK = 0.6;   // weniger als 60 % brauchbar -> Seite nicht anfassen
@@ -259,6 +260,25 @@ async function main() {
   console.log("  daten/marktlage/stand.json geschrieben");
 
   /* ----------------------------------------------------------------------
+   * BEOBACHTUNGSLISTE - Themen fuer Haltedauern von Monaten.
+   * Eigener Abruf, eigenes try/catch: faellt er aus, fehlt nur dieser Block.
+   * -------------------------------------------------------------------- */
+  let beobachtung = null;
+  try {
+    beobachtung = await beob.sammle();
+    const ok = beobachtung.eintraege.filter((e) => e.ok).length;
+    console.log("  Beobachtungsliste: " + ok + " von " + beobachtung.eintraege.length + " Werten"
+      + "  |  ggue Markt: "
+      + beobachtung.eintraege.filter((e) => e.relativ && /besser|schlechter/.test(e.relativ.stufe)).length + " auffaellig, "
+      + beobachtung.eintraege.filter((e) => e.relativ && e.relativ.stufe === "rauschen").length + " Rauschen");
+    for (const e of beobachtung.eintraege.filter((x) => !x.ok)) {
+      console.log("    FEHLT " + e.symbol + ": " + e.grund);
+    }
+  } catch (e) {
+    console.error("  Beobachtungsliste fehlgeschlagen:", e.message);
+  }
+
+  /* ----------------------------------------------------------------------
    * LANGFRIST - rollierende Renditen nach Haltedauer.
    *
    * Eigener Abruf mit Monatskerzen ueber die volle Historie. Faellt er aus,
@@ -322,7 +342,7 @@ async function main() {
     throw new Error("Vorlage enthaelt keinen __DATA__-Platzhalter");
   }
   const seite = vorlage
-    .replace("__DATA__", sicheresJson(Object.assign({}, daten, { historie, auswertung, langfrist })))
+    .replace("__DATA__", sicheresJson(Object.assign({}, daten, { historie, auswertung, langfrist, beobachtung })))
     .replace(/__VERALTET_TAGE__/g, String(ml.VERALTET_TAGE));
 
   fs.writeFileSync(path.join(BASIS, "docs", "marktlage.html"), seite, "utf8");

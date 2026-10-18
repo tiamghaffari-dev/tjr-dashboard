@@ -163,6 +163,23 @@
   .merk b { color: #c3cadb; }
   .merk .statisch { color: #ffd25c; font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 8px; }
 
+  /* Beobachtungsliste */
+  .bl-pos { position: relative; height: 16px; width: 112px; margin-top: 5px; }
+  .bl-bahn { position: absolute; top: 6px; left: 0; right: 0; height: 4px; border-radius: 2px;
+             background: linear-gradient(90deg, rgba(255,107,107,0.4), rgba(255,255,255,0.15), rgba(57,255,136,0.4)); }
+  .bl-punkt { position: absolute; top: 2px; width: 3px; height: 12px; border-radius: 2px; background: #e8eaf0; }
+  .bl-skala { color: #5a6072; font-size: 9.5px; font-family: -apple-system, sans-serif; display: flex; justify-content: space-between; margin-top: 1px; }
+  .bl-fonds { color: #5a6072; font-size: 10.5px; font-family: -apple-system, sans-serif; margin-top: 3px; }
+  .nicht-kaufbar {
+    margin-left: 7px; font-size: 9.5px; letter-spacing: 0.4px; padding: 2px 6px; border-radius: 5px;
+    background: rgba(255,210,92,0.09); border: 1px solid rgba(255,210,92,0.3); color: #ffd25c;
+    font-family: -apple-system, sans-serif; vertical-align: middle;
+  }
+  .stufe-besser    { background: rgba(57,255,136,0.08); border: 1px solid rgba(57,255,136,0.3); color: #6be79a; }
+  .stufe-schlechter{ background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.3); color: #ff8f8f; }
+  .stufe-massstab  { background: rgba(167,139,250,0.10); border: 1px solid rgba(167,139,250,0.3); color: #b9a6fb; }
+  .stufe-nicht     { background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.16); color: #6b7185; }
+
   .tabellen-rahmen { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .tabellen-rahmen table { min-width: 660px; }
   /* Die Kennzahlen-Tabellen aus Etappe 2 haben nur drei bis vier Spalten.
@@ -347,6 +364,18 @@
   <div class="bedeutung">
     <p><span class="ja">Heißt:</span> zu diesen Zeitpunkten kommen Zahlen heraus, auf die der Markt oft sprunghaft reagiert &mdash; unabhängig davon, wie sauber ein Setup aussieht.</p>
     <p><span class="nein">Heißt nicht:</span> kein Signal und keine Handlungsanweisung. Die Engine liest diese Liste nicht und blockiert dadurch nichts. <b>Und sie ist in zwei Richtungen unvollständig:</b> der Feed reicht nur bis zum Ende der <b>laufenden Kalenderwoche</b> &mdash; am Wochenende steht hier also wenig, auch wenn Montag etwas ansteht. Und drin sind ohnehin nur geplante Wirtschaftstermine und Auftritte von Notenbankern. Nicht drin sind politische Äußerungen &mdash; die kommen meist ohne Ankündigung und stehen in keinem Kalender. Eine leere Liste heißt also „keine geplanten Termine", nicht „nichts wird passieren".</p>
+  </div>
+</div>
+
+<div class="block">
+  <h2>Beobachtungsliste &mdash; wo die Themen gerade stehen</h2>
+  <div class="block-sub" id="bl-sub"></div>
+  <div class="lf-wahl" id="bl-wahl"></div>
+  <div class="tabellen-rahmen" id="bl-rahmen"></div>
+  <div class="bedeutung">
+    <p><span class="ja">Heißt:</span> eine Standortbestimmung für Haltedauern von Monaten. Wo steht ein Wert in seiner Jahresspanne, wie lief er über 1, 3, 6 und 12 Monate, wie stark schwankt er &mdash; und läuft er besser als ein breiter Welt-ETF, oder sieht es nur so aus. Der Vergleich zum Markt hat dieselbe Rausch-Prüfung wie der Sektorblock: was im Zufallsbereich liegt, wird grau als <b>Rauschen</b> ausgewiesen.</p>
+    <p><span class="nein">Heißt nicht:</span> <b>hier steht nirgends, wann man einsteigen soll.</b> Das wäre eine Vorhersage, und die kann niemand liefern &mdash; auch keine KI, die das behauptet. Ein Wert nahe am Jahrestief ist nicht „billig", er kann monatelang weiter fallen; einer am Hoch ist nicht „zu teuer".</p>
+    <p><b>Das Beispiel, das alles dazu sagt:</b> Rheinmetall stand im April 2026 bei 1.550&nbsp;€, im Juli bei 976&nbsp;€ &mdash; während die These „es wird aufgerüstet, also steigt die Rüstung" durchgehend stimmte und in jeder Zeitung stand. Kurse bewegen sich auf <i>Überraschungen</i>, nicht auf Tatsachen. Was du in den Nachrichten liest, steht längst im Preis.</p>
   </div>
 </div>
 
@@ -866,7 +895,106 @@ function zeichneLangfrist() {
     + "Der helle Strich im Balken ist der Mittelwert.</div>";
 }
 
-for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine, zeichneHistorie, zeichneAuswertung, zeichneLangfrist]) {
+/* ---------- 8. Beobachtungsliste ---------- */
+let blThema = "alle";
+
+function zeichneBeobachtung() {
+  const b = DATA.beobachtung;
+  const sub = document.getElementById("bl-sub");
+  const wahl = document.getElementById("bl-wahl");
+  const rahmen = document.getElementById("bl-rahmen");
+  if (!b || !b.eintraege || !b.eintraege.length) {
+    sub.textContent = "Beobachtungsliste konnte nicht geladen werden.";
+    wahl.innerHTML = ""; rahmen.innerHTML = "";
+    return;
+  }
+
+  sub.innerHTML = "Vergleichsmaßstab ist <b>" + (b.massstabName || b.massstab) + "</b>. "
+    + "Der Markt-Vergleich läuft über " + b.relTage + " Handelstage, die Schwankung über " + b.volFenster + ". "
+    + '<span class="null-wert">Mit <span class="nicht-kaufbar">US-ETF</span> markierte Zeilen sind für EU-Privatanleger normalerweise nicht kaufbar &mdash; sie stehen nur als Vergleich für das Thema.</span>';
+
+  const themen = ["alle"].concat(b.themen.filter(function (t) {
+    return b.eintraege.some(function (e) { return e.thema === t; });
+  }));
+  wahl.innerHTML = themen.map(function (t) {
+    return '<span class="chip ' + (t === blThema ? "an" : "") + '" data-bl="' + t + '">' + t + "</span>";
+  }).join(" ");
+  wahl.querySelectorAll("[data-bl]").forEach(function (c) {
+    c.addEventListener("click", function () { blThema = c.dataset.bl; zeichneBeobachtung(); });
+  });
+
+  const f = function (v) {
+    if (v === null || v === undefined) return '<span class="null-wert">&ndash;</span>';
+    const k = v > 0 ? "hoch" : v < 0 ? "tief" : "null-wert";
+    return '<span class="' + k + '">' + (v > 0 ? "+" : "") + String(v).replace(".", ",") + " %</span>";
+  };
+
+  const stufenKlasse = {
+    "rauschen": "rauschen", "besser": "besser", "deutlich besser": "besser",
+    "schlechter": "schlechter", "deutlich schlechter": "schlechter",
+    "massstab": "massstab", "nicht vergleichbar": "nicht", "unbekannt": "unbekannt",
+  };
+  const stufenText = { "massstab": "Vergleichsmaßstab", "nicht vergleichbar": "nicht vergleichbar" };
+
+  let html = "";
+  const gefiltert = b.eintraege.filter(function (e) { return blThema === "alle" || e.thema === blThema; });
+
+  for (const thema of b.themen) {
+    const drin = gefiltert.filter(function (e) { return e.thema === thema; });
+    if (!drin.length) continue;
+    html += '<tr class="gruppenkopf"><td colspan="7">' + thema + "</td></tr>";
+
+    for (const e of drin) {
+      if (!e.ok) {
+        html += '<tr><td class="links"><span class="wname">' + e.name + '</span><span class="wsym">' + e.symbol + "</span></td>"
+          + '<td colspan="6" class="fehlt">keine Daten &mdash; ' + (e.grund || "Abruf fehlgeschlagen") + "</td></tr>";
+        continue;
+      }
+      const r = e.relativ || {};
+      const grau = r.stufe === "rauschen" || r.stufe === "nicht vergleichbar" || r.stufe === "unbekannt";
+
+      // Position in der Jahresspanne als kleiner Balken - sagt, wo man in der
+      // bisherigen Spanne steht, nicht ob etwas billig oder teuer ist.
+      let pos = "";
+      if (e.spanne) {
+        pos = '<div class="bl-pos" title="Jahrestief ' + e.spanne.tief + ' / Jahreshoch ' + e.spanne.hoch + '">'
+          + '<div class="bl-bahn"></div><div class="bl-punkt" style="left:' + Math.max(0, Math.min(99, e.spanne.inSpanne)) + '%"></div></div>'
+          + '<div class="bl-skala" style="width:112px"><span>Tief</span><span>Hoch</span></div>';
+      }
+
+      html += "<tr" + (grau ? ' class="ist-rauschen"' : "") + ">"
+        + '<td class="links"><span class="wname">' + e.name + "</span>"
+        + '<span class="wsym">' + e.symbol + "</span>"
+        + (e.kaufbar === false ? '<span class="nicht-kaufbar">US-ETF</span>' : "")
+        + (e.langname ? '<div class="bl-fonds">' + e.langname + "</div>" : "")
+        + pos
+        + (r.grund ? '<div class="begruendung">' + r.grund + "</div>" : "")
+        + "</td>"
+        + '<td><span class="kurs">' + (e.kurs === null ? "&ndash;" : e.kurs.toLocaleString("de-DE"))
+        + '</span><span class="einheit">' + (e.waehrung || "") + "</span>"
+        + (e.spanne ? '<div class="begruendung">' + (e.spanne.vomHoch === 0 ? "am Jahreshoch"
+            : String(e.spanne.vomHoch).replace(".", ",") + " % vom Jahreshoch") + "</div>" : "")
+        + "</td>"
+        + "<td>" + f(e.monat1) + "</td>"
+        + "<td>" + f(e.monat3) + "</td>"
+        + "<td>" + f(e.monat6) + "</td>"
+        + "<td>" + f(e.jahr1) + "</td>"
+        + '<td><span class="null-wert">' + (e.schwankung === null ? "&ndash;" : String(e.schwankung).replace(".", ",") + " %") + "</span>"
+        + '<div style="margin-top:4px">' + '<span class="stufe stufe-' + (stufenKlasse[r.stufe] || "unbekannt") + '">'
+        + (stufenText[r.stufe] || r.stufe || "?") + "</span></div></td>"
+        + "</tr>";
+    }
+  }
+
+  rahmen.innerHTML = '<table><thead><tr><th class="links">Wert</th><th>Kurs</th>'
+    + "<th>1 Mon.</th><th>3 Mon.</th><th>6 Mon.</th><th>1 Jahr</th>"
+    + "<th>Schwankung<br>ggü. Markt</th></tr></thead><tbody>" + html + "</tbody></table>"
+    + '<div class="lf-quelle">Der Balken unter dem Namen zeigt die Lage in der <b>52-Wochen-Spanne</b>: ganz links am Jahrestief, ganz rechts am Jahreshoch. '
+    + "Der Fondsname darunter ist zum Nachschlagen im Broker gedacht &mdash; prüf dort die genaue Anteilsklasse (ausschüttend oder thesaurierend), "
+    + "die Namen ähneln sich stark.</div>";
+}
+
+for (const f of [zeichneNervositaet, zeichneSektoren, zeichneGleichlauf, zeichneTermine, zeichneHistorie, zeichneAuswertung, zeichneLangfrist, zeichneBeobachtung]) {
   try { f(); } catch (e) { console.error("Block fehlgeschlagen:", e); }
 }
 </script>
