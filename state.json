@@ -3,7 +3,7 @@
   "ETHUSD": false,
   "XRPUSD": false,
   "GBPUSD": false,
-  "^GSPC": true,
+  "^GSPC": false,
   "GCUSD": true,
   "_meta": {
     "windowOpen": true,
