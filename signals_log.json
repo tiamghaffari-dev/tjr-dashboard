@@ -52648,8 +52648,8 @@
     "target2": 1.3139,
     "rr2": 1.8,
     "partialExit": true,
-    "trailStop": 1.2803,
-    "tp1HitTs": null,
+    "trailStop": 1.3097,
+    "tp1HitTs": 1792490400000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -52702,9 +52702,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792490752000,
+    "rMultiple": 1.63,
+    "exitPrice": 1.3139,
+    "postmortem": {
+      "holdHours": 2.8,
+      "mfeR": 2.18,
+      "maeR": -0.03,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1792496425785",
@@ -52993,8 +53004,8 @@
     "target2": 1.3139,
     "rr2": 1.62,
     "partialExit": true,
-    "trailStop": 1.2825,
-    "tp1HitTs": null,
+    "trailStop": 1.3097,
+    "tp1HitTs": 1792490400000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -53047,9 +53058,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792490752000,
+    "rMultiple": 1.45,
+    "exitPrice": 1.3139,
+    "postmortem": {
+      "holdHours": 1.1,
+      "mfeR": 2,
+      "maeR": -0.04,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.25,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1792501351330",
