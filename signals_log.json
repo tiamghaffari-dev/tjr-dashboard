@@ -50988,8 +50988,8 @@
     "target2": 763.830017,
     "rr2": 2.25,
     "partialExit": true,
-    "trailStop": 769.152,
-    "tp1HitTs": null,
+    "trailStop": 765.823975,
+    "tp1HitTs": 1792488600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "SMT",
@@ -51043,9 +51043,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792488900000,
+    "rMultiple": 1.03,
+    "exitPrice": 765.823975,
+    "postmortem": {
+      "holdHours": 18.7,
+      "mfeR": 1.49,
+      "maeR": -0.65,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.3,
+      "targetDistAdr": 0.31,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "BTCUSD-1792436487206",
@@ -51400,8 +51417,8 @@
     "target2": 763.830017,
     "rr2": 3.22,
     "partialExit": true,
-    "trailStop": 769.440991,
-    "tp1HitTs": null,
+    "trailStop": 765.823975,
+    "tp1HitTs": 1792488600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "SMT",
@@ -51455,9 +51472,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792488900000,
+    "rMultiple": 1.72,
+    "exitPrice": 765.823975,
+    "postmortem": {
+      "holdHours": 18.1,
+      "mfeR": 2.28,
+      "maeR": -0.28,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.42,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1792438373161",
@@ -52744,9 +52772,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792490100000,
+    "rMultiple": -1,
+    "exitPrice": 81885.010938,
+    "postmortem": {
+      "holdHours": 2.2,
+      "mfeR": 0.74,
+      "maeR": -1.26,
+      "towardTargetPct": 49,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.3,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.4R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Entry: zu frueh · Analyse: These war falsch"
+    }
   },
   {
     "id": "BTCUSD-1792499437320",
@@ -52814,9 +52869,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792489500000,
+    "rMultiple": -1,
+    "exitPrice": 81837.432813,
+    "postmortem": {
+      "holdHours": 1.2,
+      "mfeR": 0.62,
+      "maeR": -1.01,
+      "towardTargetPct": 44,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.28,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.6R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.5R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Analyse: These war falsch"
+    }
   },
   {
     "id": "GCUSD-1792500725199",
@@ -52883,9 +52960,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792489500000,
+    "rMultiple": -1,
+    "exitPrice": 4152.319248,
+    "postmortem": {
+      "holdHours": 0.9,
+      "mfeR": 0.53,
+      "maeR": -1.11,
+      "towardTargetPct": 30,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.42,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.6R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "XRPUSD-1792501351330",
@@ -53012,6 +53106,231 @@
     "beobachtung": true,
     "beobachtungGrund": "zeitrahmen-konflikt",
     "signalTf": "15m",
+    "umfeld": {
+      "handelstag": "2026-10-19",
+      "quelle": "live",
+      "vix": 18.66,
+      "vixPerzentil": 72,
+      "schwankung": 18.2,
+      "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "loss",
+    "resolvedTs": 1792489500000,
+    "rMultiple": -1,
+    "exitPrice": 4152.319248,
+    "postmortem": {
+      "holdHours": 0.7,
+      "mfeR": 0.44,
+      "maeR": -1.1,
+      "towardTargetPct": 27,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.41,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.6R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
+  },
+  {
+    "id": "BTCUSD-1792504803181",
+    "asset": "BTCUSD",
+    "direction": "SHORT",
+    "entryTs": 1792504803181,
+    "entry": 82043.867188,
+    "stop": 82438.33125,
+    "target": 81096.953125,
+    "rr": 2.4,
+    "target2": 81096.953125,
+    "rr2": 2.4,
+    "partialExit": true,
+    "trailStop": 82438.33125,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "Equilibrium",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 1,
+    "fillTs": 1792490416000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "zeitrahmen-konflikt",
+    "signalTf": "5m",
+    "umfeld": {
+      "handelstag": "2026-10-19",
+      "quelle": "live",
+      "vix": 18.66,
+      "vixPerzentil": 72,
+      "schwankung": 21.2,
+      "schwankungStufe": "niedrig",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "^GSPC-1792504803181",
+    "asset": "^GSPC",
+    "direction": "SHORT",
+    "entryTs": 1792504803181,
+    "entry": 767.789978,
+    "stop": 769.732887,
+    "target": 763.830017,
+    "rr": 2.04,
+    "target2": 763.538025,
+    "rr2": 2.19,
+    "partialExit": true,
+    "trailStop": 769.732887,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 0.634,
+    "fillTs": 1792490416000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "zeitrahmen-konflikt",
+    "signalTf": "15m",
+    "umfeld": {
+      "handelstag": "2026-10-19",
+      "quelle": "live",
+      "vix": 18.66,
+      "vixPerzentil": 72,
+      "schwankung": 9,
+      "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1792504803181",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1792504803181,
+    "entry": 4147.700195,
+    "stop": 4159.260156,
+    "target": 4130.100098,
+    "rr": 1.52,
+    "target2": 4127.799805,
+    "rr2": 1.72,
+    "partialExit": true,
+    "trailStop": 4159.260156,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "Equilibrium",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R9-daily-bias"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.467,
+    "fillTs": 1792490416000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "zeitrahmen-konflikt",
+    "signalTf": "5m",
     "umfeld": {
       "handelstag": "2026-10-19",
       "quelle": "live",
