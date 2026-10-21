@@ -249,6 +249,12 @@
       <div class="inhalt" id="in-termine"></div>
     </details>
 
+    <details class="ab" id="ab-treiber">
+      <summary><span>Was bewegt welchen Markt</span>
+        <span class="sum-wert">Nachschlagewerk</span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-treiber"></div>
+    </details>
+
     <details class="ab" id="ab-gehandelt">
       <summary><span>Die sechs Werte, die die Engine handelt</span>
         <span class="sum-wert" id="sum-gehandelt"></span><span class="pfeil">&#8250;</span></summary>
@@ -929,6 +935,100 @@ function nachrichten() {
 }
 
 /* ====================================================================
+   Abschnitt: Was bewegt welchen Markt
+
+   Die Wirkungswege stehen bisher nur bei den anstehenden Terminen - und
+   der Kalender reicht nur bis Sonntag. Ab Donnerstag ist er oft leer, und
+   damit war das ganze Wissen unsichtbar. Hier steht es dauerhaft, nach
+   Markt sortiert statt nach Termin.
+
+   Rein statisch, haengt an keiner Datenquelle und kann darum nie
+   ausfallen. Es sind bekannte Wirkungszusammenhaenge, keine Prognosen:
+   WORUEBER etwas durchschlaegt, nicht wohin.
+   ==================================================================== */
+const TREIBER = [
+  { markt: "Bitcoin, Ethereum, XRP",
+    was: [
+      "<b>Zinserwartung</b> \u2013 fallende Zinsen hei\u00dfen mehr Geld, das Risiko sucht. Krypto reagiert darauf st\u00e4rker als Aktien.",
+      "<b>Regulierung</b> \u2013 Gesetze, Zulassungen, Verbote. Die gr\u00f6\u00dfte einzelne Quelle von Spr\u00fcngen.",
+      "<b>Dollar-St\u00e4rke</b> \u2013 ein fester Dollar bremst alles, was in Dollar notiert.",
+      "<b>Risikostimmung allgemein</b> \u2013 an schlechten B\u00f6rsentagen f\u00e4llt Krypto meist mit, nur heftiger.",
+    ],
+    nicht: "Quartalszahlen einzelner Firmen. Es gibt keine Firma dahinter." },
+
+  { markt: "GBP/USD",
+    was: [
+      "<b>Zinsunterschied</b> zwischen Bank of England und Fed \u2013 der eigentliche Treiber. Alles andere wirkt \u00fcber ihn.",
+      "<b>Inflationszahlen</b> beider L\u00e4nder, weil sie die Zinserwartung verschieben.",
+      "<b>Arbeitsmarktdaten</b>, aus demselben Grund.",
+      "<b>Politische Lage in Gro\u00dfbritannien</b> \u2013 Haushalt, Regierungskrisen.",
+    ],
+    nicht: "Aktienmarkt-Nachrichten. W\u00e4hrungspaare laufen eigene Wege \u2013 das zeigt deine eigene Gleichlauf-Tabelle: GBP/USD ist der einzige deiner sechs Werte ohne Zusammenhang zu den anderen." },
+
+  { markt: "S&P 500",
+    was: [
+      "<b>US-Zinsen und Inflation</b> \u2013 h\u00f6here Zinsen dr\u00fccken besonders auf Technologiewerte.",
+      "<b>Quartalszahlen</b> der gro\u00dfen Firmen. Wenige Konzerne machen einen gro\u00dfen Teil des Index aus.",
+      "<b>Konjunkturdaten</b> \u2013 Arbeitsmarkt, ISM-Umfragen, Einzelhandel.",
+    ],
+    nicht: "Einzelne europ\u00e4ische Meldungen. Der Index ist zu breit daf\u00fcr." },
+
+  { markt: "Gold",
+    was: [
+      "<b>Realzins</b> \u2013 Zins minus Inflation. Gold zahlt keine Zinsen; je weniger es woanders gibt, desto attraktiver wird es.",
+      "<b>Dollar</b> \u2013 Gold notiert in Dollar, ein fester Dollar bremst den Preis.",
+      "<b>Krisen und Notenbankk\u00e4ufe</b> \u2013 unregelm\u00e4\u00dfig, aber mit gro\u00dfer Wirkung.",
+    ],
+    nicht: "Schmucknachfrage oder Minenproduktion. Beides ver\u00e4ndert sich zu langsam, um Tageskurse zu erkl\u00e4ren." },
+
+  { markt: "R\u00fcstungswerte (Rheinmetall, Hensoldt, Thales)",
+    was: [
+      "<b>Verteidigungsbudgets</b> \u2013 beschlossene, nicht angek\u00fcndigte.",
+      "<b>Auftragseing\u00e4nge</b> der einzelnen Firma \u2013 das ist das Konkrete.",
+      "<b>Geopolitische Eskalation oder Entspannung</b>.",
+    ],
+    nicht: "Die allgemeine Lage. \u201eEs wird aufger\u00fcstet\u201c stimmte das ganze Jahr \u2013 Rheinmetall fiel trotzdem um 38 %. Die These steckt l\u00e4ngst im Preis; bewegen tut nur, was \u00fcber sie hinausgeht." },
+
+  { markt: "Energie-ETFs",
+    was: [
+      "<b>\u00d6langebot</b> \u2013 OPEC-Entscheidungen, Ausf\u00e4lle, Sanktionen.",
+      "<b>Konjunktur</b> \u2013 l\u00e4uft die Wirtschaft, wird mehr verbraucht.",
+      "<b>US-Lagerbest\u00e4nde</b>, w\u00f6chentlich.",
+    ],
+    nicht: "Der Aktienmarkt insgesamt. Energie l\u00e4uft oft gegen den Rest." },
+
+  { markt: "Breite ETFs (MSCI World, All-World)",
+    was: [
+      "<b>Alles davon gleichzeitig</b>, gemischt \u00fcber tausende Firmen.",
+      "<b>Der Dollar</b>, wenn der Fonds in Euro notiert \u2013 ein Teil der Bewegung ist dann reiner Wechselkurs.",
+    ],
+    nicht: "Einzelne Meldungen. Genau das ist der Sinn der Streuung: keine einzelne Nachricht kann den Fonds umwerfen. Der Preis daf\u00fcr ist, dass auch keine einzelne ihn nach oben rei\u00dft." },
+];
+
+function treiber() {
+  let html = '<div class="hinweis-klein" style="margin:0 0 22px">Das sagt, <b>wor\u00fcber</b> etwas '
+    + "auf einen Kurs durchschl\u00e4gt \u2013 nicht, wohin. Die Richtung h\u00e4ngt immer an der Abweichung "
+    + "von dem, was ohnehin erwartet wird.</div>";
+
+  for (const t of TREIBER) {
+    html += '<h3 style="font-size:1rem;font-weight:600;margin:24px 0 8px">' + t.markt + "</h3>"
+      + '<ul style="margin:0;padding-left:18px;color:var(--leise);font-size:0.9375rem;line-height:1.6">'
+      + t.was.map((x) => "<li style=\"margin-bottom:5px\">" + x + "</li>").join("")
+      + "</ul>"
+      + '<div class="unter" style="margin-top:8px"><b>Bewegt es kaum:</b> ' + t.nicht + "</div>";
+  }
+
+  el("in-treiber").innerHTML = html
+    + erklaerBox("Woher das kommt",
+        "<p>Das sind bekannte Wirkungszusammenh\u00e4nge aus der Lehrbuchebene, keine Messung an deinen "
+        + "Daten und keine Vorhersage. Sie helfen beim <b>Einordnen</b>: wenn ein Kurs springt, "
+        + "findest du hier, woran es \u00fcberhaupt liegen kann.</p>"
+        + "<p>Umgekehrt funktioniert es nicht. Aus \u201eZinsen fallen\u201c folgt nicht \u201ealso steigt "
+        + "Bitcoin\u201c \u2013 alle anderen wissen das auch, und was alle wissen, steht im Preis. "
+        + "Diese Liste \u00e4ndert sich nicht automatisch.</p>");
+}
+
+/* ====================================================================
    Abschnitt 5: Haltedauer
    ==================================================================== */
 let lfWahl = 0;
@@ -1078,7 +1178,7 @@ function mitschrift() {
       + "gepr&uuml;ft (" + String(DATA.symboltestVom).slice(0, 10) + ").";
   }
   for (const f of [lagebericht, gehandelt, maerkte, beobachtung, nachrichten, termine,
-                   haltedauer, etfListe, mitschrift]) {
+                   treiber, haltedauer, etfListe, mitschrift]) {
     try { f(); } catch (e) { console.error("Block fehlgeschlagen:", f.name, e); }
   }
 })();
