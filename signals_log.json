@@ -53581,8 +53581,8 @@
     "target2": 4127.799805,
     "rr2": 3.23,
     "partialExit": true,
-    "trailStop": 4176.660059,
-    "tp1HitTs": null,
+    "trailStop": 4130.100098,
+    "tp1HitTs": 1792530000000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -53635,9 +53635,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792530300000,
+    "rMultiple": 3.03,
+    "exitPrice": 4130.100098,
+    "postmortem": {
+      "holdHours": 10.3,
+      "mfeR": 3.56,
+      "maeR": 0.14,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.64,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1792520328925",
@@ -53791,8 +53802,8 @@
     "target2": 1.3517,
     "rr2": 2.48,
     "partialExit": true,
-    "trailStop": 1.30976,
-    "tp1HitTs": null,
+    "trailStop": 1.3462,
+    "tp1HitTs": 1792554600000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -53842,9 +53853,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792554900000,
+    "rMultiple": 2.03,
+    "exitPrice": 1.3462,
+    "postmortem": {
+      "holdHours": 12.8,
+      "mfeR": 2.16,
+      "maeR": -0.51,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.44,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1792524710258",
@@ -53998,8 +54026,8 @@
     "target2": 82130,
     "rr2": 2.11,
     "partialExit": true,
-    "trailStop": 83439.965625,
-    "tp1HitTs": null,
+    "trailStop": 82564.179688,
+    "tp1HitTs": 1792547400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -54052,9 +54080,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792547700000,
+    "rMultiple": 1.08,
+    "exitPrice": 82564.179688,
+    "postmortem": {
+      "holdHours": 7.6,
+      "mfeR": 1.14,
+      "maeR": -0.3,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.22,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1792534742437",
@@ -54191,9 +54230,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792557900000,
+    "rMultiple": -1,
+    "exitPrice": 83339.090625,
+    "postmortem": {
+      "holdHours": 10.2,
+      "mfeR": 0.91,
+      "maeR": -1.29,
+      "towardTargetPct": 48,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.37,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.5R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.1R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Entry: zu frueh · Analyse: These war falsch"
+    }
   },
   {
     "id": "BTCUSD-1792536682947",
@@ -54261,9 +54327,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792557900000,
+    "rMultiple": -1,
+    "exitPrice": 83367.035938,
+    "postmortem": {
+      "holdHours": 9.9,
+      "mfeR": 0.97,
+      "maeR": -1.22,
+      "towardTargetPct": 50,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.39,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.4R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Entry: zu frueh"
+    }
   },
   {
     "id": "BTCUSD-1792537319500",
@@ -54331,8 +54419,25 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792557900000,
+    "rMultiple": -1,
+    "exitPrice": 83402.95,
+    "postmortem": {
+      "holdHours": 9.7,
+      "mfeR": 1.06,
+      "maeR": -1.14,
+      "towardTargetPct": 52,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.3R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   }
 ]
