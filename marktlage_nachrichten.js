@@ -122,6 +122,17 @@ const FUELLWARE = [
   /(halving|hal\u00adving)\s*20\d\d/i,
   /\bprognose\s+20\d\d\b/i,
   /lohnt sich (ein|der|das) (einstieg|kauf)/i,
+  /* Zweite Runde nach dem ersten Livelauf: der Krypto-Block bestand
+   * komplett aus "Bitcoin kaufen"-Ratgebern einer serioesen Zeitung.
+   * Kaufanleitungen und Anbietervergleiche sind Werbeumfeld, keine
+   * Nachrichten. */
+  /\b(bitcoin|ethereum|xrp|solana|krypto\w*|aktien|etfs?|gold|silber)\s+kaufen\b/i,
+  /\bkaufen\s+(in|bei|f(ü|ue)r|20\d\d)\b/i,
+  /seri(ö|oe)se\s+anbieter|anbieter(vergleich|test)|brokervergleich|broker[- ]test/i,
+  /\banleitung\b|\bratgeber\b|\bschritt f(ü|ue)r schritt\b/i,
+  /\bvergleich\s+20\d\d\b|\bbeste[nrs]?\s+(anbieter|broker|plattform)/i,
+  /wo (kann man|kaufe ich|kauft man)/i,
+  /\w-prognose\b/i,
 ];
 
 function fuellware(titel) {
