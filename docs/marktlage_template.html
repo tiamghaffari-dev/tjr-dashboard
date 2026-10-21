@@ -913,9 +913,13 @@ function nachrichten() {
         + "<p>Was Nachrichten trotzdem taugen: zu verstehen, <b>warum</b> sich etwas bewegt hat, "
         + "und zu merken, wann es irgendwo ungew\u00f6hnlich laut wird. Nicht, um daraus einen "
         + "Einstieg abzuleiten.</p>"
-        + "<p>Portale, die vom Klick auf Anlageprodukte leben, sind bewusst ausgeschlossen. Von "
-        + n.gepruefteMeldungen + " gefundenen Meldungen kamen " + n.ausErlaubtenQuellen
-        + " aus den zugelassenen Redaktionen.</p>");
+        + "<p>Zwei Filter stehen davor. Erstens der Herausgeber: Portale, die vom Klick auf "
+        + "Anlageprodukte leben, kommen nicht durch. Zweitens die \u00dcberschrift selbst \u2013 "
+        + "Kurszielen, Countdowns und \u201eDiese 3 Aktien explodieren\u201c wird auch bei einer "
+        + "serioesen Redaktion aussortiert.</p>"
+        + "<p>Beim letzten Lauf: " + n.gepruefteMeldungen + " Meldungen gefunden, "
+        + n.ausErlaubtenQuellen + " aus zugelassenen Redaktionen, davon "
+        + (n.alsFuellwareVerworfen || 0) + " als Klickware verworfen, " + n.anzahl + " geblieben.</p>");
 }
 
 /* ====================================================================

@@ -102,6 +102,32 @@ function quellHost(block) {
   }
 }
 
+/* Auch serioese Redaktionen produzieren Suchmaschinen-Fuellware: Countdowns,
+ * Kursziele, "so viel waeren aus 1.000 Euro geworden". Das sind keine
+ * Nachrichten, sondern Klickware, und genau das Genre, vor dem Tiam auf
+ * dieser Seite ohnehin gewarnt wird. Darum ein zweiter Filter auf die
+ * Ueberschrift selbst. Bewusst eng gefasst: "Prognose" allein bleibt drin,
+ * weil "IWF senkt Prognose" eine echte Meldung ist. */
+const FUELLWARE = [
+  /live[- ]?(kurs|countdown|ticker|chart)/i,
+  /kursziel|kursprognose|preisprognose|kursentwicklung bis/i,
+  /jetzt (kaufen|einsteigen|zugreifen|verkaufen)/i,
+  /\b(kaufen|einsteigen|verkaufen|investieren)\s*\?/i,
+  /diese\s+\d+\s+(aktien|coins|etfs|werte)/i,
+  /\btop\s*\d+\b/i,
+  /so viel (w(ä|ae)re|h(ä|ae)tten|bekommst|bekommen)/i,
+  /aus\s+[\d.]+\s*(euro|dollar)\s+(w(ä|ae)ren|geworden)/i,
+  /explodier|verzehnfach|vervielfach|rakete|geheimtipp/i,
+  /was anleger jetzt (tun|wissen|beachten)/i,
+  /(halving|hal\u00adving)\s*20\d\d/i,
+  /\bprognose\s+20\d\d\b/i,
+  /lohnt sich (ein|der|das) (einstieg|kauf)/i,
+];
+
+function fuellware(titel) {
+  return FUELLWARE.some((m) => m.test(String(titel || "")));
+}
+
 function erlaubt(host) {
   if (!host) return false;
   return ERLAUBTE_QUELLEN.some((q) => host === q || host.endsWith("." + q));
@@ -141,7 +167,7 @@ async function sammle() {
   const gesehen = new Set();
   const themen = [];
   const fehler = [];
-  let gesamtRoh = 0, gesamtErlaubt = 0;
+  let gesamtRoh = 0, gesamtErlaubt = 0, gesamtFuellware = 0;
 
   for (const t of THEMEN) {
     let roh;
@@ -159,6 +185,7 @@ async function sammle() {
       if (n.zeit < grenze) continue;
       if (!erlaubt(n.host)) continue;
       gesamtErlaubt++;
+      if (fuellware(n.titel)) { gesamtFuellware++; continue; }
       const s = schluessel(n.titel);
       if (gesehen.has(s)) continue;      // dieselbe Meldung nicht unter zwei Themen
       gesehen.add(s);
@@ -184,9 +211,10 @@ async function sammle() {
     themenMitInhalt: mitInhalt,
     gepruefteMeldungen: gesamtRoh,
     ausErlaubtenQuellen: gesamtErlaubt,
+    alsFuellwareVerworfen: gesamtFuellware,
     quellenAnzahl: ERLAUBTE_QUELLEN.length,
     fehler,
   };
 }
 
-module.exports = { sammle, THEMEN, ERLAUBTE_QUELLEN, parseFeed, erlaubt, schluessel, feedUrl };
+module.exports = { sammle, THEMEN, ERLAUBTE_QUELLEN, FUELLWARE, parseFeed, erlaubt, fuellware, schluessel, feedUrl };

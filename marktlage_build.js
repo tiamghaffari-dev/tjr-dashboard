@@ -291,7 +291,8 @@ async function main() {
     console.log("  Nachrichten: " + nachrichten.anzahl + " Meldungen aus "
       + nachrichten.themenMitInhalt + " von " + nachrichten.themen.length + " Themen"
       + "  (" + nachrichten.ausErlaubtenQuellen + " von " + nachrichten.gepruefteMeldungen
-      + " geprueften Meldungen kamen aus den " + nachrichten.quellenAnzahl + " zugelassenen Redaktionen)");
+      + " geprueften Meldungen kamen aus den " + nachrichten.quellenAnzahl + " zugelassenen Redaktionen, "
+      + nachrichten.alsFuellwareVerworfen + " davon als Klickware verworfen)");
     for (const f of nachrichten.fehler) console.log("    AUSFALL " + f);
   } catch (e) {
     console.error("  Nachrichten fehlgeschlagen:", e.message);
