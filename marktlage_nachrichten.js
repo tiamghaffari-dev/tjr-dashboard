@@ -133,14 +133,29 @@ const FUELLWARE = [
   /\bvergleich\s+20\d\d\b|\bbeste[nrs]?\s+(anbieter|broker|plattform)/i,
   /wo (kann man|kaufe ich|kauft man)/i,
   /\w-prognose\b/i,
+  /* Dritte Runde: n-tv liefert automatisch erzeugte Produktseiten fuer
+   * Hebelzertifikate ("BITCOIN Turbo S 39.7938 open end (HSBC) | Kurs,
+   * Chart, Analysen | DE000HT8C950"). Das sind keine Nachrichten, und es
+   * sind ausgerechnet die Produkte, bei denen ein Totalverlust eingebaut
+   * ist. Erkennbar an der ISIN im Titel und am Produktnamen. */
+  /\b[A-Z]{2}[A-Z0-9]{9}\d\b/,
+  /\|\s*kurs,?\s*chart/i,
+  /\b(turbo|knock[- ]?out|optionsschein|faktor[- ]?zertifikat|open end)\b/i,
+  /\bfaktor\s*\d+\s*x\b|\bhebel\s*\d+/i,
+  /\bcrash-?(risiko|gefahr)\b/i,
 ];
 
 function fuellware(titel) {
   return FUELLWARE.some((m) => m.test(String(titel || "")));
 }
 
+/* Regionalausgaben: "kaernten.ORF.at" ist formal orf.at, liefert aber
+ * Lokalnachrichten ohne jeden Marktbezug. Die Hauptredaktionen bleiben. */
+const REGIONAL = /^(kaernten|wien|steiermark|ooe|noe|salzburg|tirol|vorarlberg|burgenland)\./i;
+
 function erlaubt(host) {
   if (!host) return false;
+  if (REGIONAL.test(host)) return false;
   return ERLAUBTE_QUELLEN.some((q) => host === q || host.endsWith("." + q));
 }
 
@@ -169,8 +184,19 @@ function parseFeed(xml) {
   return raus;
 }
 
+/* Entdopplung ueber die ersten Buchstaben. Ziffern fliegen bewusst mit
+ * raus: dieselbe Meldung erschien einmal als "Fuenf-Monats-Hoch" und einmal
+ * als "5-Monatshoch" und rutschte zweimal durch. */
 function schluessel(titel) {
-  return String(titel).toLowerCase().replace(/[^a-zäöüß0-9]+/g, " ").trim().slice(0, 60);
+  return String(titel)
+    // "Dax aktuellDax dreht" - in zusammengeklebten Titeln fehlt das
+    // Leerzeichen, sonst faellt die Entdopplung darueber auseinander.
+    .replace(/([a-zäöüß])([A-ZÄÖÜ])/g, "$1 $2")
+    .toLowerCase()
+    .replace(/[^a-zäöüß]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 45);
 }
 
 async function sammle() {
