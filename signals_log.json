@@ -53733,8 +53733,8 @@
     "target2": 2490.25,
     "rr2": 2.61,
     "partialExit": true,
-    "trailStop": 2418.140137,
-    "tp1HitTs": null,
+    "trailStop": 2477.060059,
+    "tp1HitTs": 1792573200000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -53786,9 +53786,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792573500000,
+    "rMultiple": 2.28,
+    "exitPrice": 2490.25,
+    "postmortem": {
+      "holdHours": 18.6,
+      "mfeR": 2.78,
+      "maeR": -0.77,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.39,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.8R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1792523111196",
@@ -53886,8 +53908,8 @@
     "target2": 2490.5,
     "rr2": 3.11,
     "partialExit": true,
-    "trailStop": 2408.22998,
-    "tp1HitTs": null,
+    "trailStop": 2477.120117,
+    "tp1HitTs": 1792573200000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -53939,9 +53961,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792573500000,
+    "rMultiple": 2.78,
+    "exitPrice": 2490.5,
+    "postmortem": {
+      "holdHours": 17.6,
+      "mfeR": 3.27,
+      "maeR": 0.02,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.49,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1792524710258",
