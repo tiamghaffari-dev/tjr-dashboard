@@ -54630,8 +54630,8 @@
     "target2": 1.3821,
     "rr2": 2.45,
     "partialExit": true,
-    "trailStop": 1.34364,
-    "tp1HitTs": null,
+    "trailStop": 1.369,
+    "tp1HitTs": 1792578300000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -54681,7 +54681,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -54697,8 +54697,8 @@
     "target2": 1.369,
     "rr2": 1.32,
     "partialExit": true,
-    "trailStop": 1.34314,
-    "tp1HitTs": null,
+    "trailStop": 1.3668,
+    "tp1HitTs": 1792578000000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -54748,9 +54748,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792578300000,
+    "rMultiple": 1.22,
+    "exitPrice": 1.369,
+    "postmortem": {
+      "holdHours": 1.6,
+      "mfeR": 1.7,
+      "maeR": -0.29,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.22,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1792588400975",
