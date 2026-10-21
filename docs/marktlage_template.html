@@ -67,6 +67,27 @@
   .lage .runter { color: var(--runter); }
   .lage .ruhig { color: var(--akzent); }
 
+  /* ---------- Tafel: vorne und hinten auf einen Blick ---------- */
+  .tafel { margin-top: 32px; }
+  .tafel-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 34px; }
+  .tafel h3 {
+    font-size: 0.8125rem; font-weight: 600; color: var(--leiser);
+    margin: 0 0 4px; letter-spacing: 0.02em;
+  }
+  .tafel-zeile {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .tafel-zeile:last-child { border-bottom: none; }
+  .tafel-name { flex: 1 1 auto; font-size: 1.0625rem; font-weight: 500; min-width: 0;
+                overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tafel-wert { font-size: 1.0625rem; font-weight: 600; white-space: nowrap;
+                font-variant-numeric: tabular-nums; }
+  .tafel-fuss { color: var(--leiser); font-size: 0.8125rem; line-height: 1.6;
+                margin-top: 16px; max-width: 46em; }
+  .tafel-fuss a { color: var(--akzent); text-decoration: none; cursor: pointer; }
+  .tafel-fuss a:hover { text-decoration: underline; }
+
   .hinweis-klein {
     margin-top: 24px; color: var(--leiser); font-size: 0.8125rem; line-height: 1.65;
     border-left: 2px solid var(--rand); padding-left: 14px; max-width: 46em;
@@ -185,6 +206,7 @@
     html { font-size: 15.5px; }
     .seite { padding: 22px 16px 56px; }
     .lage p { font-size: 1.1875rem; }
+    .tafel-paar { grid-template-columns: 1fr; gap: 18px; }
     /* Sechs Spalten auf 390px sind nicht lesbar, und seitwaerts wischen ist
        keine Antwort fuer jemanden, der die Seite auf einen Blick verstehen
        will. Darum wird am Handy jede Zeile zu einem Block: Name oben, die
@@ -222,6 +244,10 @@
 
   <!-- Der Lagebericht. Das ist die Seite; alles darunter ist Nachschlagewerk. -->
   <div class="lage" id="lage"></div>
+
+  <!-- Die Tafel steht bewusst OFFEN, nicht in einem Aufklapper: Tiam wollte
+       auf einen Blick sehen, was laeuft, ohne irgendwo hinzuklicken. -->
+  <div class="tafel" id="tafel"></div>
 
   <div class="hinweis-klein">
     Diese Seite beschreibt nur, was ist &mdash; keine Prognose, keine Empfehlung, kein Kaufsignal.
@@ -384,26 +410,9 @@ function lagebericht() {
       + "</b> &uuml;ber dem Stand von vor einem Jahr" + wo + ".");
   }
 
-  /* 2. Was laeuft gerade - Tiams Hauptfrage, darum weit oben.
-        Drei Beste nach drei Monaten, mit dem Hinweis, wie viele davon den
-        Vergleich mit dem Weltmarkt ueberhaupt ueberstehen. */
-  const bl = DATA.beobachtung && DATA.beobachtung.eintraege;
-  if (bl) {
-    const mit = bl.filter((e) => e.ok && typeof e.monat3 === "number" && isFinite(e.monat3)
-      && !(e.relativ && e.relativ.stufe === "massstab"));
-    if (mit.length >= 3) {
-      const best = mit.slice().sort((x, y) => y.monat3 - x.monat3).slice(0, 3);
-      const belegt = best.filter((e) => e.relativ && /besser/.test(e.relativ.stufe));
-      const liste = undListe(best.map((e) => "<b>" + e.name + " " + proz(e.monat3, 0) + "</b>"));
-      s.push("Am st\u00e4rksten gelaufen in drei Monaten: " + liste + ". "
-        + (belegt.length
-            ? "Davon h\u00e4lt " + undListe(belegt.map((e) => e.name))
-              + " auch dem Vergleich mit dem Weltmarkt stand."
-            : "Gegen den Weltmarkt gerechnet ist bei keinem davon der Vorsprung "
-              + "gr\u00f6\u00dfer als die Zufallsschwankung.")
-        + "");
-    }
-  }
+  /* Der Satz "am staerksten gelaufen: A, B, C" stand frueher hier. Er ist
+     in die Tafel direkt darunter gewandert - dort sieht man es, statt es
+     zu lesen, und der Lagebericht bleibt kuerzer. */
 
   /* 3. Nervositaet - nicht die VIX-Zahl, sondern was sie bedeutet. */
   const n = DATA.kennzahlen && DATA.kennzahlen.nervositaet;
@@ -468,6 +477,76 @@ function lagebericht() {
 
   if (!s.length) s.push("Heute konnten nicht genug Kurse abgerufen werden f&uuml;r einen Lagebericht.");
   el("lage").innerHTML = s.map((x) => "<p>" + x + "</p>").join("");
+}
+
+/* ====================================================================
+   DIE TAFEL
+
+   Tiam am 21.10.: "man soll direkt erkennen, dieser Markt und dieser
+   Markt laeuft gut". Der Satz im Lagebericht nennt drei Namen - sehen
+   wollte er es. Darum hier offen, ohne Aufklapper: die fuenf staerksten
+   und die drei schwaechsten der letzten drei Monate.
+
+   Was hier NICHT steht, und zwar mit Absicht: "Potenzial". Wie ein Wert
+   gelaufen IST, laesst sich messen. Wie er laufen WIRD, nicht - und eine
+   Rangliste, die beides vermischt, waere eine Vorhersage im Gewand einer
+   Messung. Die Marke hinter einem Namen sagt deshalb nur, ob der
+   Vorsprung zum Weltmarkt groesser ist als die Zufallsschwankung.
+   ==================================================================== */
+const TAFEL_VORNE = 5;
+const TAFEL_HINTEN = 3;
+
+function tafel() {
+  const b = DATA.beobachtung;
+  if (!b || !b.eintraege) return;
+
+  const werte = b.eintraege.filter((e) => e.ok
+    && typeof e.monat3 === "number" && isFinite(e.monat3)
+    && !(e.relativ && e.relativ.stufe === "massstab"));
+  if (werte.length < TAFEL_VORNE + TAFEL_HINTEN) return;
+
+  const sortiert = werte.slice().sort((x, y) => y.monat3 - x.monat3);
+  const vorne = sortiert.slice(0, TAFEL_VORNE);
+  const hinten = sortiert.slice(-TAFEL_HINTEN).reverse();
+
+  function zeile(e) {
+    const r = e.relativ || {};
+    const schlaegt = /besser/.test(r.stufe || "");
+    const hinkt = /schlechter/.test(r.stufe || "");
+    // Bei kleinen Werten eine Nachkommastelle, sonst steht da "-0 %".
+    const stellen = Math.abs(e.monat3) < 10 ? 1 : 0;
+    return '<div class="tafel-zeile"><span class="tafel-name">' + e.name
+      + (schlaegt ? ' <span class="marke m-rauf">schl&auml;gt den Markt</span>' : "")
+      + (hinkt ? ' <span class="marke m-runter">hinter dem Markt</span>' : "")
+      // Die beiden US-Vergleichswerte stehen in der Liste, weil sie zur
+      // Einordnung gehoeren - aber kaufen kann er sie hier nicht.
+      + (e.kaufbar === false ? ' <span class="marke m-warn">nicht kaufbar</span>' : "")
+      + '</span><span class="tafel-wert ' + farbe(e.monat3) + '">' + proz(e.monat3, stellen)
+      + "</span></div>";
+  }
+
+  const belegt = sortiert.filter((e) => e.relativ && /besser/.test(e.relativ.stufe));
+
+  el("tafel").innerHTML =
+    '<div class="tafel-paar">'
+    + "<div><h3>Vorne, letzte 3 Monate</h3>" + vorne.map(zeile).join("") + "</div>"
+    + "<div><h3>Hinten</h3>" + hinten.map(zeile).join("") + "</div>"
+    + "</div>"
+    + '<div class="tafel-fuss">'
+    + (belegt.length
+        ? "Eine Marke steht nur dort, wo der Vorsprung zum Weltmarkt gr&ouml;&szlig;er ist als die "
+          + "Zufallsschwankung. Heute trifft das auf <b>" + undListe(belegt.map((e) => e.name))
+          + "</b> zu."
+        : "<b>Keiner</b> dieser Werte schl&auml;gt den Weltmarkt belastbar \u2013 die Abst&auml;nde "
+          + "liegen alle im Zufallsbereich. Eine Marke erscheint nur, wenn sich das &auml;ndert.")
+    + ' <a data-oeffne="ab-beobachtung">Alle Werte ansehen</a></div>';
+
+  const knopf = el("tafel").querySelector("[data-oeffne]");
+  if (knopf) knopf.addEventListener("click", () => {
+    const d = el("ab-beobachtung");
+    d.open = true;
+    d.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 }
 
 /* ====================================================================
@@ -1177,7 +1256,7 @@ function mitschrift() {
     el("fuss-geprueft").innerHTML = " Jedes Symbol wurde vor dem Einbau einzeln auf Datenqualit&auml;t "
       + "gepr&uuml;ft (" + String(DATA.symboltestVom).slice(0, 10) + ").";
   }
-  for (const f of [lagebericht, gehandelt, maerkte, beobachtung, nachrichten, termine,
+  for (const f of [lagebericht, tafel, gehandelt, maerkte, beobachtung, nachrichten, termine,
                    treiber, haltedauer, etfListe, mitschrift]) {
     try { f(); } catch (e) { console.error("Block fehlgeschlagen:", f.name, e); }
   }
