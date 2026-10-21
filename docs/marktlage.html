@@ -231,6 +231,24 @@
   <div class="mehr">
     <h2>Zum Nachschauen</h2>
 
+    <details class="ab" id="ab-beobachtung">
+      <summary><span>Was l&auml;uft gerade</span>
+        <span class="sum-wert" id="sum-beobachtung"></span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-beobachtung"></div>
+    </details>
+
+    <details class="ab" id="ab-nachrichten">
+      <summary><span>Was gerade passiert</span>
+        <span class="sum-wert" id="sum-nachrichten"></span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-nachrichten"></div>
+    </details>
+
+    <details class="ab" id="ab-termine">
+      <summary><span>Was ansteht &mdash; und was es bewegen kann</span>
+        <span class="sum-wert" id="sum-termine"></span><span class="pfeil">&#8250;</span></summary>
+      <div class="inhalt" id="in-termine"></div>
+    </details>
+
     <details class="ab" id="ab-gehandelt">
       <summary><span>Die sechs Werte, die die Engine handelt</span>
         <span class="sum-wert" id="sum-gehandelt"></span><span class="pfeil">&#8250;</span></summary>
@@ -241,18 +259,6 @@
       <summary><span>Alle M&auml;rkte im &Uuml;berblick</span>
         <span class="sum-wert" id="sum-maerkte"></span><span class="pfeil">&#8250;</span></summary>
       <div class="inhalt" id="in-maerkte"></div>
-    </details>
-
-    <details class="ab" id="ab-beobachtung">
-      <summary><span>Beobachtungsliste &mdash; Themen zum Anlegen</span>
-        <span class="sum-wert" id="sum-beobachtung"></span><span class="pfeil">&#8250;</span></summary>
-      <div class="inhalt" id="in-beobachtung"></div>
-    </details>
-
-    <details class="ab" id="ab-termine">
-      <summary><span>Anstehende Termine</span>
-        <span class="sum-wert" id="sum-termine"></span><span class="pfeil">&#8250;</span></summary>
-      <div class="inhalt" id="in-termine"></div>
     </details>
 
     <details class="ab" id="ab-haltedauer">
@@ -283,7 +289,7 @@
 </div>
 
 <script>
-const DATA = {"stand":"2026-10-21 10:27 UTC","standIso":"2026-10-21T10:27:45.017Z","gruppen":["Index","Rohstoff","Umfeld","Sektor","Einzelwert","Gehandelt"],"veraltetTage":4,"symboltestVom":"2026-10-13T13:20:47.983Z","anzahl":25,"anzahlOk":25,"eintraege":[{"gruppe":"Index","name":"MSCI World","symbol":"URTH","hinweis":"ETF auf den Weltindex, in USD","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":207.4,"standDatum":"2026-10-20","alterTage":0.6,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.36,"tagVon":206.65,"tagVonDatum":"2026-10-19","woche":-0.84,"wocheVon":209.16,"wocheVonDatum":"2026-10-13","monat":0.3,"monatVon":206.77,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1},{"gruppe":"Index","name":"MSCI World (EUR)","symbol":"IWDA.AS","hinweis":"derselbe Weltindex, in Euro notiert","einheit":null,"ok":true,"waehrung":"EUR","boerse":"AMS","stand":130.71,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":255,"luecken":1,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.18,"tagVon":130.48,"tagVonDatum":"2026-10-20","woche":-0.83,"wocheVon":131.81,"wocheVonDatum":"2026-10-14","monat":1.62,"monatVon":128.62,"monatVonDatum":"2026-09-21","jahr":18.89,"jahrVon":109.94,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Index","name":"S&P 500","symbol":"^GSPC","hinweis":"500 größte US-Firmen","einheit":null,"ok":true,"waehrung":"USD","boerse":"SNP","stand":7712.57,"standDatum":"2026-10-20","alterTage":0.6,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.28,"tagVon":7690.73,"tagVonDatum":"2026-10-19","woche":-1.19,"wocheVon":7805.45,"wocheVonDatum":"2026-10-13","monat":0.81,"monatVon":7650.5,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1},{"gruppe":"Index","name":"Nasdaq 100","symbol":"^NDX","hinweis":"100 größte Technologiewerte","einheit":null,"ok":true,"waehrung":"USD","boerse":"NIM","stand":29490.28,"standDatum":"2026-10-20","alterTage":0.5,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.13,"tagVon":29529.35,"tagVonDatum":"2026-10-19","woche":-3.53,"wocheVon":30569.48,"wocheVonDatum":"2026-10-13","monat":-0.52,"monatVon":29644.17,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1},{"gruppe":"Index","name":"DAX","symbol":"^GDAXI","hinweis":"40 größte deutsche Firmen","einheit":null,"ok":true,"waehrung":"EUR","boerse":"GER","stand":25433.03,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":254,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.51,"tagVon":25304.42,"tagVonDatum":"2026-10-20","woche":0.53,"wocheVon":25298.61,"wocheVonDatum":"2026-10-14","monat":-0.56,"monatVon":25575.01,"monatVonDatum":"2026-09-21","jahr":4.53,"jahrVon":24330.03,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Index","name":"Euro Stoxx 50","symbol":"^STOXX50E","hinweis":"50 größte Firmen der Eurozone","einheit":null,"ok":true,"waehrung":"EUR","boerse":"ZRH","stand":6153.41,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.52,"tagVon":6121.66,"tagVonDatum":"2026-10-20","woche":-0.6,"wocheVon":6190.37,"wocheVonDatum":"2026-10-14","monat":-2.61,"monatVon":6318.2,"monatVonDatum":"2026-09-21","jahr":8.2,"jahrVon":5686.83,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Oel WTI","symbol":"CL=F","hinweis":"US-Sorte, Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":100.3,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-1.46,"tagVon":101.79,"tagVonDatum":"2026-10-20","woche":5.48,"wocheVon":95.09,"wocheVonDatum":"2026-10-14","monat":4.72,"monatVon":95.78,"monatVonDatum":"2026-09-21","jahr":73.47,"jahrVon":57.82,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Oel Brent","symbol":"BZ=F","hinweis":"Nordsee-Sorte, Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":111.25,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":2.26,"tagVon":108.79,"tagVonDatum":"2026-10-20","woche":4.89,"wocheVon":106.06,"wocheVonDatum":"2026-10-14","monat":10.87,"monatVon":100.34,"monatVonDatum":"2026-09-21","jahr":81.43,"jahrVon":61.32,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Gold","symbol":"GC=F","hinweis":"Terminkontrakt - die Engine handelt denselben Wert","einheit":null,"ok":true,"waehrung":"USD","boerse":"CMX","stand":4131.7,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.26,"tagVon":4142.6,"tagVonDatum":"2026-10-20","woche":0.58,"wocheVon":4107.9,"wocheVonDatum":"2026-10-14","monat":-5.75,"monatVon":4383.9,"monatVonDatum":"2026-09-21","jahr":0.55,"jahrVon":4109.1,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Silber","symbol":"SI=F","hinweis":"Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"CMX","stand":57.32,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.68,"tagVon":57.71,"tagVonDatum":"2026-10-20","woche":3.18,"wocheVon":55.55,"wocheVonDatum":"2026-10-14","monat":-12.93,"monatVon":65.82,"monatVonDatum":"2026-09-21","jahr":20.79,"jahrVon":47.45,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Erdgas","symbol":"NG=F","hinweis":"Terminkontrakt, sehr sprunghaft","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":2.89,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-2.46,"tagVon":2.963,"tagVonDatum":"2026-10-20","woche":-9.63,"wocheVon":3.198,"wocheVonDatum":"2026-10-14","monat":1.9,"monatVon":2.836,"monatVonDatum":"2026-09-21","jahr":-16.81,"jahrVon":3.474,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Umfeld","name":"VIX","symbol":"^VIX","hinweis":"erwartete Schwankung im S&P 500, in Prozentpunkten - kein Kurs","einheit":"pkt","ok":true,"waehrung":"USD","boerse":"CXI","stand":17.52,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":254,"luecken":8,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":1.21,"tagVon":17.31,"tagVonDatum":"2026-10-20","woche":3.85,"wocheVon":16.87,"wocheVonDatum":"2026-10-14","monat":17.82,"monatVon":14.87,"monatVonDatum":"2026-09-21","jahr":-1.96,"jahrVon":17.87,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Umfeld","name":"US-Zins 10 Jahre","symbol":"^TNX","hinweis":"Rendite zehnjähriger US-Staatsanleihen in Prozent","einheit":"%","ok":true,"waehrung":"USD","boerse":"CGI","stand":5.117,"standDatum":"2026-10-20","alterTage":0.6,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.37,"tagVon":5.136,"tagVonDatum":"2026-10-19","woche":-1.92,"wocheVon":5.217,"wocheVonDatum":"2026-10-13","monat":2.38,"monatVon":4.998,"monatVonDatum":"2026-09-18","jahr":28.37,"jahrVon":3.986,"jahrVonDatum":"2025-10-20","versuche":1},{"gruppe":"Umfeld","name":"Dollar-Index","symbol":"DX-Y.NYB","hinweis":"Dollar gegen einen Korb anderer Währungen","einheit":"pkt","ok":true,"waehrung":"USD","boerse":"NYB","stand":101.78,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":52,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.05,"tagVon":101.73,"tagVonDatum":"2026-10-20","woche":-0.75,"wocheVon":102.55,"wocheVonDatum":"2026-10-14","monat":1.35,"monatVon":100.43,"monatVonDatum":"2026-09-21","jahr":2.88,"jahrVon":98.93,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Sektor","name":"Technologie","symbol":"XLK","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":185.44,"standDatum":"2026-10-20","alterTage":0.6,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.28,"tagVon":185.96,"tagVonDatum":"2026-10-19","woche":-5.52,"wocheVon":196.28,"wocheVonDatum":"2026-10-13","monat":-2.19,"monatVon":189.6,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1},{"gruppe":"Sektor","name":"Energie","symbol":"XLE","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":67.97,"standDatum":"2026-10-20","alterTage":0.6,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.25,"tagVon":67.8,"tagVonDatum":"2026-10-19","woche":1.15,"wocheVon":67.2,"wocheVonDatum":"2026-10-13","monat":5.69,"monatVon":64.31,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1},{"gruppe":"Sektor","name":"Finanzen","symbol":"XLF","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":55.72,"standDatum":"2026-10-20","alterTage":0.6,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":1.2,"tagVon":55.06,"tagVonDatum":"2026-10-19","woche":1.64,"wocheVon":54.82,"wocheVonDatum":"2026-10-13","monat":-0.25,"monatVon":55.86,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1},{"gruppe":"Sektor","name":"Rohstoffe/Material","symbol":"XLB","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":51.23,"standDatum":"2026-10-20","alterTage":0.6,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.55,"tagVon":50.95,"tagVonDatum":"2026-10-19","woche":3.04,"wocheVon":49.72,"wocheVonDatum":"2026-10-13","monat":2.48,"monatVon":49.99,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1},{"gruppe":"Sektor","name":"Rüstung/Luftfahrt","symbol":"ITA","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"BTS","stand":206.15,"standDatum":"2026-10-20","alterTage":0.6,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.77,"tagVon":207.76,"tagVonDatum":"2026-10-19","woche":1.05,"wocheVon":204,"wocheVonDatum":"2026-10-13","monat":-3.6,"monatVon":213.84,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1},{"gruppe":"Einzelwert","name":"Rheinmetall","symbol":"RHM.DE","hinweis":"Rüstung, Frankfurt","einheit":null,"ok":true,"waehrung":"EUR","boerse":"GER","stand":1044,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":254,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.95,"tagVon":1054,"tagVonDatum":"2026-10-20","woche":6.17,"wocheVon":983.3,"wocheVonDatum":"2026-10-14","monat":3.3,"monatVon":1010.6,"monatVonDatum":"2026-09-21","jahr":-41.36,"jahrVon":1780.5,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Einzelwert","name":"Tesla","symbol":"TSLA","hinweis":"Nasdaq","einheit":null,"ok":true,"waehrung":"USD","boerse":"NMS","stand":373.71,"standDatum":"2026-10-20","alterTage":0.6,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":1.54,"tagVon":368.06,"tagVonDatum":"2026-10-19","woche":-0.41,"wocheVon":375.23,"wocheVonDatum":"2026-10-13","monat":2.59,"monatVon":364.27,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1},{"gruppe":"Gehandelt","name":"Bitcoin","symbol":"BTC-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":83237.72,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":366,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.36,"tagVon":82941,"tagVonDatum":"2026-10-20","woche":2.05,"wocheVon":81562.49,"wocheVonDatum":"2026-10-14","monat":-3.89,"monatVon":86602.91,"monatVonDatum":"2026-09-21","jahr":-23.27,"jahrVon":108476.89,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Gehandelt","name":"Ethereum","symbol":"ETH-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":2447.97,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":366,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.05,"tagVon":2446.73,"tagVonDatum":"2026-10-20","woche":1.23,"wocheVon":2418.21,"wocheVonDatum":"2026-10-14","monat":-11.83,"monatVon":2776.47,"monatVonDatum":"2026-09-21","jahr":-36.86,"jahrVon":3876.76,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Gehandelt","name":"XRP","symbol":"XRP-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":1.3528,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":366,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":1.37,"tagVon":1.3345,"tagVonDatum":"2026-10-20","woche":1.73,"wocheVon":1.3298,"wocheVonDatum":"2026-10-14","monat":-11.76,"monatVon":1.533,"monatVonDatum":"2026-09-21","jahr":-44.2,"jahrVon":2.4243,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Gehandelt","name":"GBP/USD","symbol":"GBPUSD=X","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCY","stand":1.3398,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":259,"luecken":3,"stempelKorrigiert":true,"stempelVerworfen":1,"tag":-0.2,"tagVon":1.3336,"tagVonDatum":"2026-10-19","woche":0.75,"wocheVon":1.321,"wocheVonDatum":"2026-10-13","monat":-0.37,"monatVon":1.3358,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1}],"kennzahlen":{"nervositaet":{"vix":{"stand":17.52,"perzentil":58,"jahrTief":13.47,"jahrHoch":31.05,"median":17.1,"tage":254},"fenster":20,"werte":[{"name":"Bitcoin","symbol":"BTC-USD","schwankung":21,"jahrMedian":34,"perzentil":9,"stufe":"niedrig","urteil":"Schwankt ruhiger als üblich - niedriger als an 91 % der Tage im letzten Jahr."},{"name":"Ethereum","symbol":"ETH-USD","schwankung":31.3,"jahrMedian":46.1,"perzentil":18,"stufe":"niedrig","urteil":"Schwankt ruhiger als üblich - niedriger als an 82 % der Tage im letzten Jahr."},{"name":"XRP","symbol":"XRP-USD","schwankung":34.4,"jahrMedian":43.1,"perzentil":31,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"GBP/USD","symbol":"GBPUSD=X","schwankung":5.3,"jahrMedian":6,"perzentil":24,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"S&P 500","symbol":"^GSPC","schwankung":9.1,"jahrMedian":12.2,"perzentil":10,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"Gold","symbol":"GC=F","schwankung":17.7,"jahrMedian":23.7,"perzentil":9,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."}]},"sektoren":{"ok":true,"fenster":21,"marktSymbol":"^GSPC","marktRendite":-0.67,"vonTag":"2026-09-21","bisTag":"2026-10-20","zeilen":[{"name":"Energie","symbol":"XLE","rendite":8.82,"vorsprung":9.49,"zufallsbreite":6.92,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±13,8 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Rohstoffe/Material","symbol":"XLB","rendite":3.06,"vorsprung":3.73,"zufallsbreite":3.94,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±7,9 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Finanzen","symbol":"XLF","rendite":-0.32,"vorsprung":0.35,"zufallsbreite":3.88,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±7,8 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Rüstung/Luftfahrt","symbol":"ITA","rendite":-4.62,"vorsprung":-3.95,"zufallsbreite":4.7,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±9,4 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Technologie","symbol":"XLK","rendite":-4.83,"vorsprung":-4.16,"zufallsbreite":3.89,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±7,8 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."}],"alleRauschen":true},"gleichlauf":{"ok":true,"tage":60,"vonTag":"2026-07-27","bisTag":"2026-10-20","standardfehler":0.132,"schwelle":0.26,"gemeinsamGesamt":251,"herkunft":[{"symbol":"BTC-USD","eigeneTage":366,"ohneDiesen":0,"stempelzeit":"00:00 (366x)","fehlen":null},{"symbol":"ETH-USD","eigeneTage":366,"ohneDiesen":0,"stempelzeit":"00:00 (366x)","fehlen":null},{"symbol":"XRP-USD","eigeneTage":366,"ohneDiesen":0,"stempelzeit":"00:00 (366x)","fehlen":null},{"symbol":"GBPUSD=X","eigeneTage":259,"ohneDiesen":0,"stempelzeit":"11:00 (151x), 12:00 (108x)","fehlen":null},{"symbol":"^GSPC","eigeneTage":251,"ohneDiesen":0,"stempelzeit":"13:30 (166x), 14:30 (85x)","fehlen":null},{"symbol":"GC=F","eigeneTage":252,"ohneDiesen":0,"stempelzeit":"04:00 (167x), 05:00 (83x)","fehlen":null}],"paare":[{"a":"Bitcoin","b":"XRP","aSymbol":"BTC-USD","bSymbol":"XRP-USD","wert":0.9,"stufe":"stark-mit","urteil":"Laufen deutlich miteinander. Zwei Signale gleichzeitig sind hier eher EINE Wette als zwei."},{"a":"Bitcoin","b":"Ethereum","aSymbol":"BTC-USD","bSymbol":"ETH-USD","wert":0.88,"stufe":"stark-mit","urteil":"Laufen deutlich miteinander. Zwei Signale gleichzeitig sind hier eher EINE Wette als zwei."},{"a":"Ethereum","b":"XRP","aSymbol":"ETH-USD","bSymbol":"XRP-USD","wert":0.79,"stufe":"stark-mit","urteil":"Laufen deutlich miteinander. Zwei Signale gleichzeitig sind hier eher EINE Wette als zwei."},{"a":"Bitcoin","b":"Gold","aSymbol":"BTC-USD","bSymbol":"GC=F","wert":0.5,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Ethereum","b":"Gold","aSymbol":"ETH-USD","bSymbol":"GC=F","wert":0.47,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"XRP","b":"Gold","aSymbol":"XRP-USD","bSymbol":"GC=F","wert":0.43,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"S&P 500","b":"Gold","aSymbol":"^GSPC","bSymbol":"GC=F","wert":0.36,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Bitcoin","b":"S&P 500","aSymbol":"BTC-USD","bSymbol":"^GSPC","wert":0.34,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Ethereum","b":"S&P 500","aSymbol":"ETH-USD","bSymbol":"^GSPC","wert":0.28,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"XRP","b":"S&P 500","aSymbol":"XRP-USD","bSymbol":"^GSPC","wert":0.26,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"GBP/USD","b":"S&P 500","aSymbol":"GBPUSD=X","bSymbol":"^GSPC","wert":-0.16,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"Ethereum","b":"GBP/USD","aSymbol":"ETH-USD","bSymbol":"GBPUSD=X","wert":-0.07,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"XRP","b":"GBP/USD","aSymbol":"XRP-USD","bSymbol":"GBPUSD=X","wert":0.04,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"GBP/USD","b":"Gold","aSymbol":"GBPUSD=X","bSymbol":"GC=F","wert":-0.03,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"Bitcoin","b":"GBP/USD","aSymbol":"BTC-USD","bSymbol":"GBPUSD=X","wert":0.01,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."}],"starkeAnzahl":3},"termine":{"ok":true,"geprueft":"2026-10-21T10:27:45.017Z","gesamtImFeed":86,"feedFehler":null,"waehrungen":["USD","GBP","EUR"],"kommende":[]}},"historie":{"ok":true,"handelstag":"2026-10-20","neu":false,"tage":135,"seit":"2026-04-09","bytes":273836},"auswertung":{"trades":116,"zielTrades":200,"mitTerminen":2,"zielTermine":30,"bereit":false,"termineBereit":false,"letzte":{"gelaufenAm":"2026-10-15T16:18:48.416Z","offizielleTrades":116,"mitUmfeld":116,"mitBekanntenTerminen":2,"beobachtungsTrades":462,"erwartungswert":-0.174,"standardfehler":0.121,"ergebnis":"nichts hat die Streuung überlebt"}},"langfrist":[{"name":"MSCI World","symbol":"URTH","hinweis":"Weltindex, erst seit 2012 als ETF handelbar","ok":true,"monate":178,"spanneMonate":177,"dichte":101,"von":"2012-01","bis":"2026-10","zeilen":[{"jahre":1,"fenster":165,"schlechtester":-21,"bester":52.1,"mittel":12.3,"anteilVerlust":21.8,"spanne":73.1},{"jahre":5,"fenster":117,"schlechtester":1.2,"bester":14.5,"mittel":8.6,"anteilVerlust":0,"spanne":13.3},{"jahre":10,"fenster":57,"schlechtester":5.6,"bester":11.4,"mittel":7.8,"anteilVerlust":0,"spanne":5.8}]},{"name":"S&P 500","symbol":"^GSPC","hinweis":"500 groesste US-Firmen, mit Abstand die laengste Historie","ok":true,"monate":502,"spanneMonate":501,"dichte":100,"von":"1985-01","bis":"2026-10","zeilen":[{"jahre":1,"fenster":489,"schlechtester":-44.7,"bester":53.8,"mittel":12.2,"anteilVerlust":20.4,"spanne":98.4},{"jahre":5,"fenster":441,"schlechtester":-8.5,"bester":26.2,"mittel":10.1,"anteilVerlust":18.8,"spanne":34.7},{"jahre":10,"fenster":381,"schlechtester":-5.1,"bester":16.7,"mittel":9.4,"anteilVerlust":7.3,"spanne":21.8},{"jahre":15,"fenster":322,"schlechtester":1.8,"bester":15.1,"mittel":7.5,"anteilVerlust":0,"spanne":13.4},{"jahre":20,"fenster":262,"schlechtester":2.8,"bester":10,"mittel":6.8,"anteilVerlust":0,"spanne":7.3}]}],"beobachtung":{"themen":["Breit gestreut","Rüstung","Energie","Technik","Einzelwert","Krypto"],"massstab":"EUNL.DE","massstabName":"iShares Core MSCI World UCITS ETF USD (Acc)","massstabUsd":"URTH","massstabUsdName":"iShares MSCI World ETF","relTage":90,"volFenster":60,"eintraege":[{"thema":"Breit gestreut","name":"MSCI World","symbol":"EUNL.DE","kaufbar":true,"ok":true,"langname":"iShares Core MSCI World UCITS ETF USD (Acc)","waehrung":"EUR","kurs":130.71,"stand":"2026-10-21","spanne":{"hoch":132.41,"tief":106.97,"vomHoch":-1.3,"ueberTief":22.2,"inSpanne":93},"monat1":1.7,"monat3":3.7,"monat6":12.1,"jahr1":18.9,"schwankung":8.9,"relativ":{"stufe":"massstab","grund":"Das ist der Vergleichsmaßstab selbst."}},{"thema":"Breit gestreut","name":"FTSE All-World","symbol":"VWCE.DE","kaufbar":true,"ok":true,"langname":"Vanguard FTSE All-World UCITS ETF USD Accumulation","waehrung":"EUR","kurs":170.74,"stand":"2026-10-21","spanne":{"hoch":173.96,"tief":139.2,"vomHoch":-1.9,"ueberTief":22.7,"inSpanne":91},"monat1":0.7,"monat3":3.2,"monat6":11.3,"jahr1":19.3,"schwankung":9.5,"relativ":{"vorsprung":-1.5,"zufallsbreite":2.7,"stufe":"rauschen","grund":"Vorsprung -1,5 Punkte liegt im Zufallsbereich (±2,7) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Breit gestreut","name":"MSCI ACWI","symbol":"IUSQ.DE","kaufbar":true,"ok":true,"langname":"iShares MSCI All Country World UCITS ETF USD Acc","waehrung":"EUR","kurs":109.42,"stand":"2026-10-21","spanne":{"hoch":111.42,"tief":89.06,"vomHoch":-1.8,"ueberTief":22.9,"inSpanne":91},"monat1":0.8,"monat3":3.2,"monat6":11.4,"jahr1":19.5,"schwankung":9.4,"relativ":{"vorsprung":-1.4,"zufallsbreite":2.7,"stufe":"rauschen","grund":"Vorsprung -1,4 Punkte liegt im Zufallsbereich (±2,7) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Breit gestreut","name":"Schwellenländer","symbol":"EUNM.DE","kaufbar":true,"ok":true,"langname":"iShares MSCI EM UCITS ETF USD (Acc)","waehrung":"EUR","kurs":54.474,"stand":"2026-10-21","spanne":{"hoch":60.1,"tief":42.72,"vomHoch":-9.4,"ueberTief":27.5,"inSpanne":68},"monat1":-5.4,"monat3":-0.7,"monat6":5.4,"jahr1":23.1,"schwankung":19.4,"relativ":{"vorsprung":-11.2,"zufallsbreite":22,"stufe":"rauschen","grund":"Vorsprung -11,2 Punkte liegt im Zufallsbereich (±22,0) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"VanEck Defense","symbol":"DFEN.DE","kaufbar":true,"ok":true,"langname":"VanEck Defense ETF A USD Acc","waehrung":"EUR","kurs":50.92,"stand":"2026-10-21","spanne":{"hoch":64.51,"tief":48.08,"vomHoch":-21.1,"ueberTief":5.9,"inSpanne":17},"monat1":-3.7,"monat3":-0.5,"monat6":-12,"jahr1":-5.6,"schwankung":22.6,"relativ":{"vorsprung":-10.7,"zufallsbreite":26.5,"stufe":"rauschen","grund":"Vorsprung -10,7 Punkte liegt im Zufallsbereich (±26,5) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"WisdomTree Europa Def.","symbol":"WDEF.MI","kaufbar":true,"ok":true,"langname":"WisdomTree Europe Defence UCITS ETF - EUR Acc","waehrung":"EUR","kurs":31.055,"stand":"2026-10-21","spanne":{"hoch":36.01,"tief":27.45,"vomHoch":-13.8,"ueberTief":13.1,"inSpanne":42},"monat1":-1.4,"monat3":0.8,"monat6":-1.3,"jahr1":-2.2,"schwankung":20,"relativ":{"vorsprung":-3.9,"zufallsbreite":27,"stufe":"rauschen","grund":"Vorsprung -3,9 Punkte liegt im Zufallsbereich (±27,0) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"Rheinmetall","symbol":"RHM.DE","kaufbar":true,"ok":true,"langname":"Rheinmetall AG","waehrung":"EUR","kurs":1044,"stand":"2026-10-21","spanne":{"hoch":1966,"tief":909,"vomHoch":-46.9,"ueberTief":14.9,"inSpanne":13},"monat1":3.3,"monat3":3.6,"monat6":-26.6,"jahr1":-41.4,"schwankung":35.6,"relativ":{"vorsprung":-16,"zufallsbreite":62.7,"stufe":"rauschen","grund":"Vorsprung -16,0 Punkte liegt im Zufallsbereich (±62,7) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"Hensoldt","symbol":"HAG.DE","kaufbar":true,"ok":true,"langname":"Hensoldt AG","waehrung":"EUR","kurs":85.58,"stand":"2026-10-21","spanne":{"hoch":103.3,"tief":63.18,"vomHoch":-17.2,"ueberTief":35.5,"inSpanne":56},"monat1":9.3,"monat3":10.7,"monat6":9.9,"jahr1":-13.2,"schwankung":40.9,"relativ":{"vorsprung":13.5,"zufallsbreite":53.9,"stufe":"rauschen","grund":"Vorsprung +13,5 Punkte liegt im Zufallsbereich (±53,9) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"Thales","symbol":"HO.PA","kaufbar":true,"ok":true,"langname":"Thales S.A.","waehrung":"EUR","kurs":231.1,"stand":"2026-10-21","spanne":{"hoch":274.2,"tief":211.9,"vomHoch":-15.7,"ueberTief":9.1,"inSpanne":31},"monat1":-2.4,"monat3":1.9,"monat6":-4.5,"jahr1":-9.6,"schwankung":23.6,"relativ":{"vorsprung":-5.2,"zufallsbreite":32.9,"stufe":"rauschen","grund":"Vorsprung -5,2 Punkte liegt im Zufallsbereich (±32,9) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"US-Rüstung (Vergleich)","symbol":"ITA","kaufbar":false,"ok":true,"langname":"iShares U.S. Aerospace & Defense ETF","waehrung":"USD","kurs":206.15,"stand":"2026-10-20","spanne":{"hoch":256.6,"tief":195.71,"vomHoch":-19.7,"ueberTief":5.3,"inSpanne":17},"monat1":-3.6,"monat3":-10.3,"monat6":-7.6,"jahr1":-1.7,"schwankung":19,"relativ":{"vorsprung":-15.6,"zufallsbreite":22.5,"stufe":"rauschen","grund":"Vorsprung -15,6 Punkte liegt im Zufallsbereich (±22,5) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Energie","name":"Europa Öl & Gas","symbol":"EXH1.DE","kaufbar":true,"ok":true,"langname":"iShares STOXX Europe 600 Oil & Gas UCITS ETF (DE)","waehrung":"EUR","kurs":58.42,"stand":"2026-10-21","spanne":{"hoch":59.34,"tief":37.96,"vomHoch":-1.6,"ueberTief":53.9,"inSpanne":96},"monat1":5.2,"monat3":9.3,"monat6":8,"jahr1":53,"schwankung":14.6,"relativ":{"vorsprung":9.5,"zufallsbreite":26,"stufe":"rauschen","grund":"Vorsprung +9,5 Punkte liegt im Zufallsbereich (±26,0) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Energie","name":"US-Energie (Vergleich)","symbol":"XLE","kaufbar":false,"ok":true,"langname":"State Street Energy Select Sector SPDR ETF","waehrung":"USD","kurs":67.97,"stand":"2026-10-20","spanne":{"hoch":68.51,"tief":43.06,"vomHoch":-0.8,"ueberTief":57.8,"inSpanne":98},"monat1":5.7,"monat3":16.2,"monat6":21.7,"jahr1":56.5,"schwankung":21.7,"relativ":{"vorsprung":16.1,"zufallsbreite":33.3,"stufe":"rauschen","grund":"Vorsprung +16,1 Punkte liegt im Zufallsbereich (±33,3) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Technik","name":"S&P 500 Technologie","symbol":"QDVE.DE","kaufbar":true,"ok":true,"langname":"iShares S&P 500 Information Technology Sector UCITS ETF USD (Acc)","waehrung":"EUR","kurs":46.02,"stand":"2026-10-21","spanne":{"hoch":49.51,"tief":31.88,"vomHoch":-7,"ueberTief":44.4,"inSpanne":80},"monat1":-0.5,"monat3":6.1,"monat6":21.2,"jahr1":27.7,"schwankung":19.5,"relativ":{"vorsprung":1.2,"zufallsbreite":18.4,"stufe":"rauschen","grund":"Vorsprung +1,2 Punkte liegt im Zufallsbereich (±18,4) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Technik","name":"Welt Technologie","symbol":"XDWT.DE","kaufbar":true,"ok":true,"langname":"Xtrackers MSCI World Information Technology UCITS ETF 1C","waehrung":"EUR","kurs":129.58,"stand":"2026-10-21","spanne":{"hoch":139.82,"tief":89.74,"vomHoch":-7.3,"ueberTief":44.4,"inSpanne":80},"monat1":-0.5,"monat3":5.8,"monat6":21.4,"jahr1":27.4,"schwankung":19.9,"relativ":{"vorsprung":0,"zufallsbreite":18.9,"stufe":"rauschen","grund":"Vorsprung +0,0 Punkte liegt im Zufallsbereich (±18,9) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Technik","name":"Nasdaq 100","symbol":"EQQQ.DE","kaufbar":true,"ok":true,"langname":"Invesco EQQQ NASDAQ-100 UCITS ETF","waehrung":"EUR","kurs":644.5,"stand":"2026-10-21","spanne":{"hoch":681.3,"tief":492,"vomHoch":-5.4,"ueberTief":31,"inSpanne":81},"monat1":-0.1,"monat3":3.3,"monat6":15.2,"jahr1":21.8,"schwankung":15.6,"relativ":{"vorsprung":-3.7,"zufallsbreite":13.2,"stufe":"rauschen","grund":"Vorsprung -3,7 Punkte liegt im Zufallsbereich (±13,2) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Technik","name":"US-Technik (Vergleich)","symbol":"XLK","kaufbar":false,"ok":true,"langname":"State Street Technology Select Sector SPDR ETF","waehrung":"USD","kurs":185.44,"stand":"2026-10-20","spanne":{"hoch":203.25,"tief":126.68,"vomHoch":-8.8,"ueberTief":46.4,"inSpanne":77},"monat1":-2.2,"monat3":2.6,"monat6":19.9,"jahr1":28.7,"schwankung":25.5,"relativ":{"vorsprung":-1.7,"zufallsbreite":24.8,"stufe":"rauschen","grund":"Vorsprung -1,7 Punkte liegt im Zufallsbereich (±24,8) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Einzelwert","name":"Tesla","symbol":"TSLA","kaufbar":true,"ok":true,"langname":"Tesla, Inc.","waehrung":"USD","kurs":373.71,"stand":"2026-10-20","spanne":{"hoch":498.83,"tief":297.38,"vomHoch":-25.1,"ueberTief":25.7,"inSpanne":38},"monat1":2.6,"monat3":-1.4,"monat6":-3.3,"jahr1":-16.5,"schwankung":38.9,"relativ":{"vorsprung":-9.3,"zufallsbreite":53.1,"stufe":"rauschen","grund":"Vorsprung -9,3 Punkte liegt im Zufallsbereich (±53,1) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Krypto","name":"Bitcoin","symbol":"BTC-USD","kaufbar":true,"ok":true,"langname":"Bitcoin USD","waehrung":"USD","kurs":83237.72,"stand":"2026-10-21","spanne":{"hoch":116273.31,"tief":57747.77,"vomHoch":-28.4,"ueberTief":44.1,"inSpanne":44},"monat1":-3.9,"monat3":25.9,"monat6":6.4,"jahr1":-23.3,"schwankung":28.4,"relativ":{"vorsprung":27.6,"zufallsbreite":39.6,"stufe":"rauschen","grund":"Vorsprung +27,6 Punkte liegt im Zufallsbereich (±39,6) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Krypto","name":"Ethereum","symbol":"ETH-USD","kaufbar":true,"ok":true,"langname":"Ethereum USD","waehrung":"USD","kurs":2448.11,"stand":"2026-10-21","spanne":{"hoch":4250.67,"tief":1506.51,"vomHoch":-42.4,"ueberTief":62.5,"inSpanne":34},"monat1":-11.8,"monat3":26.6,"monat6":3,"jahr1":-36.9,"schwankung":33.3,"relativ":{"vorsprung":43.4,"zufallsbreite":55.3,"stufe":"rauschen","grund":"Vorsprung +43,4 Punkte liegt im Zufallsbereich (±55,3) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Krypto","name":"Solana","symbol":"SOL-USD","kaufbar":true,"ok":true,"langname":"Solana USD","waehrung":"USD","kurs":106.15,"stand":"2026-10-21","spanne":{"hoch":205.02,"tief":60.41,"vomHoch":-48.2,"ueberTief":75.7,"inSpanne":32},"monat1":-10.6,"monat3":36.3,"monat6":22.1,"jahr1":-42.8,"schwankung":48.3,"relativ":{"vorsprung":56.4,"zufallsbreite":59.3,"stufe":"rauschen","grund":"Vorsprung +56,4 Punkte liegt im Zufallsbereich (±59,3) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Krypto","name":"XRP","symbol":"XRP-USD","kaufbar":true,"ok":true,"langname":"XRP USD","waehrung":"USD","kurs":1.3531,"stand":"2026-10-21","spanne":{"hoch":2.69,"tief":0.99,"vomHoch":-49.8,"ueberTief":36.9,"inSpanne":21},"monat1":-11.7,"monat3":18.5,"monat6":-5.4,"jahr1":-44.2,"schwankung":49.8,"relativ":{"vorsprung":14,"zufallsbreite":68.8,"stufe":"rauschen","grund":"Vorsprung +14,0 Punkte liegt im Zufallsbereich (±68,8) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}}]}};
+const DATA = {"stand":"2026-10-21 15:45 UTC","standIso":"2026-10-21T15:45:24.981Z","gruppen":["Index","Rohstoff","Umfeld","Sektor","Einzelwert","Gehandelt"],"veraltetTage":4,"symboltestVom":"2026-10-13T13:20:47.983Z","anzahl":25,"anzahlOk":25,"eintraege":[{"gruppe":"Index","name":"MSCI World","symbol":"URTH","hinweis":"ETF auf den Weltindex, in USD","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":208.61,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.58,"tagVon":207.4,"tagVonDatum":"2026-10-20","woche":0.65,"wocheVon":207.26,"wocheVonDatum":"2026-10-14","monat":-0.52,"monatVon":209.7,"monatVonDatum":"2026-09-21","jahr":14.08,"jahrVon":182.86,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Index","name":"MSCI World (EUR)","symbol":"IWDA.AS","hinweis":"derselbe Weltindex, in Euro notiert","einheit":null,"ok":true,"waehrung":"EUR","boerse":"AMS","stand":131.17,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":255,"luecken":1,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.53,"tagVon":130.48,"tagVonDatum":"2026-10-20","woche":-0.49,"wocheVon":131.81,"wocheVonDatum":"2026-10-14","monat":1.98,"monatVon":128.62,"monatVonDatum":"2026-09-21","jahr":19.31,"jahrVon":109.94,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Index","name":"S&P 500","symbol":"^GSPC","hinweis":"500 größte US-Firmen","einheit":null,"ok":true,"waehrung":"USD","boerse":"SNP","stand":7752.74,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.52,"tagVon":7712.57,"tagVonDatum":"2026-10-20","woche":0.44,"wocheVon":7718.94,"wocheVonDatum":"2026-10-14","monat":-0.15,"monatVon":7764.7,"monatVonDatum":"2026-09-21","jahr":15.11,"jahrVon":6735.35,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Index","name":"Nasdaq 100","symbol":"^NDX","hinweis":"100 größte Technologiewerte","einheit":null,"ok":true,"waehrung":"USD","boerse":"NIM","stand":29849.73,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":1.22,"tagVon":29490.28,"tagVonDatum":"2026-10-20","woche":-0.34,"wocheVon":29950.82,"wocheVonDatum":"2026-10-14","monat":-2.08,"monatVon":30482.35,"monatVonDatum":"2026-09-21","jahr":18.79,"jahrVon":25127.13,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Index","name":"DAX","symbol":"^GDAXI","hinweis":"40 größte deutsche Firmen","einheit":null,"ok":true,"waehrung":"EUR","boerse":"GER","stand":25647.11,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":254,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":1.35,"tagVon":25304.42,"tagVonDatum":"2026-10-20","woche":1.38,"wocheVon":25298.61,"wocheVonDatum":"2026-10-14","monat":0.28,"monatVon":25575.01,"monatVonDatum":"2026-09-21","jahr":5.41,"jahrVon":24330.03,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Index","name":"Euro Stoxx 50","symbol":"^STOXX50E","hinweis":"50 größte Firmen der Eurozone","einheit":null,"ok":true,"waehrung":"EUR","boerse":"ZRH","stand":6204.5,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":251,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":1.35,"tagVon":6121.66,"tagVonDatum":"2026-10-20","woche":0.23,"wocheVon":6190.37,"wocheVonDatum":"2026-10-14","monat":-1.8,"monatVon":6318.2,"monatVonDatum":"2026-09-21","jahr":9.1,"jahrVon":5686.83,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Oel WTI","symbol":"CL=F","hinweis":"US-Sorte, Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":96.8,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-4.9,"tagVon":101.79,"tagVonDatum":"2026-10-20","woche":1.8,"wocheVon":95.09,"wocheVonDatum":"2026-10-14","monat":1.06,"monatVon":95.78,"monatVonDatum":"2026-09-21","jahr":67.42,"jahrVon":57.82,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Oel Brent","symbol":"BZ=F","hinweis":"Nordsee-Sorte, Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":108.56,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.21,"tagVon":108.79,"tagVonDatum":"2026-10-20","woche":2.36,"wocheVon":106.06,"wocheVonDatum":"2026-10-14","monat":8.19,"monatVon":100.34,"monatVonDatum":"2026-09-21","jahr":77.04,"jahrVon":61.32,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Gold","symbol":"GC=F","hinweis":"Terminkontrakt - die Engine handelt denselben Wert","einheit":null,"ok":true,"waehrung":"USD","boerse":"CMX","stand":4156,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.32,"tagVon":4142.6,"tagVonDatum":"2026-10-20","woche":1.17,"wocheVon":4107.9,"wocheVonDatum":"2026-10-14","monat":-5.2,"monatVon":4383.9,"monatVonDatum":"2026-09-21","jahr":1.14,"jahrVon":4109.1,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Silber","symbol":"SI=F","hinweis":"Terminkontrakt","einheit":null,"ok":true,"waehrung":"USD","boerse":"CMX","stand":57.8,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.16,"tagVon":57.71,"tagVonDatum":"2026-10-20","woche":4.05,"wocheVon":55.55,"wocheVonDatum":"2026-10-14","monat":-12.19,"monatVon":65.82,"monatVonDatum":"2026-09-21","jahr":21.81,"jahrVon":47.45,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Rohstoff","name":"Erdgas","symbol":"NG=F","hinweis":"Terminkontrakt, sehr sprunghaft","einheit":null,"ok":true,"waehrung":"USD","boerse":"NYM","stand":2.821,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-4.79,"tagVon":2.963,"tagVonDatum":"2026-10-20","woche":-11.79,"wocheVon":3.198,"wocheVonDatum":"2026-10-14","monat":-0.53,"monatVon":2.836,"monatVonDatum":"2026-09-21","jahr":-18.8,"jahrVon":3.474,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Umfeld","name":"VIX","symbol":"^VIX","hinweis":"erwartete Schwankung im S&P 500, in Prozentpunkten - kein Kurs","einheit":"pkt","ok":true,"waehrung":"USD","boerse":"CXI","stand":16.54,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":254,"luecken":8,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-4.45,"tagVon":17.31,"tagVonDatum":"2026-10-20","woche":-1.96,"wocheVon":16.87,"wocheVonDatum":"2026-10-14","monat":11.23,"monatVon":14.87,"monatVonDatum":"2026-09-21","jahr":-7.44,"jahrVon":17.87,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Umfeld","name":"US-Zins 10 Jahre","symbol":"^TNX","hinweis":"Rendite zehnjähriger US-Staatsanleihen in Prozent","einheit":"%","ok":true,"waehrung":"USD","boerse":"CGI","stand":5.102,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.29,"tagVon":5.117,"tagVonDatum":"2026-10-20","woche":-1.7,"wocheVon":5.19,"wocheVonDatum":"2026-10-14","monat":2.8,"monatVon":4.963,"monatVonDatum":"2026-09-21","jahr":28.74,"jahrVon":3.963,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Umfeld","name":"Dollar-Index","symbol":"DX-Y.NYB","hinweis":"Dollar gegen einen Korb anderer Währungen","einheit":"pkt","ok":true,"waehrung":"USD","boerse":"NYB","stand":101.76,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":52,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.03,"tagVon":101.73,"tagVonDatum":"2026-10-20","woche":-0.77,"wocheVon":102.55,"wocheVonDatum":"2026-10-14","monat":1.33,"monatVon":100.43,"monatVonDatum":"2026-09-21","jahr":2.86,"jahrVon":98.93,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Sektor","name":"Technologie","symbol":"XLK","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":188.4,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":1.59,"tagVon":185.44,"tagVonDatum":"2026-10-20","woche":-1.07,"wocheVon":190.43,"wocheVonDatum":"2026-10-14","monat":-3.31,"monatVon":194.85,"monatVonDatum":"2026-09-21","jahr":30.68,"jahrVon":144.17,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Sektor","name":"Energie","symbol":"XLE","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":68.06,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.13,"tagVon":67.97,"tagVonDatum":"2026-10-20","woche":0.63,"wocheVon":67.63,"wocheVonDatum":"2026-10-14","monat":8.96,"monatVon":62.46,"monatVonDatum":"2026-09-21","jahr":57.01,"jahrVon":43.35,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Sektor","name":"Finanzen","symbol":"XLF","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":56.04,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.57,"tagVon":55.72,"tagVonDatum":"2026-10-20","woche":2.79,"wocheVon":54.52,"wocheVonDatum":"2026-10-14","monat":0.25,"monatVon":55.9,"monatVonDatum":"2026-09-21","jahr":6.28,"jahrVon":52.73,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Sektor","name":"Rohstoffe/Material","symbol":"XLB","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"PCX","stand":51.05,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-0.35,"tagVon":51.23,"tagVonDatum":"2026-10-20","woche":2.78,"wocheVon":49.67,"wocheVonDatum":"2026-10-14","monat":2.7,"monatVon":49.71,"monatVonDatum":"2026-09-21","jahr":15.25,"jahrVon":44.29,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Sektor","name":"Rüstung/Luftfahrt","symbol":"ITA","hinweis":"US-Sektor-ETF","einheit":null,"ok":true,"waehrung":"USD","boerse":"BTS","stand":206.76,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":0.3,"tagVon":206.15,"tagVonDatum":"2026-10-20","woche":1.23,"wocheVon":204.24,"wocheVonDatum":"2026-10-14","monat":-4.34,"monatVon":216.14,"monatVonDatum":"2026-09-21","jahr":-3.09,"jahrVon":213.36,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Einzelwert","name":"Rheinmetall","symbol":"RHM.DE","hinweis":"Rüstung, Frankfurt","einheit":null,"ok":true,"waehrung":"EUR","boerse":"GER","stand":1021,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":254,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":-3.13,"tagVon":1054,"tagVonDatum":"2026-10-20","woche":3.83,"wocheVon":983.3,"wocheVonDatum":"2026-10-14","monat":1.03,"monatVon":1010.6,"monatVonDatum":"2026-09-21","jahr":-42.66,"jahrVon":1780.5,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Einzelwert","name":"Tesla","symbol":"TSLA","hinweis":"Nasdaq","einheit":null,"ok":true,"waehrung":"USD","boerse":"NMS","stand":385.71,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":252,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":3.21,"tagVon":373.71,"tagVonDatum":"2026-10-20","woche":5.05,"wocheVon":367.16,"wocheVonDatum":"2026-10-14","monat":2.77,"monatVon":375.3,"monatVonDatum":"2026-09-21","jahr":-12.85,"jahrVon":442.6,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Gehandelt","name":"Bitcoin","symbol":"BTC-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":84426.44,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":366,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":1.79,"tagVon":82941,"tagVonDatum":"2026-10-20","woche":3.51,"wocheVon":81562.49,"wocheVonDatum":"2026-10-14","monat":-2.51,"monatVon":86602.91,"monatVonDatum":"2026-09-21","jahr":-22.17,"jahrVon":108476.89,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Gehandelt","name":"Ethereum","symbol":"ETH-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":2509.64,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":366,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":2.57,"tagVon":2446.73,"tagVonDatum":"2026-10-20","woche":3.78,"wocheVon":2418.21,"wocheVonDatum":"2026-10-14","monat":-9.61,"monatVon":2776.47,"monatVonDatum":"2026-09-21","jahr":-35.26,"jahrVon":3876.76,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Gehandelt","name":"XRP","symbol":"XRP-USD","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCC","stand":1.3785,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-21","tage":366,"luecken":0,"stempelKorrigiert":false,"stempelVerworfen":0,"tag":3.3,"tagVon":1.3345,"tagVonDatum":"2026-10-20","woche":3.66,"wocheVon":1.3298,"wocheVonDatum":"2026-10-14","monat":-10.08,"monatVon":1.533,"monatVonDatum":"2026-09-21","jahr":-43.14,"jahrVon":2.4243,"jahrVonDatum":"2025-10-21","versuche":1},{"gruppe":"Gehandelt","name":"GBP/USD","symbol":"GBPUSD=X","hinweis":"handelt die Engine","einheit":null,"ok":true,"waehrung":"USD","boerse":"CCY","stand":1.3387,"standDatum":"2026-10-21","alterTage":0,"veraltet":false,"standAusLivekurs":true,"letzteKerzeDatum":"2026-10-20","tage":259,"luecken":3,"stempelKorrigiert":true,"stempelVerworfen":1,"tag":-0.2,"tagVon":1.3336,"tagVonDatum":"2026-10-19","woche":0.75,"wocheVon":1.321,"wocheVonDatum":"2026-10-13","monat":-0.37,"monatVon":1.3358,"monatVonDatum":"2026-09-18","jahr":null,"jahrVon":null,"jahrVonDatum":null,"versuche":1}],"kennzahlen":{"nervositaet":{"vix":{"stand":16.54,"perzentil":41,"jahrTief":13.47,"jahrHoch":31.05,"median":17.09,"tage":254},"fenster":20,"werte":[{"name":"Bitcoin","symbol":"BTC-USD","schwankung":22,"jahrMedian":34,"perzentil":14,"stufe":"niedrig","urteil":"Schwankt ruhiger als üblich - niedriger als an 86 % der Tage im letzten Jahr."},{"name":"Ethereum","symbol":"ETH-USD","schwankung":33.1,"jahrMedian":46.1,"perzentil":23,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"XRP","symbol":"XRP-USD","schwankung":36.3,"jahrMedian":43.1,"perzentil":36,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"GBP/USD","symbol":"GBPUSD=X","schwankung":5.3,"jahrMedian":6,"perzentil":24,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"S&P 500","symbol":"^GSPC","schwankung":8.9,"jahrMedian":12.2,"perzentil":6,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."},{"name":"Gold","symbol":"GC=F","schwankung":17.8,"jahrMedian":23.7,"perzentil":9,"stufe":"rauschen","urteil":"Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."}]},"sektoren":{"ok":true,"fenster":21,"marktSymbol":"^GSPC","marktRendite":-0.15,"vonTag":"2026-09-22","bisTag":"2026-10-21","zeilen":[{"name":"Energie","symbol":"XLE","rendite":10.16,"vorsprung":10.31,"zufallsbreite":6.79,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±13,6 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Finanzen","symbol":"XLF","rendite":2.26,"vorsprung":2.42,"zufallsbreite":3.26,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±6,5 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Rohstoffe/Material","symbol":"XLB","rendite":1.03,"vorsprung":1.18,"zufallsbreite":3.75,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±7,5 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Rüstung/Luftfahrt","symbol":"ITA","rendite":-3.38,"vorsprung":-3.23,"zufallsbreite":4.63,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±9,3 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."},{"name":"Technologie","symbol":"XLK","rendite":-4.01,"vorsprung":-3.86,"zufallsbreite":3.99,"stufe":"rauschen","urteil":"Innerhalb dessen, was reiner Zufall über einen Monat erzeugt (±8,0 Punkte). Kein belastbarer Unterschied zum Gesamtmarkt."}],"alleRauschen":true},"gleichlauf":{"ok":true,"tage":60,"vonTag":"2026-07-27","bisTag":"2026-10-20","standardfehler":0.132,"schwelle":0.26,"gemeinsamGesamt":251,"herkunft":[{"symbol":"GBPUSD=X","eigeneTage":259,"ohneDiesen":1,"stempelzeit":"11:00 (151x), 12:00 (108x)","fehlen":{"anzahl":1,"nachWochentag":{"Mi":1},"beispiele":["2026-10-21"]}},{"symbol":"BTC-USD","eigeneTage":366,"ohneDiesen":0,"stempelzeit":"00:00 (366x)","fehlen":null},{"symbol":"ETH-USD","eigeneTage":366,"ohneDiesen":0,"stempelzeit":"00:00 (366x)","fehlen":null},{"symbol":"XRP-USD","eigeneTage":366,"ohneDiesen":0,"stempelzeit":"00:00 (366x)","fehlen":null},{"symbol":"^GSPC","eigeneTage":252,"ohneDiesen":0,"stempelzeit":"13:30 (167x), 14:30 (85x)","fehlen":null},{"symbol":"GC=F","eigeneTage":252,"ohneDiesen":0,"stempelzeit":"04:00 (167x), 05:00 (83x)","fehlen":null}],"paare":[{"a":"Bitcoin","b":"XRP","aSymbol":"BTC-USD","bSymbol":"XRP-USD","wert":0.9,"stufe":"stark-mit","urteil":"Laufen deutlich miteinander. Zwei Signale gleichzeitig sind hier eher EINE Wette als zwei."},{"a":"Bitcoin","b":"Ethereum","aSymbol":"BTC-USD","bSymbol":"ETH-USD","wert":0.88,"stufe":"stark-mit","urteil":"Laufen deutlich miteinander. Zwei Signale gleichzeitig sind hier eher EINE Wette als zwei."},{"a":"Ethereum","b":"XRP","aSymbol":"ETH-USD","bSymbol":"XRP-USD","wert":0.79,"stufe":"stark-mit","urteil":"Laufen deutlich miteinander. Zwei Signale gleichzeitig sind hier eher EINE Wette als zwei."},{"a":"Bitcoin","b":"Gold","aSymbol":"BTC-USD","bSymbol":"GC=F","wert":0.5,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Ethereum","b":"Gold","aSymbol":"ETH-USD","bSymbol":"GC=F","wert":0.47,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"XRP","b":"Gold","aSymbol":"XRP-USD","bSymbol":"GC=F","wert":0.43,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"S&P 500","b":"Gold","aSymbol":"^GSPC","bSymbol":"GC=F","wert":0.36,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Bitcoin","b":"S&P 500","aSymbol":"BTC-USD","bSymbol":"^GSPC","wert":0.34,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"Ethereum","b":"S&P 500","aSymbol":"ETH-USD","bSymbol":"^GSPC","wert":0.28,"stufe":"schwach-mit","urteil":"Schwacher Gleichlauf - messbar, aber weit von Gleichschritt entfernt."},{"a":"XRP","b":"S&P 500","aSymbol":"XRP-USD","bSymbol":"^GSPC","wert":0.26,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"GBP/USD","b":"S&P 500","aSymbol":"GBPUSD=X","bSymbol":"^GSPC","wert":-0.16,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"Ethereum","b":"GBP/USD","aSymbol":"ETH-USD","bSymbol":"GBPUSD=X","wert":-0.07,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"XRP","b":"GBP/USD","aSymbol":"XRP-USD","bSymbol":"GBPUSD=X","wert":0.04,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"GBP/USD","b":"Gold","aSymbol":"GBPUSD=X","bSymbol":"GC=F","wert":-0.03,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."},{"a":"Bitcoin","b":"GBP/USD","aSymbol":"BTC-USD","bSymbol":"GBPUSD=X","wert":0.01,"stufe":"rauschen","urteil":"Kein erkennbarer Zusammenhang - der Wert liegt innerhalb der Messungenauigkeit (±0,26)."}],"starkeAnzahl":3},"termine":{"ok":true,"geprueft":"2026-10-21T15:45:24.981Z","gesamtImFeed":86,"feedFehler":null,"waehrungen":["USD","GBP","EUR"],"kommende":[]}},"historie":{"ok":true,"handelstag":"2026-10-21","neu":true,"tage":136,"seit":"2026-04-09","bytes":275820},"auswertung":{"trades":117,"zielTrades":200,"mitTerminen":3,"zielTermine":30,"bereit":false,"termineBereit":false,"letzte":{"gelaufenAm":"2026-10-15T16:18:48.416Z","offizielleTrades":116,"mitUmfeld":116,"mitBekanntenTerminen":2,"beobachtungsTrades":462,"erwartungswert":-0.174,"standardfehler":0.121,"ergebnis":"nichts hat die Streuung überlebt"}},"langfrist":[{"name":"MSCI World","symbol":"URTH","hinweis":"Weltindex, erst seit 2012 als ETF handelbar","ok":true,"monate":178,"spanneMonate":177,"dichte":101,"von":"2012-01","bis":"2026-10","zeilen":[{"jahre":1,"fenster":165,"schlechtester":-21,"bester":52.1,"mittel":12.3,"anteilVerlust":21.8,"spanne":73.1},{"jahre":5,"fenster":117,"schlechtester":1.2,"bester":14.5,"mittel":8.6,"anteilVerlust":0,"spanne":13.3},{"jahre":10,"fenster":57,"schlechtester":5.6,"bester":11.4,"mittel":7.8,"anteilVerlust":0,"spanne":5.8}]},{"name":"S&P 500","symbol":"^GSPC","hinweis":"500 groesste US-Firmen, mit Abstand die laengste Historie","ok":true,"monate":502,"spanneMonate":501,"dichte":100,"von":"1985-01","bis":"2026-10","zeilen":[{"jahre":1,"fenster":489,"schlechtester":-44.7,"bester":53.8,"mittel":12.2,"anteilVerlust":20.4,"spanne":98.4},{"jahre":5,"fenster":441,"schlechtester":-8.5,"bester":26.2,"mittel":10.1,"anteilVerlust":18.8,"spanne":34.7},{"jahre":10,"fenster":381,"schlechtester":-5.1,"bester":16.7,"mittel":9.4,"anteilVerlust":7.3,"spanne":21.8},{"jahre":15,"fenster":322,"schlechtester":1.8,"bester":15.1,"mittel":7.5,"anteilVerlust":0,"spanne":13.4},{"jahre":20,"fenster":262,"schlechtester":2.8,"bester":10,"mittel":6.8,"anteilVerlust":0,"spanne":7.3}]}],"beobachtung":{"themen":["Breit gestreut","Rüstung","Energie","Technik","Einzelwert","Krypto"],"massstab":"EUNL.DE","massstabName":"iShares Core MSCI World UCITS ETF USD (Acc)","massstabUsd":"URTH","massstabUsdName":"iShares MSCI World ETF","relTage":90,"volFenster":60,"eintraege":[{"thema":"Breit gestreut","name":"MSCI World","symbol":"EUNL.DE","kaufbar":true,"ok":true,"langname":"iShares Core MSCI World UCITS ETF USD (Acc)","waehrung":"EUR","kurs":131.18,"stand":"2026-10-21","spanne":{"hoch":132.41,"tief":106.97,"vomHoch":-0.9,"ueberTief":22.6,"inSpanne":95},"monat1":2,"monat3":4.1,"monat6":12.5,"jahr1":19.3,"schwankung":9,"relativ":{"stufe":"massstab","grund":"Das ist der Vergleichsmaßstab selbst."}},{"thema":"Breit gestreut","name":"FTSE All-World","symbol":"VWCE.DE","kaufbar":true,"ok":true,"langname":"Vanguard FTSE All-World UCITS ETF USD Accumulation","waehrung":"EUR","kurs":171.32,"stand":"2026-10-21","spanne":{"hoch":173.96,"tief":139.2,"vomHoch":-1.5,"ueberTief":23.1,"inSpanne":92},"monat1":1.1,"monat3":3.6,"monat6":11.7,"jahr1":19.7,"schwankung":9.5,"relativ":{"vorsprung":-1.6,"zufallsbreite":2.7,"stufe":"rauschen","grund":"Vorsprung -1,6 Punkte liegt im Zufallsbereich (±2,7) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Breit gestreut","name":"MSCI ACWI","symbol":"IUSQ.DE","kaufbar":true,"ok":true,"langname":"iShares MSCI All Country World UCITS ETF USD Acc","waehrung":"EUR","kurs":109.72,"stand":"2026-10-21","spanne":{"hoch":111.42,"tief":89.06,"vomHoch":-1.5,"ueberTief":23.2,"inSpanne":92},"monat1":1.1,"monat3":3.5,"monat6":11.7,"jahr1":19.8,"schwankung":9.5,"relativ":{"vorsprung":-1.5,"zufallsbreite":2.7,"stufe":"rauschen","grund":"Vorsprung -1,5 Punkte liegt im Zufallsbereich (±2,7) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Breit gestreut","name":"Schwellenländer","symbol":"EUNM.DE","kaufbar":true,"ok":true,"langname":"iShares MSCI EM UCITS ETF USD (Acc)","waehrung":"EUR","kurs":54.542,"stand":"2026-10-21","spanne":{"hoch":60.1,"tief":42.72,"vomHoch":-9.2,"ueberTief":27.7,"inSpanne":68},"monat1":-5.3,"monat3":-0.6,"monat6":5.6,"jahr1":23.3,"schwankung":19.4,"relativ":{"vorsprung":-11.5,"zufallsbreite":22,"stufe":"rauschen","grund":"Vorsprung -11,5 Punkte liegt im Zufallsbereich (±22,0) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"VanEck Defense","symbol":"DFEN.DE","kaufbar":true,"ok":true,"langname":"VanEck Defense ETF A USD Acc","waehrung":"EUR","kurs":51,"stand":"2026-10-21","spanne":{"hoch":64.51,"tief":48.08,"vomHoch":-20.9,"ueberTief":6.1,"inSpanne":18},"monat1":-3.5,"monat3":-0.4,"monat6":-11.9,"jahr1":-5.4,"schwankung":22.6,"relativ":{"vorsprung":-10.9,"zufallsbreite":26.5,"stufe":"rauschen","grund":"Vorsprung -10,9 Punkte liegt im Zufallsbereich (±26,5) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"WisdomTree Europa Def.","symbol":"WDEF.MI","kaufbar":true,"ok":true,"langname":"WisdomTree Europe Defence UCITS ETF - EUR Acc","waehrung":"EUR","kurs":30.965,"stand":"2026-10-21","spanne":{"hoch":36.01,"tief":27.45,"vomHoch":-14,"ueberTief":12.8,"inSpanne":41},"monat1":-1.7,"monat3":0.5,"monat6":-1.6,"jahr1":-2.5,"schwankung":20,"relativ":{"vorsprung":-4.6,"zufallsbreite":27,"stufe":"rauschen","grund":"Vorsprung -4,6 Punkte liegt im Zufallsbereich (±27,0) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"Rheinmetall","symbol":"RHM.DE","kaufbar":true,"ok":true,"langname":"Rheinmetall AG","waehrung":"EUR","kurs":1021,"stand":"2026-10-21","spanne":{"hoch":1966,"tief":909,"vomHoch":-48.1,"ueberTief":12.3,"inSpanne":11},"monat1":1,"monat3":1.3,"monat6":-28.2,"jahr1":-42.7,"schwankung":36.1,"relativ":{"vorsprung":-18.4,"zufallsbreite":63.1,"stufe":"rauschen","grund":"Vorsprung -18,4 Punkte liegt im Zufallsbereich (±63,1) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"Hensoldt","symbol":"HAG.DE","kaufbar":true,"ok":true,"langname":"Hensoldt AG","waehrung":"EUR","kurs":84.42,"stand":"2026-10-21","spanne":{"hoch":103.3,"tief":63.18,"vomHoch":-18.3,"ueberTief":33.6,"inSpanne":53},"monat1":7.8,"monat3":9.2,"monat6":8.5,"jahr1":-14.4,"schwankung":41.2,"relativ":{"vorsprung":11.5,"zufallsbreite":54.2,"stufe":"rauschen","grund":"Vorsprung +11,5 Punkte liegt im Zufallsbereich (±54,2) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"Thales","symbol":"HO.PA","kaufbar":true,"ok":true,"langname":"Thales S.A.","waehrung":"EUR","kurs":230.8,"stand":"2026-10-21","spanne":{"hoch":274.2,"tief":211.9,"vomHoch":-15.8,"ueberTief":8.9,"inSpanne":30},"monat1":-2.5,"monat3":1.8,"monat6":-4.6,"jahr1":-9.7,"schwankung":23.6,"relativ":{"vorsprung":-5.7,"zufallsbreite":32.9,"stufe":"rauschen","grund":"Vorsprung -5,7 Punkte liegt im Zufallsbereich (±32,9) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Rüstung","name":"US-Rüstung (Vergleich)","symbol":"ITA","kaufbar":false,"ok":true,"langname":"iShares U.S. Aerospace & Defense ETF","waehrung":"USD","kurs":206.73,"stand":"2026-10-21","spanne":{"hoch":256.6,"tief":195.71,"vomHoch":-19.4,"ueberTief":5.6,"inSpanne":18},"monat1":-4.4,"monat3":-10.5,"monat6":-5.7,"jahr1":-3.1,"schwankung":18.9,"relativ":{"vorsprung":-14.7,"zufallsbreite":22.4,"stufe":"rauschen","grund":"Vorsprung -14,7 Punkte liegt im Zufallsbereich (±22,4) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Energie","name":"Europa Öl & Gas","symbol":"EXH1.DE","kaufbar":true,"ok":true,"langname":"iShares STOXX Europe 600 Oil & Gas UCITS ETF (DE)","waehrung":"EUR","kurs":58.55,"stand":"2026-10-21","spanne":{"hoch":59.34,"tief":37.96,"vomHoch":-1.3,"ueberTief":54.2,"inSpanne":96},"monat1":5.4,"monat3":9.6,"monat6":8.2,"jahr1":53.3,"schwankung":14.7,"relativ":{"vorsprung":9.4,"zufallsbreite":26,"stufe":"rauschen","grund":"Vorsprung +9,4 Punkte liegt im Zufallsbereich (±26,0) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Energie","name":"US-Energie (Vergleich)","symbol":"XLE","kaufbar":false,"ok":true,"langname":"State Street Energy Select Sector SPDR ETF","waehrung":"USD","kurs":68.07,"stand":"2026-10-21","spanne":{"hoch":68.51,"tief":43.13,"vomHoch":-0.6,"ueberTief":57.8,"inSpanne":98},"monat1":9,"monat3":15,"monat6":20.4,"jahr1":57,"schwankung":21.5,"relativ":{"vorsprung":15.2,"zufallsbreite":33.3,"stufe":"rauschen","grund":"Vorsprung +15,2 Punkte liegt im Zufallsbereich (±33,3) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Technik","name":"S&P 500 Technologie","symbol":"QDVE.DE","kaufbar":true,"ok":true,"langname":"iShares S&P 500 Information Technology Sector UCITS ETF USD (Acc)","waehrung":"EUR","kurs":46.415,"stand":"2026-10-21","spanne":{"hoch":49.51,"tief":31.88,"vomHoch":-6.2,"ueberTief":45.6,"inSpanne":82},"monat1":0.3,"monat3":7,"monat6":22.2,"jahr1":28.8,"schwankung":19.6,"relativ":{"vorsprung":1.7,"zufallsbreite":18.4,"stufe":"rauschen","grund":"Vorsprung +1,7 Punkte liegt im Zufallsbereich (±18,4) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Technik","name":"Welt Technologie","symbol":"XDWT.DE","kaufbar":true,"ok":true,"langname":"Xtrackers MSCI World Information Technology UCITS ETF 1C","waehrung":"EUR","kurs":130.7,"stand":"2026-10-21","spanne":{"hoch":139.82,"tief":89.74,"vomHoch":-6.5,"ueberTief":45.6,"inSpanne":82},"monat1":0.4,"monat3":6.7,"monat6":22.5,"jahr1":28.5,"schwankung":20,"relativ":{"vorsprung":0.6,"zufallsbreite":18.9,"stufe":"rauschen","grund":"Vorsprung +0,6 Punkte liegt im Zufallsbereich (±18,9) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Technik","name":"Nasdaq 100","symbol":"EQQQ.DE","kaufbar":true,"ok":true,"langname":"Invesco EQQQ NASDAQ-100 UCITS ETF","waehrung":"EUR","kurs":649,"stand":"2026-10-21","spanne":{"hoch":681.3,"tief":492,"vomHoch":-4.7,"ueberTief":31.9,"inSpanne":83},"monat1":0.6,"monat3":4,"monat6":16,"jahr1":22.7,"schwankung":15.7,"relativ":{"vorsprung":-3.4,"zufallsbreite":13.2,"stufe":"rauschen","grund":"Vorsprung -3,4 Punkte liegt im Zufallsbereich (±13,2) – kein belastbarer Unterschied zum breiten Markt","gegen":"EUNL.DE"}},{"thema":"Technik","name":"US-Technik (Vergleich)","symbol":"XLK","kaufbar":false,"ok":true,"langname":"State Street Technology Select Sector SPDR ETF","waehrung":"USD","kurs":188.42,"stand":"2026-10-21","spanne":{"hoch":203.25,"tief":126.68,"vomHoch":-7.3,"ueberTief":48.7,"inSpanne":81},"monat1":-3.3,"monat3":4.5,"monat6":19.2,"jahr1":30.7,"schwankung":25.3,"relativ":{"vorsprung":-1.2,"zufallsbreite":24.8,"stufe":"rauschen","grund":"Vorsprung -1,2 Punkte liegt im Zufallsbereich (±24,8) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Einzelwert","name":"Tesla","symbol":"TSLA","kaufbar":true,"ok":true,"langname":"Tesla, Inc.","waehrung":"USD","kurs":385.69,"stand":"2026-10-21","spanne":{"hoch":498.83,"tief":297.38,"vomHoch":-22.7,"ueberTief":29.7,"inSpanne":44},"monat1":2.8,"monat3":3.1,"monat6":-0.5,"jahr1":-12.9,"schwankung":39.3,"relativ":{"vorsprung":-8.2,"zufallsbreite":53.3,"stufe":"rauschen","grund":"Vorsprung -8,2 Punkte liegt im Zufallsbereich (±53,3) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Krypto","name":"Bitcoin","symbol":"BTC-USD","kaufbar":true,"ok":true,"langname":"Bitcoin USD","waehrung":"USD","kurs":84461.11,"stand":"2026-10-21","spanne":{"hoch":116273.31,"tief":57747.77,"vomHoch":-27.4,"ueberTief":46.3,"inSpanne":46},"monat1":-2.5,"monat3":27.8,"monat6":8,"jahr1":-22.1,"schwankung":28.6,"relativ":{"vorsprung":29.8,"zufallsbreite":39.6,"stufe":"rauschen","grund":"Vorsprung +29,8 Punkte liegt im Zufallsbereich (±39,6) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Krypto","name":"Ethereum","symbol":"ETH-USD","kaufbar":true,"ok":true,"langname":"Ethereum USD","waehrung":"USD","kurs":2511.36,"stand":"2026-10-21","spanne":{"hoch":4250.67,"tief":1506.51,"vomHoch":-40.9,"ueberTief":66.7,"inSpanne":37},"monat1":-9.5,"monat3":29.9,"monat6":5.7,"jahr1":-35.2,"schwankung":33.7,"relativ":{"vorsprung":47.7,"zufallsbreite":55.3,"stufe":"rauschen","grund":"Vorsprung +47,7 Punkte liegt im Zufallsbereich (±55,3) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}},{"thema":"Krypto","name":"Solana","symbol":"SOL-USD","kaufbar":true,"ok":true,"langname":"Solana USD","waehrung":"USD","kurs":108.6,"stand":"2026-10-21","spanne":{"hoch":205.02,"tief":60.41,"vomHoch":-47,"ueberTief":79.8,"inSpanne":33},"monat1":-8.5,"monat3":39.4,"monat6":24.9,"jahr1":-41.5,"schwankung":48.4,"relativ":{"vorsprung":59.6,"zufallsbreite":59.3,"stufe":"besser","grund":"außerhalb des Zufallsbereichs (±59,3 Punkte), aber nicht weit","gegen":"URTH"}},{"thema":"Krypto","name":"XRP","symbol":"XRP-USD","kaufbar":true,"ok":true,"langname":"XRP USD","waehrung":"USD","kurs":1.3789,"stand":"2026-10-21","spanne":{"hoch":2.69,"tief":0.99,"vomHoch":-48.8,"ueberTief":39.5,"inSpanne":23},"monat1":-10.1,"monat3":20.8,"monat6":-3.6,"jahr1":-43.1,"schwankung":50.2,"relativ":{"vorsprung":18.7,"zufallsbreite":68.9,"stufe":"rauschen","grund":"Vorsprung +18,7 Punkte liegt im Zufallsbereich (±68,9) – kein belastbarer Unterschied zum breiten Markt","gegen":"URTH"}}]},"nachrichten":{"ok":true,"themen":[{"name":"Krypto","betrifft":["Bitcoin","Ethereum","XRP"],"ok":true,"eintraege":[{"titel":"Bitcoin-Halving 2028: Live-Countdown, Datum und Termine in der Tabelle","link":"https://news.google.com/rss/articles/CBMiugFBVV95cUxQbUc3M2cyNmVEb2IzdjBuTGtScklWWEM0cG1QWUF0RF95UG9UOVNrd2VzOUdzcGRnYTF1RzZmZHZlNUd1ZGNrd2xOT2JLM0ttRHoxajU2U2UxTDZBZ1Q4Sm81TEN6WGZIUTNoMFc5Wk5ndDJDSDdnckpCM3NxZlF0NzBGYlg3WXVqdndYa3dwekhCbF8tQ0RlcDkxckFKYkg1Vi04cDVfWmlqV2NHVjFJdEcxRlBLOFlZVXc?oc=5","quelle":"WirtschaftsWoche","zeitIso":"2026-10-21T07:17:00.000Z"},{"titel":"Neues Crash-Risiko für Bitcoin? Was der Kryptowährung durch eine neue Regelung droht","link":"https://news.google.com/rss/articles/CBMi5AFBVV95cUxOelliY0hFeno0SFBSNzVvV3R2RzQ5Y2xJbVZfNGpRZUhLemtoRkxJVU9WeEZNU3U0WTVfVE5XTkthdkdDX2p4UVpVbkpIOGNFSE9kZVhqZmZiWHNxUzBGUU8yWThnOE5kTFYtblNRelpJT0duSHJXOHNZb2p0ZkhWVmcyWUdRdmNwdTc3Q19Ja3F2MUFmZ0lkY3llUlJPSHVZSG5DNGFRN2FPRGliZl9HeEh0MmF6UFpKRko4SUNnZ2pRV2RvYzMtdFAyMHhxSkZyb2Jqd3JwOWRjY1NnSU5YR01LeFo?oc=5","quelle":"Börse Online","zeitIso":"2026-10-21T05:15:00.000Z"},{"titel":"BITCOIN Turbo S 39.7938 open end (HSBC) | Kurs, Chart, Analysen | DE000HT8C950","link":"https://news.google.com/rss/articles/CBMikAFBVV95cUxPQVFVN2QxanlDUDFWOFFqZmxIaTJlakFEQkhIUTNVS0hkdlVnTVZSMHp3U2lVRy15cWw5WjJuQTEzbWNHdlNxM1VLZTFHQkVJeFBlU2FwTjFSSGlDclNPT29RTDVScGtyUGMxSUMtbk9LNGl4ZTZiblFnZENaaVZpYmdwRmtlRHBuZ1VyUHVtQng?oc=5","quelle":"n-tv.de","zeitIso":"2026-10-21T06:22:00.000Z"}]},{"name":"Aktienmärkte","betrifft":["S&P 500","Nasdaq","DAX","breite ETFs"],"ok":true,"eintraege":[{"titel":"Dow Jones, S&P 500, Nasdaq: Wall Street notiert uneinheitlich","link":"https://news.google.com/rss/articles/CBMizAFBVV95cUxQdzZ2aUdYM1BURWlZWnNGd0ZfX2FwMTF2czlHbUNIV3pCeFdZUkp4RGpDc2hvYmw2UjczeUJ2dHFBRk00TjU3MFlkN2hBNDdvcVJMZlpkZGMyVC16QzdmTHgyUlN5SW5vbnhGeTgzTFRhZUpvNW5EN2FhX2xJSWEzekJKVjhBN2Q2SzJUdk10eldSTWU4UWhGYkdZMVZXN09FaXRSRDFMd3hwdWRyS3Q0b1FkS1I1LUVmbzJ3YVhUU01mZnJpVVFZUHplUGQ?oc=5","quelle":"Handelsblatt","zeitIso":"2026-10-21T13:51:52.000Z"},{"titel":"Börse: Dax und Wall Street legen zu, SpaceX überzeugt mit Milliardengewinn, Adidas im Fokus","link":"https://news.google.com/rss/articles/CBMi8wFBVV95cUxPSi1VeEVZWlNoNmRxRERkZkRUT2dRWFZPWklsZnZXMC01N3Fua2NldGZpRnN3ZkFlalRIbThTVFJhc0h3VFdTNUlocVNGX0NLWGlzQkxqZ2YweHFIcHJKVGI0aGZLVTNLZDJzOEEycFZkT2t4VG5pZVRBVEZYbVY1MnVLTXptNjQxQkZ2YTExRmc0SjNoSnl4RmVvVWR5bll2MVdnUF9tWlBjTVZza0tTbnhnbnU0OWpDNkFuLVZqeWlyWWMxNXNvcW54cFJ6ajV3U05Fa0xEanBiOEIwb2NiU05lakthNUg4VFVLZlFNamlteVk?oc=5","quelle":"Manager Magazin","zeitIso":"2026-10-21T14:03:00.000Z"},{"titel":"Diagnostikgesellschaft im Dax: Übernahme von Qiagen wird wahrscheinlicher","link":"https://news.google.com/rss/articles/CBMi1gFBVV95cUxQRGFXU2FtWG5JYm1RR3pqdmd6TGpGUk4zbFZqQy00RXlLRXltdDdoT0tRQVhPQ1pmdGk0Q3lQSW5rOGgzSGtDOXNKcGVnLXBBVDRKUFRDRGZYeHFsMURKZkVYRUxrLXJ1OFRXemNDVWVvU2hIVVpub1FEN0NsOWFHR0tjclBOU1RJalh0NlpuN2hZcEhEbmxucVA3YjRYQzJYdzFWVGNqNW5HMk5UMHdaNmZyQ3ZYTmNlZ085S3pfbjFGZEQtb3l4cTRaaVd0SlF6eUZjMXl3?oc=5","quelle":"FAZ","zeitIso":"2026-10-21T14:05:08.000Z"}]},{"name":"Zinsen und Notenbanken","betrifft":["GBP/USD","Gold","S&P 500","breite ETFs"],"ok":true,"eintraege":[{"titel":"Inflation in Großbritannien: Bank of England vor mehreren Zinsschritten","link":"https://news.google.com/rss/articles/CBMi0AFBVV95cUxQNXNaRDFISTMtNG5tZnprbTNPRlBKYjFvbkJTZDZQdW1UQVlLeUtGVDV1dWwxRVRvRGY0UE5QUnk1TE9WVkxGemF6UlBYc29BRUNvRXJLSjI2NEk5SnVzZzJQbzVRU2dQMEs1Mlktd1hWVGhhZ2FsQXhzNXJxVTI3djhyNjhKLXMyUDZHeGVqSzFJRzFwOXdDMDZnRzNXLXVmVk5mUDYzcDNacFpfOWgwbV9vY3lSWEt2LVBEcHN2eUhldEZRVWdGd2JTSV9aX1Ux?oc=5","quelle":"FAZ","zeitIso":"2026-10-21T13:08:54.000Z"},{"titel":"Inflation und Betriebskosten treiben Preise","link":"https://news.google.com/rss/articles/CBMiUkFVX3lxTFB6SDB4RVpqMVVyMVU5T19sOTlsYU5VVURQTUVkUmxyRGstRGc0UUtBcTREOHNlMk5UcGd0c2tBb283bkFIS3lFYmNUMTh2d2VESXc?oc=5","quelle":"kaernten.ORF.at","zeitIso":"2026-10-20T17:28:01.000Z"},{"titel":"Britische Inflation steigt stärker als erwartet, Zinserhöhung wahrscheinlicher","link":"https://news.google.com/rss/articles/CBMisgFBVV95cUxOQ0d1eldySXBCSmlaR0R1OFFIMEsydE1XaURYamh5aHJQOThGNVZQVlhUTTdOZU1UUzdmS05xcE50eHBhTm8wYkNPRjIyRklENU5taVM5RFpXbzNGSWVEbXpIeEtUQ2s3clBEZHR2X0JwRjhHeXBuc0VXT1Z2dE1jNV9nM1BER0tGSWdZNFZLUHdOQW5qTTB5NUpPMEhrenIwRENtLWFJM2tDcDliTndRQ3NB?oc=5","quelle":"Euronews.com","zeitIso":"2026-10-21T08:53:54.000Z"}]},{"name":"Gold und Rohstoffe","betrifft":["Gold","Energie-ETFs"],"ok":true,"eintraege":[{"titel":"Goldpreis stabilisiert sich nach jüngsten Verlusten","link":"https://news.google.com/rss/articles/CBMioAFBVV95cUxQajNsUDRXQ2RSSzBFV253TnhDNzBGRjVWNHhETmZaOUl3d3JPLXZNdGcza0lLbkVUMlhDbDZsT1k3c3d3WGFCTk1iWU5vM0IzN3ZuVUhMZ2JIZXhPNDNXb2hFbDJqbzBjTENNM1ZZTHpfLU9PZ29MZU94ZXZPTmFyLVB5cjRNVnVmNzZQMEVSZ3hZcFhXWEwwaXJpX0pNU0JE?oc=5","quelle":"Der Standard","zeitIso":"2026-10-21T12:16:00.000Z"},{"titel":"Dax aktuell: Dax dreht ins Plus – Ölpreis sinkt nach Fünf-Monats-Hoch","link":"https://news.google.com/rss/articles/CBMi2wFBVV95cUxOZHU3azhYbVR6R2xvY3ZuRjlMVHJvS3Fab0dKVHZOZEhLdjJKZGtBdEczVGRZOG9uRS1wNUxwTzk1cWlCZm9heUQ5Mk5hcDRqQUxockVfXzBqTlJtTHlCNjZacDdlNW5wNlpEUTRNRUM1WG1HUXRpRlZPejJ5eU1zRVRicE5iVWIxdW9TRFdsRE1VZ1BvOWhQOTd1UUM2MnI3NEd6dHBjZmh3UFF2SkZVTmloSDVLbFdIdlIyTHdsR241QVhhRU9WQXlmWE5zME8yWWg4azhMRzh3Y3M?oc=5","quelle":"Handelsblatt","zeitIso":"2026-10-21T07:42:59.000Z"},{"titel":"Dax aktuellDax dreht ins Plus – Ölpreis sinkt nach 5-Monatshoch","link":"https://news.google.com/rss/articles/CBMi0wFBVV95cUxOTWxvTEFmbzNGTDR6SDB1aEZJVmNnV2lkRnZLTFJ5YTVMMmVJOEJGVlhUeE1aQWNlNWM4LTdEZlZPZGdaWGc2VldSaE9oejBueUp6Tjk4dzBFQ0oxNEVKeTFNY1FPeVJRa1R2TzZ1cXVPUzdBUDA3MkRjN1RjWUZuS010YTdQU2dyLURVa2xOYl9FNjhiM1VzTGY2Nk85eVNGSjhtakdIZlo3YS1xV09ER1ZHTmR0bEQtUEo5THpCRnpkcEctS3VjSXdKaG5sdXZBa19Z?oc=5","quelle":"Handelsblatt","zeitIso":"2026-10-21T07:42:59.000Z"}]},{"name":"Rüstung","betrifft":["Rheinmetall","Hensoldt","Rüstungs-ETFs"],"ok":true,"eintraege":[{"titel":"Kanada und Türkei wollen bei Energie und Rüstung kooperieren","link":"https://news.google.com/rss/articles/CBMisAFBVV95cUxOb2tJODQ5SHJIR3JoMTgxcjV2SzNjd2Q2azVzeHhhOEcwSlpDdTdLb1lwRFNmVlc4SlpIaEFEb3E5VmhuY0FKb2R3NGRqd2pJekZQMnRWbWlPR2U4VHhQVWhIbFU0MmVpbWJ0QzEzdzhSS2VRSG1VaUhtOHdqQ2VBMmh6RVZNTkpGeDJlcEFHcXBVZC1JMk5UYkF0MVRPcElxUmNtR3FyTDM5RVR3dFZ4aQ?oc=5","quelle":"Der Standard","zeitIso":"2026-10-21T04:32:00.000Z"},{"titel":"Führungskräfte: Diese Fachkräfte haben gute Chancen in der Rüstungsindustrie","link":"https://news.google.com/rss/articles/CBMizAFBVV95cUxNOExrQjVNVmViVUhiekhrOHhEa3g5WHFUcktjcWdjWUc1SEFxcko2TlFyT3FCTms2dU9lZ0UtUjZrbTZNTVJJdmt1VzBsN3QxbnRzbktGLV9mMUotNGpBZ0xuUDYyMVhqM2V4Q0Y3dUJnMWxyZ0xvdEZtVGstMDJOSjlUUXNZTVE4aG9HOERvTHRaenRxZGRmbDU1OXk4WFQzQWp5dG1fZks2blpNMWJSRDlGTFh4bDJ1NEJobjRTbVZxODdndFZVUmVfcWw?oc=5","quelle":"Handelsblatt","zeitIso":"2026-10-21T08:51:00.000Z"},{"titel":"Rüstungsaktien: Analysten sehen Luft nach oben – Vorsicht bei den Kaufempfehlungen","link":"https://news.google.com/rss/articles/CBMi2gFBVV95cUxPS2RtN3pJb2hjRHZNLTdfWGZXazVadkgzaXNLX05DNDRiNEluRHhIcWszRmZzbzJOZGNoSklrcFBtNUc3ZGN6dHlTbWExZkE3VTV1V3Axc2VERzJyUXhGMlpHWkJDNWNXUEpmRlRKQzU2bk9VVUtiRmYwQXRrbVlqYkZHdldZaHQ3WVNpQVozRHVub1ZkbTl6d3I1amdPY0JoS2NFbTdvVDVEckpzV1JhZ0hYMlN3NTBSUjhobDFYcENSdVg0cVRTblkySlFVM2V4TXQ5YkVTMWY5Zw?oc=5","quelle":"Börse Online","zeitIso":"2026-10-21T06:32:00.000Z"}]},{"name":"Weltlage","betrifft":["praktisch alles"],"ok":true,"eintraege":[{"titel":"Ukraine-Krieg: Putin spricht mit Trump-Gesandtem Witkoff über Ukraine-Krieg","link":"https://news.google.com/rss/articles/CBMi2AFBVV95cUxOUzBLVE14MUh6MndmblpIUFc2ZVRPRmJMUDJyTFE0c3pzNENGNUFGSjhwRWdMMGZ1endkT29HT05RRmY4N1NlVFUwN1NPaXZUM0lfckQ2MkV0bmFLVS1lNmJvU0J4NERCUTRZakI2LWh1QnlFUnN5MU1pX3JDTTN1V0kzdFFXMTlBMUM5RHFkaEtKXy1NcEtpY0RzR0U0a1JvSUVlSEZhdzdWTi05R2llOGZZeHlXU2RqWmhsTnFyN1AyX2lfMGk4NjRVbE44c284bk1YcUozVUk?oc=5","quelle":"Handelsblatt","zeitIso":"2026-10-21T13:04:00.000Z"},{"titel":"Lässt Trump die Ukraine wirklich im Stich? Experte Mangott in der „ZiB 2“","link":"https://news.google.com/rss/articles/CBMiqgFBVV95cUxOTmJSNHZ0TEpwMTBydmwxUEZoUTdfUGFYUF9JSW1mM1Z4Sl9hYVNPTHlLZ3Q1OFcwQ2ZiMnpOUG1ZWjdEUzNManQwT0VkZ2YzN183aHB6Zzh2OE1GRmN0SDcxQVQxaXFmN093bGcyZC1nbnd4TFBrbnRzc25IZVhIbDFWTnV4R2ZwYUxnSDZRaFpGV0FZWHdPaFN6by03ajBpTlJ5R3VRWGprUQ?oc=5","quelle":"DiePresse.com","zeitIso":"2026-10-21T09:31:19.000Z"},{"titel":"Treffen in Oslo: Bewegung in Ukraine-Friedensdiplomatie","link":"https://news.google.com/rss/articles/CBMiRkFVX3lxTE1EQk5JTTUyeTg1UmtqN3B6R1FKOFFWUHY2TGdtSlJfTENIU1ktRm9fR3BFeVBib0lBQXNERkYzRXZWUmlKS0E?oc=5","quelle":"ORF","zeitIso":"2026-10-20T21:27:36.000Z"}]}],"tageZurueck":3,"anzahl":18,"themenMitInhalt":6,"gepruefteMeldungen":600,"ausErlaubtenQuellen":18,"quellenAnzahl":29,"fehler":[]}};
 const VERALTET_TAGE = DATA.veraltetTage || 4;
 
 /* ====================================================================
@@ -315,6 +321,28 @@ function undListe(xs) {
   if (xs.length <= 1) return xs[0] || "";
   return xs.slice(0, -1).join(", ") + " und " + xs[xs.length - 1];
 }
+/* Ueberschriften kommen von fremden Servern. Sie werden schon beim Abruf von
+   Tags befreit, aber alles, was aus dem Netz stammt, wird hier trotzdem
+   entschaerft, bevor es in die Seite geht - zwei Schichten, eine Zeile. */
+function esc(x) {
+  return String(x === null || x === undefined ? "" : x)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function sichererLink(u) {
+  const t = String(u || "").trim();
+  return /^https?:\/\//i.test(t) ? t : null;
+}
+function wann(iso, lang) {
+  const d = new Date(iso);
+  if (!isFinite(d.getTime())) return "";
+  return d.toLocaleString("de-AT", lang
+    ? { timeZone: "Europe/Vienna", weekday: "long", day: "2-digit", month: "2-digit",
+        hour: "2-digit", minute: "2-digit" }
+    : { timeZone: "Europe/Vienna", weekday: "short", day: "2-digit", month: "2-digit",
+        hour: "2-digit", minute: "2-digit" });
+}
+
 /* Das Datum des Laufs, nicht das des Browsers - sonst wechselt der Hinweis
    je nachdem, wann die Seite geoeffnet wird. */
 function heute() {
@@ -350,7 +378,28 @@ function lagebericht() {
       + "</b> &uuml;ber dem Stand von vor einem Jahr" + wo + ".");
   }
 
-  /* 2. Nervositaet - nicht die VIX-Zahl, sondern was sie bedeutet. */
+  /* 2. Was laeuft gerade - Tiams Hauptfrage, darum weit oben.
+        Drei Beste nach drei Monaten, mit dem Hinweis, wie viele davon den
+        Vergleich mit dem Weltmarkt ueberhaupt ueberstehen. */
+  const bl = DATA.beobachtung && DATA.beobachtung.eintraege;
+  if (bl) {
+    const mit = bl.filter((e) => e.ok && typeof e.monat3 === "number" && isFinite(e.monat3)
+      && !(e.relativ && e.relativ.stufe === "massstab"));
+    if (mit.length >= 3) {
+      const best = mit.slice().sort((x, y) => y.monat3 - x.monat3).slice(0, 3);
+      const belegt = best.filter((e) => e.relativ && /besser/.test(e.relativ.stufe));
+      const liste = undListe(best.map((e) => "<b>" + e.name + " " + proz(e.monat3, 0) + "</b>"));
+      s.push("Am st\u00e4rksten gelaufen in drei Monaten: " + liste + ". "
+        + (belegt.length
+            ? "Davon h\u00e4lt " + undListe(belegt.map((e) => e.name))
+              + " auch dem Vergleich mit dem Weltmarkt stand."
+            : "Gegen den Weltmarkt gerechnet ist bei keinem davon der Vorsprung "
+              + "gr\u00f6\u00dfer als die Zufallsschwankung.")
+        + "");
+    }
+  }
+
+  /* 3. Nervositaet - nicht die VIX-Zahl, sondern was sie bedeutet. */
   const n = DATA.kennzahlen && DATA.kennzahlen.nervositaet;
   if (n && n.vix && typeof n.vix.perzentil === "number") {
     const p = n.vix.perzentil;
@@ -362,7 +411,7 @@ function lagebericht() {
       + " %</b> der Tage im letzten Jahr.");
   }
 
-  /* 3. Sektoren - meistens ist die ehrliche Antwort "nichts Belastbares". */
+  /* 4. Sektoren - meistens ist die ehrliche Antwort "nichts Belastbares". */
   const sk = DATA.kennzahlen && DATA.kennzahlen.sektoren;
   if (sk && sk.ok && sk.zeilen) {
     const auf = sk.zeilen.filter((z) => z.stufe === "deutlich" || z.stufe === "schwach");
@@ -380,7 +429,7 @@ function lagebericht() {
     }
   }
 
-  /* 4. Gleichlauf - die wichtigste Auskunft fuer sein Risiko. */
+  /* 5. Gleichlauf - die wichtigste Auskunft fuer sein Risiko. */
   const gl = DATA.kennzahlen && DATA.kennzahlen.gleichlauf;
   if (gl && gl.ok && gl.paare) {
     const stark = gl.paare.filter((p) => p.stufe === "stark-mit");
@@ -397,7 +446,7 @@ function lagebericht() {
     }
   }
 
-  /* 5. Termine - nur der naechste, in Klartext. */
+  /* 6. Termine - nur der naechste, in Klartext. */
   const t = DATA.kennzahlen && DATA.kennzahlen.termine;
   if (t && t.ok) {
     if (!t.kommende || !t.kommende.length) {
@@ -544,6 +593,36 @@ function maerkte() {
    Abschnitt 3: Beobachtungsliste
    ==================================================================== */
 let blThema = "alle";
+let blSort = "thema";        // "thema" | "beste" | "schlechteste"
+
+const BL_MARKE = {
+  "rauschen": "wie der Markt", "besser": "besser", "deutlich besser": "deutlich besser",
+  "schlechter": "schlechter", "deutlich schlechter": "deutlich schlechter",
+  "massstab": "Vergleichsma\u00dfstab", "nicht vergleichbar": "\u2013", "unbekannt": "\u2013",
+};
+
+function blZeile(e, rang) {
+  const r = e.relativ || {};
+  const leise = !r.stufe || r.stufe === "rauschen" || r.stufe === "nicht vergleichbar"
+             || r.stufe === "unbekannt";
+  const kl = /besser/.test(r.stufe || "") ? "m-rauf"
+           : /schlechter/.test(r.stufe || "") ? "m-runter"
+           : r.stufe === "massstab" ? "m-akz" : "";
+
+  return "<tr><td>"
+    + (rang ? '<span class="still zahl" style="margin-right:9px">' + rang + ".</span>" : "")
+    + '<span class="nam">' + e.name + "</span>"
+    + (e.kaufbar === false ? ' <span class="marke m-warn">nicht in der EU kaufbar</span>' : "")
+    + (!leise ? ' <span class="marke ' + kl + '">' + (BL_MARKE[r.stufe] || r.stufe) + "</span>" : "")
+    + (e.langname ? '<div class="unter">' + e.langname + "</div>" : "")
+    + (e.spanne && typeof e.spanne.inSpanne === "number"
+        ? '<div class="spanne"><i style="left:' + Math.max(0, Math.min(97, e.spanne.inSpanne))
+          + '%"></i></div><div class="spanne-text"><span>Jahrestief</span><span>Jahreshoch</span></div>'
+        : "")
+    + '</td><td data-k="Kurs">' + kursText(e.kurs, e.waehrung) + "</td>"
+    + '<td data-k="3 Monate">' + pr(e.monat3) + '</td><td data-k="1 Jahr">'
+    + pr(e.jahr1) + "</td></tr>";
+}
 
 function beobachtung() {
   const b = DATA.beobachtung;
@@ -554,109 +633,182 @@ function beobachtung() {
   const themen = ["alle"].concat((b.themen || []).filter((t) => ok.some((e) => e.thema === t)));
   const knoepfe = '<div class="filter">' + themen.map((t) =>
     '<button class="knopf ' + (t === blThema ? "an" : "") + '" data-bl="' + t + '">' + t + "</button>")
-    .join("") + "</div>";
+    .join("") + "</div>"
+    + '<div class="filter" style="margin-top:-8px">'
+    + [["thema", "nach Thema"], ["beste", "beste zuerst"], ["schlechteste", "schlechteste zuerst"]]
+        .map(([k, w]) => '<button class="knopf ' + (k === blSort ? "an" : "") + '" data-sort="' + k
+          + '">' + w + "</button>").join("")
+    + "</div>";
 
-  const markeText = {
-    "rauschen": "wie der Markt", "besser": "besser", "deutlich besser": "deutlich besser",
-    "schlechter": "schlechter", "deutlich schlechter": "deutlich schlechter",
-    "massstab": "Vergleichsma&szlig;stab", "nicht vergleichbar": "-", "unbekannt": "-",
-  };
-
+  const gefiltert = ok.filter((e) => blThema === "alle" || e.thema === blThema);
   let html = "";
-  for (const thema of (b.themen || [])) {
-    const drin = ok.filter((e) => e.thema === thema && (blThema === "alle" || e.thema === blThema));
-    if (!drin.length) continue;
-    html += '<tr class="kopfzeile"><td colspan="4">' + thema + "</td></tr>";
-    for (const e of drin) {
-      const r = e.relativ || {};
-      const leise = !r.stufe || r.stufe === "rauschen" || r.stufe === "nicht vergleichbar"
-                 || r.stufe === "unbekannt";
-      const kl = /besser/.test(r.stufe || "") ? "m-rauf"
-               : /schlechter/.test(r.stufe || "") ? "m-runter"
-               : r.stufe === "massstab" ? "m-akz" : "";
 
-      html += "<tr><td><span class=\"nam\">" + e.name + "</span>"
-        + (e.kaufbar === false ? ' <span class="marke m-warn">nicht in der EU kaufbar</span>' : "")
-        + (!leise ? ' <span class="marke ' + kl + '">' + (markeText[r.stufe] || r.stufe) + "</span>" : "")
-        + (e.langname ? '<div class="unter">' + e.langname + "</div>" : "")
-        + (e.spanne && typeof e.spanne.inSpanne === "number"
-            ? '<div class="spanne"><i style="left:' + Math.max(0, Math.min(97, e.spanne.inSpanne))
-              + '%"></i></div><div class="spanne-text"><span>Jahrestief</span><span>Jahreshoch</span></div>'
-            : "")
-        + '</td><td data-k="Kurs">' + kursText(e.kurs, e.waehrung) + "</td>"
-        + '<td data-k="3 Monate">' + pr(e.monat3) + '</td><td data-k="1 Jahr">'
-        + pr(e.jahr1) + "</td></tr>";
+  if (blSort === "thema") {
+    for (const thema of (b.themen || [])) {
+      const drin = gefiltert.filter((e) => e.thema === thema);
+      if (!drin.length) continue;
+      html += '<tr class="kopfzeile"><td colspan="4">' + thema + "</td></tr>";
+      for (const e of drin) html += blZeile(e, null);
     }
+  } else {
+    /* Rangliste nach Dreimonats-Entwicklung. Werte ohne Dreimonatswert
+       stehen hinten, statt mit einer 0 mitgerechnet zu werden. */
+    const mitWert = gefiltert.filter((e) => typeof e.monat3 === "number" && isFinite(e.monat3));
+    const ohne = gefiltert.filter((e) => !(typeof e.monat3 === "number" && isFinite(e.monat3)));
+    mitWert.sort((x, y) => blSort === "beste" ? y.monat3 - x.monat3 : x.monat3 - y.monat3);
+    mitWert.forEach((e, i) => { html += blZeile(e, i + 1); });
+    for (const e of ohne) html += blZeile(e, null);
   }
 
   el("in-beobachtung").innerHTML = knoepfe
     + '<div class="rahmen"><table class="stapel"><thead><tr>'
     + "<th>Wert</th><th>Kurs</th><th>3 Monate</th><th>1 Jahr</th>"
     + "</tr></thead><tbody>" + html + "</tbody></table></div>"
-    + erklaerBox("Was das ist &ndash; und was nicht",
-        "<p>Eine Standortbestimmung f&uuml;r Haltedauern von Monaten. Der Balken unter dem Namen zeigt, wo "
-        + "der Wert in seiner <b>Jahresspanne</b> steht: links am Tief, rechts am Hoch. Eine Marke steht nur "
-        + "dort, wo der Abstand zum Weltmarkt gr&ouml;&szlig;er ist als die Messungenauigkeit &ndash; bei den "
-        + "meisten Werten ist er das nicht.</p>"
-        + "<p><b>Hier steht nirgends, wann man einsteigen soll.</b> Das w&auml;re eine Vorhersage. Ein Wert "
-        + "nahe am Jahrestief ist nicht \"billig\" &ndash; er kann monatelang weiter fallen.</p>"
-        + "<p>Das Beispiel dazu aus den eigenen Daten: <b>Rheinmetall</b> stand im April 2026 bei 1.550 &euro;, "
-        + "im Juli bei 976 &euro; &ndash; w&auml;hrend \"es wird aufger&uuml;stet\" durchgehend stimmte und in "
-        + "jeder Zeitung stand. Kurse bewegen sich auf <b>&Uuml;berraschungen</b>, nicht auf Tatsachen. Was in "
-        + "den Nachrichten steht, steht l&auml;ngst im Preis.</p>"
-        + "<p>Der Fondsname unter jedem Wert ist zum Nachschlagen im Broker gedacht &ndash; pr&uuml;f dort die "
-        + "genaue Anteilsklasse, die Namen &auml;hneln sich stark.</p>");
+    + erklaerBox("Was das ist \u2013 und was nicht",
+        "<p>Eine Standortbestimmung f\u00fcr Haltedauern von Monaten. Der Balken unter dem Namen "
+        + "zeigt, wo der Wert in seiner <b>Jahresspanne</b> steht: links am Tief, rechts am Hoch. "
+        + "Eine Marke steht nur dort, wo der Abstand zum Weltmarkt gr\u00f6\u00dfer ist als die "
+        + "Messungenauigkeit \u2013 bei den meisten Werten ist er das nicht.</p>"
+        + "<p><b>Achtung bei der Rangliste:</b> sie sortiert nach den letzten drei Monaten. Das "
+        + "ist eine R\u00fcckschau. Dass ein Wert oben steht, hei\u00dft nicht, dass er oben bleibt "
+        + "\u2013 der Zusammenhang zwischen \u201elief zuletzt gut\u201c und \u201el\u00e4uft weiter gut\u201c "
+        + "ist bei einzelnen Werten \u00fcber solche Zeitr\u00e4ume schwach bis gar nicht vorhanden.</p>"
+        + "<p><b>Hier steht nirgends, wann man einsteigen soll.</b> Das w\u00e4re eine Vorhersage. Ein "
+        + "Wert nahe am Jahrestief ist nicht \u201ebillig\u201c \u2013 er kann monatelang weiter fallen.</p>"
+        + "<p>Das Beispiel dazu aus den eigenen Daten: <b>Rheinmetall</b> stand im April 2026 bei "
+        + "1.550\u00a0\u20ac, im Juli bei 976\u00a0\u20ac \u2013 w\u00e4hrend \u201ees wird aufger\u00fcstet\u201c "
+        + "durchgehend stimmte und in jeder Zeitung stand. Kurse bewegen sich auf "
+        + "<b>\u00dcberraschungen</b>, nicht auf Tatsachen.</p>"
+        + "<p>Der Fondsname unter jedem Wert ist zum Nachschlagen im Broker gedacht \u2013 pr\u00fcf dort "
+        + "die genaue Anteilsklasse, die Namen \u00e4hneln sich stark.</p>");
 
   el("in-beobachtung").querySelectorAll("[data-bl]").forEach((k) => {
     k.addEventListener("click", () => { blThema = k.dataset.bl; beobachtung(); });
   });
-}
-
-/* Die Kalendertitel kommen als Haendler-Kuerzel herein ("CPI y/y", "NFP").
-   Hier werden die haeufigen in Klartext uebersetzt; alles Unbekannte bleibt
-   im Original stehen, statt falsch geraten zu werden. */
-const TERMIN_REGION = { USD: "US-", GBP: "britische ", EUR: "Eurozone: ", CAD: "kanadische ", JPY: "japanische " };
-const TERMIN_WORTE = [
-  [/^Core CPI/i,                        "Inflationsrate ohne Energie und Lebensmittel"],
-  [/^CPI/i,                             "Inflationsrate"],
-  [/^Core PCE/i,                        "Inflationsma&szlig; der Notenbank (PCE)"],
-  [/^(Core )?PPI/i,                     "Erzeugerpreise"],
-  [/Non-?Farm Employment Change/i,      "Arbeitsmarktbericht"],
-  [/^Unemployment Rate/i,               "Arbeitslosenquote"],
-  [/^Average (Hourly )?Earnings/i,      "Lohnentwicklung"],
-  [/Unemployment Claims|Claimant Count/i, "Antr&auml;ge auf Arbeitslosengeld"],
-  [/Federal Funds Rate|Interest Rate Decision|Main Refinancing Rate|Official Bank Rate|Cash Rate/i,
-                                        "Zinsentscheid"],
-  [/^FOMC (Statement|Economic Projections)/i, "Notenbank-Erkl&auml;rung"],
-  [/Press Conference/i,                 "Pressekonferenz der Notenbank"],
-  [/Meeting Minutes|FOMC Meeting/i,     "Sitzungsprotokoll der Notenbank"],
-  [/(Powell|Lagarde|Bailey|Chair|Gov |President).*Speaks/i, "Rede der Notenbankspitze"],
-  [/Core Retail Sales/i,                "Einzelhandelsums&auml;tze ohne Autos"],
-  [/Retail Sales/i,                     "Einzelhandelsums&auml;tze"],
-  [/GDP/i,                              "Wirtschaftsleistung (BIP)"],
-  [/ISM Manufacturing/i,                "Stimmung in der US-Industrie (ISM)"],
-  [/ISM Services/i,                     "Stimmung im US-Dienstleistungssektor (ISM)"],
-  [/Manufacturing PMI/i,                "Stimmung in der Industrie"],
-  [/Services PMI/i,                     "Stimmung im Dienstleistungssektor"],
-  [/Consumer Confidence|Consumer Sentiment/i, "Verbrauchervertrauen"],
-  [/Crude Oil Inventories/i,            "US-&Ouml;llagerbest&auml;nde"],
-];
-
-function terminName(e) {
-  const t = String(e.titel || "");
-  for (const [muster, wort] of TERMIN_WORTE) {
-    if (muster.test(t)) {
-      const vorn = TERMIN_REGION[e.waehrung] || "";
-      const name = vorn + wort;
-      return /^[A-Z]/.test(vorn) || !vorn ? name : name.charAt(0).toUpperCase() + name.slice(1);
-    }
-  }
-  return t;
+  el("in-beobachtung").querySelectorAll("[data-sort]").forEach((k) => {
+    k.addEventListener("click", () => { blSort = k.dataset.sort; beobachtung(); });
+  });
 }
 
 /* ====================================================================
-   Abschnitt 4: Termine
+   Abschnitt 4: Termine und ihre Wirkungswege
    ==================================================================== */
+const TERMIN_REGION = { USD: "US-", GBP: "britische ", EUR: "Eurozone: ", CAD: "kanadische ", JPY: "japanische " };
+
+/* Jeder Termin bekommt drei Angaben:
+ *   wort     - Klartextname statt Haendlerkuerzel
+ *   betrifft - welche von Tiams Maerkten ueberhaupt daranhaengen
+ *   wirkt    - der Wirkungsweg, so wie er in Lehrbuechern steht
+ *
+ * Der Wirkungsweg ist KEINE Prognose. Er sagt, worueber eine Zahl auf einen
+ * Kurs durchschlagen kann - nicht, in welche Richtung es diesmal geht. Die
+ * haengt an der Abweichung von der Erwartung, und die kennt vorher niemand.
+ */
+const TERMIN_WORTE = [
+  [/^Core CPI/i, {
+    wort: "Inflationsrate ohne Energie und Lebensmittel",
+    betrifft: "Währungen, Gold, Technologieaktien, breite ETFs",
+    wirkt: "Die Notenbanken schauen auf genau diese Zahl. Höher als erwartet heißt: Zinsen bleiben länger oben." }],
+  [/^CPI/i, {
+    wort: "Inflationsrate",
+    betrifft: "Währungen, Gold, Technologieaktien, breite ETFs",
+    wirkt: "Über der Erwartung → Zinsen bleiben länger hoch → Währung tendenziell fester, Gold und zinsempfindliche Aktien tendenziell schwächer. Unter der Erwartung → umgekehrt." }],
+  [/^Core PCE/i, {
+    wort: "Inflationsmaß der US-Notenbank (PCE)",
+    betrifft: "US-Dollar, Gold, S&P 500",
+    wirkt: "Dasselbe wie die Inflationsrate, nur ist das die Zahl, auf die sich die Fed ausdrücklich beruft." }],
+  [/^(Core )?PPI/i, {
+    wort: "Erzeugerpreise",
+    betrifft: "dieselben Märkte wie die Inflationsrate, nur schwächer",
+    wirkt: "Vorstufe der Inflation: was Firmen im Einkauf zahlen, landet oft Monate später in den Verbraucherpreisen." }],
+  [/Non-?Farm Employment Change/i, {
+    wort: "Arbeitsmarktbericht",
+    betrifft: "US-Dollar, S&P 500, Gold",
+    wirkt: "Starker Arbeitsmarkt → Zinsen bleiben eher oben → Dollar fester. Der Kurs springt oft in der ersten Minute und dreht danach wieder." }],
+  [/^Unemployment Rate/i, {
+    wort: "Arbeitslosenquote",
+    betrifft: "Währung des jeweiligen Landes, Aktienindizes",
+    wirkt: "Geht zusammen mit dem Arbeitsmarktbericht in dieselbe Zinsfrage ein." }],
+  [/^Average (Hourly )?Earnings/i, {
+    wort: "Lohnentwicklung",
+    betrifft: "Währungen, Aktienindizes",
+    wirkt: "Steigende Löhne gelten als Inflationstreiber – der Markt liest die Zahl als Inflationssignal, nicht als Sozialstatistik." }],
+  [/Unemployment Claims|Claimant Count/i, {
+    wort: "Anträge auf Arbeitslosengeld",
+    betrifft: "US-Dollar, S&P 500",
+    wirkt: "Wöchentlich und darum verrauscht. Einzelne Wochen bewegen selten viel." }],
+  [/Federal Funds Rate|Interest Rate Decision|Main Refinancing Rate|Official Bank Rate|Cash Rate/i, {
+    wort: "Zinsentscheid",
+    betrifft: "Währungen zuerst, dann Aktien, Gold und Anleihen",
+    wirkt: "Der Schritt selbst steht meist schon im Preis. Bewegung macht fast immer der Ausblick – was die Notenbank über die nächsten Monate sagt." }],
+  [/^FOMC (Statement|Economic Projections)/i, {
+    wort: "Notenbank-Erklärung",
+    betrifft: "alle US-nahen Märkte, also auch Krypto",
+    wirkt: "Hier zählen Formulierungen, nicht Zahlen. Ein geändertes Wort im Text kann mehr bewegen als der Zinssatz." }],
+  [/Press Conference/i, {
+    wort: "Pressekonferenz der Notenbank",
+    betrifft: "alle Märkte der jeweiligen Währung",
+    wirkt: "Freie Rede und Nachfragen – die unberechenbarste halbe Stunde im Kalender." }],
+  [/Meeting Minutes|FOMC Meeting/i, {
+    wort: "Sitzungsprotokoll der Notenbank",
+    betrifft: "Währungen, Aktienindizes",
+    wirkt: "Nachträglich veröffentlicht, zeigt wie einig sich die Notenbanker waren." }],
+  [/(Powell|Lagarde|Bailey|Chair|Gov |President).*Speaks/i, {
+    wort: "Rede der Notenbankspitze",
+    betrifft: "Währungen, Aktienindizes, Gold",
+    wirkt: "Meist folgenlos, gelegentlich ein einzelner Satz mit großer Wirkung." }],
+  [/Core Retail Sales/i, {
+    wort: "Einzelhandelsumsätze ohne Autos",
+    betrifft: "Aktienindizes, Währung",
+    wirkt: "Misst, ob die Leute noch Geld ausgeben – der direkteste Konjunkturhinweis." }],
+  [/Retail Sales/i, {
+    wort: "Einzelhandelsumsätze",
+    betrifft: "Aktienindizes, Währung",
+    wirkt: "Misst, ob die Leute noch Geld ausgeben – der direkteste Konjunkturhinweis." }],
+  [/GDP/i, {
+    wort: "Wirtschaftsleistung (BIP)",
+    betrifft: "Aktienindizes, Währung",
+    wirkt: "Rückschau auf ein abgelaufenes Quartal. Bewegt weniger, als der Name vermuten lässt, weil das meiste daran schon bekannt ist." }],
+  [/ISM Manufacturing/i, {
+    wort: "Stimmung in der US-Industrie (ISM)",
+    betrifft: "S&P 500, Rohstoffe, US-Dollar",
+    wirkt: "Umfrage unter Einkaufsmanagern. Über 50 heißt Wachstum, darunter Schrumpfung – läuft der harten Konjunktur voraus." }],
+  [/ISM Services/i, {
+    wort: "Stimmung im US-Dienstleistungssektor (ISM)",
+    betrifft: "S&P 500, US-Dollar",
+    wirkt: "Dienstleistungen sind der größere Teil der US-Wirtschaft – diese Umfrage wiegt oft schwerer als die der Industrie." }],
+  [/Manufacturing PMI/i, {
+    wort: "Stimmung in der Industrie",
+    betrifft: "Aktienindizes, Währung, Rohstoffe",
+    wirkt: "Einkaufsmanager-Umfrage, über 50 Wachstum, darunter Schrumpfung." }],
+  [/Services PMI/i, {
+    wort: "Stimmung im Dienstleistungssektor",
+    betrifft: "Aktienindizes, Währung",
+    wirkt: "Einkaufsmanager-Umfrage, über 50 Wachstum, darunter Schrumpfung." }],
+  [/Consumer Confidence|Consumer Sentiment/i, {
+    wort: "Verbrauchervertrauen",
+    betrifft: "Aktienindizes",
+    wirkt: "Stimmungsumfrage unter Haushalten – Vorlauf auf den Konsum." }],
+  [/Crude Oil Inventories/i, {
+    wort: "US-Öllagerbestände",
+    betrifft: "Ölpreis und damit Energie-ETFs",
+    wirkt: "Volle Lager heißen zu viel Angebot → Preisdruck nach unten, leere umgekehrt." }],
+];
+
+function terminTreffer(e) {
+  const t = String(e.titel || "");
+  for (const paar of TERMIN_WORTE) if (paar[0].test(t)) return paar[1];
+  return null;
+}
+
+function terminName(e) {
+  const d = terminTreffer(e);
+  if (!d) return String(e.titel || "");
+  const vorn = TERMIN_REGION[e.waehrung] || "";
+  const name = vorn + d.wort;
+  return (!vorn || /^[A-Z]/.test(vorn)) ? name : name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 function termine() {
   const t = DATA.kennzahlen && DATA.kennzahlen.termine;
   if (!t || !t.ok) {
@@ -667,25 +819,103 @@ function termine() {
   const k = t.kommende || [];
   el("sum-termine").textContent = k.length ? k.length + " diese Woche" : "keine mehr diese Woche";
 
-  const html = !k.length
-    ? '<div class="leer">F&uuml;r den Rest der Kalenderwoche stehen keine Termine mit hoher erwarteter '
-      + "Wirkung an.</div>"
-    : '<div class="rahmen"><table><tbody>' + k.map((e) =>
-        "<tr><td><span class=\"nam\">" + terminName(e) + "</span>"
-        + (terminName(e) !== e.titel ? '<span class="sym">' + e.titel + "</span>" : "")
-        + '<span class="sym">' + e.waehrung + "</span></td>"
-        + '<td class="still">' + new Date(e.zeitIso).toLocaleString("de-AT", { timeZone: "Europe/Vienna",
-            weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
-        + "</td></tr>").join("") + "</tbody></table></div>";
+  /* Der wichtigste Satz des ganzen Abschnitts steht oben und nicht bei jedem
+     einzelnen Termin - sonst liest er sich nach dem dritten Mal weg. */
+  const grundsatz = '<div class="hinweis-klein" style="margin:0 0 20px">'
+    + "Bei <b>jedem</b> dieser Termine bewegt nicht die Zahl den Kurs, sondern die "
+    + "<b>Abweichung von der Erwartung</b>. Was alle erwarten, steht schon im Preis. "
+    + "Deshalb kann eine gute Zahl einen Kurs fallen lassen \u2013 wenn eine noch bessere "
+    + "erwartet war.</div>";
+
+  let html;
+  if (!k.length) {
+    html = grundsatz + '<div class="leer">F\u00fcr den Rest der Kalenderwoche stehen keine Termine '
+      + "mit hoher erwarteter Wirkung an.</div>";
+  } else {
+    html = grundsatz + '<div class="rahmen"><table class="stapel"><tbody>' + k.map((e) => {
+      const d = terminTreffer(e);
+      const name = terminName(e);
+      return "<tr><td><span class=\"nam\">" + esc(name) + "</span>"
+        + (name !== e.titel ? '<span class="sym">' + esc(e.titel) + "</span>" : "")
+        + '<span class="sym">' + esc(e.waehrung) + "</span>"
+        + (d ? '<div class="unter"><b>Betrifft:</b> ' + d.betrifft + "<br>" + d.wirkt + "</div>"
+             : '<div class="unter">Kein hinterlegter Wirkungsweg \u2013 was dieser Termin bewegt, '
+               + "steht hier nicht, statt geraten zu werden.</div>")
+        + '</td><td data-k="Zeit" class="still">' + wann(e.zeitIso, false) + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+  }
 
   el("in-termine").innerHTML = html
-    + erklaerBox("Was hier drinsteht &ndash; und was nicht",
-        "<p>Zeiten in Wiener Ortszeit. Zu diesen Zeitpunkten kommen Zahlen heraus, auf die der Markt oft "
-        + "sprunghaft reagiert &ndash; unabh&auml;ngig davon, wie sauber ein Setup aussieht.</p>"
-        + "<p><b>Die Liste ist in zwei Richtungen unvollst&auml;ndig.</b> Sie reicht nur bis zum Ende der "
-        + "laufenden Woche. Und drin sind nur geplante Wirtschaftstermine und Auftritte von Notenbankern "
-        + "&ndash; politische &Auml;u&szlig;erungen kommen ohne Ank&uuml;ndigung und stehen in keinem Kalender.</p>"
+    + erklaerBox("Was hier drinsteht \u2013 und was nicht",
+        "<p>Zeiten in Wiener Ortszeit. Der Wirkungsweg unter jedem Termin sagt, <b>worueber</b> "
+        + "eine Zahl auf einen Kurs durchschlagen kann \u2013 nicht, in welche Richtung es diesmal "
+        + "geht. Die Richtung h\u00e4ngt an der Abweichung von der Erwartung, und die kennt "
+        + "niemand vorher.</p>"
+        + "<p><b>Die Liste ist in zwei Richtungen unvollst\u00e4ndig.</b> Sie reicht nur bis zum Ende "
+        + "der laufenden Woche. Und drin sind nur geplante Wirtschaftstermine und Auftritte von "
+        + "Notenbankern \u2013 politische \u00c4u\u00dferungen kommen ohne Ank\u00fcndigung und stehen in "
+        + "keinem Kalender.</p>"
         + "<p>Die Engine liest diese Liste nicht und blockiert dadurch nichts.</p>");
+}
+
+/* ====================================================================
+   Abschnitt: Nachrichtenlage
+
+   Ueberschriften, nach Thema, mit der Angabe welche seiner Maerkte das
+   Thema ueberhaupt betrifft. Bewusst OHNE Bewertung: hier steht nirgends,
+   ob eine Meldung gut oder schlecht fuer einen Kurs ist.
+   ==================================================================== */
+function nachrichten() {
+  const n = DATA.nachrichten;
+  if (!n || !n.ok) {
+    el("sum-nachrichten").textContent = "nicht abrufbar";
+    el("in-nachrichten").innerHTML = '<div class="leer">Die Nachrichtenquellen waren beim letzten '
+      + "Lauf nicht erreichbar. Lieber nichts als eine leere Liste, die wie \"keine Nachrichten\" "
+      + "aussieht.</div>";
+    return;
+  }
+  el("sum-nachrichten").textContent = n.anzahl
+    ? n.anzahl + " Meldungen" : "nichts Neues";
+
+  let html = "";
+  for (const t of n.themen) {
+    html += '<h3 style="font-size:0.9375rem;font-weight:600;margin:26px 0 2px">' + esc(t.name) + "</h3>"
+      + '<div class="unter" style="margin:0 0 10px">Betrifft: ' + esc((t.betrifft || []).join(", ")) + "</div>";
+    if (!t.ok) {
+      html += '<div class="unter">Quelle beim letzten Lauf nicht erreichbar.</div>';
+      continue;
+    }
+    if (!t.eintraege.length) {
+      html += '<div class="unter">Nichts aus den zugelassenen Redaktionen in den letzten '
+        + n.tageZurueck + " Tagen.</div>";
+      continue;
+    }
+    for (const m of t.eintraege) {
+      const u = sichererLink(m.link);
+      const titel = esc(m.titel);
+      html += '<div style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05)">'
+        + (u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer nofollow" '
+             + 'style="color:var(--schrift);text-decoration:none">' + titel + "</a>"
+             : titel)
+        + '<div class="unter">' + esc(m.quelle || "") + ", " + wann(m.zeitIso, false) + "</div></div>";
+    }
+  }
+
+  el("in-nachrichten").innerHTML = html
+    + erklaerBox("Warum hier keine Bewertung steht",
+        "<p>Das sind <b>nur \u00dcberschriften</b>, aus " + n.quellenAnzahl + " festgelegten Redaktionen, "
+        + "der letzten " + n.tageZurueck + " Tage. Es steht nirgends, ob eine Meldung gut oder "
+        + "schlecht f\u00fcr einen Kurs ist \u2013 und das ist Absicht.</p>"
+        + "<p>Der Grund steht in deinen eigenen Daten: <b>Rheinmetall</b> stand im April bei "
+        + "1.550\u00a0\u20ac und im Juli bei 976\u00a0\u20ac, w\u00e4hrend die Aufr\u00fcstungs-Meldungen "
+        + "durchgehend positiv waren. Eine Nachricht, die du lesen kannst, haben Millionen andere "
+        + "auch schon gelesen \u2013 sie steckt im Preis, bevor du handeln kannst.</p>"
+        + "<p>Was Nachrichten trotzdem taugen: zu verstehen, <b>warum</b> sich etwas bewegt hat, "
+        + "und zu merken, wann es irgendwo ungew\u00f6hnlich laut wird. Nicht, um daraus einen "
+        + "Einstieg abzuleiten.</p>"
+        + "<p>Portale, die vom Klick auf Anlageprodukte leben, sind bewusst ausgeschlossen. Von "
+        + n.gepruefteMeldungen + " gefundenen Meldungen kamen " + n.ausErlaubtenQuellen
+        + " aus den zugelassenen Redaktionen.</p>");
 }
 
 /* ====================================================================
@@ -837,7 +1067,8 @@ function mitschrift() {
     el("fuss-geprueft").innerHTML = " Jedes Symbol wurde vor dem Einbau einzeln auf Datenqualit&auml;t "
       + "gepr&uuml;ft (" + String(DATA.symboltestVom).slice(0, 10) + ").";
   }
-  for (const f of [lagebericht, gehandelt, maerkte, beobachtung, termine, haltedauer, etfListe, mitschrift]) {
+  for (const f of [lagebericht, gehandelt, maerkte, beobachtung, nachrichten, termine,
+                   haltedauer, etfListe, mitschrift]) {
     try { f(); } catch (e) { console.error("Block fehlgeschlagen:", f.name, e); }
   }
 })();
