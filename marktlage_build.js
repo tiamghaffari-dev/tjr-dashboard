@@ -27,6 +27,7 @@ const kz = require("./marktlage_kennzahlen.js");
 const hist = require("./marktlage_historie.js");
 const lang = require("./marktlage_langfrist.js");
 const beob = require("./marktlage_beobachtung.js");
+const nachr = require("./marktlage_nachrichten.js");
 
 const BASIS = __dirname;
 const MIN_ANTEIL_OK = 0.6;   // weniger als 60 % brauchbar -> Seite nicht anfassen
@@ -279,6 +280,24 @@ async function main() {
   }
 
   /* ----------------------------------------------------------------------
+   * NACHRICHTEN - Schlagzeilen zu den Themen, die seine Maerkte bewegen.
+   * Reine Ueberschriften, keine Bewertung. Faellt der Abruf aus, fehlt nur
+   * dieser Block; die Seite sagt dann, dass die Quellen nicht erreichbar
+   * waren, statt stillschweigend "keine Nachrichten" anzuzeigen.
+   * -------------------------------------------------------------------- */
+  let nachrichten = null;
+  try {
+    nachrichten = await nachr.sammle();
+    console.log("  Nachrichten: " + nachrichten.anzahl + " Meldungen aus "
+      + nachrichten.themenMitInhalt + " von " + nachrichten.themen.length + " Themen"
+      + "  (" + nachrichten.ausErlaubtenQuellen + " von " + nachrichten.gepruefteMeldungen
+      + " geprueften Meldungen kamen aus den " + nachrichten.quellenAnzahl + " zugelassenen Redaktionen)");
+    for (const f of nachrichten.fehler) console.log("    AUSFALL " + f);
+  } catch (e) {
+    console.error("  Nachrichten fehlgeschlagen:", e.message);
+  }
+
+  /* ----------------------------------------------------------------------
    * LANGFRIST - rollierende Renditen nach Haltedauer.
    *
    * Eigener Abruf mit Monatskerzen ueber die volle Historie. Faellt er aus,
@@ -342,7 +361,7 @@ async function main() {
     throw new Error("Vorlage enthaelt keinen __DATA__-Platzhalter");
   }
   const seite = vorlage
-    .replace("__DATA__", sicheresJson(Object.assign({}, daten, { historie, auswertung, langfrist, beobachtung })))
+    .replace("__DATA__", sicheresJson(Object.assign({}, daten, { historie, auswertung, langfrist, beobachtung, nachrichten })))
     .replace(/__VERALTET_TAGE__/g, String(ml.VERALTET_TAGE));
 
   fs.writeFileSync(path.join(BASIS, "docs", "marktlage.html"), seite, "utf8");
