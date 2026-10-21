@@ -54846,8 +54846,8 @@
     "target2": 2516.040039,
     "rr2": 2.44,
     "partialExit": true,
-    "trailStop": 2447.169922,
-    "tp1HitTs": null,
+    "trailStop": 2497.75,
+    "tp1HitTs": 1792579800000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -54897,10 +54897,21 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1792580026000,
+    "rMultiple": 1.53,
+    "benachrichtigt": true,
+    "exitPrice": 2497.75,
+    "postmortem": {
+      "holdHours": 0.6,
+      "mfeR": 1.54,
+      "maeR": -0.03,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.31,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1792593152982",
@@ -54969,9 +54980,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792579500000,
+    "rMultiple": -1,
+    "exitPrice": 771.051013,
+    "postmortem": {
+      "holdHours": 0.2,
+      "mfeR": 0.45,
+      "maeR": -1.04,
+      "towardTargetPct": 23,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.7R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 23% entgegen (max +0.5R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "GCUSD-1792593471973",
