@@ -887,8 +887,12 @@ function nachrichten() {
     }
     if (!t.eintraege.length) {
       html += '<div class="unter">Nichts aus den zugelassenen Redaktionen in den letzten '
-        + n.tageZurueck + " Tagen.</div>";
+        + (n.tageNotfall || n.tageZurueck) + " Tagen.</div>";
       continue;
+    }
+    if (t.tage && n.tageNotfall && t.tage === n.tageNotfall) {
+      html += '<div class="unter">In den letzten ' + n.tageZurueck + " Tagen nichts, darum "
+        + n.tageNotfall + " Tage zur\u00fcck.</div>";
     }
     for (const m of t.eintraege) {
       const u = sichererLink(m.link);
@@ -904,8 +908,10 @@ function nachrichten() {
   el("in-nachrichten").innerHTML = html
     + erklaerBox("Warum hier keine Bewertung steht",
         "<p>Das sind <b>nur \u00dcberschriften</b>, aus " + n.quellenAnzahl + " festgelegten Redaktionen, "
-        + "der letzten " + n.tageZurueck + " Tage. Es steht nirgends, ob eine Meldung gut oder "
-        + "schlecht f\u00fcr einen Kurs ist \u2013 und das ist Absicht.</p>"
+        + "der letzten " + n.tageZurueck + " Tage. Bleibt ein Thema dabei leer, wird einmal "
+        + (n.tageNotfall || 7) + " Tage zur\u00fcck gesucht und das dann auch dazugeschrieben. "
+        + "Es steht nirgends, ob eine Meldung gut oder schlecht f\u00fcr einen Kurs ist \u2013 "
+        + "und das ist Absicht.</p>"
         + "<p>Der Grund steht in deinen eigenen Daten: <b>Rheinmetall</b> stand im April bei "
         + "1.550\u00a0\u20ac und im Juli bei 976\u00a0\u20ac, w\u00e4hrend die Aufr\u00fcstungs-Meldungen "
         + "durchgehend positiv waren. Eine Nachricht, die du lesen kannst, haben Millionen andere "

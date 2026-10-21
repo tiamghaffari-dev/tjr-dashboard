@@ -24,7 +24,15 @@
 
 const TAGE_ZURUECK = 3;
 const PRO_THEMA = 3;
-const ZEITFENSTER = "when:" + TAGE_ZURUECK + "d";
+const TAGE_NOTFALL = 7;          // zweiter Versuch, wenn ein Thema leer bleibt
+
+/* Die Themenabfrage laeuft zweimal: erst ueber drei Tage, und fuer jedes
+ * Thema, das danach leer ist, noch einmal ueber sieben. Der Grund steht im
+ * dritten Livelauf: nach dem Klickware-Filter blieb beim Thema Krypto gar
+ * nichts uebrig, weil die deutschsprachige Krypto-Berichterstattung in den
+ * zugelassenen Redaktionen duenn ist und die Suchtreffer von Kaufratgebern
+ * belegt waren. Lieber eine vier Tage alte echte Meldung als gar keine -
+ * das Datum steht ohnehin bei jeder Zeile. */
 
 /* Redaktionen, deren Ueberschriften hier erscheinen duerfen. Bewusst kurz
  * und bewusst ohne Portale, die vom Klick auf Anlageprodukte leben. */
@@ -34,14 +42,14 @@ const ERLAUBTE_QUELLEN = [
   "tagesschau.de", "n-tv.de", "manager-magazin.de", "boerse-online.de",
   "derstandard.at", "diepresse.com", "orf.at", "kurier.at", "krone.at",
   "nzz.ch", "cash.ch", "wiwo.de", "capital.de", "finanzmarktwelt.de",
-  "br.de", "zdf.de", "dw.com", "euronews.com", "cnbc.com",
+  "br.de", "zdf.de", "dw.com", "euronews.com", "cnbc.com", "heise.de", "golem.de",
 ];
 
 /* Jedes Thema sagt dazu, welche von Tiams Werten es ueberhaupt betrifft.
  * Diese Zuordnung ist der ganze Zweck der Uebung - eine Schlagzeile ohne
  * Bezug zu einem seiner Maerkte ist fuer ihn nur Rauschen. */
 const THEMEN = [
-  { name: "Krypto", frage: "Bitcoin OR Kryptowaehrung OR Ethereum",
+  { name: "Krypto", frage: "Bitcoin OR Kryptomarkt OR Kryptowährungen OR Ethereum OR Krypto-Regulierung",
     betrifft: ["Bitcoin", "Ethereum", "XRP"] },
   { name: "Aktienmärkte", frage: "Börse OR \"Wall Street\" OR \"S&P 500\" OR Dax",
     betrifft: ["S&P 500", "Nasdaq", "DAX", "breite ETFs"] },
@@ -55,8 +63,8 @@ const THEMEN = [
     betrifft: ["praktisch alles"] },
 ];
 
-function feedUrl(frage) {
-  const q = encodeURIComponent(frage + " " + ZEITFENSTER);
+function feedUrl(frage, tage) {
+  const q = encodeURIComponent(frage + " when:" + (tage || TAGE_ZURUECK) + "d");
   return "https://news.google.com/rss/search?q=" + q + "&hl=de&gl=AT&ceid=AT:de";
 }
 
@@ -200,39 +208,56 @@ function schluessel(titel) {
 }
 
 async function sammle() {
-  const grenze = Date.now() - TAGE_ZURUECK * 86400 * 1000;
   const gesehen = new Set();
   const themen = [];
   const fehler = [];
-  let gesamtRoh = 0, gesamtErlaubt = 0, gesamtFuellware = 0;
+  const zaehler = { roh: 0, erlaubt: 0, fuellware: 0 };
+
+  /* Holt ein Thema fuer ein bestimmtes Zeitfenster und reicht nur das
+     durch, was Quelle, Klickware-Filter und Entdopplung ueberlebt. */
+  async function hole(t, tage) {
+    const grenze = Date.now() - tage * 86400 * 1000;
+    const roh = parseFeed(await holeFeed(feedUrl(t.frage, tage)));
+    zaehler.roh += roh.length;
+
+    const raus = [];
+    for (const n of roh) {
+      if (n.zeit < grenze) continue;
+      if (!erlaubt(n.host)) continue;
+      zaehler.erlaubt++;
+      if (fuellware(n.titel)) { zaehler.fuellware++; continue; }
+      const s = schluessel(n.titel);
+      if (gesehen.has(s)) continue;      // dieselbe Meldung nicht unter zwei Themen
+      gesehen.add(s);
+      raus.push({
+        titel: n.titel, link: n.link, quelle: n.quelle,
+        zeitIso: new Date(n.zeit).toISOString(),
+      });
+      if (raus.length >= PRO_THEMA) break;
+    }
+    return raus;
+  }
 
   for (const t of THEMEN) {
-    let roh;
+    let eintraege, weiterFenster = false;
     try {
-      roh = parseFeed(await holeFeed(feedUrl(t.frage)));
+      eintraege = await hole(t, TAGE_ZURUECK);
     } catch (e) {
       fehler.push(t.name + ": " + (e && e.message ? e.message : e));
       themen.push({ name: t.name, betrifft: t.betrifft, ok: false, eintraege: [] });
       continue;
     }
-    gesamtRoh += roh.length;
-
-    const eintraege = [];
-    for (const n of roh) {
-      if (n.zeit < grenze) continue;
-      if (!erlaubt(n.host)) continue;
-      gesamtErlaubt++;
-      if (fuellware(n.titel)) { gesamtFuellware++; continue; }
-      const s = schluessel(n.titel);
-      if (gesehen.has(s)) continue;      // dieselbe Meldung nicht unter zwei Themen
-      gesehen.add(s);
-      eintraege.push({
-        titel: n.titel, link: n.link, quelle: n.quelle,
-        zeitIso: new Date(n.zeit).toISOString(),
-      });
-      if (eintraege.length >= PRO_THEMA) break;
+    // Leer geblieben? Dann noch einmal mit groesserem Zeitfenster.
+    if (!eintraege.length) {
+      try {
+        eintraege = await hole(t, TAGE_NOTFALL);
+        weiterFenster = eintraege.length > 0;
+      } catch (e) {
+        fehler.push(t.name + " (zweiter Versuch): " + (e && e.message ? e.message : e));
+      }
     }
-    themen.push({ name: t.name, betrifft: t.betrifft, ok: true, eintraege });
+    themen.push({ name: t.name, betrifft: t.betrifft, ok: true, eintraege,
+                  tage: weiterFenster ? TAGE_NOTFALL : TAGE_ZURUECK });
   }
 
   const mitInhalt = themen.filter((t) => t.eintraege.length).length;
@@ -244,11 +269,12 @@ async function sammle() {
     ok: true,
     themen,
     tageZurueck: TAGE_ZURUECK,
+    tageNotfall: TAGE_NOTFALL,
     anzahl: themen.reduce((s, t) => s + t.eintraege.length, 0),
     themenMitInhalt: mitInhalt,
-    gepruefteMeldungen: gesamtRoh,
-    ausErlaubtenQuellen: gesamtErlaubt,
-    alsFuellwareVerworfen: gesamtFuellware,
+    gepruefteMeldungen: zaehler.roh,
+    ausErlaubtenQuellen: zaehler.erlaubt,
+    alsFuellwareVerworfen: zaehler.fuellware,
     quellenAnzahl: ERLAUBTE_QUELLEN.length,
     fehler,
   };
