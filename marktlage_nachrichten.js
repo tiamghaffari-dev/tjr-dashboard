@@ -172,6 +172,11 @@ const FUELLWARE = [
   /\b(endet|beginnt|startet|kommt)\s+(jetzt|nun)\b/i,
   /f(ü|ue)r wen\s+.{0,30}\blohnt\b/i,
   /\bzukunft von\b.*\?/i,
+  /* Fuenfte Runde: Anbietervergleiche im Fragesatz und Sparplan-Ratgeber. */
+  /\bwelche[rsn]?\b.{0,25}\b(b(ö|oe)rse|broker|plattform|app|anbieter|bank)\b/i,
+  /\b(ist|sind)\s+besser\b|\bbesser\s*\?/i,
+  /\bsparplan\b/i,
+  /\banbieter\b.{0,40}\bgeb(ü|ue)hren\b|\bgeb(ü|ue)hren\b.{0,40}\banbieter\b/i,
 ];
 
 function fuellware(titel) {
