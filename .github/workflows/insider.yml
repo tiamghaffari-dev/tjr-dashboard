@@ -69,6 +69,16 @@ jobs:
             echo "Nichts geaendert - kein Commit."
           else
             git commit -m "Insider-Beobachtung: $(date -u +'%Y-%m-%d %H:%M UTC')"
-            git pull --rebase --autostash -q
-            git push -q && echo "Gepusht."
+            # Mehrere Workflows schreiben in denselben Zweig. Ohne
+            # Wiederholung verliert der langsamste das Rennen und der Lauf
+            # faellt rot aus, obwohl das Ergebnis in Ordnung war - genau das
+            # ist am 22.10.2026 passiert. Dieselbe Schleife wie bei Marktlage.
+            for i in 1 2 3 4 5; do
+              git fetch -q origin main || true
+              git rebase -q origin/main || { git rebase --abort 2>/dev/null; true; }
+              if git push -q; then echo "Gepusht (Versuch $i)."; exit 0; fi
+              echo "Push-Versuch $i fehlgeschlagen, warte $((i * 8)) Sekunden."
+              sleep $((i * 8))
+            done
+            exit 1
           fi
