@@ -56484,9 +56484,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1792667400000,
+    "rMultiple": -1,
+    "exitPrice": 1.31514,
+    "postmortem": {
+      "holdHours": 3.1,
+      "mfeR": 0.43,
+      "maeR": -1.08,
+      "towardTargetPct": 32,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.27,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.1R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.4R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Entry: zu frueh · Analyse: These war falsch"
+    }
   },
   {
     "id": "GBPUSD-1792670457096",
@@ -56500,8 +56527,8 @@
     "target2": 1.341796,
     "rr2": 1.76,
     "partialExit": true,
-    "trailStop": 1.334643,
-    "tp1HitTs": null,
+    "trailStop": 1.339926,
+    "tp1HitTs": 1792673100000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -56554,9 +56581,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792673400000,
+    "rMultiple": 1.04,
+    "exitPrice": 1.339926,
+    "postmortem": {
+      "holdHours": 4.8,
+      "mfeR": 1.08,
+      "maeR": -0.64,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.43,
+      "targetDistAdr": 0.45,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1792673110977",
@@ -56570,8 +56608,8 @@
     "target2": 1.3085,
     "rr2": 1.45,
     "partialExit": true,
-    "trailStop": 1.33606,
-    "tp1HitTs": null,
+    "trailStop": 1.3091,
+    "tp1HitTs": 1792673400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -56625,9 +56663,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792673700000,
+    "rMultiple": 1.39,
+    "exitPrice": 1.3091,
+    "postmortem": {
+      "holdHours": 4.2,
+      "mfeR": 1.76,
+      "maeR": -0.56,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.28,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "GCUSD-1792674742839",
@@ -56790,8 +56845,8 @@
     "target2": 81096.953125,
     "rr2": 1.02,
     "partialExit": true,
-    "trailStop": 81949.770313,
-    "tp1HitTs": null,
+    "trailStop": 81096.953125,
+    "tp1HitTs": 1792673100000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -56843,9 +56898,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792673400000,
+    "rMultiple": 1.02,
+    "exitPrice": 81096.953125,
+    "postmortem": {
+      "holdHours": 2.6,
+      "mfeR": 1.75,
+      "maeR": -0.73,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.2,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.7R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1792678900421",
@@ -56859,8 +56936,8 @@
     "target2": 2378.560059,
     "rr2": 1.73,
     "partialExit": true,
-    "trailStop": 2427.034033,
-    "tp1HitTs": null,
+    "trailStop": 2388.800049,
+    "tp1HitTs": 1792667400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -56914,9 +56991,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792667700000,
+    "rMultiple": 1.15,
+    "exitPrice": 2388.800049,
+    "postmortem": {
+      "holdHours": 0.9,
+      "mfeR": 1.26,
+      "maeR": -0.31,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.23,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.2R, der Preis lief danach aber noch bis +2.9R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "XRPUSD-1792678900421",
@@ -56930,8 +57024,8 @@
     "target2": 1.3085,
     "rr2": 1.51,
     "partialExit": true,
-    "trailStop": 1.33656,
-    "tp1HitTs": null,
+    "trailStop": 1.309,
+    "tp1HitTs": 1792673400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -56985,9 +57079,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792673700000,
+    "rMultiple": 1.47,
+    "exitPrice": 1.309,
+    "postmortem": {
+      "holdHours": 2.6,
+      "mfeR": 1.83,
+      "maeR": -0.06,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1792680170660",
@@ -57001,8 +57106,8 @@
     "target2": 2378.560059,
     "rr2": 1.73,
     "partialExit": true,
-    "trailStop": 2427.074072,
-    "tp1HitTs": null,
+    "trailStop": 2388.800049,
+    "tp1HitTs": 1792667400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -57056,9 +57161,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792667700000,
+    "rMultiple": 1.15,
+    "exitPrice": 2388.800049,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 1.26,
+      "maeR": -0.26,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.23,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.2R, der Preis lief danach aber noch bis +2.9R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "XRPUSD-1792680170660",
@@ -57072,8 +57194,8 @@
     "target2": 1.3085,
     "rr2": 1.46,
     "partialExit": true,
-    "trailStop": 1.33596,
-    "tp1HitTs": null,
+    "trailStop": 1.309,
+    "tp1HitTs": 1792673400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -57127,8 +57249,19 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792673700000,
+    "rMultiple": 1.42,
+    "exitPrice": 1.309,
+    "postmortem": {
+      "holdHours": 2.2,
+      "mfeR": 1.77,
+      "maeR": -0.06,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.28,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
