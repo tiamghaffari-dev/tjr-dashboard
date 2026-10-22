@@ -40,6 +40,11 @@
   .schedule-row .time { color: var(--schrift); font-weight: 500; white-space: nowrap;
                         font-variant-numeric: tabular-nums; }
   .schedule-row .freq { color: var(--leiser); text-align: right; }
+  /* Am Handy passen Zeit und Takt nicht in eine Zeile - dann untereinander. */
+  @media (max-width: 460px) {
+    .schedule-row { flex-wrap: wrap; gap: 2px; }
+    .schedule-row .freq { text-align: left; width: 100%; }
+  }
   .schedule-row.focus .time, .schedule-row.focus .freq { color: var(--rauf); }
   .badge-focus {
     display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: var(--rund-voll);

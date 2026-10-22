@@ -129,6 +129,14 @@ td {
 }
 td:first-child { text-align: left; white-space: normal; }
 
+/* Am Handy passt keine breite Tabelle nebeneinander. Statt die ganze
+   Seite waagrecht scrollen zu lassen, scrollt die Tabelle fuer sich.
+   display:block auf der Tabelle laesst die Spalten weiter ausrichten,
+   weil die Zeilengruppen ihre Tabellenrollen behalten. */
+@media (max-width: 760px) {
+  table { display: block; max-width: 100%; overflow-x: auto; }
+}
+
 /* ---------------------------------------------------------------
    Marken und Knoepfe
    --------------------------------------------------------------- */
