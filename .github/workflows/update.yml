@@ -39,6 +39,12 @@ on:
       - "tjr_rules.js"
       - "auto_tune.js"
       - "kerzen_archiv.js"
+      # Vorlagen und gemeinsames Stylesheet (22.10.2026): eine
+      # Design-Aenderung soll die Seite sofort neu bauen, nicht erst
+      # beim naechsten Zeitplan-Lauf. Reine Anzeige, keine Handelslogik.
+      - "docs/report_template.html"
+      - "docs/history_template.html"
+      - "docs/stil.css"
       - ".github/workflows/update.yml"
   workflow_dispatch: {}
 

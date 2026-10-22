@@ -3,97 +3,77 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Insider-Kaeufe // Beobachtung</title>
+<title>Insider-Käufe</title>
+<link rel="stylesheet" href="stil.css">
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  /* Grundlagen stehen in stil.css. Hier nur das Eigene dieser Seite. */
+  body { padding: 0; }
+  .inhalt { max-width: var(--breit); margin: 0 auto; padding: 26px 20px 56px; }
 
-  html, body {
-    margin: 0; padding: 0; min-height: 100%;
-    background:
-      radial-gradient(circle at 15% 0%, rgba(255, 196, 0, 0.13), transparent 42%),
-      radial-gradient(circle at 85% 8%, rgba(88, 101, 242, 0.10), transparent 40%),
-      #05060a;
-    color: #e8eaf0;
-    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
-  }
-  body { padding: 22px 24px 48px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .dot, .howto-link { display: none; }   /* ersetzt durch die Navigationsleiste */
+  .subtitle { color: var(--leiser); font-size: 0.875rem; margin: 6px 0 22px; }
 
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
-  .brand { display: flex; align-items: center; gap: 10px; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
-  h1 {
-    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
-    background: linear-gradient(90deg, #ffd25c, #a78bfa 55%, #7dd3fc 90%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .tag {
-    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,210,92,0.35);
-    color: #ffd25c; background: rgba(255,210,92,0.08);
-  }
-  .howto-link {
-    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
-    padding: 4px 10px; border-radius: 6px; text-decoration: none;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
-    color: #9198ad; transition: all 0.15s ease;
-  }
-  .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
-  .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 16px 0; font-family: -apple-system, sans-serif; }
-
+  /* Der Warnkasten ist der einzige farbige Block - deshalb faellt er auf. */
   .warn {
-    background: linear-gradient(135deg, rgba(255,196,0,0.09), rgba(255,196,0,0.02));
-    border: 1px solid rgba(255,196,0,0.28); border-radius: 12px;
-    padding: 13px 16px; margin-bottom: 20px; font-size: 12.5px; line-height: 1.6;
-    font-family: -apple-system, sans-serif; animation: fadeUp 0.4s ease; color: #d8cfae;
+    border: 1px solid rgba(251,191,36,0.25); background: rgba(251,191,36,0.04);
+    border-radius: var(--rund); padding: 15px 18px; margin-bottom: 24px;
+    font-size: 0.9375rem; line-height: 1.65; color: var(--leise);
   }
-  .warn b { color: #ffd25c; }
+  .warn b { color: var(--warn); }
 
-  .cards { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-  .card {
-    flex: 1 1 140px; background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 12px 14px;
-  }
-  .card .k { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: #6b7185; font-family: -apple-system, sans-serif; }
-  .card .v { font-size: 20px; font-weight: 700; margin-top: 4px; }
+  .cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
+  .card { flex: 1 1 150px; border: 1px solid var(--rand); border-radius: var(--rund);
+          padding: 14px 16px; }
+  .card .k { font-size: 0.8125rem; color: var(--leiser); }
+  .card .v { font-size: 1.5rem; font-weight: 650; margin-top: 4px;
+             font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  th {
-    text-align: left; padding: 9px 10px; color: #6b7185; font-weight: 600;
-    font-size: 10.5px; letter-spacing: 0.7px; text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,255,255,0.1); font-family: -apple-system, sans-serif;
-    cursor: pointer; user-select: none; white-space: nowrap;
-  }
-  th:hover { color: #9fb2ff; }
-  td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.045); vertical-align: top; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-  .sym { font-weight: 700; color: #7dd3fc; }
-  .firma { color: #9198ad; font-size: 11.5px; font-family: -apple-system, sans-serif; }
-  .geld { color: #39ff88; font-weight: 600; }
-  .mehrere { color: #ffd25c; font-weight: 700; }
-  .lag-ok { color: #6b7185; }
-  .lag-mittel { color: #ffd25c; }
-  .lag-schlecht { color: #ff6b6b; font-weight: 600; }
-  .insider-liste { color: #7c8399; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 3px; }
+  th { cursor: pointer; user-select: none; text-align: left; letter-spacing: 0;
+       text-transform: none; font-size: 0.8125rem; }
+  th:hover { color: var(--akzent); }
+  td { text-align: left; white-space: normal; }
+  tr:hover td { background: rgba(255,255,255,0.018); }
+
+  .sym { font-weight: 600; color: var(--akzent); }
+  .firma { color: var(--leiser); font-size: 0.8125rem; }
+  .geld { color: var(--rauf); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .mehrere { color: var(--warn); font-weight: 600; }
+  .lag-ok { color: var(--leiser); }
+  .lag-mittel { color: var(--warn); }
+  .lag-schlecht { color: var(--runter); font-weight: 600; }
+  .insider-liste { color: var(--leiser); font-size: 0.8125rem; margin-top: 4px; }
   .grossakt {
-    margin-left: 7px; font-size: 9.5px; letter-spacing: 0.5px; padding: 2px 6px; border-radius: 5px;
-    background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.35); color: #b9a6fb;
-    font-family: -apple-system, sans-serif; vertical-align: middle;
+    margin-left: 8px; font-size: 0.75rem; padding: 2px 8px; border-radius: var(--rund-voll);
+    border: 1px solid var(--rand); color: var(--leiser); vertical-align: middle;
   }
-  a.beleg { color: #6b7185; text-decoration: none; font-size: 11px; }
-  a.beleg:hover { color: #7dd3fc; }
-  .leer { color: #6b7185; padding: 40px 10px; text-align: center; font-family: -apple-system, sans-serif; }
-  .fuss { margin-top: 26px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);
-          color: #5a6072; font-size: 11.5px; line-height: 1.7; font-family: -apple-system, sans-serif; }
+  a.beleg { color: var(--leiser); text-decoration: none; font-size: 0.8125rem; }
+  a.beleg:hover { color: var(--akzent); }
+  .leer { color: var(--leiser); padding: 44px 10px; text-align: center; }
 </style>
 </head>
 <body>
+<!-- Gemeinsame Navigationsleiste (22.10.2026). Vorher hatte jede Seite
+     ihren eigenen Zurueck-Knopf und man sah nicht, was es sonst gibt. -->
+<nav class="leiste" aria-label="Bereiche des Dashboards">
+  <div class="leiste-rolle">
+    <a href="index.html">Report</a>
+    <a href="history.html">Verlauf</a>
+    <a href="marktlage.html">Marktlage</a>
+    <a href="insider.html" class="hier" aria-current="page">Insider</a>
+    <a href="tjr_methode.html">Methode</a>
+    <a href="how_it_works.html">Wie es läuft</a>
+  </div>
+</nav>
+
+<div class="inhalt">
 
 <div class="topbar">
   <div class="brand">
     <span class="dot"></span>
-    <h1>Insider-Kaeufe</h1>
+    <h1>Insider-Käufe</h1>
     <span class="tag">nur Beobachtung</span>
   </div>
   <a class="howto-link" href="index.html">&larr; TJR-Dashboard</a>
@@ -190,5 +170,6 @@ document.querySelector(".subtitle").insertAdjacentHTML("beforeend",
   ` &mdash; Stand ${DATA.stand || "?"}`);
 zeichne();
 </script>
+</div>
 </body>
 </html>

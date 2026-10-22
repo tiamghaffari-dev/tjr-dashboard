@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Marktlage</title>
+<link rel="stylesheet" href="stil.css">
 <style>
   /* ===================================================================
      UMBAU 18.10.2026 - Tiam: "zu viel Text, zu klein, zu kompliziert.
@@ -22,18 +23,11 @@
      Die Saetze oben kommen aus denselben Daten wie die Tabellen darunter,
      samt Rauschpruefung - andere Darstellung, nicht andere Aussage.
      =================================================================== */
-  :root {
-    color-scheme: dark;
-    --grund:   #0a0c11;
-    --rand:    rgba(255,255,255,0.09);
-    --schrift: #e9ecf2;
-    --leise:   #8c94a6;
-    --leiser:  #656d7e;
-    --rauf:    #4ade80;
-    --runter:  #f87171;
-    --akzent:  #7dd3fc;
-    --warn:    #fbbf24;
-  }
+  /* Farben, Schrift, Leiste und Nach-oben-Knopf stehen jetzt in stil.css -
+     fuer alle Seiten gemeinsam. Hier bleibt nur, was es nur hier gibt.
+     Die Leiste laeuft auf dieser Seite in der schmaleren Lesebreite mit. */
+  :root { --leiste-breit: 760px; }
+
   * { box-sizing: border-box; }
 
   html { font-size: 16px; }
@@ -44,50 +38,6 @@
     -webkit-font-smoothing: antialiased;
   }
   .seite { max-width: 760px; margin: 0 auto; padding: 22px 20px 64px; }
-
-  /* ---------- Navigationsleiste ---------- */
-  .leiste {
-    position: sticky; top: 0; z-index: 20;
-    background: rgba(10,12,17,0.92); backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--rand);
-  }
-  .leiste-rolle {
-    max-width: 760px; margin: 0 auto; padding: 0 20px;
-    display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;
-  }
-  .leiste-rolle::-webkit-scrollbar { display: none; }
-  /* Am Handy passen nicht alle Namen nebeneinander. Der Verlauf nach rechts
-     zeigt, dass da noch etwas kommt, statt wie ein Darstellungsfehler zu
-     wirken. */
-  .leiste::after {
-    content: ""; position: absolute; top: 0; right: 0; bottom: 1px; width: 36px;
-    pointer-events: none;
-    background: linear-gradient(to right, rgba(10,12,17,0), rgba(10,12,17,0.95));
-  }
-  .leiste { position: sticky; }
-  .leiste a {
-    padding: 13px 11px; font-size: 0.9375rem; color: var(--leiser);
-    text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent;
-  }
-  .leiste a:hover { color: var(--schrift); }
-  .leiste a.hier { color: var(--schrift); border-bottom-color: var(--akzent); }
-  .leiste a:focus-visible { outline: 2px solid var(--akzent); outline-offset: -4px; border-radius: 4px; }
-
-  /* Aufgeklappte Abschnitte sollen nicht unter der Leiste verschwinden,
-     wenn man sie anspringt. */
-  details.ab { scroll-margin-top: 58px; }
-
-  /* ---------- Zurueck nach oben ---------- */
-  .hoch {
-    position: fixed; right: 18px; bottom: 18px; z-index: 15;
-    width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
-    border: 1px solid var(--rand); background: rgba(18,21,28,0.94);
-    color: var(--leise); font-size: 1.125rem; line-height: 1;
-    backdrop-filter: blur(6px);
-  }
-  .hoch:hover { color: var(--schrift); border-color: rgba(125,211,252,0.45); }
-  .hoch:focus-visible { outline: 2px solid var(--akzent); outline-offset: 2px; }
-  .hoch[hidden] { display: none; }
 
   /* ---------- Kopf ---------- */
   .kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }

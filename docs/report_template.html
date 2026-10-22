@@ -3,118 +3,113 @@
 <head>
 <meta charset="utf-8">
 <title>TJR Live-Report // ICT-SMC</title>
+<link rel="stylesheet" href="stil.css">
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
+  /* Grundlagen (Farben, Schrift, Leiste, Tabellen) stehen in stil.css.
+     Hier steht nur noch, was diese Seite eigens braucht.
 
+     WICHTIG: Klassennamen sind unveraendert. Die Engine laeuft auf dieser
+     Seite im Browser mit und greift per Klassenname auf Elemente zu -
+     umbenannt wurde nichts, nur umgefaerbt und neu gesetzt. */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  html, body {
-    margin: 0; padding: 0; min-height: 100%;
-    background:
-      radial-gradient(circle at 15% 0%, rgba(88, 101, 242, 0.16), transparent 42%),
-      radial-gradient(circle at 85% 8%, rgba(57, 255, 136, 0.10), transparent 40%),
-      #05060a;
-    color: #e8eaf0;
-    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
-  }
-  body { padding: 22px 24px 48px; }
+  body { padding: 0; }
+  .inhalt { max-width: var(--breit); margin: 0 auto; padding: 24px 20px 56px; }
 
   .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; flex-wrap: wrap; gap: 10px; }
   .brand { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .dot { width: 11px; height: 11px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--warn); flex-shrink: 0; }
   /* Tiam, 2026-07-12: "es soll simple gross und einfach zu verstehen sein" -
      Titel deutlich vergroessert (21px -> 36px) und das kryptische
      "// ICT-SMC"-Suffix aus dem Titel selbst entfernt (steht jetzt als
      kleines, dezentes Badge daneben statt im Haupttitel zu stehen). */
-  h1 {
-    font-size: 36px; margin: 0; letter-spacing: 0.3px; font-weight: 800;
-    background: linear-gradient(90deg, #7dd3fc, #a78bfa 45%, #39ff88 90%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
+  /* Der Farbverlauf im Titel ist raus: eine Akzentfarbe reicht, und
+     Verlaufsschrift liest sich auf kleinen Schirmen schlecht. */
+  h1 { font-size: 1.75rem; margin: 0; letter-spacing: -0.01em; font-weight: 700;
+       color: var(--schrift); }
   .tag {
-    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(122,140,255,0.35);
-    color: #9fb2ff; background: rgba(122,140,255,0.08);
+    font-size: 0.75rem; letter-spacing: 0;
+    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(125,211,252,0.35);
+    color: var(--akzent); background: rgba(125,211,252,0.08);
   }
   .brand-badge {
-    font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600;
-    padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(122,140,255,0.3);
-    color: #9fb2ff; background: rgba(122,140,255,0.08); white-space: nowrap;
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(125,211,252,0.3);
+    color: var(--akzent); background: rgba(125,211,252,0.08); white-space: nowrap;
   }
   .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .howto-link {
-    font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 600;
+    font-family: inherit; font-size: 12px; font-weight: 600;
     padding: 5px 11px; border-radius: 6px; text-decoration: none;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
-    color: #9198ad; transition: all 0.15s ease;
+    color: var(--leise); transition: all 0.15s ease;
   }
-  .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .howto-link:hover { border-color: rgba(125,211,252,0.4); color: var(--schrift); }
 
   /* Zeitrahmen-Umschalter (Tiam, 2026-10-01). TJR arbeitet Weekly -> Daily ->
      4H -> 1H -> 15min -> 5min -> 1min; bisher zeigte der Chart nur 5min. */
   .tf-bar { display: flex; gap: 5px; flex-wrap: wrap; margin: 2px 0 8px 0; align-items: center; }
   .tf-btn {
-    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
+    font-family: inherit; font-size: 11px; font-weight: 600;
     padding: 4px 11px; border-radius: 6px; cursor: pointer;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
-    color: #9198ad; transition: all 0.12s ease; user-select: none;
+    color: var(--leise); transition: all 0.12s ease; user-select: none;
   }
-  .tf-btn:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
+  .tf-btn:hover { border-color: rgba(125,211,252,0.4); color: var(--schrift); }
   .tf-btn.active {
-    background: rgba(122,140,255,0.16); border-color: rgba(122,140,255,0.55); color: #cdd6ff;
+    background: rgba(125,211,252,0.16); border-color: rgba(125,211,252,0.55); color: var(--schrift);
   }
   .tf-btn.leer { opacity: 0.35; cursor: not-allowed; }
   .tf-hinweis {
-    font-family: -apple-system, sans-serif; font-size: 10.5px; color: #6b7185; margin-left: 4px;
+    font-family: inherit; font-size: 10.5px; color: var(--leiser); margin-left: 4px;
   }
   .subtitle {
     color: #a8afc2; font-size: 16px; line-height: 1.5; margin: 10px 0 16px 0;
-    font-family: -apple-system, sans-serif;
+    font-family: inherit;
   }
   .status-line {
     font-size: 13.5px; color: #8790a8; margin-bottom: 20px; padding-bottom: 14px;
     border-bottom: 1px solid rgba(255,255,255,0.06); line-height: 1.6;
-    font-family: -apple-system, sans-serif;
+    font-family: inherit;
   }
 
   .news-box {
-    background: linear-gradient(135deg, rgba(255,196,0,0.08), rgba(255,196,0,0.02));
-    border: 1px solid rgba(255,196,0,0.28); border-radius: 12px;
+    background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(251,191,36,0.02));
+    border: 1px solid rgba(251,191,36,0.28); border-radius: 12px;
     padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px;
-    font-family: -apple-system, sans-serif; animation: fadeUp 0.4s ease;
+    font-family: inherit; animation: fadeUp 0.4s ease;
   }
-  .news-box.empty { background: linear-gradient(135deg, rgba(57,255,136,0.07), rgba(57,255,136,0.01)); border-color: rgba(57,255,136,0.25); color: #9be8b8; }
-  .news-title { font-weight: 700; margin-bottom: 6px; color: #ffd25c; letter-spacing: 0.3px; }
+  .news-box.empty { background: linear-gradient(135deg, rgba(74,222,128,0.07), rgba(74,222,128,0.01)); border-color: rgba(74,222,128,0.25); color: var(--rauf); }
+  .news-title { font-weight: 700; margin-bottom: 6px; color: var(--warn); letter-spacing: 0.3px; }
   .news-box.empty .news-title { color: #6be79a; }
   .news-item { margin: 3px 0; color: #d8d2b8; }
-  .news-source { color: #565c70; font-size: 10.5px; margin-top: 6px; }
+  .news-source { color: var(--leiser); font-size: 10.5px; margin-top: 6px; }
 
   .settings-box {
-    background: linear-gradient(135deg, rgba(122,140,255,0.09), rgba(122,140,255,0.02));
-    border: 1px solid rgba(122,140,255,0.25); border-radius: 12px;
+    background: linear-gradient(135deg, rgba(125,211,252,0.09), rgba(125,211,252,0.02));
+    border: 1px solid rgba(125,211,252,0.25); border-radius: 12px;
     padding: 12px 16px; margin-bottom: 20px; font-size: 12px;
-    font-family: -apple-system, sans-serif;
+    font-family: inherit;
   }
   .settings-body { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
   .settings-field { display: flex; align-items: center; gap: 6px; }
-  .settings-field label { color: #7c8399; }
+  .settings-field label { color: var(--leiser); }
   .settings-field input {
     width: 90px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 6px; color: #e8eaf0; padding: 4px 8px; font-family: inherit; font-size: 12px;
+    border-radius: 6px; color: var(--schrift); padding: 4px 8px; font-family: inherit; font-size: 12px;
   }
-  .settings-hint { color: #565c70; font-size: 10.5px; flex-basis: 100%; }
+  .settings-hint { color: var(--leiser); font-size: 10.5px; flex-basis: 100%; }
   .risk-tier-btn {
     font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer;
     padding: 4px 9px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.04); color: #9198ad; transition: all 0.15s ease;
+    background: rgba(255,255,255,0.04); color: var(--leise); transition: all 0.15s ease;
   }
-  .risk-tier-btn:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
-  .risk-tier-btn.active { background: rgba(122,140,255,0.18); border-color: rgba(122,140,255,0.55); color: #d7dbe8; }
-  .settings-hint-inline { color: #7c8399; font-size: 10.5px; }
+  .risk-tier-btn:hover { border-color: rgba(125,211,252,0.4); color: var(--schrift); }
+  .risk-tier-btn.active { background: rgba(125,211,252,0.18); border-color: rgba(125,211,252,0.55); color: var(--schrift); }
+  .settings-hint-inline { color: var(--leiser); font-size: 10.5px; }
 
   /* Tiam, 2026-07-12: "ich finde generell das Layout nicht cool" ->
      komplette Struktur-Ueberarbeitung: statt einer langen Liste aller 6
@@ -126,23 +121,23 @@
      .asset-section / .asset-section.active weiter unten. */
   .overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 22px; }
   .overview-card {
-    cursor: pointer; user-select: none; font-family: -apple-system, sans-serif;
+    cursor: pointer; user-select: none; font-family: inherit;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
     border-radius: 12px; padding: 12px 14px; transition: all 0.15s ease;
   }
-  .overview-card:hover { border-color: rgba(122,140,255,0.4); }
+  .overview-card:hover { border-color: rgba(125,211,252,0.4); }
   .overview-card.active {
-    border-color: rgba(122,140,255,0.6); background: rgba(122,140,255,0.09);
-    box-shadow: 0 0 0 1px rgba(122,140,255,0.25);
+    border-color: rgba(125,211,252,0.6); background: rgba(125,211,252,0.09);
+    box-shadow: 0 0 0 1px rgba(125,211,252,0.25);
   }
-  .overview-card.has-entry { border-color: rgba(57,255,136,0.55); box-shadow: 0 0 14px -4px rgba(57,255,136,0.4); }
+  .overview-card.has-entry { border-color: rgba(74,222,128,0.55); box-shadow: 0 0 14px -4px rgba(74,222,128,0.4); }
   .overview-card.has-open-trade { border-color: rgba(64,156,255,0.55); box-shadow: 0 0 14px -4px rgba(64,156,255,0.4); }
-  .ov-name { font-weight: 700; font-size: 13px; color: #f2f3f8; margin-bottom: 8px; }
+  .ov-name { font-weight: 700; font-size: 13px; color: var(--schrift); margin-bottom: 8px; }
   .ov-badges { display: flex; gap: 4px; flex-wrap: wrap; }
   .ov-badges .badge { font-size: 9.5px; padding: 3px 7px; }
 
   .legend-wrap { margin: 4px 0 22px; }
-  .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 10.5px; color: #9198ad; font-family: -apple-system, sans-serif; margin-top: 10px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 10.5px; color: var(--leise); font-family: inherit; margin-top: 10px; }
   .legend span { display: inline-flex; align-items: center; gap: 5px; }
   .swatch { width: 12px; height: 3px; border-radius: 2px; display: inline-block; }
 
@@ -153,31 +148,31 @@
      zuerst eine einfache Alltagssprache-Zusammenfassung sieht statt einer
      Fachbegriff-Wand. Tiam/Power-User koennen jederzeit aufklappen. */
   details.collapsible > summary {
-    cursor: pointer; list-style: none; font-family: -apple-system, sans-serif;
-    font-weight: 700; color: #9fb2ff; font-size: 12.5px; letter-spacing: 0.3px;
+    cursor: pointer; list-style: none; font-family: inherit;
+    font-weight: 700; color: var(--akzent); font-size: 12.5px; letter-spacing: 0.3px;
     padding: 4px 0; user-select: none;
   }
   details.collapsible > summary::-webkit-details-marker { display: none; }
-  details.collapsible > summary::before { content: "\25B8  "; color: #6b7185; }
+  details.collapsible > summary::before { content: "\25B8  "; color: var(--leiser); }
   details.collapsible[open] > summary::before { content: "\25BE  "; }
-  details.collapsible > summary:hover { color: #d7dbe8; }
+  details.collapsible > summary:hover { color: var(--schrift); }
   .tech-details { margin-top: 10px; }
 
   .plain-headline {
-    font-family: -apple-system, sans-serif; font-size: 14px; line-height: 1.5;
+    font-family: inherit; font-size: 14px; line-height: 1.5;
     padding: 10px 14px; border-radius: 10px; margin-bottom: 12px;
-    background: rgba(255,255,255,0.03); border-left: 3px solid #565c70;
-    color: #d7dbe8;
+    background: rgba(255,255,255,0.03); border-left: 3px solid var(--leiser);
+    color: var(--schrift);
   }
   .plain-headline .headline-emoji { margin-right: 6px; }
-  .plain-headline.headline-entry { border-left-color: #39ff88; background: rgba(57,255,136,0.06); }
-  .plain-headline.headline-watch { border-left-color: #ffd25c; background: rgba(255,196,0,0.06); }
-  .plain-headline.headline-monitor { border-left-color: #7dd3fc; background: rgba(125,211,252,0.06); }
-  .plain-headline.headline-none { border-left-color: #565c70; }
+  .plain-headline.headline-entry { border-left-color: var(--rauf); background: rgba(74,222,128,0.06); }
+  .plain-headline.headline-watch { border-left-color: var(--warn); background: rgba(251,191,36,0.06); }
+  .plain-headline.headline-monitor { border-left-color: var(--akzent); background: rgba(125,211,252,0.06); }
+  .plain-headline.headline-none { border-left-color: var(--leiser); }
   .plain-headline.headline-weekly { border-left-color: #b48cff; background: rgba(180,140,255,0.06); font-size: 0.92em; opacity: 0.9; }
 
-  .subtitle .inline-link { color: #9fb2ff; text-decoration: none; border-bottom: 1px dotted rgba(159,178,255,0.5); }
-  .subtitle .inline-link:hover { color: #d7dbe8; }
+  .subtitle .inline-link { color: var(--akzent); text-decoration: none; border-bottom: 1px dotted rgba(159,178,255,0.5); }
+  .subtitle .inline-link:hover { color: var(--schrift); }
 
   .asset-section { display: none; margin-bottom: 26px; scroll-margin-top: 16px; }
   .asset-section.active { display: block; animation: fadeUp 0.4s ease both; }
@@ -190,18 +185,18 @@
     border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
     padding: 16px 18px 14px;
   }
-  .panel.glow-entry { border-color: rgba(57,255,136,0.5); box-shadow: 0 0 0 1px rgba(57,255,136,0.15), 0 14px 34px -16px rgba(57,255,136,0.35); }
+  .panel.glow-entry { border-color: rgba(74,222,128,0.5); box-shadow: 0 0 0 1px rgba(74,222,128,0.15), 0 14px 34px -16px rgba(74,222,128,0.35); }
   .panel.glow-error { border-color: rgba(255,90,90,0.4); }
   .panel-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
-  .panel-head h2 { font-size: 15px; margin: 0; font-family: -apple-system, sans-serif; font-weight: 700; color: #f2f3f8; letter-spacing: 0.2px; }
-  .symbol { color: #6b7185; font-size: 11px; letter-spacing: 0.5px; }
+  .panel-head h2 { font-size: 15px; margin: 0; font-family: inherit; font-weight: 700; color: var(--schrift); letter-spacing: 0.2px; }
+  .symbol { color: var(--leiser); font-size: 11px; letter-spacing: 0.5px; }
   /* Tiam, 2026-07-13: "ich will das der chart selber laeuft" - kostenlose
      Live-Anbindung (Binance-WebSocket fuer Krypto) statt bezahltem FMP-
      Upgrade. Dieses Badge zeigt sichtbar an, wann fuer ein Asset gerade
      eine echte Live-Verbindung steht, statt nur der alten Batch-Daten. */
   .live-feed-badge {
-    display: none; font-family: -apple-system, sans-serif; font-size: 10px;
-    font-weight: 700; color: #4fff9c; margin-left: 8px; letter-spacing: 0.3px;
+    display: none; font-family: inherit; font-size: 10px;
+    font-weight: 700; color: var(--rauf); margin-left: 8px; letter-spacing: 0.3px;
     animation: livePulse 2s ease-in-out infinite;
   }
 
@@ -210,97 +205,109 @@
   .badges { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
   .badge {
     font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
-    letter-spacing: 0.3px; font-family: -apple-system, sans-serif; border: 1px solid transparent;
+    letter-spacing: 0.3px; font-family: inherit; border: 1px solid transparent;
   }
-  .bias-bullish { background: rgba(57,255,136,0.12); color: #4fff9c; border-color: rgba(57,255,136,0.3); }
-  .bias-bearish { background: rgba(255,90,90,0.12); color: #ff6b6b; border-color: rgba(255,90,90,0.3); }
-  .bias-neutral { background: rgba(255,255,255,0.06); color: #9aa0b4; border-color: rgba(255,255,255,0.12); }
-  .sig-entry { background: linear-gradient(90deg, #17c96b, #39ff88); color: #041a0d; box-shadow: 0 0 14px rgba(57,255,136,0.45); }
-  .sig-watch { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
+  .bias-bullish { background: rgba(74,222,128,0.12); color: var(--rauf); border-color: rgba(74,222,128,0.3); }
+  .bias-bearish { background: rgba(255,90,90,0.12); color: var(--runter); border-color: rgba(255,90,90,0.3); }
+  .bias-neutral { background: rgba(255,255,255,0.06); color: var(--leise); border-color: rgba(255,255,255,0.12); }
+  .sig-entry { background: linear-gradient(90deg, #17c96b, var(--rauf)); color: #041a0d; box-shadow: 0 0 14px rgba(74,222,128,0.45); }
+  .sig-watch { background: rgba(251,191,36,0.14); color: var(--warn); border-color: rgba(251,191,36,0.35); }
   .sig-open { background: rgba(64,156,255,0.16); color: #7ec4ff; border-color: rgba(64,156,255,0.4); }
-  .sig-none { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
-  .sig-error { background: rgba(255,90,90,0.14); color: #ff6b6b; border-color: rgba(255,90,90,0.35); }
-  .badge-outside { background: rgba(255,255,255,0.05); color: #9198ad; border-color: rgba(255,255,255,0.15); }
-  .mode-analyzing { background: rgba(57,255,136,0.12); color: #4fff9c; border-color: rgba(57,255,136,0.3); }
-  .mode-monitoring { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
-  .mode-idle { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.1); }
+  .sig-none { background: rgba(255,255,255,0.05); color: var(--leiser); border-color: rgba(255,255,255,0.1); }
+  .sig-error { background: rgba(255,90,90,0.14); color: var(--runter); border-color: rgba(255,90,90,0.35); }
+  .badge-outside { background: rgba(255,255,255,0.05); color: var(--leise); border-color: rgba(255,255,255,0.15); }
+  .mode-analyzing { background: rgba(74,222,128,0.12); color: var(--rauf); border-color: rgba(74,222,128,0.3); }
+  .mode-monitoring { background: rgba(251,191,36,0.14); color: var(--warn); border-color: rgba(251,191,36,0.35); }
+  .mode-idle { background: rgba(255,255,255,0.05); color: var(--leiser); border-color: rgba(255,255,255,0.1); }
 
-  .steps { font-size: 12px; font-family: -apple-system, sans-serif; margin: 6px 0 14px; }
+  .steps { font-size: 12px; font-family: inherit; margin: 6px 0 14px; }
   .step { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: baseline; }
   .step:last-child { border-bottom: none; }
   .step-icon { flex-shrink: 0; width: 16px; text-align: center; }
-  .step-icon.ok { color: #4fff9c; }
+  .step-icon.ok { color: var(--rauf); }
   .step-icon.pending { color: #4b5064; }
-  .step-label { color: #6b7185; min-width: 128px; }
-  .step-text { color: #d7dbe8; }
+  .step-label { color: var(--leiser); min-width: 128px; }
+  .step-text { color: var(--schrift); }
 
   .info-table { font-size: 12px; margin-bottom: 4px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
   .info-table div { display: flex; justify-content: space-between; padding: 5px 10px; background: rgba(255,255,255,0.02); }
   .info-table div:nth-child(even) { background: rgba(255,255,255,0.045); }
-  .info-table span:first-child { color: #6b7185; font-family: -apple-system, sans-serif; font-size: 11px; }
-  .info-table span:last-child { color: #e8eaf0; font-weight: 600; font-size: 11.5px; text-align: right; }
-  .info-table .row-entry span:last-child { color: #4fff9c; }
-  .info-table .row-stop span:last-child { color: #ff6b6b; }
-  .info-table .row-target span:last-child { color: #ffd25c; }
-  .info-table .row-size span:last-child { color: #7dd3fc; }
+  .info-table span:first-child { color: var(--leiser); font-family: inherit; font-size: 11px; }
+  .info-table span:last-child { color: var(--schrift); font-weight: 600; font-size: 11.5px; text-align: right; }
+  .info-table .row-entry span:last-child { color: var(--rauf); }
+  .info-table .row-stop span:last-child { color: var(--runter); }
+  .info-table .row-target span:last-child { color: var(--warn); }
+  .info-table .row-size span:last-child { color: var(--akzent); }
 
   .ai-note {
-    font-size: 11.5px; line-height: 1.5; color: #d9d3ff; margin: 10px 0 0;
-    padding: 8px 10px; border-radius: 8px; font-family: -apple-system, sans-serif;
-    background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.25);
+    font-size: 11.5px; line-height: 1.5; color: var(--schrift); margin: 10px 0 0;
+    padding: 8px 10px; border-radius: 8px; font-family: inherit;
+    background: rgba(125,211,252,0.08); border: 1px solid rgba(125,211,252,0.25);
   }
-  .ai-note .ai-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; color: #a78bfa; margin-bottom: 3px; text-transform: uppercase; }
+  .ai-note .ai-label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--akzent); margin-bottom: 4px; }
   /* Umfeld-Zeile (Marktlage-Bereich, seit 15.10.2026). Bewusst anders
      eingefaerbt als alles, was zur Entscheidung gehoert - blau statt lila,
      und ohne Rahmen-Akzent: das hier ist Beiwerk, keine Begruendung. */
   .umfeld-note {
     font-size: 11.5px; line-height: 1.55; color: #bcc6d6; margin: 8px 0 0;
-    padding: 8px 10px; border-radius: 8px; font-family: -apple-system, sans-serif;
+    padding: 8px 10px; border-radius: 8px; font-family: inherit;
     background: rgba(125,211,252,0.055); border: 1px solid rgba(125,211,252,0.18);
   }
-  .umfeld-note .u-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.4px; color: #7dd3fc; margin-bottom: 3px; text-transform: uppercase; }
+  .umfeld-note .u-label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--akzent); margin-bottom: 4px; }
   .umfeld-note .u-teil { display: inline-block; margin-right: 14px; }
-  .umfeld-note b { color: #dbe3ef; font-weight: 600; }
-  .umfeld-note .u-grau { color: #6b7185; }
-  .umfeld-note .u-fuss { display: block; margin-top: 4px; color: #6b7185; font-size: 10.5px; }
-  .umfeld-note a { color: #7dd3fc; text-decoration: none; }
+  .umfeld-note b { color: var(--schrift); font-weight: 600; }
+  .umfeld-note .u-grau { color: var(--leiser); }
+  .umfeld-note .u-fuss { display: block; margin-top: 4px; color: var(--leiser); font-size: 10.5px; }
+  .umfeld-note a { color: var(--akzent); text-decoration: none; }
   .umfeld-note a:hover { text-decoration: underline; }
 
-  .err { color: #ff8080; font-size: 12px; font-family: -apple-system, sans-serif; }
-  ::selection { background: rgba(122,140,255,0.35); }
+  .err { color: var(--runter); font-size: 12px; font-family: inherit; }
+  ::selection { background: rgba(125,211,252,0.35); }
 
   .live-indicator {
-    color: #4fff9c; font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px;
+    color: var(--rauf); font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px;
     animation: livePulse 2s ease-in-out infinite;
   }
   @keyframes livePulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
   .refresh-toast {
     position: fixed; bottom: 18px; right: 18px; z-index: 999;
-    background: rgba(20,24,38,0.95); border: 1px solid rgba(57,255,136,0.4);
-    color: #9be8b8; font-family: -apple-system, sans-serif; font-size: 12px;
+    background: rgba(20,24,38,0.95); border: 1px solid rgba(74,222,128,0.4);
+    color: var(--rauf); font-family: inherit; font-size: 12px;
     padding: 8px 14px; border-radius: 10px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6);
     opacity: 0; transform: translateY(8px); transition: opacity 0.25s ease, transform 0.25s ease;
     pointer-events: none;
   }
   .refresh-toast.show { opacity: 1; transform: translateY(0); }
-  .refresh-countdown { color: #7c8399; font-size: 0.85em; margin-left: 6px; }
+  .refresh-countdown { color: var(--leiser); font-size: 0.85em; margin-left: 6px; }
 </style>
 </head>
 <body>
-  <div id="refresh-toast" class="refresh-toast">🔄 Chart aktualisiert</div>
+<!-- Gemeinsame Navigationsleiste (22.10.2026). Vorher hatte jede Seite
+     ihren eigenen Zurueck-Knopf und man sah nicht, was es sonst gibt. -->
+<nav class="leiste" aria-label="Bereiche des Dashboards">
+  <div class="leiste-rolle">
+    <a href="index.html" class="hier" aria-current="page">Report</a>
+    <a href="history.html">Verlauf</a>
+    <a href="marktlage.html">Marktlage</a>
+    <a href="insider.html">Insider</a>
+    <a href="tjr_methode.html">Methode</a>
+    <a href="how_it_works.html">Wie es läuft</a>
+  </div>
+</nav>
+
+<div class="inhalt">
+
+  <div id="refresh-toast" class="refresh-toast">Chart aktualisiert</div>
+  <!-- Die fuenf Verweise auf die anderen Seiten standen hier als Reihe von
+       Knoepfen mit Emojis. Dasselbe macht jetzt die Navigationsleiste oben,
+       auf jeder Seite gleich - darum sind sie hier weg. -->
   <div class="topbar">
     <div class="brand">
-      <span class="dot"></span>
       <h1>TJR Live-Report</h1>
       <span class="brand-badge">ICT / Smart Money</span>
     </div>
     <div class="topbar-right">
-      <a class="howto-link" href="how_it_works.html">ℹ️ Wie funktioniert das?</a>
-      <a class="howto-link" href="history.html">📊 Verlauf aller Assets</a>
-      <a class="howto-link" href="insider.html">🏛️ Insider-Käufe (Beobachtung)</a>
-      <a class="howto-link" href="marktlage.html">🌍 Marktlage (Beobachtung)</a>
-      <a class="howto-link" href="tjr_methode.html">📐 TJR-Methode: was die Engine wirklich tut</a>
-      <span class="tag">no auto-trades · analysis only</span>
+      <span class="tag">keine automatischen Trades · nur Analyse</span>
     </div>
   </div>
   <div class="subtitle">Automatische Live-Analyse von 6 Assets im Handelsstil von TJR — aktiv gehandelt wird nur 9–10 und 15–17 Uhr (Wien). <a class="inline-link" href="how_it_works.html">Wie funktioniert das genau?</a></div>
@@ -2362,5 +2369,6 @@ setInterval(tickCountdown, 1000);
 initSettings();
 main();
 </script>
+</div>
 </body>
 </html>

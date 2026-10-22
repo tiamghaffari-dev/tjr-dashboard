@@ -3,97 +3,104 @@
 <head>
 <meta charset="utf-8">
 <title>TJR Verlauf // ICT-SMC</title>
+<link rel="stylesheet" href="stil.css">
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0; min-height: 100%;
-    background:
-      radial-gradient(circle at 15% 0%, rgba(88, 101, 242, 0.16), transparent 42%),
-      radial-gradient(circle at 85% 8%, rgba(57, 255, 136, 0.10), transparent 40%),
-      #05060a;
-    color: #e8eaf0;
-    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
-  }
-  body { padding: 22px 24px 48px; max-width: 1180px; margin: 0 auto; }
+  /* Grundlagen stehen in stil.css. Hier nur das Eigene dieser Seite. */
+  body { padding: 0; }
+  .inhalt { max-width: var(--breit); margin: 0 auto; padding: 26px 20px 56px; }
 
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
   .brand { display: flex; align-items: center; gap: 10px; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
-  h1 {
-    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
-    background: linear-gradient(90deg, #7dd3fc, #a78bfa 45%, #39ff88 90%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .back-link {
-    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
-    padding: 4px 10px; border-radius: 6px; text-decoration: none;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
-    color: #9198ad; transition: all 0.15s ease;
-  }
-  .back-link:hover { color: #e8eaf0; border-color: rgba(255,255,255,0.3); }
-  .subtitle { font-size: 12px; color: #7c8399; margin: 10px 0 20px; line-height: 1.5; }
+  .dot, .back-link { display: none; }   /* ersetzt durch die Navigationsleiste */
+  .subtitle { font-size: 0.875rem; color: var(--leiser); margin: 8px 0 26px; line-height: 1.6; }
 
-  .summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 22px; }
-  .summary-card {
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px; padding: 12px 14px;
-  }
-  .summary-card .label { font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: #7c8399; margin-bottom: 6px; }
-  .summary-card .value { font-size: 20px; font-weight: 700; }
-  .v-win { color: #4fff9c; }
-  .v-loss { color: #ff6b6b; }
-  .v-open { color: #ffd25c; }
-  .v-neutral { color: #e8eaf0; }
+  /* Kennzahlen oben: Zahl gross, Beschriftung klein darueber. */
+  .summary-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                 gap: 12px; margin-bottom: 26px; }
+  .summary-card { border: 1px solid var(--rand); border-radius: var(--rund); padding: 13px 15px; }
+  .summary-card .label { font-size: 0.8125rem; color: var(--leiser); margin-bottom: 5px;
+                         letter-spacing: 0; text-transform: none; }
+  .summary-card .value { font-size: 1.5rem; font-weight: 650; white-space: nowrap;
+                         font-variant-numeric: tabular-nums; }
+  .v-win { color: var(--rauf); }
+  .v-loss { color: var(--runter); }
+  .v-open { color: var(--warn); }
+  .v-neutral { color: var(--schrift); }
 
-  .asset-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 24px; }
-  .asset-card {
-    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: all 0.15s ease;
-  }
-  .asset-card:hover, .asset-card.active { border-color: rgba(122,140,255,0.5); background: rgba(122,140,255,0.06); }
-  .asset-card .name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-  .asset-card .stats { font-size: 11px; color: #9198ad; display: flex; gap: 8px; flex-wrap: wrap; }
+  .asset-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                 gap: 12px; margin-bottom: 28px; }
+  .asset-card { border: 1px solid var(--rand); border-radius: var(--rund);
+                padding: 13px 15px; cursor: pointer; }
+  .asset-card:hover { border-color: rgba(125,211,252,0.3); }
+  .asset-card.active { border-color: rgba(125,211,252,0.5); background: rgba(125,211,252,0.06); }
+  .asset-card .name { font-size: 1rem; font-weight: 600; margin-bottom: 5px; }
+  .asset-card .stats { font-size: 0.8125rem; color: var(--leiser);
+                       display: flex; gap: 10px; flex-wrap: wrap; }
 
-  .filters { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .filters { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
   .filters select {
-    font-family: inherit; font-size: 12px; background: rgba(255,255,255,0.04);
-    color: #e8eaf0; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 10px;
+    font-family: inherit; font-size: 0.875rem; background: var(--feld);
+    color: var(--schrift); border: 1px solid var(--rand);
+    border-radius: var(--rund-voll); padding: 7px 12px;
   }
-  .filters .reset-link { font-size: 11px; color: #9198ad; cursor: pointer; text-decoration: underline; }
+  .filters .reset-link { font-size: 0.8125rem; color: var(--leiser); cursor: pointer;
+                         text-decoration: underline; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  thead th {
-    text-align: left; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase;
-    color: #7c8399; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.1);
-  }
-  tbody td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
-  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  thead th { text-align: left; letter-spacing: 0; text-transform: none;
+             font-size: 0.8125rem; padding: 8px 10px 8px 0; }
+  tbody td { padding: 11px 10px 11px 0; vertical-align: middle;
+             text-align: left; white-space: nowrap; }
+  tbody tr:hover { background: rgba(255,255,255,0.018); }
   tbody tr.tr-link { cursor: pointer; }
-  tbody tr.tr-link:hover { background: rgba(122,140,255,0.08); }
+  tbody tr.tr-link:hover { background: rgba(125,211,252,0.07); }
+
+  /* Ergebnis-Marken: nur Umrandung, keine gefuellten Flaechen. */
   .badge {
-    display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px;
-    font-weight: 700; letter-spacing: 0.3px; border: 1px solid transparent;
+    display: inline-block; padding: 2px 9px; border-radius: var(--rund-voll);
+    font-size: 0.75rem; border: 1px solid var(--rand); color: var(--leiser);
+    letter-spacing: 0; font-weight: 400;
   }
-  .badge-win { background: rgba(57,255,136,0.14); color: #4fff9c; border-color: rgba(57,255,136,0.35); }
-  .badge-loss { background: rgba(255,107,157,0.14); color: #ff6b6b; border-color: rgba(255,107,157,0.35); }
-  .badge-open { background: rgba(255,196,0,0.14); color: #ffd25c; border-color: rgba(255,196,0,0.35); }
-  .badge-stale { background: rgba(255,255,255,0.05); color: #7c8399; border-color: rgba(255,255,255,0.15); }
-  .dir-long { color: #4fff9c; }
-  .dir-short { color: #ff6b6b; }
-  .empty-state { color: #7c8399; font-size: 13px; padding: 30px 10px; text-align: center; }
-    .analyse-block { margin-top:34px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.08); }
-    .analyse-titel { font-size:11px; letter-spacing:0.6px; text-transform:uppercase; color:#9aa3b8; margin-bottom:6px; }
-    .analyse-hinweis { font-size:11px; color:#5f6678; line-height:1.55; margin-bottom:14px; max-width:70ch; }
+  .badge-win   { color: var(--rauf);   border-color: rgba(74,222,128,0.35); }
+  .badge-loss  { color: var(--runter); border-color: rgba(248,113,113,0.35); }
+  .badge-open  { color: var(--warn);   border-color: rgba(251,191,36,0.35); }
+  .badge-stale { color: var(--leiser); }
+  .dir-long { color: var(--rauf); }
+  .dir-short { color: var(--runter); }
+  .empty-state { color: var(--leiser); font-size: 0.9375rem; padding: 34px 10px; text-align: center; }
+
+  /* Zehn Spalten passen auf keinem schmalen Schirm nebeneinander. Statt die
+     Seite breiter werden zu lassen, scrollt die Tabelle fuer sich. */
+  #tableWrap, .tabellenrahmen { overflow-x: auto; }
+  #tableWrap table { min-width: 880px; }
+
+  .analyse-block { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--rand); }
+  .analyse-titel { font-size: 0.9375rem; font-weight: 600; color: var(--schrift);
+                   margin-bottom: 7px; letter-spacing: 0; text-transform: none; }
+  .analyse-hinweis { font-size: 0.875rem; color: var(--leiser); line-height: 1.65;
+                     margin-bottom: 16px; max-width: 70ch; }
 </style>
 </head>
 <body>
+<!-- Gemeinsame Navigationsleiste (22.10.2026). Vorher hatte jede Seite
+     ihren eigenen Zurueck-Knopf und man sah nicht, was es sonst gibt. -->
+<nav class="leiste" aria-label="Bereiche des Dashboards">
+  <div class="leiste-rolle">
+    <a href="index.html">Report</a>
+    <a href="history.html" class="hier" aria-current="page">Verlauf</a>
+    <a href="marktlage.html">Marktlage</a>
+    <a href="insider.html">Insider</a>
+    <a href="tjr_methode.html">Methode</a>
+    <a href="how_it_works.html">Wie es läuft</a>
+  </div>
+</nav>
+
+<div class="inhalt">
+
   <div class="topbar">
     <div class="brand">
-      <span class="dot"></span>
-      <h1>TJR VERLAUF // ALLE ASSETS</h1>
+      <h1>Verlauf &mdash; alle Trades</h1>
     </div>
-    <a class="back-link" href="index.html">← Live-Dashboard</a>
   </div>
   <div class="subtitle">
     Jedes ENTRY-Signal, das die Engine seit Start des automatischen Trackings gefeuert hat (Paper-Trading, kein echtes Geld) —
@@ -884,5 +891,6 @@ renderSummary();
 renderAssetCards();
 renderTable();
 </script>
+</div>
 </body>
 </html>
