@@ -446,3 +446,33 @@ meldung,transaktion,verzoegerungTage,symbol,firma,inhaber,rolle,stueck,preis,sum
 2026-10-19,2026-10-15,4,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,26984,34.3787,927675,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-425300.txt
 2026-10-19,2026-10-16,3,IAM,Iambic Therapeutics  Inc.,Rachlin Evan Lockwood,Director,718750,16,11500000,https://www.sec.gov/Archives/edgar/data/1997038/0002151678-26-000007.txt
 2026-10-19,2026-10-15,4,CNXU,Conexeu Sciences Inc.,Purcell Lynn Sebastian,Director,166666,3,499998,https://www.sec.gov/Archives/edgar/data/2066836/0002128469-26-000009.txt
+2026-10-20,2026-10-16,4,AYI,ACUITY INC. (DE),O'Shaughnessy Laura,Director,73,302.32,22069,https://www.sec.gov/Archives/edgar/data/1144215/0001813477-26-000008.txt
+2026-10-20,2026-10-16,4,BOLD,Boundless Bio  Inc.,TANG KEVIN,10% Eigner,118185,2.34,276553,https://www.sec.gov/Archives/edgar/data/1178579/0001178579-26-000019.txt
+2026-10-20,2026-10-19,1,BOLD,Boundless Bio  Inc.,TANG KEVIN,10% Eigner,12790,2.34,29929,https://www.sec.gov/Archives/edgar/data/1178579/0001178579-26-000019.txt
+2026-10-20,2026-10-19,1,BOLD,Boundless Bio  Inc.,TANG KEVIN,10% Eigner,18279,2.33,42590,https://www.sec.gov/Archives/edgar/data/1178579/0001178579-26-000019.txt
+2026-10-20,2026-10-19,1,XGN,EXAGEN INC.,Chernett Jorey,10% Eigner,14000,7.46,104440,https://www.sec.gov/Archives/edgar/data/1274737/0001193805-26-001382.txt
+2026-10-20,2026-10-19,1,NNOX,Nano-X Imaging Ltd.,Meltzer Erez,Chief Executive Officer,25000,0.45,11250,https://www.sec.gov/Archives/edgar/data/1371973/0001213900-26-110808.txt
+2026-10-20,2026-10-16,4,GRF,EAGLE CAPITAL GROWTH FUND  INC.,Sims David C,CFO  CCO  Secretary  Treasurer,1396,10.16,14183,https://www.sec.gov/Archives/edgar/data/1401612/0001401612-26-000005.txt
+2026-10-20,2026-10-16,4,GRF,EAGLE CAPITAL GROWTH FUND  INC.,Sims David C,CFO  CCO  Secretary  Treasurer,7410,10.03,74322,https://www.sec.gov/Archives/edgar/data/1401612/0001401612-26-000005.txt
+2026-10-20,2026-10-16,4,GRF,EAGLE CAPITAL GROWTH FUND  INC.,Sims David C,CFO  CCO  Secretary  Treasurer,1981,10.16,20127,https://www.sec.gov/Archives/edgar/data/1401612/0001401612-26-000005.txt
+2026-10-20,2026-10-20,0,DX,DYNEX CAPITAL INC,Popenoe Smriti Laxman,Co-CEO and President,10000,10.62,106200,https://www.sec.gov/Archives/edgar/data/1501438/0000826675-26-000121.txt
+2026-10-20,2026-10-20,0,DX,DYNEX CAPITAL INC,Popenoe Smriti Laxman,Co-CEO and President,2000,25.18,50360,https://www.sec.gov/Archives/edgar/data/1501438/0000826675-26-000121.txt
+2026-10-20,2026-10-19,1,NXG,NXG NextGen Infrastructure Income Fund,Sunderland Todd,,1000,46.5,46500,https://www.sec.gov/Archives/edgar/data/1506488/0001957908-26-000003.txt
+2026-10-20,2026-10-16,4,ECF,ELLSWORTH GROWTH &amp; INCOME FUND LTD,Saba Capital Management  L.P.,10% Eigner,16347,11.65,190443,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000360.txt
+2026-10-20,2026-10-19,1,ECF,ELLSWORTH GROWTH &amp; INCOME FUND LTD,Saba Capital Management  L.P.,10% Eigner,17079,11.47,195896,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000360.txt
+2026-10-20,2026-10-16,4,GF,NEW GERMANY FUND INC,Saba Capital Management  L.P.,10% Eigner,15042,10.31,155083,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000361.txt
+2026-10-20,2026-10-19,1,GF,NEW GERMANY FUND INC,Saba Capital Management  L.P.,10% Eigner,15046,10.34,155576,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000361.txt
+2026-10-20,2026-10-16,4,DSM,BNY MELLON STRATEGIC MUNICIPAL BOND FUND  INC.,Saba Capital Management  L.P.,10% Eigner,48135,5.26,253190,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000362.txt
+2026-10-20,2026-10-16,4,DSM,BNY MELLON STRATEGIC MUNICIPAL BOND FUND  INC.,Saba Capital Management  L.P.,10% Eigner,90507,5.28,477877,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000362.txt
+2026-10-20,2026-10-19,1,DSM,BNY MELLON STRATEGIC MUNICIPAL BOND FUND  INC.,Saba Capital Management  L.P.,10% Eigner,69080,5.29,365433,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000362.txt
+2026-10-20,2026-10-16,4,JOF,JAPAN SMALLER CAPITALIZATION FUND INC,Saba Capital Management  L.P.,10% Eigner,16222,11.94,193691,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000363.txt
+2026-10-20,2026-10-19,1,JOF,JAPAN SMALLER CAPITALIZATION FUND INC,Saba Capital Management  L.P.,10% Eigner,30000,11.94,358200,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000363.txt
+2026-10-20,2026-10-16,4,LEO,BNY MELLON STRATEGIC MUNICIPALS  INC.,Saba Capital Management  L.P.,10% Eigner,250087,5.66,1415492,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000365.txt
+2026-10-20,2026-10-16,4,LEO,BNY MELLON STRATEGIC MUNICIPALS  INC.,Saba Capital Management  L.P.,10% Eigner,72771,5.63,409701,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000365.txt
+2026-10-20,2026-10-19,1,LEO,BNY MELLON STRATEGIC MUNICIPALS  INC.,Saba Capital Management  L.P.,10% Eigner,15246,5.67,86445,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000365.txt
+2026-10-20,2026-10-19,1,NBIS,Nebius Group N.V.,Grimme Arne,Director,148,169.99,25159,https://www.sec.gov/Archives/edgar/data/1513845/0001513845-26-000134.txt
+2026-10-20,2026-10-20,0,JCTC,JEWETT CAMERON TRADING CO LTD,AJB Investment Fund II  LP,10% Eigner,3945,2.905,11460,https://www.sec.gov/Archives/edgar/data/1536588/0001536588-26-000043.txt
+2026-10-20,2026-10-19,1,NVA,Nova Minerals Corp,Gerteisen Christopher,Chief Executive Officer,4237,3.3473,14183,https://www.sec.gov/Archives/edgar/data/1852551/0001225208-26-008474.txt
+2026-10-20,2026-10-16,4,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,347195,34.7141,12052562,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-426865.txt
+2026-10-20,2026-10-16,4,SCISX,MA Specialty Credit Income Fund,MA Eagle II Holdings Fund,10% Eigner,96930.533,24.76,2400000,https://www.sec.gov/Archives/edgar/data/2015849/0000945621-26-001274.txt
+2026-10-20,2026-10-20,0,DX,DYNEX CAPITAL INC,Sartori Michael Andrew,Chief Financial Officer,1000,10.7,10700,https://www.sec.gov/Archives/edgar/data/2119118/0000826675-26-000120.txt
