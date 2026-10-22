@@ -11605,7 +11605,7 @@
   },
   "2026-10-21": {
     "handelstag": "2026-10-21",
-    "geschriebenAm": "2026-10-22T06:01:10.240Z",
+    "geschriebenAm": "2026-10-22T06:20:37.189Z",
     "kurse": {
       "URTH": 208.49,
       "IWDA.AS": 131.2,
@@ -11613,14 +11613,14 @@
       "^NDX": 29822.52,
       "^GDAXI": 25645.04,
       "^STOXX50E": 6207.52,
-      "CL=F": 99.11,
-      "BZ=F": 111.25,
-      "GC=F": 4085.7,
-      "SI=F": 55.87,
-      "NG=F": 2.763,
+      "CL=F": 99.26,
+      "BZ=F": 111.44,
+      "GC=F": 4108.7,
+      "SI=F": 56.45,
+      "NG=F": 2.77,
       "^VIX": 16.68,
       "^TNX": 5.146,
-      "DX-Y.NYB": 101.55,
+      "DX-Y.NYB": 101.52,
       "XLK": 188.54,
       "XLE": 68.16,
       "XLF": 56.04,
@@ -11628,20 +11628,20 @@
       "ITA": 205.79,
       "RHM.DE": 1020,
       "TSLA": 386.47,
-      "BTC-USD": 82740.41,
-      "ETH-USD": 2436.18,
-      "XRP-USD": 1.3437,
-      "GBPUSD=X": 1.3407
+      "BTC-USD": 82673.41,
+      "ETH-USD": 2435.16,
+      "XRP-USD": 1.342,
+      "GBPUSD=X": 1.3408
     },
     "vix": 16.68,
     "vixPerzentil": 43,
     "schwankung": {
       "BTC-USD": 20.9,
       "ETH-USD": 31.3,
-      "XRP-USD": 34,
+      "XRP-USD": 33.9,
       "GBPUSD=X": 5.5,
       "^GSPC": 8.9,
-      "GC=F": 18.4
+      "GC=F": 18
     },
     "schwankungStufe": {
       "BTC-USD": "niedrig",
