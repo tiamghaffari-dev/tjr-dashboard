@@ -11605,7 +11605,7 @@
   },
   "2026-10-21": {
     "handelstag": "2026-10-21",
-    "geschriebenAm": "2026-10-22T00:54:25.569Z",
+    "geschriebenAm": "2026-10-22T06:01:10.240Z",
     "kurse": {
       "URTH": 208.49,
       "IWDA.AS": 131.2,
@@ -11613,14 +11613,14 @@
       "^NDX": 29822.52,
       "^GDAXI": 25645.04,
       "^STOXX50E": 6207.52,
-      "CL=F": 98.05,
-      "BZ=F": 110.02,
-      "GC=F": 4133.6,
-      "SI=F": 57.5,
-      "NG=F": 2.776,
+      "CL=F": 99.11,
+      "BZ=F": 111.25,
+      "GC=F": 4085.7,
+      "SI=F": 55.87,
+      "NG=F": 2.763,
       "^VIX": 16.68,
       "^TNX": 5.146,
-      "DX-Y.NYB": 101.69,
+      "DX-Y.NYB": 101.55,
       "XLK": 188.54,
       "XLE": 68.16,
       "XLF": 56.04,
@@ -11628,44 +11628,44 @@
       "ITA": 205.79,
       "RHM.DE": 1020,
       "TSLA": 386.47,
-      "BTC-USD": 84193.92,
-      "ETH-USD": 2474.69,
-      "XRP-USD": 1.3638,
-      "GBPUSD=X": 1.3395
+      "BTC-USD": 82740.41,
+      "ETH-USD": 2436.18,
+      "XRP-USD": 1.3437,
+      "GBPUSD=X": 1.3407
     },
     "vix": 16.68,
     "vixPerzentil": 43,
     "schwankung": {
-      "BTC-USD": 21.7,
-      "ETH-USD": 31.8,
-      "XRP-USD": 35.1,
+      "BTC-USD": 20.9,
+      "ETH-USD": 31.3,
+      "XRP-USD": 34,
       "GBPUSD=X": 5.5,
       "^GSPC": 8.9,
-      "GC=F": 17.7
+      "GC=F": 18.4
     },
     "schwankungStufe": {
       "BTC-USD": "niedrig",
-      "ETH-USD": "rauschen",
+      "ETH-USD": "niedrig",
       "XRP-USD": "rauschen",
       "GBPUSD=X": "rauschen",
       "^GSPC": "rauschen",
       "GC=F": "rauschen"
     },
     "sektorVorsprung": {
-      "XLE": 9.49,
-      "XLB": 3.73,
-      "XLF": 0.35,
-      "ITA": -3.95,
-      "XLK": -4.16
+      "XLE": 10.42,
+      "XLF": 2.36,
+      "XLB": 1.66,
+      "ITA": -3.74,
+      "XLK": -3.84
     },
     "sektorStufe": {
       "XLE": "rauschen",
-      "XLB": "rauschen",
       "XLF": "rauschen",
+      "XLB": "rauschen",
       "ITA": "rauschen",
       "XLK": "rauschen"
     },
-    "sektorMarktRendite": -0.67,
+    "sektorMarktRendite": -0.1,
     "sektorAllesRauschen": true,
     "gleichlauf": {
       "BTC-USD|XRP-USD": 0.9,
