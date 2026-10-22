@@ -43,16 +43,56 @@
     font-size: 1rem; line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-  .seite { max-width: 760px; margin: 0 auto; padding: 28px 20px 64px; }
+  .seite { max-width: 760px; margin: 0 auto; padding: 22px 20px 64px; }
+
+  /* ---------- Navigationsleiste ---------- */
+  .leiste {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(10,12,17,0.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rand);
+  }
+  .leiste-rolle {
+    max-width: 760px; margin: 0 auto; padding: 0 20px;
+    display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;
+  }
+  .leiste-rolle::-webkit-scrollbar { display: none; }
+  /* Am Handy passen nicht alle Namen nebeneinander. Der Verlauf nach rechts
+     zeigt, dass da noch etwas kommt, statt wie ein Darstellungsfehler zu
+     wirken. */
+  .leiste::after {
+    content: ""; position: absolute; top: 0; right: 0; bottom: 1px; width: 36px;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(10,12,17,0), rgba(10,12,17,0.95));
+  }
+  .leiste { position: sticky; }
+  .leiste a {
+    padding: 13px 11px; font-size: 0.9375rem; color: var(--leiser);
+    text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent;
+  }
+  .leiste a:hover { color: var(--schrift); }
+  .leiste a.hier { color: var(--schrift); border-bottom-color: var(--akzent); }
+  .leiste a:focus-visible { outline: 2px solid var(--akzent); outline-offset: -4px; border-radius: 4px; }
+
+  /* Aufgeklappte Abschnitte sollen nicht unter der Leiste verschwinden,
+     wenn man sie anspringt. */
+  details.ab { scroll-margin-top: 58px; }
+
+  /* ---------- Zurueck nach oben ---------- */
+  .hoch {
+    position: fixed; right: 18px; bottom: 18px; z-index: 15;
+    width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
+    border: 1px solid var(--rand); background: rgba(18,21,28,0.94);
+    color: var(--leise); font-size: 1.125rem; line-height: 1;
+    backdrop-filter: blur(6px);
+  }
+  .hoch:hover { color: var(--schrift); border-color: rgba(125,211,252,0.45); }
+  .hoch:focus-visible { outline: 2px solid var(--akzent); outline-offset: 2px; }
+  .hoch[hidden] { display: none; }
 
   /* ---------- Kopf ---------- */
   .kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .kopf { margin-top: 6px; }
   h1 { font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-  .zurueck {
-    font-size: 0.875rem; color: var(--leise); text-decoration: none;
-    padding: 6px 12px; border: 1px solid var(--rand); border-radius: 999px; white-space: nowrap;
-  }
-  .zurueck:hover { color: var(--schrift); border-color: rgba(125,211,252,0.4); }
   .stand { color: var(--leiser); font-size: 0.8125rem; margin-top: 5px; }
 
   /* ---------- Lagebericht: der Kern der Seite ---------- */
@@ -202,6 +242,8 @@
             background: rgba(255,255,255,0.07); }
   .balken > i { position: absolute; left: 0; top: 0; height: 8px; border-radius: 4px; display: block; }
 
+  @media (min-width: 700px) { .leiste::after { display: none; } }
+
   @media (max-width: 620px) {
     html { font-size: 15.5px; }
     .seite { padding: 22px 16px 56px; }
@@ -232,6 +274,22 @@
 </style>
 </head>
 <body>
+
+<!-- Navigationsleiste. Vorher fuehrte von hier genau ein Knopf zurueck zum
+     Report - dass es Verlauf, Methode und Insider ueberhaupt gibt, war von
+     dieser Seite aus nicht zu sehen. Klebt oben, damit der Weg zurueck auch
+     mitten in einem langen Abschnitt da ist. -->
+<nav class="leiste" aria-label="Bereiche des Dashboards">
+  <div class="leiste-rolle">
+    <a href="index.html">Report</a>
+    <a href="history.html">Verlauf</a>
+    <a href="marktlage.html" class="hier" aria-current="page">Marktlage</a>
+    <a href="insider.html">Insider</a>
+    <a href="tjr_methode.html">Methode</a>
+    <a href="how_it_works.html">Wie es l&auml;uft</a>
+  </div>
+</nav>
+
 <div class="seite">
 
   <div class="kopf">
@@ -239,7 +297,6 @@
       <h1>Marktlage</h1>
       <div class="stand" id="stand"></div>
     </div>
-    <a class="zurueck" href="index.html">TJR-Dashboard</a>
   </div>
 
   <!-- Der Lagebericht. Das ist die Seite; alles darunter ist Nachschlagewerk. -->
@@ -319,6 +376,8 @@
   </div>
 
 </div>
+
+<button class="hoch" id="hoch" type="button" aria-label="Zur&uuml;ck nach oben" hidden>&#8593;</button>
 
 <script>
 const DATA = __DATA__;
@@ -1248,6 +1307,52 @@ function mitschrift() {
         + "beeinflusst.</p>");
 }
 
+/* ====================================================================
+   Bedienung: wo war ich, und wie komme ich zurueck
+
+   Zwei kleine Sachen, die beim Zurechtfinden helfen:
+   - Welche Abschnitte offen waren, bleibt ueber den Seitenaufruf hinaus
+     gemerkt. Wer immer dasselbe nachschaut, findet es gleich offen vor.
+   - Ein Knopf zurueck nach oben, sobald man weit genug gescrollt ist.
+
+   Der Speicher liegt im Browser und kann ueberall fehlen oder gesperrt
+   sein (privates Fenster, geloeschte Seitendaten). Darum steht jeder
+   Zugriff in try/catch und die Seite funktioniert ohne ihn genauso.
+   ==================================================================== */
+const SPEICHER = "marktlage_offene_abschnitte";
+
+function merkeOffene() {
+  const offen = [...document.querySelectorAll("details.ab")]
+    .filter((d) => d.open).map((d) => d.id);
+  try { localStorage.setItem(SPEICHER, JSON.stringify(offen)); } catch (e) { /* egal */ }
+}
+
+function stelleOffeneHer() {
+  let offen = [];
+  try {
+    const roh = localStorage.getItem(SPEICHER);
+    if (roh) offen = JSON.parse(roh);
+  } catch (e) { return; }
+  if (!Array.isArray(offen)) return;
+  for (const id of offen) {
+    const d = document.getElementById(id);
+    if (d && d.tagName === "DETAILS") d.open = true;
+  }
+}
+
+function bedienung() {
+  document.querySelectorAll("details.ab").forEach((d) => {
+    d.addEventListener("toggle", merkeOffene);
+  });
+
+  const knopf = el("hoch");
+  if (!knopf) return;
+  knopf.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  const pruefe = () => { knopf.hidden = window.scrollY < 600; };
+  window.addEventListener("scroll", pruefe, { passive: true });
+  pruefe();
+}
+
 /* ==================================================================== */
 (function start() {
   el("stand").textContent = "Stand " + (DATA.stand || "?") + ", "
@@ -1257,9 +1362,12 @@ function mitschrift() {
       + "gepr&uuml;ft (" + String(DATA.symboltestVom).slice(0, 10) + ").";
   }
   for (const f of [lagebericht, tafel, gehandelt, maerkte, beobachtung, nachrichten, termine,
-                   treiber, haltedauer, etfListe, mitschrift]) {
+                   treiber, haltedauer, etfListe, mitschrift, bedienung]) {
     try { f(); } catch (e) { console.error("Block fehlgeschlagen:", f.name, e); }
   }
+  // Erst NACH der Bedienung, sonst speichert das Wiederherstellen sich selbst
+  // in einer Schleife zurueck.
+  try { stelleOffeneHer(); } catch (e) { console.error("Abschnitte nicht wiederherstellbar:", e); }
 })();
 </script>
 </body>
