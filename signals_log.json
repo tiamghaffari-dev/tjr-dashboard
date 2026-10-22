@@ -56692,10 +56692,21 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1792662300000,
+    "rMultiple": 1.9,
+    "benachrichtigt": true,
+    "exitPrice": 4072.699951,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 2.15,
+      "maeR": 0,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.24,
+      "targetDistAdr": 0.45,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1792675378203",
@@ -56759,6 +56770,75 @@
       "vix": 18.35,
       "vixPerzentil": 67,
       "schwankung": 5.5,
+      "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "BTCUSD-1792678536016",
+    "asset": "BTCUSD",
+    "direction": "SHORT",
+    "entryTs": 1792678536016,
+    "entry": 81528.523438,
+    "stop": 81949.770313,
+    "target": 81096.953125,
+    "rr": 1.02,
+    "target2": 81096.953125,
+    "rr2": 1.02,
+    "partialExit": true,
+    "trailStop": 81949.770313,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "ok",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 0.005,
+    "fillTs": 1792664152000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "zeitrahmen-konflikt",
+    "signalTf": "5m",
+    "umfeld": {
+      "handelstag": "2026-10-22",
+      "quelle": "live",
+      "vix": 18.11,
+      "vixPerzentil": 65,
+      "schwankung": 23.5,
       "schwankungStufe": "rauschen",
       "sektorAllesRauschen": true,
       "termineHeute": 0
