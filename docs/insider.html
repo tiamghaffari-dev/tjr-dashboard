@@ -3,97 +3,77 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Insider-Kaeufe // Beobachtung</title>
+<title>Insider-Käufe</title>
+<link rel="stylesheet" href="stil.css">
 <style>
-  :root { color-scheme: light; }
-  * { box-sizing: border-box; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  /* Grundlagen stehen in stil.css. Hier nur das Eigene dieser Seite. */
+  body { padding: 0; }
+  .inhalt { max-width: var(--breit); margin: 0 auto; padding: 26px 20px 56px; }
 
-  html, body {
-    margin: 0; padding: 0; min-height: 100%;
-    background:
-      radial-gradient(circle at 15% 0%, rgba(255, 196, 0, 0.13), transparent 42%),
-      radial-gradient(circle at 85% 8%, rgba(88, 101, 242, 0.10), transparent 40%),
-      #05060a;
-    color: #e8eaf0;
-    font-family: "SF Mono", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
-  }
-  body { padding: 22px 24px 48px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .dot, .howto-link { display: none; }   /* ersetzt durch die Navigationsleiste */
+  .subtitle { color: var(--leiser); font-size: 0.875rem; margin: 6px 0 22px; }
 
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; flex-wrap: wrap; gap: 10px; }
-  .brand { display: flex; align-items: center; gap: 10px; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; background: #ffd25c; flex-shrink: 0; }
-  h1 {
-    font-size: 21px; margin: 0; letter-spacing: 0.5px; font-weight: 700;
-    background: linear-gradient(90deg, #ffd25c, #a78bfa 55%, #7dd3fc 90%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .tag {
-    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,210,92,0.35);
-    color: #ffd25c; background: rgba(255,210,92,0.08);
-  }
-  .howto-link {
-    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 600;
-    padding: 4px 10px; border-radius: 6px; text-decoration: none;
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12);
-    color: #9198ad; transition: all 0.15s ease;
-  }
-  .howto-link:hover { border-color: rgba(122,140,255,0.4); color: #d7dbe8; }
-  .subtitle { color: #7c8399; font-size: 12.5px; margin: 6px 0 16px 0; font-family: -apple-system, sans-serif; }
-
+  /* Der Warnkasten ist der einzige farbige Block - deshalb faellt er auf. */
   .warn {
-    background: linear-gradient(135deg, rgba(255,196,0,0.09), rgba(255,196,0,0.02));
-    border: 1px solid rgba(255,196,0,0.28); border-radius: 12px;
-    padding: 13px 16px; margin-bottom: 20px; font-size: 12.5px; line-height: 1.6;
-    font-family: -apple-system, sans-serif; animation: fadeUp 0.4s ease; color: #d8cfae;
+    border: 1px solid rgba(251,191,36,0.25); background: rgba(251,191,36,0.04);
+    border-radius: var(--rund); padding: 15px 18px; margin-bottom: 24px;
+    font-size: 0.9375rem; line-height: 1.65; color: var(--leise);
   }
-  .warn b { color: #ffd25c; }
+  .warn b { color: var(--warn); }
 
-  .cards { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-  .card {
-    flex: 1 1 140px; background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; padding: 12px 14px;
-  }
-  .card .k { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: #6b7185; font-family: -apple-system, sans-serif; }
-  .card .v { font-size: 20px; font-weight: 700; margin-top: 4px; }
+  .cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
+  .card { flex: 1 1 150px; border: 1px solid var(--rand); border-radius: var(--rund);
+          padding: 14px 16px; }
+  .card .k { font-size: 0.8125rem; color: var(--leiser); }
+  .card .v { font-size: 1.5rem; font-weight: 650; margin-top: 4px;
+             font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  th {
-    text-align: left; padding: 9px 10px; color: #6b7185; font-weight: 600;
-    font-size: 10.5px; letter-spacing: 0.7px; text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,255,255,0.1); font-family: -apple-system, sans-serif;
-    cursor: pointer; user-select: none; white-space: nowrap;
-  }
-  th:hover { color: #9fb2ff; }
-  td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.045); vertical-align: top; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-  .sym { font-weight: 700; color: #7dd3fc; }
-  .firma { color: #9198ad; font-size: 11.5px; font-family: -apple-system, sans-serif; }
-  .geld { color: #39ff88; font-weight: 600; }
-  .mehrere { color: #ffd25c; font-weight: 700; }
-  .lag-ok { color: #6b7185; }
-  .lag-mittel { color: #ffd25c; }
-  .lag-schlecht { color: #ff6b6b; font-weight: 600; }
-  .insider-liste { color: #7c8399; font-size: 11px; font-family: -apple-system, sans-serif; margin-top: 3px; }
+  th { cursor: pointer; user-select: none; text-align: left; letter-spacing: 0;
+       text-transform: none; font-size: 0.8125rem; }
+  th:hover { color: var(--akzent); }
+  td { text-align: left; white-space: normal; }
+  tr:hover td { background: rgba(255,255,255,0.018); }
+
+  .sym { font-weight: 600; color: var(--akzent); }
+  .firma { color: var(--leiser); font-size: 0.8125rem; }
+  .geld { color: var(--rauf); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .mehrere { color: var(--warn); font-weight: 600; }
+  .lag-ok { color: var(--leiser); }
+  .lag-mittel { color: var(--warn); }
+  .lag-schlecht { color: var(--runter); font-weight: 600; }
+  .insider-liste { color: var(--leiser); font-size: 0.8125rem; margin-top: 4px; }
   .grossakt {
-    margin-left: 7px; font-size: 9.5px; letter-spacing: 0.5px; padding: 2px 6px; border-radius: 5px;
-    background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.35); color: #b9a6fb;
-    font-family: -apple-system, sans-serif; vertical-align: middle;
+    margin-left: 8px; font-size: 0.75rem; padding: 2px 8px; border-radius: var(--rund-voll);
+    border: 1px solid var(--rand); color: var(--leiser); vertical-align: middle;
   }
-  a.beleg { color: #6b7185; text-decoration: none; font-size: 11px; }
-  a.beleg:hover { color: #7dd3fc; }
-  .leer { color: #6b7185; padding: 40px 10px; text-align: center; font-family: -apple-system, sans-serif; }
-  .fuss { margin-top: 26px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06);
-          color: #5a6072; font-size: 11.5px; line-height: 1.7; font-family: -apple-system, sans-serif; }
+  a.beleg { color: var(--leiser); text-decoration: none; font-size: 0.8125rem; }
+  a.beleg:hover { color: var(--akzent); }
+  .leer { color: var(--leiser); padding: 44px 10px; text-align: center; }
 </style>
 </head>
 <body>
+<!-- Gemeinsame Navigationsleiste (22.10.2026). Vorher hatte jede Seite
+     ihren eigenen Zurueck-Knopf und man sah nicht, was es sonst gibt. -->
+<nav class="leiste" aria-label="Bereiche des Dashboards">
+  <div class="leiste-rolle">
+    <a href="index.html">Report</a>
+    <a href="history.html">Verlauf</a>
+    <a href="marktlage.html">Marktlage</a>
+    <a href="insider.html" class="hier" aria-current="page">Insider</a>
+    <a href="tjr_methode.html">Methode</a>
+    <a href="how_it_works.html">Wie es läuft</a>
+  </div>
+</nav>
+
+<div class="inhalt">
 
 <div class="topbar">
   <div class="brand">
     <span class="dot"></span>
-    <h1>Insider-Kaeufe</h1>
+    <h1>Insider-Käufe</h1>
     <span class="tag">nur Beobachtung</span>
   </div>
   <a class="howto-link" href="index.html">&larr; TJR-Dashboard</a>
@@ -133,7 +113,7 @@
 </div>
 
 <script>
-const DATA = {"stand":"2026-10-22 01:32 UTC","tageZurueck":4,"angesehen":1500,"schwelle":10000,"fehlerAnzahl":2,"gruppen":[{"symbol":"CTY","firma":"CITY THERAPEUTICS, INC.","anzahlInsider":2,"insider":["ARCH Venture Partners XII, LLC","NELSEN ROBERT"],"summe":27540000,"kaeufe":9,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":0,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1219039/0001104659-26-116966.txt"}]},{"symbol":"APLD","firma":"Applied Digital Corp.","anzahlInsider":2,"insider":["Cummins Wes","Zhang Jason Gechen"],"summe":13329372,"kaeufe":4,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":3,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1144879/0001391935-26-000009.txt"}]},{"symbol":"DX","firma":"DYNEX CAPITAL INC","anzahlInsider":2,"insider":["Popenoe Smriti Laxman","Sartori Michael Andrew"],"summe":334520,"kaeufe":6,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":0,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1501438/0000826675-26-000121.txt"}]},{"symbol":"LNBIX","firma":"Lincoln Bain Capital Total Credit Fund","anzahlInsider":1,"insider":["Lincoln Financial Investments Corp"],"summe":50000000,"kaeufe":2,"frueheste":"2026-10-15","spaeteste":"2026-10-15","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1464867/0001193125-26-425009.txt"}]},{"symbol":"CRBG","firma":"Corebridge Financial, Inc.","anzahlInsider":1,"insider":["NIPPON LIFE INSURANCE CO"],"summe":41181326,"kaeufe":5,"frueheste":"2026-10-15","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-426865.txt"}]},{"symbol":"IAM","firma":"Iambic Therapeutics, Inc.","anzahlInsider":1,"insider":["Rachlin Evan Lockwood"],"summe":23000000,"kaeufe":2,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":3,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1997038/0002151678-26-000007.txt"}]},{"symbol":"BPRE","firma":"Bluerock Private Real Estate Fund","anzahlInsider":1,"insider":["KAMFAR RAMIN"],"summe":4844670,"kaeufe":4,"frueheste":"2026-10-15","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1111908/0001398344-26-018404.txt"}]},{"symbol":"SCISX","firma":"MA Specialty Credit Income Fund","anzahlInsider":1,"insider":["MA Eagle II Holdings Fund"],"summe":4800000,"kaeufe":2,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/2015849/0000945621-26-001274.txt"}]},{"symbol":"LEO","firma":"BNY MELLON STRATEGIC MUNICIPALS, INC.","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":3823276,"kaeufe":6,"frueheste":"2026-10-16","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000365.txt"}]},{"symbol":"DSM","firma":"BNY MELLON STRATEGIC MUNICIPAL BOND FUND, INC.","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":2265113,"kaeufe":7,"frueheste":"2026-10-15","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000362.txt"}]},{"symbol":"SNES","firma":"SenesTech, Inc.","anzahlInsider":1,"insider":["GLENBROOK CAPITAL MANAGEMENT"],"summe":1412112,"kaeufe":6,"frueheste":"2026-10-15","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1273782/0000902664-26-004215.txt"}]},{"symbol":"JOF","firma":"JAPAN SMALLER CAPITALIZATION FUND INC","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":1103782,"kaeufe":4,"frueheste":"2026-10-16","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000363.txt"}]},{"symbol":"BOLD","firma":"Boundless Bio, Inc.","anzahlInsider":1,"insider":["TANG KEVIN"],"summe":1047216,"kaeufe":9,"frueheste":"2026-10-16","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1178579/0001178579-26-000019.txt"}]},{"symbol":"CNXU","firma":"Conexeu Sciences Inc.","anzahlInsider":1,"insider":["Purcell Lynn Sebastian"],"summe":999996,"kaeufe":2,"frueheste":"2026-10-15","spaeteste":"2026-10-15","maxVerzoegerung":4,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/2066836/0002128469-26-000009.txt"}]},{"symbol":"ECF","firma":"ELLSWORTH GROWTH &amp; INCOME FUND LTD","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":888518,"kaeufe":5,"frueheste":"2026-10-15","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000360.txt"}]},{"symbol":"GF","firma":"NEW GERMANY FUND INC","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":792061,"kaeufe":5,"frueheste":"2026-10-15","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000361.txt"}]},{"symbol":"ACOG","firma":"Alpha Cognition Inc.","anzahlInsider":1,"insider":["Opaleye Management Inc."],"summe":617152,"kaeufe":4,"frueheste":"2026-10-15","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1595855/0001493152-26-047631.txt"}]},{"symbol":"EP","firma":"EMPIRE PETROLEUM CORP","anzahlInsider":1,"insider":["Mulacek Phil E"],"summe":304481,"kaeufe":3,"frueheste":"2026-10-09","spaeteste":"2026-10-14","maxVerzoegerung":10,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1670677/0001072613-26-000827.txt"}]},{"symbol":"GRF","firma":"EAGLE CAPITAL GROWTH FUND, INC.","anzahlInsider":1,"insider":["Sims David C"],"summe":217264,"kaeufe":6,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1401612/0001401612-26-000005.txt"}]},{"symbol":"XGN","firma":"EXAGEN INC.","anzahlInsider":1,"insider":["Chernett Jorey"],"summe":208880,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":1,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1274737/0001193805-26-001382.txt"}]},{"symbol":"API","firma":"Agora, Inc.","anzahlInsider":1,"insider":["Zhao Bin"],"summe":153862,"kaeufe":4,"frueheste":"2026-10-15","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1802883/0001193125-26-424723.txt"}]},{"symbol":"NXG","firma":"NXG NextGen Infrastructure Income Fund","anzahlInsider":1,"insider":["Sunderland Todd"],"summe":93000,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1506488/0001957908-26-000003.txt"}]},{"symbol":"JCTC","firma":"JEWETT CAMERON TRADING CO LTD","anzahlInsider":1,"insider":["AJB Investment Fund II, LP"],"summe":57300,"kaeufe":5,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":0,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1536588/0001536588-26-000043.txt"}]},{"symbol":"ELTP","firma":"ELITE PHARMACEUTICALS INC /NV/","anzahlInsider":1,"insider":["Dash Barry H"],"summe":51960,"kaeufe":2,"frueheste":"2026-10-09","spaeteste":"2026-10-09","maxVerzoegerung":10,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1053369/0001493152-26-047486.txt"}]},{"symbol":"NBIS","firma":"Nebius Group N.V.","anzahlInsider":1,"insider":["Grimme Arne"],"summe":50318,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1513845/0001513845-26-000134.txt"}]},{"symbol":"FUL","firma":"FULLER H B CO","anzahlInsider":1,"insider":["Malik Muhammad Shahbaz"],"summe":50000,"kaeufe":2,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":3,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1621150/0001225208-26-008441.txt"}]},{"symbol":"AYI","firma":"ACUITY INC. (DE)","anzahlInsider":1,"insider":["O'Shaughnessy Laura"],"summe":44138,"kaeufe":2,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1144215/0001813477-26-000008.txt"}]},{"symbol":"EQBK","firma":"EQUITY BANCSHARES INC","anzahlInsider":1,"insider":["Borck Leon"],"summe":37072,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":0,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1227500/0001886793-26-000004.txt"}]},{"symbol":"NVA","firma":"Nova Minerals Corp","anzahlInsider":1,"insider":["Gerteisen Christopher"],"summe":28366,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1852551/0001225208-26-008474.txt"}]},{"symbol":"XFOR","firma":"X4 Pharmaceuticals, Inc","anzahlInsider":1,"insider":["Craig Adam R"],"summe":23768,"kaeufe":2,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":3,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1339498/0001339498-26-000005.txt"}]},{"symbol":"NNOX","firma":"Nano-X Imaging Ltd.","anzahlInsider":1,"insider":["Meltzer Erez"],"summe":22500,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1371973/0001213900-26-110808.txt"}]}]};
+const DATA = {"stand":"2026-10-22 06:34 UTC","tageZurueck":4,"angesehen":1500,"schwelle":10000,"fehlerAnzahl":1,"gruppen":[{"symbol":"DX","firma":"DYNEX CAPITAL INC","anzahlInsider":3,"insider":["BOSTON BYRON L","Popenoe Smriti Laxman","Sartori Michael Andrew"],"summe":534460,"kaeufe":8,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1283563/0000826675-26-000124.txt"}]},{"symbol":"CTY","firma":"CITY THERAPEUTICS, INC.","anzahlInsider":2,"insider":["ARCH Venture Partners XII, LLC","NELSEN ROBERT"],"summe":12240000,"kaeufe":4,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":0,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1219039/0001104659-26-116966.txt"}]},{"symbol":"APLD","firma":"Applied Digital Corp.","anzahlInsider":2,"insider":["Cummins Wes","Zhang Jason Gechen"],"summe":7671372,"kaeufe":3,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":3,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1144879/0001391935-26-000009.txt"}]},{"symbol":"GXVIX","firma":"Global X Venture &amp; Innovation Fund","anzahlInsider":1,"insider":["GLOBAL X MANAGEMENT COMPANY, INC."],"summe":50000000,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":2,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1579960/0001213900-26-111339.txt"}]},{"symbol":"CRBG","firma":"Corebridge Financial, Inc.","anzahlInsider":1,"insider":["NIPPON LIFE INSURANCE CO"],"summe":35287600,"kaeufe":4,"frueheste":"2026-10-16","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-427950.txt"}]},{"symbol":"LNBIX","firma":"Lincoln Bain Capital Total Credit Fund","anzahlInsider":1,"insider":["Lincoln Financial Investments Corp"],"summe":25000000,"kaeufe":1,"frueheste":"2026-10-15","spaeteste":"2026-10-15","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1464867/0001193125-26-425009.txt"}]},{"symbol":"BPRE","firma":"Bluerock Private Real Estate Fund","anzahlInsider":1,"insider":["KAMFAR RAMIN"],"summe":11534682,"kaeufe":10,"frueheste":"2026-10-15","spaeteste":"2026-10-21","maxVerzoegerung":4,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1111908/0001398344-26-018550.txt"}]},{"symbol":"SCISX","firma":"MA Specialty Credit Income Fund","anzahlInsider":1,"insider":["MA Eagle II Holdings Fund"],"summe":4800000,"kaeufe":2,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/2015849/0000945621-26-001274.txt"}]},{"symbol":"TENX","firma":"TENAX THERAPEUTICS, INC.","anzahlInsider":1,"insider":["ADAR1 Capital Management, LLC"],"summe":4390278,"kaeufe":9,"frueheste":"2026-10-19","spaeteste":"2026-10-21","maxVerzoegerung":2,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1861120/0001940272-26-000027.txt"}]},{"symbol":"LEO","firma":"BNY MELLON STRATEGIC MUNICIPALS, INC.","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":3911638,"kaeufe":8,"frueheste":"2026-10-16","spaeteste":"2026-10-20","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000369.txt"}]},{"symbol":"FBK","firma":"FB Financial Corp","anzahlInsider":1,"insider":["INGRAM ORRIN H II"],"summe":3075576,"kaeufe":4,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1191473/0001191473-26-000008.txt"}]},{"symbol":"GF","firma":"NEW GERMANY FUND INC","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":2605857,"kaeufe":7,"frueheste":"2026-10-15","spaeteste":"2026-10-20","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000367.txt"}]},{"symbol":"DSM","firma":"BNY MELLON STRATEGIC MUNICIPAL BOND FUND, INC.","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":2420169,"kaeufe":9,"frueheste":"2026-10-15","spaeteste":"2026-10-20","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000368.txt"}]},{"symbol":"SNES","firma":"SenesTech, Inc.","anzahlInsider":1,"insider":["GLENBROOK CAPITAL MANAGEMENT"],"summe":1412112,"kaeufe":6,"frueheste":"2026-10-15","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1273782/0000902664-26-004215.txt"}]},{"symbol":"JOF","firma":"JAPAN SMALLER CAPITALIZATION FUND INC","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":1103782,"kaeufe":4,"frueheste":"2026-10-16","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000363.txt"}]},{"symbol":"BOLD","firma":"Boundless Bio, Inc.","anzahlInsider":1,"insider":["TANG KEVIN"],"summe":1047216,"kaeufe":9,"frueheste":"2026-10-16","spaeteste":"2026-10-19","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1178579/0001178579-26-000019.txt"}]},{"symbol":"ECF","firma":"ELLSWORTH GROWTH &amp; INCOME FUND LTD","anzahlInsider":1,"insider":["Saba Capital Management, L.P."],"summe":930206,"kaeufe":7,"frueheste":"2026-10-15","spaeteste":"2026-10-20","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000366.txt"}]},{"symbol":"ACOG","firma":"Alpha Cognition Inc.","anzahlInsider":1,"insider":["Opaleye Management Inc."],"summe":617152,"kaeufe":4,"frueheste":"2026-10-15","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1595855/0001493152-26-047631.txt"}]},{"symbol":"EP","firma":"EMPIRE PETROLEUM CORP","anzahlInsider":1,"insider":["Mulacek Phil E"],"summe":304481,"kaeufe":3,"frueheste":"2026-10-09","spaeteste":"2026-10-14","maxVerzoegerung":10,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1670677/0001072613-26-000827.txt"}]},{"symbol":"RAPP","firma":"Rapport Therapeutics, Inc.","anzahlInsider":1,"insider":["Ignelzi Troy A."],"summe":287100,"kaeufe":2,"frueheste":"2026-10-21","spaeteste":"2026-10-21","maxVerzoegerung":0,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1579829/0001193125-26-428018.txt"}]},{"symbol":"SKAS","firma":"Saker Aviation Services, Inc.","anzahlInsider":1,"insider":["Eriksen Howard Timothy"],"summe":280416,"kaeufe":4,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":1,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1041718/0001104659-26-117603.txt"}]},{"symbol":"CRF","firma":"CORNERSTONE TOTAL RETURN FUND INC","anzahlInsider":1,"insider":["Bradshaw Joshua"],"summe":235200,"kaeufe":2,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1892951/0001398344-26-018542.txt"}]},{"symbol":"GRF","firma":"EAGLE CAPITAL GROWTH FUND, INC.","anzahlInsider":1,"insider":["Sims David C"],"summe":217264,"kaeufe":6,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1401612/0001401612-26-000005.txt"}]},{"symbol":"XGN","firma":"EXAGEN INC.","anzahlInsider":1,"insider":["Chernett Jorey"],"summe":208880,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":1,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1274737/0001193805-26-001382.txt"}]},{"symbol":"CLM","firma":"Cornerstone Strategic Investment Fund, Inc.","anzahlInsider":1,"insider":["Bradshaw Joshua"],"summe":194560,"kaeufe":2,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1892951/0001398344-26-018541.txt"}]},{"symbol":"NBIS","firma":"Nebius Group N.V.","anzahlInsider":1,"insider":["Grimme Arne"],"summe":149744,"kaeufe":6,"frueheste":"2026-10-19","spaeteste":"2026-10-21","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1513845/0001513845-26-000136.txt"}]},{"symbol":"OWLS","firma":"OBOOK HOLDINGS INC.","anzahlInsider":1,"insider":["WANG CHUN KAI"],"summe":104074,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":2,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/2025416/0002109337-26-000012.txt"}]},{"symbol":"NXG","firma":"NXG NextGen Infrastructure Income Fund","anzahlInsider":1,"insider":["Sunderland Todd"],"summe":93000,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1506488/0001957908-26-000003.txt"}]},{"symbol":"YORW","firma":"YORK WATER CO","anzahlInsider":1,"insider":["Velazquez David M"],"summe":80000,"kaeufe":2,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/108985/0000108985-26-000091.txt"}]},{"symbol":"VRXA","firma":"Veraxa Biotech AG - Post de-SPAC","anzahlInsider":1,"insider":["Ziegler Christoph Samuel"],"summe":65400,"kaeufe":2,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/2079109/0001829126-26-011387.txt"}]},{"symbol":"MHH","firma":"Mastech Digital, Inc.","anzahlInsider":1,"insider":["SHAW STEVEN A"],"summe":60052,"kaeufe":4,"frueheste":"2026-10-19","spaeteste":"2026-10-20","maxVerzoegerung":2,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1190614/0001193125-26-427279.txt"}]},{"symbol":"JCTC","firma":"JEWETT CAMERON TRADING CO LTD","anzahlInsider":1,"insider":["AJB Investment Fund II, LP"],"summe":57300,"kaeufe":5,"frueheste":"2026-10-20","spaeteste":"2026-10-20","maxVerzoegerung":0,"nurGrossaktionaer":true,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1536588/0001536588-26-000043.txt"}]},{"symbol":"ELTP","firma":"ELITE PHARMACEUTICALS INC /NV/","anzahlInsider":1,"insider":["Dash Barry H"],"summe":51960,"kaeufe":2,"frueheste":"2026-10-09","spaeteste":"2026-10-09","maxVerzoegerung":10,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1053369/0001493152-26-047486.txt"}]},{"symbol":"AYI","firma":"ACUITY INC. (DE)","anzahlInsider":1,"insider":["O'Shaughnessy Laura"],"summe":44138,"kaeufe":2,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":4,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1144215/0001813477-26-000008.txt"}]},{"symbol":"NVA","firma":"Nova Minerals Corp","anzahlInsider":1,"insider":["Gerteisen Christopher"],"summe":28366,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1852551/0001225208-26-008474.txt"}]},{"symbol":"FUL","firma":"FULLER H B CO","anzahlInsider":1,"insider":["Malik Muhammad Shahbaz"],"summe":25000,"kaeufe":1,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":3,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1621150/0001225208-26-008441.txt"}]},{"symbol":"XFOR","firma":"X4 Pharmaceuticals, Inc","anzahlInsider":1,"insider":["Craig Adam R"],"summe":23768,"kaeufe":2,"frueheste":"2026-10-16","spaeteste":"2026-10-16","maxVerzoegerung":3,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1339498/0001339498-26-000005.txt"}]},{"symbol":"NNOX","firma":"Nano-X Imaging Ltd.","anzahlInsider":1,"insider":["Meltzer Erez"],"summe":22500,"kaeufe":2,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":1,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1371973/0001213900-26-110808.txt"}]},{"symbol":"EQBK","firma":"EQUITY BANCSHARES INC","anzahlInsider":1,"insider":["Borck Leon"],"summe":18536,"kaeufe":1,"frueheste":"2026-10-19","spaeteste":"2026-10-19","maxVerzoegerung":0,"nurGrossaktionaer":false,"belege":[{"quelle":"https://www.sec.gov/Archives/edgar/data/1227500/0001886793-26-000004.txt"}]}]};
 
 function euro(n) { return n.toLocaleString("de-DE"); }
 function lagKlasse(t) { return t <= 3 ? "lag-ok" : t <= 7 ? "lag-mittel" : "lag-schlecht"; }
@@ -190,5 +170,6 @@ document.querySelector(".subtitle").insertAdjacentHTML("beforeend",
   ` &mdash; Stand ${DATA.stand || "?"}`);
 zeichne();
 </script>
+</div>
 </body>
 </html>
