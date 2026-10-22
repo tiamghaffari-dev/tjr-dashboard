@@ -48,20 +48,33 @@ const ERLAUBTE_QUELLEN = [
 /* Jedes Thema sagt dazu, welche von Tiams Werten es ueberhaupt betrifft.
  * Diese Zuordnung ist der ganze Zweck der Uebung - eine Schlagzeile ohne
  * Bezug zu einem seiner Maerkte ist fuer ihn nur Rauschen. */
+/* Jedes Thema sagt dazu, welche von Tiams Werten es betrifft - und zwar mit
+ * SYMBOL, nicht nur als Wort. Damit kann die Seite zu jeder Nachrichtenlage
+ * zeigen, was die betroffenen Werte in denselben Tagen tatsaechlich gemacht
+ * haben. Das ist der ehrliche Teil von Tiams Frage "was wird davon
+ * beeinflusst": was schon passiert ist, laesst sich messen - was noch
+ * passieren wird, nicht. */
 const THEMEN = [
-  { name: "Krypto", frage: "Bitcoin OR Kryptomarkt OR Kryptowährungen OR Ethereum OR Krypto-Regulierung",
-    betrifft: ["Bitcoin", "Ethereum", "XRP"] },
-  { name: "Aktienmärkte", frage: "Börse OR \"Wall Street\" OR \"S&P 500\" OR Dax",
-    betrifft: ["S&P 500", "Nasdaq", "DAX", "breite ETFs"] },
-  { name: "Zinsen und Notenbanken", frage: "Leitzins OR EZB OR \"Federal Reserve\" OR Inflation",
-    betrifft: ["GBP/USD", "Gold", "S&P 500", "breite ETFs"] },
-  { name: "Gold und Rohstoffe", frage: "Goldpreis OR Ölpreis OR Rohstoffe",
-    betrifft: ["Gold", "Energie-ETFs"] },
-  { name: "Rüstung", frage: "Rüstung OR Verteidigungsausgaben OR Rheinmetall",
-    betrifft: ["Rheinmetall", "Hensoldt", "Rüstungs-ETFs"] },
-  { name: "Weltlage", frage: "Trump Zölle OR Handelskrieg OR Ukraine OR Nahost",
-    betrifft: ["praktisch alles"] },
+  { name: "Krypto",
+    frage: "Bitcoin OR Kryptomarkt OR Kryptow\u00e4hrungen OR Ethereum OR Krypto-Regulierung",
+    betrifft: ["BTC-USD", "ETH-USD", "XRP-USD", "SOL-USD"] },
+  { name: "Aktienm\u00e4rkte",
+    frage: "B\u00f6rse OR \"Wall Street\" OR \"S&P 500\" OR Dax",
+    betrifft: ["EQQQ.DE", "QDVE.DE", "EUNL.DE", "VWCE.DE"] },
+  { name: "Zinsen und Notenbanken",
+    frage: "Leitzins OR EZB OR \"Federal Reserve\" OR Inflation",
+    betrifft: ["EUNL.DE", "EUNM.DE", "QDVE.DE"] },
+  { name: "Gold und Rohstoffe",
+    frage: "Goldpreis OR \u00d6lpreis OR Rohstoffe",
+    betrifft: ["EXH1.DE", "XLE"] },
+  { name: "R\u00fcstung",
+    frage: "R\u00fcstung OR Verteidigungsausgaben OR Rheinmetall",
+    betrifft: ["RHM.DE", "HAG.DE", "HO.PA", "DFEN.DE", "WDEF.MI"] },
+  { name: "Weltlage",
+    frage: "Trump Z\u00f6lle OR Handelskrieg OR Ukraine OR Nahost",
+    betrifft: ["EUNL.DE", "DFEN.DE", "EXH1.DE", "BTC-USD"] },
 ];
+
 
 function feedUrl(frage, tage) {
   const q = encodeURIComponent(frage + " when:" + (tage || TAGE_ZURUECK) + "d");
@@ -151,6 +164,14 @@ const FUELLWARE = [
   /\b(turbo|knock[- ]?out|optionsschein|faktor[- ]?zertifikat|open end)\b/i,
   /\bfaktor\s*\d+\s*x\b|\bhebel\s*\d+/i,
   /\bcrash-?(risiko|gefahr)\b/i,
+  /* Vierte Runde: Spekulations-Ueberschriften im Fragesatz. "Welche
+   * Projekte haben Potenzial?" und "endet jetzt der Baerenmarkt?" sind
+   * genau das Genre, vor dem diese Seite an anderer Stelle warnt. */
+  /\b(hat|haben|mit)\s+potenzial\b|potenzial\s*\?/i,
+  /\bwelche[rsn]?\s+(projekte|aktien|coins|kryptow(ä|ae)hrungen|etfs?|werte|fonds)\b/i,
+  /\b(endet|beginnt|startet|kommt)\s+(jetzt|nun)\b/i,
+  /f(ü|ue)r wen\s+.{0,30}\blohnt\b/i,
+  /\bzukunft von\b.*\?/i,
 ];
 
 function fuellware(titel) {

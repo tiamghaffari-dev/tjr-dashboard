@@ -971,10 +971,29 @@ function nachrichten() {
   el("sum-nachrichten").textContent = n.anzahl
     ? n.anzahl + " Meldungen" : "nichts Neues";
 
-  let html = "";
+  /* Tiam am 22.10.: "was wird dadurch beeinflusst". Was noch kommt, weiss
+     niemand - was schon passiert ist, steht in den Kursen. Darum zu jedem
+     Thema die betroffenen Werte mit ihrer Bewegung aus denselben Tagen. */
+  let html = '<div class="hinweis-klein" style="margin:0 0 22px">Unter jedem Thema stehen die '
+    + "betroffenen Werte mit dem, was sie in <b>denselben Tagen</b> gemacht haben. Das ist "
+    + "keine Folge aus der Nachricht und keine Vorhersage \u2013 es ist, was bereits im Preis "
+    + "steht, bevor du es gelesen hast.</div>";
+
   for (const t of n.themen) {
-    html += '<h3 style="font-size:0.9375rem;font-weight:600;margin:26px 0 2px">' + esc(t.name) + "</h3>"
-      + '<div class="unter" style="margin:0 0 10px">Betrifft: ' + esc((t.betrifft || []).join(", ")) + "</div>";
+    html += '<h3 style="font-size:0.9375rem;font-weight:600;margin:26px 0 4px">' + esc(t.name) + "</h3>";
+
+    const werte = (t.betrifft || []).map((sym) => beo(sym)).filter(Boolean);
+    if (werte.length) {
+      html += '<div class="unter" style="margin:0 0 12px;display:flex;flex-wrap:wrap;gap:4px 14px">'
+        + '<span class="still">3 Tage:</span>'
+        + werte.map((e) => esc(e.name) + " "
+            + '<span class="zahl ' + farbe(e.tage3) + '">'
+            + (typeof e.tage3 === "number" ? proz(e.tage3, 1) : "\u2013") + "</span>").join("")
+        + "</div>";
+    } else {
+      html += '<div class="unter" style="margin:0 0 12px">Betrifft: '
+        + esc((t.betrifft || []).join(", ")) + "</div>";
+    }
     if (!t.ok) {
       html += '<div class="unter">Quelle beim letzten Lauf nicht erreichbar.</div>';
       continue;
@@ -1001,7 +1020,12 @@ function nachrichten() {
 
   el("in-nachrichten").innerHTML = html
     + erklaerBox("Warum hier keine Bewertung steht",
-        "<p>Das sind <b>nur \u00dcberschriften</b>, aus " + n.quellenAnzahl + " festgelegten Redaktionen, "
+        "<p><b>Warum hier keine Kauf-Hinweise stehen.</b> Eine Nachricht, die du lesen kannst, "
+        + "haben Millionen andere auch gelesen. Der Kurs hat reagiert, bevor du am Handy warst \u2013 "
+        + "deshalb stehen hier die <b>bereits gelaufenen</b> Bewegungen und keine erwarteten. "
+        + "Was eine Nachricht noch bewegt, h\u00e4ngt nur daran, wie sie von dem abweicht, was "
+        + "ohnehin erwartet wurde, und das steht in keiner Schlagzeile.</p>"
+        + "<p>Das sind <b>nur \u00dcberschriften</b>, aus " + n.quellenAnzahl + " festgelegten Redaktionen, "
         + "der letzten " + n.tageZurueck + " Tage. Bleibt ein Thema dabei leer, wird einmal "
         + (n.tageNotfall || 7) + " Tage zur\u00fcck gesucht und das dann auch dazugeschrieben. "
         + "Es steht nirgends, ob eine Meldung gut oder schlecht f\u00fcr einen Kurs ist \u2013 "

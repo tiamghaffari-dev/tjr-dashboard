@@ -236,6 +236,11 @@ async function sammle() {
       kurs: rund(letzter, letzter >= 100 ? 2 : 4),
       stand: new Date(reihe[reihe.length - 1].ts * 1000).toISOString().slice(0, 10),
       spanne: spanne52(reihe),
+      /* Kurze Fenster (22.10.2026): Tiam will zu einer Nachricht sehen, was
+       * die betroffenen Werte SCHON gemacht haben. Drei und sieben Tage
+       * decken das Fenster ab, aus dem die Schlagzeilen stammen. */
+      tage3: rund(seit(reihe, 3), 1),
+      tage7: rund(seit(reihe, 7), 1),
       monat1: rund(seit(reihe, 30), 1),
       monat3: rund(seit(reihe, 91), 1),
       monat6: rund(seit(reihe, 182), 1),
