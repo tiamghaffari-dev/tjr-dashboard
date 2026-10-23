@@ -57969,9 +57969,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792735800000,
+    "rMultiple": 1.41,
+    "exitPrice": 4023.699951
   },
   {
     "id": "BTCUSD-1792759781524",
@@ -58128,10 +58129,11 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1792735800000,
+    "rMultiple": 1.65,
+    "benachrichtigt": true,
+    "exitPrice": 4023.699951
   },
   {
     "id": "XRPUSD-1792763941269",
