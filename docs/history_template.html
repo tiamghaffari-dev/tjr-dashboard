@@ -834,14 +834,27 @@ function renderTable() {
           const targetCell = r.partialExit && r.target2 != null
             ? `${r.target ?? "–"} / ${r.target2}`
             : (r.target ?? "–");
-          const currentStop = r.status === "partial" || r.tp1HitTs ? (r.trailStop ?? r.stop) : r.stop;
+          /* Tiam, 23.10.2026: "ich weiss nicht, wo sein Take-Profit war, wo
+             sein Stop-Loss war". Hier stand bisher bei jedem Trade, der TP1
+             erreicht hatte, der NACHGEZOGENE Stop - also der TP1-Preis. In der
+             Tabelle las sich das als Stop und Ziel auf demselben Kurs, was
+             rechnerisch unmoeglich aussieht. Bei abgeschlossenen Trades steht
+             jetzt der Stop, mit dem eingestiegen wurde; bei laufenden der
+             urspruengliche und dahinter der nachgezogene. */
+          const wurdeNachgezogen = r.tp1HitTs && r.trailStop != null && r.trailStop !== r.stop;
+          const laeuftNoch = r.status === "open" || r.status === "partial";
+          const stopCell = wurdeNachgezogen
+            ? (laeuftNoch
+                ? `${r.stop ?? "–"} <span class="still">&rarr; ${r.trailStop}</span>`
+                : `${r.stop ?? "–"} <span class="still">(auf ${r.trailStop} nachgezogen)</span>`)
+            : (r.stop ?? "–");
           return `
           <tr class="tr-link" data-asset="${r.asset}" data-ts="${r.entryTs}" title="Zum Chart zu diesem Zeitpunkt springen">
             <td>${fmtDate(r.entryTs)}</td>
             <td>${meta.icon} ${meta.display || meta.name}</td>
             <td class="${r.direction === "LONG" ? "dir-long" : "dir-short"}">${r.direction}</td>
             <td>${r.entry ?? "–"}</td>
-            <td>${currentStop ?? "–"}</td>
+            <td>${stopCell}</td>
             <td>${targetCell}</td>
             <td>${r.rr ? "1:" + r.rr : "–"}</td>
             <td>${r.zoneKind || "–"}</td>

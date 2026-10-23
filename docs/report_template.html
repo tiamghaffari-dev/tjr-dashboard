@@ -1176,10 +1176,20 @@ function drawPositionBox(chart, candles, sig, startTs, series) {
 // Box (die immer an ann.zoneTs bzw. dem offenen Trade haengt) und stapelt
 // sich nicht ueber die Zeit, weil jede alte Box exakt in ihrem eigenen
 // vergangenen Zeitfenster sitzt statt bis "jetzt" zu reichen.
+/* Tiam, 23.10.2026: "er soll die Trades, die er gesetzt hat, generell schon
+   anzeigen - ich sehe, dass er eingestiegen ist, aber nicht wo sein
+   Take-Profit war, wo sein Stop-Loss war."
+   Die Boxen WURDEN gezeichnet, nur mit 12 % Deckkraft und einer Randlinie bei
+   30 % - auf dunklem Grund zwischen Kerzen praktisch unsichtbar. Deutlich
+   angehoben. Sie bleiben trotzdem schwaecher als die Box des aktuellen
+   Signals und bekommen eine duenne DURCHGEZOGENE Kante - die laufende Box ist
+   dick und gestrichelt (so wie TradingViews Positions-Werkzeug), damit
+   "abgeschlossen" und "laeuft gerade" auf einen Blick auseinandergehen. */
 const HISTORICAL_BOX_COLORS = {
-  profit: { fill: "rgba(79,255,190,0.12)", line: "rgba(79,255,190,0.3)" },
-  risk: { fill: "rgba(255,107,157,0.12)", line: "rgba(255,107,157,0.3)" },
+  profit: { fill: "rgba(74,222,128,0.28)", line: "rgba(74,222,128,0.75)" },
+  risk: { fill: "rgba(248,113,113,0.26)", line: "rgba(248,113,113,0.7)" },
 };
+const HISTORICAL_BOX_DASH = null;   // durchgezogen, im Gegensatz zur laufenden Box
 const STALE_BOX_FALLBACK_BARS = 120; // ~10h bei 5-Min-Kerzen, falls kein resolvedTs vorliegt (seit 2026-07-15 Kerzen-Umstellung korrigiert)
 
 // FEHLER GEFUNDEN 2026-08-16 (Tiam: "was ist da passiert"): der Versatz wurde
@@ -1277,13 +1287,13 @@ function drawHistoricalPositionBox(chart, candles, rec, series) {
   const histProfitTop = Math.max(rec.entry, histFarTarget);
   const histProfitBottom = Math.min(rec.entry, histFarTarget);
   drawBox(chart, series, segData, histProfitTop, histProfitBottom, {
-    fillColor: HISTORICAL_BOX_COLORS.profit.fill, borderColor: HISTORICAL_BOX_COLORS.profit.line, borderWidth: 1, borderDash: null,
+    fillColor: HISTORICAL_BOX_COLORS.profit.fill, borderColor: HISTORICAL_BOX_COLORS.profit.line, borderWidth: 1, borderDash: HISTORICAL_BOX_DASH,
   });
 
   const histRiskTop = Math.max(rec.entry, rec.stop);
   const histRiskBottom = Math.min(rec.entry, rec.stop);
   drawBox(chart, series, segData, histRiskTop, histRiskBottom, {
-    fillColor: HISTORICAL_BOX_COLORS.risk.fill, borderColor: HISTORICAL_BOX_COLORS.risk.line, borderWidth: 1, borderDash: null,
+    fillColor: HISTORICAL_BOX_COLORS.risk.fill, borderColor: HISTORICAL_BOX_COLORS.risk.line, borderWidth: 1, borderDash: HISTORICAL_BOX_DASH,
   });
 }
 
