@@ -59742,9 +59742,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1792992600000,
+    "rMultiple": 1.36,
+    "exitPrice": 4016.100098
   },
   {
     "id": "GBPUSD-1793019435048",
