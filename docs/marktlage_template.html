@@ -25,8 +25,7 @@
      =================================================================== */
   /* Farben, Schrift, Leiste und Nach-oben-Knopf stehen jetzt in stil.css -
      fuer alle Seiten gemeinsam. Hier bleibt nur, was es nur hier gibt.
-     Die Leiste laeuft auf dieser Seite in der schmaleren Lesebreite mit. */
-  :root { --leiste-breit: 760px; }
+     Die Leiste laeuft in derselben Breite wie der Inhalt. */
 
   * { box-sizing: border-box; }
 
@@ -37,7 +36,7 @@
     font-size: 1rem; line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-  .seite { max-width: 760px; margin: 0 auto; padding: 22px 20px 64px; }
+  .seite { max-width: var(--breit); margin: 0 auto; padding: 22px 24px 64px; }
 
   /* ---------- Kopf ---------- */
   .kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
@@ -48,8 +47,8 @@
   /* ---------- Lagebericht: der Kern der Seite ---------- */
   .lage { margin: 32px 0 0; }
   .lage p {
-    font-size: 1.375rem; line-height: 1.5; margin: 0 0 15px;
-    letter-spacing: -0.005em; max-width: 34em;
+    font-size: 1.5rem; line-height: 1.5; margin: 0 0 16px;
+    letter-spacing: -0.005em; max-width: 36em;   /* Zeilenlaenge gedeckelt, nicht die Seite */
   }
   .lage p:last-child { margin-bottom: 0; }
   .lage b { font-weight: 650; }
@@ -57,9 +56,24 @@
   .lage .runter { color: var(--runter); }
   .lage .ruhig { color: var(--akzent); }
 
+  /* ---------- Kopf der Seite: Lagebericht + Tafel ---------- */
+  @media (min-width: 1100px) {
+    .oben {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: 0 64px;
+      align-items: start;
+    }
+    /* Beide Spalten auf derselben Hoehe beginnen lassen. */
+    .oben .lage { margin-top: 30px; }
+    .oben .tafel { margin-top: 30px; }
+    /* In der schmaleren rechten Spalte stehen Vorne und Hinten untereinander. */
+    .oben .tafel-paar { grid-template-columns: 1fr; gap: 22px; }
+  }
+
   /* ---------- Tafel: vorne und hinten auf einen Blick ---------- */
   .tafel { margin-top: 32px; }
-  .tafel-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 34px; }
+  .tafel-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 56px; }
   .tafel h3 {
     font-size: 0.8125rem; font-weight: 600; color: var(--leiser);
     margin: 0 0 4px; letter-spacing: 0.02em;
@@ -249,12 +263,18 @@
     </div>
   </div>
 
-  <!-- Der Lagebericht. Das ist die Seite; alles darunter ist Nachschlagewerk. -->
-  <div class="lage" id="lage"></div>
+  <!-- Lagebericht und Tafel bilden zusammen den Kopf der Seite. Auf breiten
+       Schirmen stehen sie NEBENEINANDER: der Fliesstext darf nicht ueber die
+       ganze Breite laufen (unlesbar), und der Platz daneben bliebe sonst leer.
+       Unter 1100 Pixeln stehen sie wieder untereinander. -->
+  <div class="oben">
+    <!-- Der Lagebericht. Das ist die Seite; alles darunter ist Nachschlagewerk. -->
+    <div class="lage" id="lage"></div>
 
-  <!-- Die Tafel steht bewusst OFFEN, nicht in einem Aufklapper: Tiam wollte
-       auf einen Blick sehen, was laeuft, ohne irgendwo hinzuklicken. -->
-  <div class="tafel" id="tafel"></div>
+    <!-- Die Tafel steht bewusst OFFEN, nicht in einem Aufklapper: Tiam wollte
+         auf einen Blick sehen, was laeuft, ohne irgendwo hinzuklicken. -->
+    <div class="tafel" id="tafel"></div>
+  </div>
 
   <div class="hinweis-klein">
     Diese Seite beschreibt nur, was ist &mdash; keine Prognose, keine Empfehlung, kein Kaufsignal.

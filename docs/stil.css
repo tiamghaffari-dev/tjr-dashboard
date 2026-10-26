@@ -40,9 +40,16 @@
   --akzent:   #7dd3fc;   /* die einzige Akzentfarbe der Seite */
   --warn:     #fbbf24;
 
-  --schmal:   760px;     /* Lesebreite fuer Text */
-  --leiste-breit: 1180px;/* Leiste laeuft mit der Inhaltsbreite der Seite */
-  --breit:    1180px;    /* fuer Chart- und Tabellenseiten */
+  /* Tiam, 26.10.2026: "du hast es so zusammengepackt, als waere es nur fuers
+     Handy - am Laptop soll es ausgebreitet sein."  Stimmt: die Marktlage sass
+     in 760 Pixeln, auf einem 1440er Schirm blieb links und rechts alles leer.
+     Die Seitenbreite ist jetzt deutlich groesser. Was NICHT mitwaechst, sind
+     Fliesstexte: eine Zeile mit 200 Zeichen liest sich schlecht, darum
+     behalten Absaetze ihre eigene Deckelung in em. Tabellen, Tafeln und
+     Abschnitte nutzen die volle Breite. */
+  --schmal:   900px;     /* Lesebreite fuer reine Textseiten */
+  --leiste-breit: 1440px;/* Leiste laeuft mit der Inhaltsbreite der Seite */
+  --breit:    1440px;    /* Seitenbreite fuer Chart-, Tabellen- und Uebersichtsseiten */
 
   --rund:     10px;
   --rund-voll:999px;
