@@ -67068,8 +67068,8 @@
     "target2": 80266,
     "rr2": 2.16,
     "partialExit": true,
-    "trailStop": 81598.04375,
-    "tp1HitTs": null,
+    "trailStop": 80305.101563,
+    "tp1HitTs": 1793289900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -67122,9 +67122,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793290020000,
+    "rMultiple": 2.12,
+    "exitPrice": 80266,
+    "postmortem": {
+      "holdHours": 3.6,
+      "mfeR": 2.74,
+      "maeR": -0.49,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.41,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "BTCUSD-1793300174826",
@@ -67138,8 +67155,8 @@
     "target2": 80266,
     "rr2": 1.21,
     "partialExit": true,
-    "trailStop": 81195.028125,
-    "tp1HitTs": null,
+    "trailStop": 80305.101563,
+    "tp1HitTs": 1793289900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -67192,9 +67209,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793290020000,
+    "rMultiple": 1.16,
+    "exitPrice": 80266,
+    "postmortem": {
+      "holdHours": 1.2,
+      "mfeR": 1.79,
+      "maeR": -0.17,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.22,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1793300174826",
@@ -67208,8 +67236,8 @@
     "target2": 1.2715,
     "rr2": 1.44,
     "partialExit": true,
-    "trailStop": 1.29864,
-    "tp1HitTs": null,
+    "trailStop": 1.2715,
+    "tp1HitTs": 1793289600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -67263,9 +67291,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793289900000,
+    "rMultiple": 1.44,
+    "exitPrice": 1.2715,
+    "postmortem": {
+      "holdHours": 1.1,
+      "mfeR": 2.15,
+      "maeR": 0.13,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1793302075479",
@@ -67330,6 +67369,142 @@
       "vixPerzentil": 45,
       "schwankung": 10.3,
       "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "ETHUSD-1793304422751",
+    "asset": "ETHUSD",
+    "direction": "LONG",
+    "entryTs": 1793304422751,
+    "entry": 2302.050049,
+    "stop": 2284.432031,
+    "target": 2340.469971,
+    "rr": 2.18,
+    "target2": 2348.75,
+    "rr2": 2.65,
+    "partialExit": true,
+    "trailStop": 2284.432031,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "Equilibrium",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R9-daily-bias"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 0.975,
+    "fillTs": 1793290033000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "15m",
+    "umfeld": {
+      "handelstag": "2026-10-29",
+      "quelle": "live",
+      "vix": 16.89,
+      "vixPerzentil": 45,
+      "schwankung": 26.3,
+      "schwankungStufe": "niedrig",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1793304422751",
+    "asset": "GCUSD",
+    "direction": "SHORT",
+    "entryTs": 1793304422751,
+    "entry": 4034,
+    "stop": 4045.7,
+    "target": 4016.100098,
+    "rr": 1.53,
+    "target2": 4001.600098,
+    "rr2": 2.77,
+    "partialExit": true,
+    "trailStop": 4045.7,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 6,
+      "bewertbar": 6,
+      "fehlend": []
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.057,
+    "fillTs": 1793290033000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "15m",
+    "umfeld": {
+      "handelstag": "2026-10-29",
+      "quelle": "live",
+      "vix": 16.89,
+      "vixPerzentil": 45,
+      "schwankung": 15.8,
+      "schwankungStufe": "niedrig",
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
