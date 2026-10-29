@@ -67546,8 +67546,8 @@
     "target2": 4016.300049,
     "rr2": 1.82,
     "partialExit": true,
-    "trailStop": 4049.300098,
-    "tp1HitTs": null,
+    "trailStop": 4023.600098,
+    "tp1HitTs": 1793301300000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -67597,9 +67597,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793301600000,
+    "rMultiple": 1.2,
+    "exitPrice": 4023.600098,
+    "postmortem": {
+      "holdHours": 2.9,
+      "mfeR": 1.22,
+      "maeR": -0.24,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.24,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1793307279960",
