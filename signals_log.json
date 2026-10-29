@@ -64891,9 +64891,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793217600000,
+    "rMultiple": 1.13,
+    "exitPrice": 1.331842,
+    "postmortem": {
+      "holdHours": 3.8,
+      "mfeR": 0.89,
+      "maeR": 0.53,
+      "towardTargetPct": 79,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.23,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1793219201725",
