@@ -455,6 +455,29 @@ function lagebericht() {
       + " %</b> der Tage im letzten Jahr.");
   }
 
+  /* 3b. Wie viele echte Wetten steckt die Beobachtungsliste? Zwanzig Namen
+        sind keine zwanzig Wetten, wenn die meisten im Gleichschritt mit dem
+        Weltindex laufen. Das ist die Frage hinter "streue ich eigentlich". */
+  const bl2 = DATA.beobachtung && DATA.beobachtung.eintraege;
+  if (bl2) {
+    const mitK = bl2.filter((e) => e.ok && e.marktkorrelation);
+    if (mitK.length >= 8) {
+      const markt = mitK.filter((e) => e.marktkorrelation.wert >= 0.85);
+      const eigen = mitK.filter((e) => e.marktkorrelation.wert < 0.3);
+      if (markt.length) {
+        s.push("<b>" + markt.length + " von " + mitK.length + "</b> beobachteten Werten laufen "
+          + "praktisch im Gleichschritt mit dem Weltmarkt"
+          + (eigen.length
+              ? " &ndash; eigene Wege gehen nur <b>" + undListe(eigen.map((e) => e.name)) + "</b>."
+              : " &ndash; das sind keine " + mitK.length + " Wetten, sondern im Kern eine.")
+        );
+      } else if (eigen.length) {
+        s.push("Die beobachteten Werte laufen gerade <b>weitgehend unabh&auml;ngig</b> vom "
+          + "Weltmarkt &ndash; das ist ungew&ouml;hnlich und h&auml;lt selten lange.");
+      }
+    }
+  }
+
   /* 4. Sektoren - meistens ist die ehrliche Antwort "nichts Belastbares". */
   const sk = DATA.kennzahlen && DATA.kennzahlen.sektoren;
   if (sk && sk.ok && sk.zeilen) {
@@ -729,6 +752,21 @@ function blZeile(e, rang) {
     + (e.kaufbar === false ? ' <span class="marke m-warn">nicht in der EU kaufbar</span>' : "")
     + (!leise ? ' <span class="marke ' + kl + '">' + (BL_MARKE[r.stufe] || r.stufe) + "</span>" : "")
     + (e.langname ? '<div class="unter">' + e.langname + "</div>" : "")
+    /* Zwei Zahlen, die in keiner Renditespalte stehen: was man aushalten
+       musste, und wie viel davon einfach der Weltmarkt war. */
+    + (e.rueckgang || e.marktkorrelation
+        ? '<div class="unter">'
+          + (e.rueckgang
+              ? "tiefster Stand im Jahr: <b class=\"runter\">" + proz(e.rueckgang.tiefe, 0)
+                + "</b> unter dem Hoch davor"
+                + (e.rueckgang.dauerTage ? " (" + e.rueckgang.dauerTage + " Tage lang)" : "")
+              : "")
+          + (e.rueckgang && e.marktkorrelation ? " &nbsp;&middot;&nbsp; " : "")
+          + (e.marktkorrelation
+              ? "l&auml;uft zu <b>" + dz(e.marktkorrelation.wert, 2) + "</b> mit dem Weltmarkt"
+              : "")
+          + "</div>"
+        : "")
     + (e.spanne && typeof e.spanne.inSpanne === "number"
         ? '<div class="spanne"><i style="left:' + Math.max(0, Math.min(97, e.spanne.inSpanne))
           + '%"></i></div><div class="spanne-text"><span>Jahrestief</span><span>Jahreshoch</span></div>'
@@ -749,7 +787,8 @@ function beobachtung() {
     '<button class="knopf ' + (t === blThema ? "an" : "") + '" data-bl="' + t + '">' + t + "</button>")
     .join("") + "</div>"
     + '<div class="filter" style="margin-top:-8px">'
-    + [["thema", "nach Thema"], ["beste", "beste zuerst"], ["schlechteste", "schlechteste zuerst"]]
+    + [["thema", "nach Thema"], ["beste", "beste zuerst"], ["schlechteste", "schlechteste zuerst"],
+       ["ruhigste", "ruhigste zuerst"]]
         .map(([k, w]) => '<button class="knopf ' + (k === blSort ? "an" : "") + '" data-sort="' + k
           + '">' + w + "</button>").join("")
     + "</div>";
@@ -764,6 +803,14 @@ function beobachtung() {
       html += '<tr class="kopfzeile"><td colspan="4">' + thema + "</td></tr>";
       for (const e of drin) html += blZeile(e, null);
     }
+  } else if (blSort === "ruhigste") {
+    /* Nach dem tiefsten Stand im Jahr: welcher Wert hat am wenigsten
+       Aushalten verlangt. Werte ohne Jahresreihe stehen hinten. */
+    const mitWert = gefiltert.filter((e) => e.rueckgang && typeof e.rueckgang.tiefe === "number");
+    const ohne = gefiltert.filter((e) => !(e.rueckgang && typeof e.rueckgang.tiefe === "number"));
+    mitWert.sort((x, y) => y.rueckgang.tiefe - x.rueckgang.tiefe);   // -8 vor -40
+    mitWert.forEach((e, i) => { html += blZeile(e, i + 1); });
+    for (const e of ohne) html += blZeile(e, null);
   } else {
     /* Rangliste nach Dreimonats-Entwicklung. Werte ohne Dreimonatswert
        stehen hinten, statt mit einer 0 mitgerechnet zu werden. */
@@ -793,6 +840,16 @@ function beobachtung() {
         + "1.550\u00a0\u20ac, im Juli bei 976\u00a0\u20ac \u2013 w\u00e4hrend \u201ees wird aufger\u00fcstet\u201c "
         + "durchgehend stimmte und in jeder Zeitung stand. Kurse bewegen sich auf "
         + "<b>\u00dcberraschungen</b>, nicht auf Tatsachen.</p>"
+        + "<p><b>Tiefster Stand im Jahr</b> sagt, was ein Einstieg zum schlechtestm\u00f6glichen "
+        + "Zeitpunkt gekostet h\u00e4tte: wie weit der Kurs unter sein bis dahin h\u00f6chstes Niveau "
+        + "gefallen ist und wie lange das gedauert hat. Bei Haltedauern von Monaten entscheidet "
+        + "genau diese Zahl, ob man dabeibleibt &ndash; eine Jahresrendite von +20 % f\u00fchlt sich "
+        + "v\u00f6llig anders an, wenn man zwischendurch 40 % im Minus stand.</p>"
+        + "<p><b>L\u00e4uft zu X mit dem Weltmarkt</b> geht von 0 bis 1 und misst &uuml;ber "
+        + "90 Handelstage, wie viel von der Bewegung einfach der Gesamtmarkt ist. Ab etwa 0,85 "
+        + "kaufst du im Kern den Weltindex mit h\u00f6heren Kosten. Das ist nicht automatisch "
+        + "schlecht &ndash; aber es hei\u00dft, dass f\u00fcnf solche Werte nebeneinander keine "
+        + "Streuung sind.</p>"
         + "<p>Der Fondsname unter jedem Wert ist zum Nachschlagen im Broker gedacht \u2013 pr\u00fcf dort "
         + "die genaue Anteilsklasse, die Namen \u00e4hneln sich stark.</p>");
 

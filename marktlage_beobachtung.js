@@ -156,6 +156,83 @@ function spanne52(reihe) {
  * es Staerke. */
 const REL_TAGE = 90;
 
+/* Maximaler Rueckgang im letzten Jahr (29.10.2026).
+ *
+ * Tiams Frage ist immer "was kann ich erwarten" - die ehrlichere Zahl ist
+ * "was musste ich aushalten". Ein Wert, der ueber ein Jahr 20 % zugelegt hat,
+ * dazwischen aber 45 % unter seinem Hoch stand, ist etwas voellig anderes als
+ * einer, der dieselben 20 % ruhig gelaufen ist. Bei Haltedauern von Monaten
+ * entscheidet genau das, ob man dabeibleibt.
+ *
+ * Gemessen vom jeweils hoechsten vorherigen Schlusskurs, nicht vom Jahreshoch:
+ * so steht da, was ein Einstieg zum schlechtmoeglichsten Zeitpunkt gekostet
+ * haette. */
+function maxRueckgang(reihe, tage) {
+  if (!reihe || reihe.length < 10) return null;
+  const grenze = reihe[reihe.length - 1].ts - tage * 86400;
+  const teil = reihe.filter((p) => p.ts >= grenze);
+  if (teil.length < 10) return null;
+
+  let hoch = teil[0].close, tiefstTs = null, hochTs = teil[0].ts;
+  let schlimmster = 0, schlimmsterHochTs = null, schlimmsterTiefTs = null;
+  for (const p of teil) {
+    if (p.close > hoch) { hoch = p.close; hochTs = p.ts; }
+    const rueck = (p.close - hoch) / hoch * 100;
+    if (rueck < schlimmster) {
+      schlimmster = rueck;
+      schlimmsterHochTs = hochTs;
+      schlimmsterTiefTs = p.ts;
+    }
+  }
+  if (schlimmsterTiefTs === null) return null;
+
+  const letzter = teil[teil.length - 1].close;
+  const aktuell = (letzter - hoch) / hoch * 100;   // Abstand zum bisherigen Hoch
+  const tag = (ts) => new Date(ts * 1000).toISOString().slice(0, 10);
+  return {
+    tiefe: rund(schlimmster, 1),
+    von: tag(schlimmsterHochTs),
+    bis: tag(schlimmsterTiefTs),
+    dauerTage: Math.round((schlimmsterTiefTs - schlimmsterHochTs) / 86400),
+    jetzt: rund(aktuell, 1),
+    erholt: aktuell > schlimmster * 0.25,   // wieder nah am Hoch
+  };
+}
+
+/* Wie viel von einem Wert ist einfach "der Markt"? (29.10.2026)
+ *
+ * Die Beobachtungsliste sieht nach zwanzig Wetten aus. Wenn die meisten davon
+ * im Gleichschritt mit dem Weltindex laufen, sind es in Wahrheit ein paar
+ * wenige. Dieselbe Rechnung wie beim Gleichlauf der sechs gehandelten Werte,
+ * nur gegen den Vergleichsindex statt untereinander.
+ *
+ * Nur bei gleicher Waehrung, sonst misst man den Wechselkurs mit. */
+function marktkorrelation(reihe, massstabReihe, gleicheWaehrung) {
+  if (!gleicheWaehrung || !massstabReihe) return null;
+  const a = kz.gemeinsameTage({ x: reihe, y: massstabReihe }, ["x", "y"]);
+  if (a.tage.length < REL_TAGE + 10) return null;
+  const rx = kz.renditen(a.closes.x).slice(-REL_TAGE);
+  const ry = kz.renditen(a.closes.y).slice(-REL_TAGE);
+  if (rx.length < REL_TAGE) return null;
+  const roh = kz.korrelation(rx, ry);
+  if (roh === null) return null;
+
+  // Auf zwei Stellen runden BEVOR geurteilt wird, damit Anzeige und Urteil
+  // nicht auseinanderlaufen (gleiche Logik wie bei gleichlauf()).
+  const k = Math.round(roh * 100) / 100;
+  const standardfehler = 1 / Math.sqrt(REL_TAGE - 3);
+  const schwelle = Math.round(2 * standardfehler * 100) / 100;
+
+  let stufe;
+  if (Math.abs(k) <= schwelle) stufe = "eigenstaendig";
+  else if (k >= 0.85) stufe = "praktisch der Markt";
+  else if (k >= 0.6) stufe = "ueberwiegend Markt";
+  else if (k >= 0.3) stufe = "teilweise Markt";
+  else stufe = "weitgehend eigenstaendig";
+
+  return { wert: k, stufe, tage: REL_TAGE, standardfehler: rund(standardfehler, 2), schwelle };
+}
+
 function relativ(reihe, massstabReihe, gleicheWaehrung) {
   if (!gleicheWaehrung || !massstabReihe) return { stufe: "nicht vergleichbar", grund: "andere Währung als der Vergleichsindex – ein Vergleich würde den Wechselkurs mitmessen" };
   const a = kz.gemeinsameTage({ x: reihe, y: massstabReihe }, ["x", "y"]);
@@ -236,6 +313,12 @@ async function sammle() {
       kurs: rund(letzter, letzter >= 100 ? 2 : 4),
       stand: new Date(reihe[reihe.length - 1].ts * 1000).toISOString().slice(0, 10),
       spanne: spanne52(reihe),
+      rueckgang: maxRueckgang(reihe, 365),
+      marktkorrelation: (() => {
+        if (w.symbol === MASSSTAB_EUR || w.symbol === MASSSTAB_USD) return null;
+        const ms = massstabFuer(m.waehrung);
+        return ms && ms.reihe ? marktkorrelation(reihe, ms.reihe, true) : null;
+      })(),
       /* Kurze Fenster (22.10.2026): Tiam will zu einer Nachricht sehen, was
        * die betroffenen Werte SCHON gemacht haben. Drei und sieben Tage
        * decken das Fenster ab, aus dem die Schlagzeilen stammen. */
@@ -274,4 +357,4 @@ async function sammle() {
   };
 }
 
-module.exports = { WERTE, THEMEN, MASSSTAB, MASSSTAB_EUR, MASSSTAB_USD, REL_TAGE, VOL_FENSTER, holeReihe, seit, spanne52, relativ, sammle };
+module.exports = { WERTE, THEMEN, MASSSTAB, MASSSTAB_EUR, MASSSTAB_USD, REL_TAGE, VOL_FENSTER, holeReihe, seit, spanne52, relativ, maxRueckgang, marktkorrelation, sammle };
