@@ -66500,8 +66500,8 @@
     "target2": 80305.101563,
     "rr2": 3.43,
     "partialExit": true,
-    "trailStop": 82095.9125,
-    "tp1HitTs": null,
+    "trailStop": 81128.601563,
+    "tp1HitTs": 1793277000000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -66554,9 +66554,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793277300000,
+    "rMultiple": 1.39,
+    "exitPrice": 81128.601563,
+    "postmortem": {
+      "holdHours": 0.8,
+      "mfeR": 1.41,
+      "maeR": -0.46,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.19,
+      "targetDistAdr": 0.27,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.4R, der Preis lief danach aber noch bis +3.0R weiter. Hier lag deutlich mehr drin."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ · Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1793288710414",
@@ -66570,8 +66592,8 @@
     "target2": 1.283,
     "rr2": 2.18,
     "partialExit": true,
-    "trailStop": 1.31844,
-    "tp1HitTs": null,
+    "trailStop": 1.2938,
+    "tp1HitTs": 1793279700000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -66625,9 +66647,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793280000000,
+    "rMultiple": 1.21,
+    "exitPrice": 1.2938,
+    "postmortem": {
+      "holdHours": 1.6,
+      "mfeR": 1.26,
+      "maeR": -0.83,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.24,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.2R, der Preis lief danach aber noch bis +2.7R weiter. Hier lag deutlich mehr drin."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.8R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Take-Profit: zu konservativ · Entry: zu frueh"
+    }
   },
   {
     "id": "^GSPC-1793288710414",
@@ -66695,9 +66744,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1793279400000,
+    "rMultiple": -1,
+    "exitPrice": 768.372021,
+    "postmortem": {
+      "holdHours": 1.4,
+      "mfeR": 0.54,
+      "maeR": -1.25,
+      "towardTargetPct": 17,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.63,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.7R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 17% entgegen (max +0.5R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -2.1R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   },
   {
     "id": "^GSPC-1793289390009",
@@ -66765,9 +66841,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1793279400000,
+    "rMultiple": -1,
+    "exitPrice": 768.451978,
+    "postmortem": {
+      "holdHours": 1.2,
+      "mfeR": 0.47,
+      "maeR": -1.32,
+      "towardTargetPct": 15,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.61,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 15% entgegen (max +0.5R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -2.2R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   },
   {
     "id": "BTCUSD-1793290346826",
@@ -66781,8 +66884,8 @@
     "target2": 80305.101563,
     "rr2": 3.17,
     "partialExit": true,
-    "trailStop": 82062.754688,
-    "tp1HitTs": null,
+    "trailStop": 81128.601563,
+    "tp1HitTs": 1793277000000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -66835,9 +66938,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793277300000,
+    "rMultiple": 1.22,
+    "exitPrice": 81128.601563,
+    "postmortem": {
+      "holdHours": 0.4,
+      "mfeR": 1.23,
+      "maeR": 0.02,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.24,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.2R, der Preis lief danach aber noch bis +2.7R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "^GSPC-1793291303150",
@@ -66905,9 +67025,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1793281500000,
+    "rMultiple": -1,
+    "exitPrice": 767.696701,
+    "postmortem": {
+      "holdHours": 1.3,
+      "mfeR": 0.25,
+      "maeR": -1.41,
+      "towardTargetPct": 10,
+      "stopDistAdr": 0.26,
+      "targetDistAdr": 0.67,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.9R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 10% entgegen (max +0.3R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.4R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   },
   {
     "id": "BTCUSD-1793291622747",
