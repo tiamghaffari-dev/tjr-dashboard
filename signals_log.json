@@ -65112,9 +65112,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793204700000,
+    "rMultiple": 1.45,
+    "exitPrice": 1.330566
   },
   {
     "id": "XRPUSD-1793232741987",
