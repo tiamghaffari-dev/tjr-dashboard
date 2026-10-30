@@ -67479,8 +67479,8 @@
     "target2": 4001.600098,
     "rr2": 2.77,
     "partialExit": true,
-    "trailStop": 4045.7,
-    "tp1HitTs": null,
+    "trailStop": 4016.100098,
+    "tp1HitTs": 1793304300000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -67530,9 +67530,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793304539000,
+    "rMultiple": 1.53,
+    "exitPrice": 4016.100098,
+    "postmortem": {
+      "holdHours": 4,
+      "mfeR": 1.6,
+      "maeR": -0.7,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.31,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.7R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "GCUSD-1793305712229",
@@ -67624,8 +67646,8 @@
     "target2": 4016.100098,
     "rr2": 1.61,
     "partialExit": true,
-    "trailStop": 4046.599902,
-    "tp1HitTs": null,
+    "trailStop": 4016.300049,
+    "tp1HitTs": 1793304300000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -67675,8 +67697,19 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793304539000,
+    "rMultiple": 1.59,
+    "exitPrice": 4016.300049,
+    "postmortem": {
+      "holdHours": 3.2,
+      "mfeR": 1.68,
+      "maeR": -0.28,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.32,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
