@@ -67981,8 +67981,8 @@
     "target2": 76324.921875,
     "rr2": 2.75,
     "partialExit": true,
-    "trailStop": 77913.939063,
-    "tp1HitTs": null,
+    "trailStop": 76324.921875,
+    "tp1HitTs": 1793371800000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -68034,9 +68034,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793371990000,
+    "rMultiple": 2.75,
+    "exitPrice": 76324.921875,
+    "postmortem": {
+      "holdHours": 3.4,
+      "mfeR": 3.17,
+      "maeR": -0.17,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.55,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1793374052021",
@@ -68284,8 +68295,8 @@
     "target2": 76324.921875,
     "rr2": 2.35,
     "partialExit": true,
-    "trailStop": 77742.884375,
-    "tp1HitTs": null,
+    "trailStop": 76324.921875,
+    "tp1HitTs": 1793371800000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -68338,9 +68349,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793371990000,
+    "rMultiple": 2.35,
+    "exitPrice": 76324.921875,
+    "postmortem": {
+      "holdHours": 2.8,
+      "mfeR": 2.76,
+      "maeR": -0.57,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.47,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1793384468483",
@@ -68462,6 +68490,75 @@
     "weeklyBiasAtEntry": "bearish",
     "zonentiefe": 0.368,
     "fillTs": 1793371073000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "15m",
+    "umfeld": {
+      "handelstag": "2026-10-30",
+      "quelle": "live",
+      "vix": 20.06,
+      "vixPerzentil": 82,
+      "schwankung": 4.7,
+      "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": false,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GBPUSD-1793386410747",
+    "asset": "GBPUSD",
+    "direction": "LONG",
+    "entryTs": 1793386410747,
+    "entry": 1.339136,
+    "stop": 1.33609,
+    "target": 1.342444,
+    "rr": 1.09,
+    "target2": 1.343346,
+    "rr2": 1.38,
+    "partialExit": true,
+    "trailStop": 1.33609,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.413,
+    "fillTs": 1793372023000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
