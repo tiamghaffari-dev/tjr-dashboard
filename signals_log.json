@@ -67318,8 +67318,8 @@
     "target2": 765.210022,
     "rr2": 1.84,
     "partialExit": true,
-    "trailStop": 769.802999,
-    "tp1HitTs": null,
+    "trailStop": 766.560303,
+    "tp1HitTs": 1793352600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "SMT",
@@ -67372,9 +67372,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793352900000,
+    "rMultiple": 1.42,
+    "exitPrice": 765.210022,
+    "postmortem": {
+      "holdHours": 18.1,
+      "mfeR": 5.4,
+      "maeR": -0.91,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.27,
+      "targetDistAdr": 0.27,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.0R, der Preis lief danach aber noch bis +5.1R weiter. Hier lag deutlich mehr drin."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.9R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Take-Profit: zu konservativ · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1793304422751",
