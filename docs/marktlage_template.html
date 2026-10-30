@@ -373,6 +373,9 @@ function kursText(wert, einheit) {
   return '<span class="zahl">' + dz(wert, n) + "</span>"
     + (einheit ? ' <span class="still">' + einheit + "</span>" : "");
 }
+function eintragVon(symbol) {
+  return (DATA.eintraege || []).find((e) => e.symbol === symbol && e.ok) || null;
+}
 function beo(symbol) {
   const b = DATA.beobachtung;
   if (!b || !b.eintraege) return null;
@@ -476,6 +479,22 @@ function lagebericht() {
           + "Weltmarkt &ndash; das ist ungew&ouml;hnlich und h&auml;lt selten lange.");
       }
     }
+  }
+
+  /* 3c. Das Zinsumfeld. Die US-Zinsen fuer zehn Jahre sind der Taktgeber fuer
+        fast alles auf dieser Seite - Gold, zinsempfindliche Aktien, der Dollar.
+        Der Wert steht in den Marktdaten, stand aber nirgends in Worten. */
+  const zins = eintragVon("^TNX");
+  if (zins && typeof zins.stand === "number") {
+    const vorJahr = (typeof zins.jahr === "number" && zins.jahr !== -100)
+      ? zins.stand / (1 + zins.jahr / 100) : null;
+    const richtung = typeof zins.jahr === "number"
+      ? (zins.jahr > 5 ? "deutlich gestiegen" : zins.jahr < -5 ? "deutlich gefallen" : "kaum veraendert")
+      : null;
+    s.push("Die US-Zinsen f&uuml;r zehn Jahre liegen bei <b>" + dz(zins.stand, 2) + " %</b>"
+      + (vorJahr !== null && richtung
+          ? " &ndash; vor einem Jahr waren es " + dz(vorJahr, 2) + " %, also <b>" + richtung + "</b>" : "")
+      + ". Sie sind der Taktgeber f&uuml;r Gold und f&uuml;r zinsempfindliche Aktien.");
   }
 
   /* 4. Sektoren - meistens ist die ehrliche Antwort "nichts Belastbares". */
@@ -759,7 +778,11 @@ function blZeile(e, rang) {
           + (e.rueckgang
               ? "tiefster Stand im Jahr: <b class=\"runter\">" + proz(e.rueckgang.tiefe, 0)
                 + "</b> unter dem Hoch davor"
-                + (e.rueckgang.dauerTage ? " (" + e.rueckgang.dauerTage + " Tage lang)" : "")
+                + (e.rueckgang.dauerTage ? " nach " + e.rueckgang.dauerTage + " Tagen" : "")
+                + (e.rueckgang.nochDarunter
+                    ? ", <b>bis heute nicht aufgeholt</b> (" + e.rueckgang.tageDarunter + " Tage)"
+                    : (e.rueckgang.erholungTage !== null
+                        ? ", aufgeholt in " + e.rueckgang.erholungTage + " Tagen" : ""))
               : "")
           + (e.rueckgang && e.marktkorrelation ? " &nbsp;&middot;&nbsp; " : "")
           + (e.marktkorrelation

@@ -167,6 +167,46 @@ const REL_TAGE = 90;
  * Gemessen vom jeweils hoechsten vorherigen Schlusskurs, nicht vom Jahreshoch:
  * so steht da, was ein Einstieg zum schlechtmoeglichsten Zeitpunkt gekostet
  * haette. */
+/* Kursverlauf fuer die Miniaturkurve (30.10.2026).
+ *
+ * Die Seite war bis hier komplett Text und Tabellen. Eine Zahlenspalte sagt
+ * "+18 %", eine Kurve sagt, OB es ruhig hochging oder ob zwischendurch die
+ * Haelfte weg war. Letzteres liest man in einer Sekunde statt in drei Zahlen.
+ *
+ * Ausgeduennt auf hoechstens PUNKTE Werte: die volle Tagesreihe waere das
+ * Zwanzigfache an Daten fuer eine 110 Pixel breite Grafik, in der man den
+ * Unterschied ohnehin nicht saehe. Hoch- und Tiefpunkt bleiben dabei
+ * erhalten, damit die Kurve ihre Ausschlaege nicht verliert. */
+const VERLAUF_PUNKTE = 64;
+
+function kursverlauf(reihe, tage) {
+  if (!reihe || reihe.length < 10) return null;
+  const grenze = reihe[reihe.length - 1].ts - tage * 86400;
+  const teil = reihe.filter((p) => p.ts >= grenze);
+  if (teil.length < 10) return null;
+  if (teil.length <= VERLAUF_PUNKTE) return teil.map((p) => rund(p.close, 4));
+
+  // Gleichmaessig ausduennen, aber die Extremwerte jedes Abschnitts behalten.
+  const breite = teil.length / VERLAUF_PUNKTE;
+  const raus = [];
+  for (let i = 0; i < VERLAUF_PUNKTE; i++) {
+    const von = Math.floor(i * breite);
+    const bis = Math.min(teil.length, Math.floor((i + 1) * breite));
+    const abschnitt = teil.slice(von, Math.max(bis, von + 1));
+    if (!abschnitt.length) continue;
+    // Im Abschnitt den Wert nehmen, der am weitesten vom vorigen Punkt weg
+    // ist - so ueberlebt ein Einbruch das Ausduennen.
+    const vorher = raus.length ? raus[raus.length - 1] : abschnitt[0].close;
+    let gewaehlt = abschnitt[0].close, abstand = -1;
+    for (const p of abschnitt) {
+      const d = Math.abs(p.close - vorher);
+      if (d > abstand) { abstand = d; gewaehlt = p.close; }
+    }
+    raus.push(rund(gewaehlt, 4));
+  }
+  return raus;
+}
+
 function maxRueckgang(reihe, tage) {
   if (!reihe || reihe.length < 10) return null;
   const grenze = reihe[reihe.length - 1].ts - tage * 86400;
@@ -189,13 +229,32 @@ function maxRueckgang(reihe, tage) {
   const letzter = teil[teil.length - 1].close;
   const aktuell = (letzter - hoch) / hoch * 100;   // Abstand zum bisherigen Hoch
   const tag = (ts) => new Date(ts * 1000).toISOString().slice(0, 10);
+
+  /* Die zweite Haelfte der Frage (30.10.2026): nicht nur wie tief, sondern wie
+   * lange bis zurueck. Ein Rueckgang von 20 %, der nach drei Wochen aufgeholt
+   * ist, ist etwas anderes als einer, der nach neun Monaten noch steht. Dafuer
+   * wird der Kurs nach dem Tiefpunkt gesucht, der das Hoch davor wieder
+   * erreicht hat - findet sich keiner, steht der Wert bis heute darunter. */
+  const hochVorher = teil.find((x) => x.ts === schlimmsterHochTs);
+  const schwelle = hochVorher ? hochVorher.close : null;
+  let erholtAm = null;
+  if (schwelle !== null) {
+    const danach = teil.filter((x) => x.ts > schlimmsterTiefTs && x.close >= schwelle);
+    if (danach.length) erholtAm = danach[0].ts;
+  }
+
   return {
     tiefe: rund(schlimmster, 1),
     von: tag(schlimmsterHochTs),
     bis: tag(schlimmsterTiefTs),
     dauerTage: Math.round((schlimmsterTiefTs - schlimmsterHochTs) / 86400),
+    erholtAm: erholtAm ? tag(erholtAm) : null,
+    erholungTage: erholtAm ? Math.round((erholtAm - schlimmsterTiefTs) / 86400) : null,
+    nochDarunter: erholtAm === null,
+    tageDarunter: erholtAm === null
+      ? Math.round((teil[teil.length - 1].ts - schlimmsterHochTs) / 86400) : null,
     jetzt: rund(aktuell, 1),
-    erholt: aktuell > schlimmster * 0.25,   // wieder nah am Hoch
+    erholt: erholtAm !== null,
   };
 }
 
@@ -314,6 +373,7 @@ async function sammle() {
       stand: new Date(reihe[reihe.length - 1].ts * 1000).toISOString().slice(0, 10),
       spanne: spanne52(reihe),
       rueckgang: maxRueckgang(reihe, 365),
+      verlauf: kursverlauf(reihe, 365),
       marktkorrelation: (() => {
         if (w.symbol === MASSSTAB_EUR || w.symbol === MASSSTAB_USD) return null;
         const ms = massstabFuer(m.waehrung);
@@ -357,4 +417,4 @@ async function sammle() {
   };
 }
 
-module.exports = { WERTE, THEMEN, MASSSTAB, MASSSTAB_EUR, MASSSTAB_USD, REL_TAGE, VOL_FENSTER, holeReihe, seit, spanne52, relativ, maxRueckgang, marktkorrelation, sammle };
+module.exports = { WERTE, THEMEN, MASSSTAB, MASSSTAB_EUR, MASSSTAB_USD, REL_TAGE, VOL_FENSTER, holeReihe, seit, spanne52, relativ, maxRueckgang, marktkorrelation, kursverlauf, sammle };
