@@ -69886,8 +69886,8 @@
     "target2": 754.02002,
     "rr2": 3.76,
     "partialExit": true,
-    "trailStop": 759.82998,
-    "tp1HitTs": null,
+    "trailStop": 756.599976,
+    "tp1HitTs": 1793628000000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "SMT",
@@ -69941,9 +69941,26 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793628300000,
+    "rMultiple": 1.65,
+    "exitPrice": 756.599976,
+    "postmortem": {
+      "holdHours": 1.6,
+      "mfeR": 1.94,
+      "maeR": -0.64,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.19,
+      "targetDistAdr": 0.31,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1793640949176",
