@@ -19,7 +19,44 @@ function loadCandles(raw) {
     open: +r.open, high: +r.high, low: +r.low, close: +r.close, volume: +r.volume,
   }));
   rows.sort((a, b) => a.ts - b.ts);
-  return rows;
+  // Tiam, 2026-11-02: "Was ist mit den Charts passiert? Warum sehe ich die
+  // nicht mehr? Ich glaube, irgendein Bug ist da." - am 1.11.2026 endete in
+  // den USA die Sommerzeit. Dadurch gab es die New-Yorker Ortszeit 01:00-01:59
+  // ZWEIMAL (einmal EDT = UTC-4, danach EST = UTC-5). parseTs() oben nimmt
+  // bewusst die nackte Ortszeit als Pseudo-Epoche und kennt den Offset gar
+  // nicht, also fielen beide Durchlaeufe auf dieselben 12 Pseudo-Zeitstempel.
+  // Doppelte ts verletzen die Grundannahme der ganzen Engine (streng
+  // aufsteigend UND eindeutig: Archiv-Map in kerzen_archiv.js, resolveSignals'
+  // ts-Filter, die Kerzensuche der Chart-Annotationen). Im Browser hat
+  // Lightweight Charts deshalb bei jedem Neuzeichnen "Value is null"
+  // geworfen und die Kerzen ueberhaupt nicht mehr gemalt - Gitter und
+  // Preisachse kamen noch, die Kerzen nicht.
+  //
+  // Zusammenfassen statt eine der beiden Stunden wegzuwerfen, und zwar mit
+  // EXAKT derselben Regel wie resample() weiter unten (open = erste, high/low
+  // = Extremwerte beider, close = letzte, volume = Summe). Dadurch ist die
+  // rohe 5min-Reihe mit den daraus abgeleiteten 15min/1h/4h-Reihen konsistent,
+  // die genau diese Stunde ohnehin schon immer so zusammengefasst haben (und
+  // deshalb als einzige heil geblieben sind). Die Quelle liefert real
+  // aufsteigend, der erste Treffer ist also die EDT-, der zweite die
+  // EST-Stunde - open/close bleiben damit chronologisch richtig herum.
+  //
+  // Greift nur bei Assets, die in dieser Stunde ueberhaupt handeln (praktisch
+  // nur Krypto - Indizes und Forex sind Sonntag nachts zu) und nur einmal im
+  // Jahr. An allen anderen Tagen ist die Schleife ein reines Durchreichen.
+  const eindeutig = [];
+  for (const r of rows) {
+    const vorige = eindeutig.length ? eindeutig[eindeutig.length - 1] : null;
+    if (vorige && vorige.ts === r.ts) {
+      vorige.high = Math.max(vorige.high, r.high);
+      vorige.low = Math.min(vorige.low, r.low);
+      vorige.close = r.close;
+      vorige.volume += r.volume;
+      continue;
+    }
+    eindeutig.push(r);
+  }
+  return eindeutig;
 }
 
 function resample(df, intervalMinutes) {

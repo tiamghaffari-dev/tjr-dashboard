@@ -1791,14 +1791,49 @@ function kerzenZusammenfassen(kerzen, minuten) {
   return [...eimer.values()].sort((a, b) => a.ts - b.ts);
 }
 
+// Tiam, 2026-11-02: "Was ist mit den Charts passiert? Warum sehe ich die nicht
+// mehr?" - Lightweight Charts verlangt streng aufsteigende, EINDEUTIGE
+// Zeitstempel. Kommt derselbe Zeitstempel zweimal, wirft die Bibliothek bei
+// jedem Neuzeichnen "Value is null" und malt die Kerzen gar nicht mehr -
+// Gitter und Preisachse kommen noch, deshalb sieht die Seite auf den ersten
+// Blick heil aus und ist trotzdem leer. Passiert ist das am 1.11.2026 durch
+// das Ende der US-Sommerzeit (die Ortszeit 01:00-01:59 gab es zweimal, siehe
+// engine.js loadCandles - dort ist die Ursache behoben).
+// Das hier ist die zweite Verteidigungslinie: selbst wenn die Datenlieferung
+// noch einmal Dubletten oder kaputte Zahlen enthaelt, soll der Chart
+// weiterzeichnen statt still zu sterben. Dieselbe Zusammenfass-Regel wie
+// ueberall sonst (open = erste, high/low = Extremwerte, close = letzte).
+function kerzenBereinigen(kerzen) {
+  if (!Array.isArray(kerzen) || !kerzen.length) return kerzen;
+  const sauber = [];
+  for (const k of kerzen) {
+    if (!k) continue;
+    const zahlen = [k.ts, k.open, k.high, k.low, k.close];
+    if (!zahlen.every((v) => typeof v === "number" && isFinite(v))) continue;
+    const vorige = sauber.length ? sauber[sauber.length - 1] : null;
+    if (vorige && Math.floor(vorige.ts / 1000) === Math.floor(k.ts / 1000)) {
+      sauber[sauber.length - 1] = Object.assign({}, vorige, {
+        high: Math.max(vorige.high, k.high),
+        low: Math.min(vorige.low, k.low),
+        close: k.close,
+        volume: (vorige.volume || 0) + (k.volume || 0),
+      });
+      continue;
+    }
+    if (vorige && k.ts < vorige.ts) continue;   // Rueckwaertssprung: verwerfen
+    sauber.push(k);
+  }
+  return sauber;
+}
+
 function kerzenFuerTf(item, tfId) {
   const tf = TIMEFRAMES.find((t) => t.id === tfId) || TIMEFRAMES[0];
   if (tf.quelle) {
     const q = item[tf.quelle];
-    return Array.isArray(q) && q.length ? q : null;
+    return Array.isArray(q) && q.length ? kerzenBereinigen(q) : null;
   }
-  if (tf.minuten === 5) return item.ltf;
-  return kerzenZusammenfassen(item.ltf, tf.minuten);
+  if (tf.minuten === 5) return kerzenBereinigen(item.ltf);
+  return kerzenZusammenfassen(kerzenBereinigen(item.ltf), tf.minuten);
 }
 
 function zeichneTfLeiste(item) {
