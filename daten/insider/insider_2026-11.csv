@@ -1,0 +1,45 @@
+meldung,transaktion,verzoegerungTage,symbol,firma,inhaber,rolle,stueck,preis,summe,quelle
+2026-11-02,2026-10-30,3,OCFC,OCEANFIRST FINANCIAL CORP,Katsoulis Nicos,Director,10000,17.8277,178277,https://www.sec.gov/Archives/edgar/data/1004702/0001408329-26-000004.txt
+2026-11-02,2026-10-30,3,RVSB,RIVERVIEW BANCORP INC,Girod Jon Louis,Director,2000,6.0399,12080,https://www.sec.gov/Archives/edgar/data/1041368/0002128637-26-000009.txt
+2026-11-02,2026-10-29,4,JBLU,JETBLUE AIRWAYS CORP,BONEPARTH PETER,Director,100000,3,300000,https://www.sec.gov/Archives/edgar/data/1078543/0001078543-26-000003.txt
+2026-11-02,2026-10-30,3,BANC,BANC OF CALIFORNIA  INC.,WOLFF JARED M,CHAIRMAN AND CEO,5487,18.18,99754,https://www.sec.gov/Archives/edgar/data/1169770/0001200277-26-000006.txt
+2026-11-02,2026-10-30,3,ANIX,Anixa Biosciences Inc,KUMAR AMIT,Chief Executive Officer,5000,3.17,15850,https://www.sec.gov/Archives/edgar/data/1191905/0001493152-26-049574.txt
+2026-11-02,2026-11-02,0,ASPE,Aspen Neuroscience  Inc.,ARCH Venture Partners XIV  L.P.,10% Eigner,1200000,15,18000000,https://www.sec.gov/Archives/edgar/data/1202769/0001193125-26-444141.txt
+2026-11-02,2026-10-29,4,ROL,ROLLINS INC,LOR INC,10% Eigner,1444402,34.5864,49956665,https://www.sec.gov/Archives/edgar/data/1212243/0001104659-26-121502.txt
+2026-11-02,2026-11-02,0,ASPE,Aspen Neuroscience  Inc.,ARCH Venture Fund X  L.P.,10% Eigner,66666,15,999990,https://www.sec.gov/Archives/edgar/data/1219039/0001193125-26-444147.txt
+2026-11-02,2026-11-02,0,ASPE,Aspen Neuroscience  Inc.,ARCH Venture Fund X  L.P.,10% Eigner,66667,15,1000005,https://www.sec.gov/Archives/edgar/data/1219039/0001193125-26-444147.txt
+2026-11-02,2026-11-02,0,ASPE,Aspen Neuroscience  Inc.,ARCH Venture Fund X  L.P.,10% Eigner,1200000,15,18000000,https://www.sec.gov/Archives/edgar/data/1219039/0001193125-26-444147.txt
+2026-11-02,2026-10-30,3,STIM,Neuronetics  Inc.,Chernett Jorey,10% Eigner,18000,2.27,40860,https://www.sec.gov/Archives/edgar/data/1227636/0000921895-26-002891.txt
+2026-11-02,2026-10-30,3,ATEC,Alphatec Holdings  Inc.,Demski David M,Director,60000,6.81,408600,https://www.sec.gov/Archives/edgar/data/1350653/0001555392-26-000004.txt
+2026-11-02,2026-10-30,3,AEYE,AUDIOEYE INC,HAWKINS JAMES B,Director,4000,13.15,52600,https://www.sec.gov/Archives/edgar/data/1362190/0000898243-26-000027.txt
+2026-11-02,2026-10-30,3,GRX,Gabelli Healthcare &amp; WellnessRx Trust,Saba Capital Management  L.P.,10% Eigner,10196,10.13,103285,https://www.sec.gov/Archives/edgar/data/1391437/0001510281-26-000398.txt
+2026-11-02,2026-10-30,3,RBBN,Ribbon Communications Inc.,McClelland Bruce William,President &amp; CEO,60000,1.604,96240,https://www.sec.gov/Archives/edgar/data/1424201/0001708055-26-000089.txt
+2026-11-02,2026-10-30,3,SEVN,Seven Hills Realty Trust,Jordan Matthew P.,Director,10000,6.56,65600,https://www.sec.gov/Archives/edgar/data/1452477/0001104659-26-121333.txt
+2026-11-02,2026-10-30,3,SEVN,Seven Hills Realty Trust,Lorenzini Thomas J.,President and CIO,5000,6.59,32950,https://www.sec.gov/Archives/edgar/data/1452477/0001104659-26-121335.txt
+2026-11-02,2026-11-02,0,ENPH,Enphase Energy  Inc.,Kothandaraman Badrinarayanan,President &amp; CEO,10000,26.7514,267514,https://www.sec.gov/Archives/edgar/data/1463101/0001543777-26-000006.txt
+2026-11-02,2026-10-29,4,MXF,MEXICO EQUITY &amp; INCOME FUND INC,Saba Capital Management  L.P.,10% Eigner,19675,20.1,395468,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000400.txt
+2026-11-02,2026-10-29,4,MXF,MEXICO EQUITY &amp; INCOME FUND INC,Saba Capital Management  L.P.,10% Eigner,4226,20.13,85069,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000400.txt
+2026-11-02,2026-10-30,3,MXF,MEXICO EQUITY &amp; INCOME FUND INC,Saba Capital Management  L.P.,10% Eigner,15143,20.25,306646,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000400.txt
+2026-11-02,2026-10-30,3,ECF,ELLSWORTH GROWTH &amp; INCOME FUND LTD,Saba Capital Management  L.P.,10% Eigner,11565,11.77,136120,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000401.txt
+2026-11-02,2026-10-29,4,JOF,JAPAN SMALLER CAPITALIZATION FUND INC,Saba Capital Management  L.P.,10% Eigner,5083,11.31,57489,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000402.txt
+2026-11-02,2026-10-30,3,JOF,JAPAN SMALLER CAPITALIZATION FUND INC,Saba Capital Management  L.P.,10% Eigner,58686,10.98,644372,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000402.txt
+2026-11-02,2026-11-02,0,FCPT,Four Corners Property Trust  Inc.,Lenehan William H,President and CEO,10000,22.6072,226072,https://www.sec.gov/Archives/edgar/data/1548409/0001193125-26-443902.txt
+2026-11-02,2026-10-29,4,HDSN,HUDSON TECHNOLOGIES INC /NY,Hartree Partners  LP,10% Eigner,200000,4.443,888600,https://www.sec.gov/Archives/edgar/data/1597857/0000921895-26-002902.txt
+2026-11-02,2026-10-30,3,HDSN,HUDSON TECHNOLOGIES INC /NY,Hartree Partners  LP,10% Eigner,58710,4.2498,249506,https://www.sec.gov/Archives/edgar/data/1597857/0000921895-26-002902.txt
+2026-11-02,2026-11-02,0,HDSN,HUDSON TECHNOLOGIES INC /NY,Hartree Partners  LP,10% Eigner,41290,4.25,175483,https://www.sec.gov/Archives/edgar/data/1597857/0000921895-26-002902.txt
+2026-11-02,2026-10-30,3,LSTR,LANDSTAR SYSTEM INC,Lonegro Frank A,President &amp; CEO,5000,142.9238,714619,https://www.sec.gov/Archives/edgar/data/1653042/0000853816-26-000069.txt
+2026-11-02,2026-10-30,3,PUMP,ProPetro Holding Corp.,Weatherl Caleb Lyle,Chief Financial Officer,2000,7.78,15560,https://www.sec.gov/Archives/edgar/data/1680247/0002078488-26-000005.txt
+2026-11-02,2026-10-29,4,STKH,Steakholder Foods Ltd.,Kaufman Arik,Chief Executive Officer,36826,0.3847,14167,https://www.sec.gov/Archives/edgar/data/1713725/0001213900-26-114637.txt
+2026-11-02,2026-10-30,3,STKH,Steakholder Foods Ltd.,Kaufman Arik,Chief Executive Officer,60000,0.4,24000,https://www.sec.gov/Archives/edgar/data/1713725/0001213900-26-114637.txt
+2026-11-02,2026-11-02,0,RSI,Rush Street Interactive  Inc.,Winter Thomas,Director,10000,11.831,118310,https://www.sec.gov/Archives/edgar/data/1793659/0001836156-26-000008.txt
+2026-11-02,2026-10-29,4,API,Agora  Inc.,Zhao Bin,Chief Executive Officer,9429,4.4471,41932,https://www.sec.gov/Archives/edgar/data/1802883/0001193125-26-442557.txt
+2026-11-02,2026-10-30,3,API,Agora  Inc.,Zhao Bin,Chief Executive Officer,9095,4.375,39791,https://www.sec.gov/Archives/edgar/data/1802883/0001193125-26-442557.txt
+2026-11-02,2026-10-29,4,ROL,ROLLINS INC,R. Randall Rollins Voting Trust U/A dated August 25  1994,10% Eigner,1444402,34.5864,49956665,https://www.sec.gov/Archives/edgar/data/1820515/0001104659-26-121503.txt
+2026-11-02,2026-10-29,4,STKH,Steakholder Foods Ltd.,Kaiser Yaron,Director,30291,0.4064,12310,https://www.sec.gov/Archives/edgar/data/1828098/0001213900-26-114660.txt
+2026-11-02,2026-10-30,3,STKH,Steakholder Foods Ltd.,Kaiser Yaron,Director,26141,0.4162,10880,https://www.sec.gov/Archives/edgar/data/1828098/0001213900-26-114660.txt
+2026-11-02,2026-10-29,4,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,246521,35.4978,8750953,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-443677.txt
+2026-11-02,2026-10-29,4,CLH,CLEAN HARBORS INC,Polito Karyn,Director,125,314.83,39354,https://www.sec.gov/Archives/edgar/data/1965457/0001965457-26-000007.txt
+2026-11-02,2026-11-02,0,BBTX,Bambusa Therapeutics  Inc.,Jeggle Helmut Wolfgang,Director,375000,16,6000000,https://www.sec.gov/Archives/edgar/data/1982614/0001982614-26-000004.txt
+2026-11-02,2026-10-30,3,NTRS,NORTHERN TRUST CORP,Moritz Robert Edward Jr.,Director,236,169.07,39901,https://www.sec.gov/Archives/edgar/data/2033834/0002033834-26-000023.txt
+2026-11-02,2026-11-02,0,BBTX,Bambusa Therapeutics  Inc.,Salvia Investment GmbH,10% Eigner,375000,16,6000000,https://www.sec.gov/Archives/edgar/data/2044950/0002162499-26-000004.txt
+2026-11-02,2026-10-30,3,BLX,BLADEX  INC.,Diaz Adriana Lizzeth,Chief Audit Officer,1792,52.39,93883,https://www.sec.gov/Archives/edgar/data/2121830/0000890541-26-000014.txt
