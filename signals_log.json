@@ -70973,9 +70973,31 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1793736600000,
+    "rMultiple": -1,
+    "exitPrice": 76698.920313,
+    "postmortem": {
+      "holdHours": 10.7,
+      "mfeR": 2.47,
+      "maeR": -1,
+      "towardTargetPct": 88,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.56,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 88% der Zielstrecke (max +2.5R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "BTCUSD-1793718371763",
