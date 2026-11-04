@@ -73208,9 +73208,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793767500000,
+    "rMultiple": 1.29,
+    "exitPrice": 78622.390625
   },
   {
     "id": "XRPUSD-1793801026164",
@@ -73224,8 +73225,8 @@
     "target2": 1.2968,
     "rr2": 1.91,
     "partialExit": true,
-    "trailStop": 1.26876,
-    "tp1HitTs": null,
+    "trailStop": 1.2965,
+    "tp1HitTs": 1793785200000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -73277,9 +73278,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1793785526000,
+    "rMultiple": 1.9,
+    "benachrichtigt": true,
+    "exitPrice": 1.2968,
+    "postmortem": {
+      "holdHours": 0.7,
+      "mfeR": 3.2,
+      "maeR": -0.05,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.38,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
