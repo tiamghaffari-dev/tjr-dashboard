@@ -12367,5 +12367,90 @@
     "gleichlaufStark": 3,
     "gleichlaufTage": 60,
     "termineHeute": 0
+  },
+  "2026-11-03": {
+    "handelstag": "2026-11-03",
+    "geschriebenAm": "2026-11-04T02:42:33.267Z",
+    "kurse": {
+      "URTH": 204.28,
+      "IWDA.AS": 128.95,
+      "^GSPC": 7568.92,
+      "^NDX": 28180.26,
+      "^GDAXI": 25864.62,
+      "^STOXX50E": 6144.56,
+      "CL=F": 95.2,
+      "BZ=F": 102.9,
+      "GC=F": 3953.8,
+      "SI=F": 49.48,
+      "NG=F": 2.853,
+      "^VIX": 20.83,
+      "^TNX": 4.952,
+      "DX-Y.NYB": 101.35,
+      "XLK": 176.51,
+      "XLE": 66.68,
+      "XLF": 57.19,
+      "XLB": 52.59,
+      "ITA": 216.17,
+      "RHM.DE": 1004.8,
+      "TSLA": 398.5,
+      "BTC-USD": 76576.8,
+      "ETH-USD": 2252.42,
+      "XRP-USD": 1.2514,
+      "GBPUSD=X": 1.3472
+    },
+    "vix": 20.83,
+    "vixPerzentil": 85,
+    "schwankung": {
+      "BTC-USD": 23.4,
+      "ETH-USD": 24.4,
+      "XRP-USD": 34.4,
+      "GBPUSD=X": 4.4,
+      "^GSPC": 11.4,
+      "GC=F": 20.2
+    },
+    "schwankungStufe": {
+      "BTC-USD": "rauschen",
+      "ETH-USD": "niedrig",
+      "XRP-USD": "rauschen",
+      "GBPUSD=X": "rauschen",
+      "^GSPC": "rauschen",
+      "GC=F": "rauschen"
+    },
+    "sektorVorsprung": {
+      "XLB": 8.88,
+      "XLF": 8.78,
+      "XLE": 7.73,
+      "ITA": 7.08,
+      "XLK": -9.52
+    },
+    "sektorStufe": {
+      "XLB": "rauschen",
+      "XLF": "rauschen",
+      "XLE": "rauschen",
+      "ITA": "rauschen",
+      "XLK": "rauschen"
+    },
+    "sektorMarktRendite": -2.64,
+    "sektorAllesRauschen": true,
+    "gleichlauf": {
+      "BTC-USD|XRP-USD": 0.91,
+      "BTC-USD|ETH-USD": 0.89,
+      "ETH-USD|XRP-USD": 0.8,
+      "BTC-USD|GC=F": 0.52,
+      "ETH-USD|GC=F": 0.49,
+      "XRP-USD|GC=F": 0.49,
+      "^GSPC|GC=F": 0.47,
+      "BTC-USD|^GSPC": 0.43,
+      "GBPUSD=X|^GSPC": -0.37,
+      "ETH-USD|^GSPC": 0.36,
+      "XRP-USD|^GSPC": 0.33,
+      "GBPUSD=X|GC=F": -0.17,
+      "XRP-USD|GBPUSD=X": 0.05,
+      "ETH-USD|GBPUSD=X": -0.04,
+      "BTC-USD|GBPUSD=X": 0.03
+    },
+    "gleichlaufStark": 3,
+    "gleichlaufTage": 60,
+    "termineHeute": 0
   }
 }
