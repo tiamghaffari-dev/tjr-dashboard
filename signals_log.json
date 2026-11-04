@@ -73154,8 +73154,8 @@
     "target2": 78734.617188,
     "rr2": 1.6,
     "partialExit": true,
-    "trailStop": 77777.725,
-    "tp1HitTs": null,
+    "trailStop": 78622.390625,
+    "tp1HitTs": 1793785207000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -73208,7 +73208,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
