@@ -75303,9 +75303,10 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793856900000,
+    "rMultiple": 1.08,
+    "exitPrice": 1.348327
   },
   {
     "id": "GCUSD-1793889556017",
