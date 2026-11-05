@@ -75250,8 +75250,8 @@
     "target2": 1.348345,
     "rr2": 1.09,
     "partialExit": true,
-    "trailStop": 1.343786,
-    "tp1HitTs": null,
+    "trailStop": 1.348327,
+    "tp1HitTs": 1793874626000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -75303,7 +75303,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
