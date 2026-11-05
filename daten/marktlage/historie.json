@@ -12452,5 +12452,90 @@
     "gleichlaufStark": 3,
     "gleichlaufTage": 60,
     "termineHeute": 0
+  },
+  "2026-11-04": {
+    "handelstag": "2026-11-04",
+    "geschriebenAm": "2026-11-05T02:47:27.982Z",
+    "kurse": {
+      "URTH": 207.87,
+      "IWDA.AS": 130.53,
+      "^GSPC": 7688.62,
+      "^NDX": 28437.17,
+      "^GDAXI": 26437.67,
+      "^STOXX50E": 6265.71,
+      "CL=F": 87.51,
+      "BZ=F": 94.31,
+      "GC=F": 4132.5,
+      "SI=F": 53.08,
+      "NG=F": 2.953,
+      "^VIX": 16.61,
+      "^TNX": 4.894,
+      "DX-Y.NYB": 101.3,
+      "XLK": 176.5,
+      "XLE": 63.52,
+      "XLF": 59.2,
+      "XLB": 53.9,
+      "ITA": 212.84,
+      "RHM.DE": 1003.4,
+      "TSLA": 385.19,
+      "BTC-USD": 80561.72,
+      "ETH-USD": 2429.96,
+      "XRP-USD": 1.3064,
+      "GBPUSD=X": 1.3489
+    },
+    "vix": 16.61,
+    "vixPerzentil": 41,
+    "schwankung": {
+      "BTC-USD": 28.2,
+      "ETH-USD": 35,
+      "XRP-USD": 36.6,
+      "GBPUSD=X": 4.3,
+      "^GSPC": 12.9,
+      "GC=F": 24.3
+    },
+    "schwankungStufe": {
+      "BTC-USD": "rauschen",
+      "ETH-USD": "rauschen",
+      "XRP-USD": "rauschen",
+      "GBPUSD=X": "rauschen",
+      "^GSPC": "rauschen",
+      "GC=F": "rauschen"
+    },
+    "sektorVorsprung": {
+      "XLF": 11.28,
+      "XLB": 10.05,
+      "ITA": 3.87,
+      "XLE": 1.31,
+      "XLK": -10.96
+    },
+    "sektorStufe": {
+      "XLF": "schwach",
+      "XLB": "rauschen",
+      "ITA": "rauschen",
+      "XLE": "rauschen",
+      "XLK": "rauschen"
+    },
+    "sektorMarktRendite": -1.67,
+    "sektorAllesRauschen": false,
+    "gleichlauf": {
+      "BTC-USD|XRP-USD": 0.91,
+      "BTC-USD|ETH-USD": 0.89,
+      "ETH-USD|XRP-USD": 0.8,
+      "BTC-USD|GC=F": 0.53,
+      "ETH-USD|GC=F": 0.5,
+      "XRP-USD|GC=F": 0.49,
+      "^GSPC|GC=F": 0.47,
+      "BTC-USD|^GSPC": 0.43,
+      "GBPUSD=X|^GSPC": -0.37,
+      "ETH-USD|^GSPC": 0.36,
+      "XRP-USD|^GSPC": 0.34,
+      "GBPUSD=X|GC=F": -0.18,
+      "XRP-USD|GBPUSD=X": 0.06,
+      "BTC-USD|GBPUSD=X": 0.04,
+      "ETH-USD|GBPUSD=X": -0.02
+    },
+    "gleichlaufStark": 3,
+    "gleichlaufTage": 60,
+    "termineHeute": 0
   }
 }
