@@ -38,10 +38,15 @@
  *
  * ---------------------------------------------------------------------------
  * EINE QUELLE, ZWEI ORTE: build.js laedt diese Datei als Modul, und
- * report_template.html bekommt denselben Quelltext ueber den Platzhalter
- * __KERZEN_PACKEN_SOURCE__ eingebettet - genau wie engine.js. Deshalb
- * koennen Packer und Entpacker nicht auseinanderlaufen. Wer hier etwas
- * aendert, aendert es automatisch an beiden Stellen.
+ * report_template.html bekommt denselben Quelltext ueber einen Platzhalter
+ * eingebettet - genau wie engine.js. Deshalb koennen Packer und Entpacker
+ * nicht auseinanderlaufen. Wer hier etwas aendert, aendert es automatisch an
+ * beiden Stellen.
+ *
+ * Der Name des Platzhalters steht hier bewusst NICHT ausgeschrieben: dieser
+ * Quelltext landet ja in der fertigen Seite, und dort wuerde der Name eine
+ * Pruefung "sind alle Platzhalter ersetzt?" faelschlich ausloesen.
+ * Nachzulesen ist er in build.js, Funktion renderFromTemplate().
  * ===========================================================================
  */
 
