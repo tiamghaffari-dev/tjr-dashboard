@@ -55,6 +55,68 @@ const KANDIDATEN = [
   { gruppe: "Kontrolle", name: "Ethereum", symbol: "ETH-USD" },
   { gruppe: "Kontrolle", name: "XRP", symbol: "XRP-USD" },
   { gruppe: "Kontrolle", name: "GBP/USD", symbol: "GBPUSD=X" },
+
+  // ==========================================================================
+  // ZWEITE RUNDE, 06.11.2026 - Tiam: "schau, ob du vielleicht bessere Daten
+  // hier einfuegen kannst". Ausgewaehlt wurde nach einem Kriterium: laesst
+  // sich daraus OHNE Sprachmodell und OHNE Prognose eine Aussage rechnen, die
+  // man sonst nirgends auf der Seite sieht? Alles andere waere nur mehr Zeilen.
+  // Jeder Kandidat hier steht fuer genau eine solche Aussage (siehe Kommentar).
+  // ==========================================================================
+
+  // Zinskurve: 10 Jahre minus 3 Monate. Der am laengsten beobachtete
+  // Konjunkturindikator ueberhaupt - und einer, der sich aus zwei Zahlen
+  // ausrechnen laesst statt geschaetzt zu werden.
+  { gruppe: "Zins", name: "US-Zins 3 Monate", symbol: "^IRX" },
+  { gruppe: "Zins", name: "US-Zins 2 Jahre", symbol: "^UST2YR" },
+  { gruppe: "Zins", name: "US-Zins 5 Jahre", symbol: "^FVX" },
+  { gruppe: "Zins", name: "US-Zins 30 Jahre", symbol: "^TYX" },
+
+  // Waehrungen: Tiam investiert in Euro, die Werte notieren in Dollar.
+  // Ohne EUR/USD sieht er bei seinen ETFs nicht, wie viel der Bewegung
+  // ueberhaupt Kurs war und wie viel nur Wechselkurs.
+  { gruppe: "Waehrung", name: "Euro/Dollar", symbol: "EURUSD=X" },
+  { gruppe: "Waehrung", name: "Dollar/Yen", symbol: "USDJPY=X" },
+  { gruppe: "Waehrung", name: "Euro/Franken", symbol: "EURCHF=X" },
+
+  // Marktbreite: gleichgewichteter S&P gegen den normalen. Laeuft der Markt
+  // breit, oder tragen ihn nur ein paar Riesen? Steht so auf keiner Seite.
+  { gruppe: "Breite", name: "S&P 500 gleichgewichtet", symbol: "RSP" },
+
+  // Risikoneigung: zyklischer Konsum gegen defensiven Konsum. Das klassische
+  // Paar, an dem man sieht, ob Anleger zugreifen oder sich verstecken.
+  { gruppe: "Sektor2", name: "Konsum zyklisch", symbol: "XLY" },
+  { gruppe: "Sektor2", name: "Konsum defensiv", symbol: "XLP" },
+  { gruppe: "Sektor2", name: "Versorger", symbol: "XLU" },
+  { gruppe: "Sektor2", name: "Gesundheit", symbol: "XLV" },
+  { gruppe: "Sektor2", name: "Halbleiter", symbol: "SMH" },
+
+  // Kreditstress: Hochzinsanleihen gegen sichere Staatsanleihen. Reagiert
+  // frueher als Aktien, wenn im System etwas klemmt.
+  { gruppe: "Anleihe", name: "Hochzinsanleihen", symbol: "HYG" },
+  { gruppe: "Anleihe", name: "US-Staatsanleihen 7-10J", symbol: "IEF" },
+  { gruppe: "Anleihe", name: "Unternehmensanleihen gute Bonitaet", symbol: "LQD" },
+  { gruppe: "Anleihe", name: "Inflationsgeschuetzte Anleihen", symbol: "TIP" },
+
+  // Regionen, die bisher ganz fehlen.
+  { gruppe: "Region", name: "Schwellenlaender", symbol: "EEM" },
+  { gruppe: "Region", name: "Japan", symbol: "EWJ" },
+  { gruppe: "Region", name: "China", symbol: "MCHI" },
+
+  // Rohstoffe mit Aussagekraft ueber die Konjunktur bzw. Nahrungsmittelpreise.
+  { gruppe: "Rohstoff2", name: "Kupfer", symbol: "HG=F" },
+  { gruppe: "Rohstoff2", name: "Weizen", symbol: "ZW=F" },
+
+  // Ruestung Europa - das Thema taucht in den Nachrichten staendig auf,
+  // ist aber bisher nur ueber ein US-ETF und eine Einzelaktie abgedeckt.
+  { gruppe: "Einzelwert2", name: "Ruestung Europa (ETF)", symbol: "DFEN.DE" },
+  { gruppe: "Einzelwert2", name: "Hensoldt", symbol: "HAG.DE" },
+
+  // Krypto, das Tiam selbst haelt, bisher aber nicht auf der Seite steht.
+  { gruppe: "Krypto", name: "Solana", symbol: "SOL-USD" },
+
+  // Nasdaq-Volatilitaet als Gegenstueck zum VIX.
+  { gruppe: "Umfeld2", name: "Nasdaq-Volatilitaet", symbol: "^VXN" },
 ];
 
 const PAUSE_MS = 400;   // hoeflich bleiben, kein Hammern auf Yahoo
