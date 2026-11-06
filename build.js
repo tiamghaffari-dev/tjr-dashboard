@@ -15,6 +15,7 @@ const { evaluateRules, ruleSummary, blockingViolations, KNOWN_GAPS, confluenceSc
 const methodeSeite = require("./methode_seite.js");
 const { justiere, bereinigen, tageswerte } = require("./auto_tune.js");
 const { archiviere, bestand } = require("./kerzen_archiv.js");
+const kp = require("./kerzen_packen.js");
 
 const TUNING_PATH = path.join(__dirname, "tuning.json");
 
@@ -1300,11 +1301,26 @@ function readEngineJsSource() {
   return fs.readFileSync(path.join(__dirname, "engine.js"), "utf8");
 }
 
+/* Kerzen kompakt in die Seite schreiben (06.11.2026, siehe kerzen_packen.js).
+ * Nur fuer Vorlagen, die den Entpacker ueberhaupt eingebettet bekommen - sonst
+ * stuende dort ein Objekt, wo die Seite eine Liste erwartet. Die Pruefung
+ * laeuft deshalb ueber den Platzhalter, nicht ueber den Dateinamen. */
+function payloadFuerVorlage(tpl, payload) {
+  if (tpl.indexOf("__KERZEN_PACKEN_SOURCE__") < 0) return payload;
+  return {
+    ...payload,
+    assets: (payload.assets || []).map((a) => (a && a.ltf
+      ? { ...a, ltf: kp.packeKerzen(a.ltf) }
+      : a)),
+  };
+}
+
 function renderFromTemplate(templateFile, outFile, payload) {
   const templatePath = path.join(__dirname, "docs", templateFile);
   const tpl = fs.readFileSync(templatePath, "utf8");
   const out = tpl
-    .replace("__PRECOMPUTED_JSON__", JSON.stringify(payload))
+    .replace("__KERZEN_PACKEN_SOURCE__", () => fs.readFileSync(path.join(__dirname, "kerzen_packen.js"), "utf8"))
+    .replace("__PRECOMPUTED_JSON__", JSON.stringify(payloadFuerVorlage(tpl, payload)))
     .replace("__GENERATED_AT__", `Zuletzt aktualisiert: ${payload.generatedAt}`)
     .replace("__ENGINE_JS_SOURCE__", () => readEngineJsSource());
   fs.writeFileSync(path.join(__dirname, "docs", outFile), out, "utf8");

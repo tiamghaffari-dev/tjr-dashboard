@@ -368,8 +368,23 @@
 __ENGINE_JS_SOURCE__
 </script>
 <script>
+/* Entpacker fuer die kompakt geschriebenen Chart-Kerzen. Quelltext kommt aus
+   kerzen_packen.js, damit Packer und Entpacker nicht auseinanderlaufen
+   koennen - dasselbe Verfahren wie bei engine.js darueber. Muss VOR dem
+   PRECOMPUTED-Block stehen, weil der sofort entpackt wird. */
+__KERZEN_PACKEN_SOURCE__
+</script>
+<script>
 let PRECOMPUTED = __PRECOMPUTED_JSON__;
 const charts = {};
+/* Diese Zeile MUSS hinter "const charts = {};" stehen und die Zeile darueber
+   muss exakt "let PRECOMPUTED = <JSON>;" bleiben: pollForUpdate() weiter unten
+   holt die Seite neu und schneidet sich den Datensatz mit genau diesem Muster
+   wieder heraus (/let PRECOMPUTED = ([\s\S]*?);\nconst charts = \{\};/).
+   Stuende hier ein Funktionsaufruf, bekaeme JSON.parse() beim Nachladen
+   "entpackeAlle({...})" zu sehen und der Auto-Refresh waere tot.
+   entpackeAlle() aendert den Datensatz an Ort und Stelle. */
+entpackeAlle(PRECOMPUTED);
 const chartRanges = {};
 
 function fmtOrDash(x) { return (x === null || x === undefined) ? "–" : x; }
@@ -2348,7 +2363,10 @@ async function pollForUpdate() {
     if (!match) return;
     const fresh = JSON.parse(match[1]);
     if (fresh.generatedAt === PRECOMPUTED.generatedAt) return;
-    PRECOMPUTED = fresh;
+    // Auch hier entpacken: die nachgeladene Seite ist genauso gepackt wie die
+    // erste. Ohne diese Zeile stuenden nach dem ersten Auto-Refresh Objekte
+    // statt Kerzenlisten in den Charts - und die Kerzen waeren wieder weg.
+    PRECOMPUTED = entpackeAlle(fresh);
     main();
     showRefreshToast();
   } catch (e) {
