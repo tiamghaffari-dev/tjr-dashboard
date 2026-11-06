@@ -23,11 +23,34 @@ on:
     # Dank "concurrency" unten laeuft trotzdem immer nur EIN Lauf, und ein
     # wartender startet sofort, wenn der vorige endet. Damit heilt der
     # Zeitplan GitHubs Aussetzer selbst.
-    - cron: "*/15 6 * * 1-5"
-    - cron: "*/15 7-8 * * 1-5"
-    - cron: "*/15 9-12 * * 1-5"
-    - cron: "*/15 13-14 * * 1-5"
-    - cron: "*/15 15-21 * * 1-5"
+    #
+    # ------------------------------------------------------------------
+    # GEMESSEN 06.11.2026, vier Wochen Commit-Zeiten, nur Werktage:
+    #   11-21 UTC  dicht belegt (62 bis 171 Laeufe je Stunde)
+    #   03-05 UTC  NULL Laeufe
+    #   08-09 UTC  NULL Laeufe
+    #   06/07/10   zusammen 11 Laeufe, also praktisch ein einziger Start
+    #
+    # Wien liegt im Winter bei UTC+1. 08-09 UTC ist damit exakt Tiams
+    # Vormittagsfenster 9-10 Uhr - das war VIER WOCHEN LANG dunkel. Jeder
+    # Trade im Log stammt aus dem Nachmittagsfenster, nicht weil vormittags
+    # nichts passiert, sondern weil niemand hingeschaut hat.
+    #
+    # Zwei Ursachen, beide hier behoben:
+    #   1. Zwischen 22 und 06 UTC stand ueberhaupt kein Cron. Die Kette
+    #      endete also jede Nacht gegen 02:30 und niemand weckte sie.
+    #   2. Die Eintraege um 06-08 UTC laesst GitHub fast immer fallen
+    #      (bekannte Drosselung, im Repo nicht abstellbar).
+    #
+    # Gegenmittel: ein Eintrag ueber ALLE Stunden, damit nie eine Luecke im
+    # Zeitplan selbst entsteht, UND unten eine deutlich laengere Schleife.
+    # Ein Lauf lebt jetzt rund fuenf Stunden statt 50 Minuten - es muss also
+    # nur noch EINER von rund fuenfzehn Zeitplan-Starts je Nacht
+    # durchkommen, damit der Vormittag abgedeckt ist.
+    #
+    # Weiterhin bewusst nur Mo-Fr: am Wochenende soll sich nichts aendern.
+    # ------------------------------------------------------------------
+    - cron: "*/20 * * * 1-5"
   # Bewusst mit paths-Filter: ein Push, der nur docs/ oder signals_log.json
   # aendert, ist ja gerade das ERGEBNIS eines Laufs und wuerde sonst sofort
   # den naechsten ausloesen (Endlosschleife).
@@ -65,8 +88,11 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    # Schleife ~55 Min + Puffer. GitHub erlaubt bis zu 6 Stunden je Job.
-    timeout-minutes: 70
+    # Schleife ~5 Stunden + Puffer. GitHub erlaubt bis zu 6 Stunden je Job.
+    # Gemessen: 10 Durchlaeufe brauchten 47 Minuten, davon 45 Minuten Schlaf -
+    # der Bau selbst kostet rund 16 Sekunden. 58 Durchlaeufe sind damit
+    # 285 Minuten Schlaf plus gut 15 Minuten Arbeit, also etwa 5 Stunden.
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
 
@@ -83,7 +109,11 @@ jobs:
           # KEIN "set -e": ein einzelner misslungener Durchlauf (z.B. Yahoo
           # antwortet kurz nicht) darf die restlichen neun nicht mitreissen.
           set +e
-          DURCHLAEUFE=10
+          # 06.11.2026 von 10 auf 58 erhoeht - siehe die Messung oben beim
+          # Zeitplan. Nicht, um oefter zu rechnen (der Takt bleibt 5 Minuten),
+          # sondern damit ein Lauf die Nacht ueberbrueckt und der Vormittag
+          # nicht mehr davon abhaengt, ob GitHub den 08-UTC-Start zulaesst.
+          DURCHLAEUFE=58
           git config user.name "tjr-bot"
           git config user.email "actions@github.com"
 
