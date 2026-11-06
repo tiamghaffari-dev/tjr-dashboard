@@ -76684,8 +76684,8 @@
     "target2": 4038,
     "rr2": 1.69,
     "partialExit": true,
-    "trailStop": 4096.836001,
-    "tp1HitTs": null,
+    "trailStop": 4044.5,
+    "tp1HitTs": 1793953800000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -76738,9 +76738,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1793953998000,
+    "rMultiple": 1.4,
+    "exitPrice": 4044.5,
+    "postmortem": {
+      "holdHours": 0.8,
+      "mfeR": 1.83,
+      "maeR": -0.08,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.28,
+      "targetDistAdr": 0.39,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1793971963493",
@@ -76754,8 +76765,8 @@
     "target2": 4044.5,
     "rr2": 1.99,
     "partialExit": true,
-    "trailStop": 4090.919873,
-    "tp1HitTs": null,
+    "trailStop": 4059.600098,
+    "tp1HitTs": 1793953998000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -76807,7 +76818,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   }
