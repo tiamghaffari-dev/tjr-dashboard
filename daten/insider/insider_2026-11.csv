@@ -110,3 +110,73 @@ meldung,transaktion,verzoegerungTage,symbol,firma,inhaber,rolle,stueck,preis,sum
 2026-11-03,2026-11-03,0,LRN,Stride  Inc.,Haggart Dylan G.,Director,31357,75.04,2353029,https://www.sec.gov/Archives/edgar/data/1157408/0001213900-26-115698.txt
 2026-11-03,2026-11-02,1,FISI,FINANCIAL INSTITUTIONS INC,DORN ANDREW W JR,Director,1575,40.11,63173,https://www.sec.gov/Archives/edgar/data/1221249/0001193125-26-445315.txt
 2026-11-03,2026-10-30,4,TRTX,TPG RE Finance Trust  Inc.,SILVERSTEIN WENDY,Director,38900,6.51,253239,https://www.sec.gov/Archives/edgar/data/1246489/0001193125-26-444483.txt
+2026-11-05,2026-11-03,2,AWRE,AWARE INC /MA/,Amlani Ajay K,President &amp; CEO,21000,0.92,19320,https://www.sec.gov/Archives/edgar/data/1015739/0001193125-26-450060.txt
+2026-11-05,2026-11-04,1,AWRE,AWARE INC /MA/,Amlani Ajay K,President &amp; CEO,13511,0.97,13106,https://www.sec.gov/Archives/edgar/data/1015739/0001193125-26-450060.txt
+2026-11-05,2026-11-03,2,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,24313,7.84,190614,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-03,2,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,97800,7.84,766752,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-03,2,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,24400,7.88,192272,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-03,2,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,98600,7.88,776968,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-04,1,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,9267,7.78,72097,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-04,1,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,37100,7.78,288638,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-04,1,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,5000,7.07,35350,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-04,1,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,20000,7.07,141400,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-05,0,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,30891,7.31,225813,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-05,0,ETRA,Electra Therapeutics  Inc.,ORBIMED ADVISORS LLC,Director,125200,7.31,915212,https://www.sec.gov/Archives/edgar/data/1055951/0000947871-26-000985.txt
+2026-11-05,2026-11-04,1,LBTY,Liberty Global Ltd.,FRIES MICHAEL T,President &amp; CEO,110000,9.3652,1030172,https://www.sec.gov/Archives/edgar/data/1058725/0001058725-26-000011.txt
+2026-11-05,2026-11-04,1,BXMT,BLACKSTONE MORTGAGE TRUST  INC.,Johnson Timothy Steven,Chief Executive Officer,90000,11.5039,1035351,https://www.sec.gov/Archives/edgar/data/1061630/0001061630-26-000102.txt
+2026-11-05,2026-11-04,1,BXMT,BLACKSTONE MORTGAGE TRUST  INC.,NASSAU HENRY N,Director,10000,11.4291,114291,https://www.sec.gov/Archives/edgar/data/1061630/0001061630-26-000103.txt
+2026-11-05,2026-11-03,2,BB,BLACKBERRY Ltd,Chaikof David,Director,5000,8.18,40900,https://www.sec.gov/Archives/edgar/data/1070235/0001070235-26-000145.txt
+2026-11-05,2026-11-04,1,RRBI,RED RIVER BANCSHARES INC,Price Teddy Ray,Director,878,107.79,94640,https://www.sec.gov/Archives/edgar/data/1071236/0001770071-26-000012.txt
+2026-11-05,2026-11-04,1,RRBI,RED RIVER BANCSHARES INC,Price Teddy Ray,Director,153,107.56,16457,https://www.sec.gov/Archives/edgar/data/1071236/0001770071-26-000012.txt
+2026-11-05,2026-11-05,0,TTMI,TTM TECHNOLOGIES INC,Ali Wajid,Director,10000,63.1541,631541,https://www.sec.gov/Archives/edgar/data/1116942/0001193125-26-449379.txt
+2026-11-05,2026-11-05,0,LAB,STANDARD BIOTOOLS INC.,Carey Thomas D.,Director,75000,0.6253,46898,https://www.sec.gov/Archives/edgar/data/1162194/0001193125-26-450238.txt
+2026-11-05,2026-11-05,0,BOLD,Boundless Bio  Inc.,TANG KEVIN,10% Eigner,8390,2.4,20136,https://www.sec.gov/Archives/edgar/data/1178579/0001178579-26-000023.txt
+2026-11-05,2026-10-31,5,SCND,SCIENTIFIC INDUSTRIES INC,MOORE JOHN A,Chairman of the Board,51200,0.65,33280,https://www.sec.gov/Archives/edgar/data/1182944/0001182944-26-000007.txt
+2026-11-05,2026-11-04,1,LYEL,Lyell Immunopharma  Inc.,ARCH Venture Fund XIII  L.P.,10% Eigner,2321262,10.77,24999992,https://www.sec.gov/Archives/edgar/data/1202769/0001012975-26-001013.txt
+2026-11-05,2026-11-05,0,MTUS,Metallus Inc.,RICE RONALD A,Director,10000,16.61,166100,https://www.sec.gov/Archives/edgar/data/1224027/0001193125-26-450443.txt
+2026-11-05,2026-11-03,2,BKR,Baker Hughes Co,RICE JOHN G,Director,10000,53.1,531000,https://www.sec.gov/Archives/edgar/data/1232377/0001232377-26-000016.txt
+2026-11-05,2026-11-03,2,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,24313,7.84,190614,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-03,2,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,97800,7.84,766752,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-03,2,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,24400,7.88,192272,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-03,2,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,98600,7.88,776968,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-04,1,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,9267,7.78,72097,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-04,1,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,37100,7.78,288638,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-04,1,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,5000,7.07,35350,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-04,1,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,20000,7.07,141400,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-05,0,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,30891,7.31,225813,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-05,0,ETRA,Electra Therapeutics  Inc.,GORDON CARL L,Director,125200,7.31,915212,https://www.sec.gov/Archives/edgar/data/1282930/0000947871-26-000986.txt
+2026-11-05,2026-11-04,1,VNDA,Vanda Pharmaceuticals Inc.,Duncan Charles Cliff,Director,3447,3.821,13171,https://www.sec.gov/Archives/edgar/data/1347178/0001193125-26-449902.txt
+2026-11-05,2026-11-05,0,VNDA,Vanda Pharmaceuticals Inc.,Duncan Charles Cliff,Director,5803,3.8042,22076,https://www.sec.gov/Archives/edgar/data/1347178/0001193125-26-449902.txt
+2026-11-05,2026-02-19,259,VRNS,VARONIS SYSTEMS INC,Prishkolnik Rachel,Director,1015,25.72,26106,https://www.sec.gov/Archives/edgar/data/1361113/0001628280-26-071087.txt
+2026-11-05,2026-11-05,0,GLXY,Galaxy Digital Inc.,Novogratz Michael,Chief Executive Officer,528757,12.694,6712041,https://www.sec.gov/Archives/edgar/data/1380615/0001380615-26-000013.txt
+2026-11-05,2026-11-05,0,GLXY,Galaxy Digital Inc.,Novogratz Michael,Chief Executive Officer,231243,13.632,3152305,https://www.sec.gov/Archives/edgar/data/1380615/0001380615-26-000013.txt
+2026-11-05,2026-11-03,2,GRCE,Grace Therapeutics  Inc.,Opaleye Management Inc.,10% Eigner,10328,1.7894,18481,https://www.sec.gov/Archives/edgar/data/1444192/0001493152-26-050313.txt
+2026-11-05,2026-11-03,2,PAM,Pampa Energy Inc.,Mindlin Damian Miguel,Vicepresident,19413,68.43,1328432,https://www.sec.gov/Archives/edgar/data/1469395/0002028916-26-000012.txt
+2026-11-05,2026-11-04,1,PAM,Pampa Energy Inc.,Mindlin Damian Miguel,Vicepresident,19239,66.93,1287666,https://www.sec.gov/Archives/edgar/data/1469395/0002028916-26-000012.txt
+2026-11-05,2026-11-03,2,SPXC,SPX Technologies  Inc.,Deck Brian A,Director,3000,164.34,493020,https://www.sec.gov/Archives/edgar/data/1490816/0001490816-26-000002.txt
+2026-11-05,2026-11-04,1,MXF,MEXICO EQUITY &amp; INCOME FUND INC,Saba Capital Management  L.P.,10% Eigner,15011,20.95,314480,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000414.txt
+2026-11-05,2026-11-05,0,MTDR,Matador Resources Co,Calvert Christopher P,EVP and CFO,2000,52.57,105140,https://www.sec.gov/Archives/edgar/data/1520006/0002020286-26-000011.txt
+2026-11-05,2026-11-05,0,MTDR,Matador Resources Co,Colodney Benjamin T,SVP &amp; Chief Accounting Officer,500,51.52,25760,https://www.sec.gov/Archives/edgar/data/1520006/0002074755-26-000008.txt
+2026-11-05,2026-11-03,2,FBRT,Franklin BSP Realty Trust  Inc.,Byrne Richard J,Chairman and CEO,162600,6.14,998364,https://www.sec.gov/Archives/edgar/data/1562528/0001104659-26-123375.txt
+2026-11-05,2026-11-04,1,LBTY,Liberty Global Ltd.,Rodriguez Enrique,EVP  Chief Technology Officer,211313,9.4456,1995978,https://www.sec.gov/Archives/edgar/data/1565787/0001570585-26-000156.txt
+2026-11-05,2026-11-04,1,CLX,CLOROX CO /DE/,Breber Pierre R,Director,4000,100.0627,400251,https://www.sec.gov/Archives/edgar/data/1594960/0001225208-26-008735.txt
+2026-11-05,2026-11-03,2,COUR,Coursera  Inc.,Pale Fire Capital SE,10% Eigner,2526702,3.7209,9401605,https://www.sec.gov/Archives/edgar/data/1651562/0000921895-26-002941.txt
+2026-11-05,2026-11-04,1,COUR,Coursera  Inc.,Pale Fire Capital SE,10% Eigner,2698400,3.8537,10398824,https://www.sec.gov/Archives/edgar/data/1651562/0000921895-26-002941.txt
+2026-11-05,2026-11-05,0,COUR,Coursera  Inc.,Pale Fire Capital SE,10% Eigner,3130149,3.722,11650415,https://www.sec.gov/Archives/edgar/data/1651562/0000921895-26-002941.txt
+2026-11-05,2026-11-04,1,LYEL,Lyell Immunopharma  Inc.,ARCH Venture Partners IX  LLC,10% Eigner,2321262,10.77,24999992,https://www.sec.gov/Archives/edgar/data/1666306/0001012975-26-001014.txt
+2026-11-05,2026-11-03,2,LBRT,Liberty Energy Inc.,Gosney Ryan T,Chief Accounting Officer,3000,15,45000,https://www.sec.gov/Archives/edgar/data/1684189/0001628280-26-071187.txt
+2026-11-05,2026-11-04,1,SYY,SYSCO CORP,Ondrof Thomas Gerard,Director,2500,76.62,191550,https://www.sec.gov/Archives/edgar/data/1685591/0001685591-26-000006.txt
+2026-11-05,2026-11-03,2,LBRT,Liberty Energy Inc.,Gusek Ron,CEO and President,25000,15.0934,377335,https://www.sec.gov/Archives/edgar/data/1694028/0001628280-26-071186.txt
+2026-11-05,2026-11-03,2,UPBD,UPBOUND GROUP  INC.,Karam Fahmi,Chief Executive Officer,4407,22.71,100083,https://www.sec.gov/Archives/edgar/data/1743843/0001193125-26-449973.txt
+2026-11-05,2026-11-05,0,AOMR,Angel Oak Mortgage REIT  Inc.,Parsons Landon,Director,7400,6.28,46472,https://www.sec.gov/Archives/edgar/data/1766478/0001766478-26-000070.txt
+2026-11-05,2026-11-03,2,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,7901,35.348,279285,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-449978.txt
+2026-11-05,2026-11-03,2,CRBG,Corebridge Financial  Inc.,NIPPON LIFE INSURANCE CO,10% Eigner,348195,36.1471,12586239,https://www.sec.gov/Archives/edgar/data/1889539/0001193125-26-449978.txt
+2026-11-05,2026-11-05,0,JBSS,SANFILIPPO JOHN B &amp; SON INC,Finn Michael J,Sr. VP  Corporate Controller,200,56.08,11216,https://www.sec.gov/Archives/edgar/data/1890137/0001193125-26-449849.txt
+2026-11-05,2026-02-27-05:00,,TRAD,APEX Tech Acquisition Inc.,Liu Shaoren,CEO and CFO,208971,10,2089710,https://www.sec.gov/Archives/edgar/data/2004972/0001477932-26-006731.txt
+2026-11-05,2026-04-15-05:00,,TRAD,APEX Tech Acquisition Inc.,Liu Shaoren,CEO and CFO,3029,10,30290,https://www.sec.gov/Archives/edgar/data/2004972/0001477932-26-006732.txt
+2026-11-05,2026-11-04,1,OACOX,OneAscent Capital Opportunities Fund,Siverling John,,25000,11.53,288250,https://www.sec.gov/Archives/edgar/data/2020928/0001580642-26-007549.txt
+2026-11-05,2026-11-04,1,FLOC,Flowco Holdings Inc.,Fairbanks Jonathan B.,Director,15140,19.3477,292924,https://www.sec.gov/Archives/edgar/data/2035149/0001193125-26-450429.txt
+2026-11-05,2026-11-03,2,CRH,CRH PUBLIC LTD CO,Talbot Siobhan,Director,2000,94.63,189260,https://www.sec.gov/Archives/edgar/data/2039507/0000849395-26-000015.txt
+2026-11-05,2026-11-04,1,CBAN,COLONY BANKCORP INC,Canup Edward G,CHIEF BANKING OFFICER,1000,20.5,20500,https://www.sec.gov/Archives/edgar/data/2051327/0002051327-26-000020.txt
+2026-11-05,2026-11-04,1,PLSM,Pulsenmore Ltd.,Sonnenschein Elazar,Chief Executive Officer,9259,1.7,15740,https://www.sec.gov/Archives/edgar/data/2064764/0001493152-26-050241.txt
+2026-11-05,2026-11-03,2,DGICA,DONEGAL GROUP INC,DONEGAL MUTUAL INSURANCE CO,10% Eigner,7500,18.6941,140206,https://www.sec.gov/Archives/edgar/data/800457/0000935596-26-000027.txt
