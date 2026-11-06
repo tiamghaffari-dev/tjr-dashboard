@@ -28,6 +28,7 @@ const SYMBOLE = [
   { gruppe: "Index",      name: "Nasdaq 100",        symbol: "^NDX",      hinweis: "100 größte Technologiewerte" },
   { gruppe: "Index",      name: "DAX",               symbol: "^GDAXI",    hinweis: "40 größte deutsche Firmen" },
   { gruppe: "Index",      name: "Euro Stoxx 50",     symbol: "^STOXX50E", hinweis: "50 größte Firmen der Eurozone", waehrung: "EUR" },
+  { gruppe: "Index",      name: "S&P 500 gleichgewichtet", symbol: "RSP", hinweis: "dieselben 500 Firmen, aber jede gleich schwer - zeigt, ob die Bewegung breit getragen ist" },
 
   // --- Rohstoffe ---
   { gruppe: "Rohstoff",   name: "Oel WTI",           symbol: "CL=F",      hinweis: "US-Sorte, Terminkontrakt" },
@@ -35,11 +36,14 @@ const SYMBOLE = [
   { gruppe: "Rohstoff",   name: "Gold",              symbol: "GC=F",      hinweis: "Terminkontrakt - die Engine handelt denselben Wert" },
   { gruppe: "Rohstoff",   name: "Silber",            symbol: "SI=F",      hinweis: "Terminkontrakt" },
   { gruppe: "Rohstoff",   name: "Erdgas",            symbol: "NG=F",      hinweis: "Terminkontrakt, sehr sprunghaft" },
+  { gruppe: "Rohstoff",   name: "Kupfer",            symbol: "HG=F",      hinweis: "Terminkontrakt - steckt in Bau, Leitungen und Elektroautos, gilt deshalb als Konjunkturmesser" },
+  { gruppe: "Rohstoff",   name: "Weizen",            symbol: "ZW=F",      hinweis: "Terminkontrakt, notiert in US-Cent je Scheffel", einheit: "ct" },
 
   // --- Umfeld: Nervositaet, Zinsen, Dollar ---
   { gruppe: "Umfeld",     name: "VIX",               symbol: "^VIX",      hinweis: "erwartete Schwankung im S&P 500, in Prozentpunkten - kein Kurs", einheit: "pkt" },
   { gruppe: "Umfeld",     name: "US-Zins 10 Jahre",  symbol: "^TNX",      hinweis: "Rendite zehnjähriger US-Staatsanleihen in Prozent", einheit: "%" },
   { gruppe: "Umfeld",     name: "Dollar-Index",      symbol: "DX-Y.NYB",  hinweis: "Dollar gegen einen Korb anderer Währungen", einheit: "pkt" },
+  { gruppe: "Umfeld",     name: "Nasdaq-Volatilität", symbol: "^VXN",      hinweis: "erwartete Schwankung im Nasdaq 100 - das Gegenstück zum VIX", einheit: "pkt" },
 
   // --- Sektoren: welcher Teil des Marktes laeuft gerade ---
   { gruppe: "Sektor",     name: "Technologie",       symbol: "XLK",       hinweis: "US-Sektor-ETF" },
@@ -47,10 +51,44 @@ const SYMBOLE = [
   { gruppe: "Sektor",     name: "Finanzen",          symbol: "XLF",       hinweis: "US-Sektor-ETF" },
   { gruppe: "Sektor",     name: "Rohstoffe/Material",symbol: "XLB",       hinweis: "US-Sektor-ETF" },
   { gruppe: "Sektor",     name: "Rüstung/Luftfahrt",symbol: "ITA",       hinweis: "US-Sektor-ETF" },
+  { gruppe: "Sektor",     name: "Konsum zyklisch",   symbol: "XLY",       hinweis: "US-Sektor-ETF - Autos, Reisen, Luxus: was man kauft, wenn man sich sicher fühlt" },
+  { gruppe: "Sektor",     name: "Konsum defensiv",   symbol: "XLP",       hinweis: "US-Sektor-ETF - Essen, Hygiene, Haushalt: was man immer kauft" },
+  { gruppe: "Sektor",     name: "Versorger",         symbol: "XLU",       hinweis: "US-Sektor-ETF - Strom und Wasser, gilt als defensiv" },
+  { gruppe: "Sektor",     name: "Gesundheit",        symbol: "XLV",       hinweis: "US-Sektor-ETF" },
+  { gruppe: "Sektor",     name: "Halbleiter",        symbol: "SMH",       hinweis: "ETF - der Motor hinter dem Technologiesektor" },
 
   // --- Einzelwerte, die Tiam ausdruecklich sehen wollte ---
   { gruppe: "Einzelwert", name: "Rheinmetall",       symbol: "RHM.DE",    hinweis: "Rüstung, Frankfurt" },
   { gruppe: "Einzelwert", name: "Tesla",             symbol: "TSLA",      hinweis: "Nasdaq" },
+  { gruppe: "Einzelwert", name: "Hensoldt",          symbol: "HAG.DE",    hinweis: "Rüstungselektronik, Frankfurt" },
+  { gruppe: "Einzelwert", name: "Rüstung Europa",    symbol: "DFEN.DE",   hinweis: "ETF auf europäische Rüstungswerte" },
+
+  // --- Zinsen: die ganze Kurve, nicht nur ein Punkt ---
+  // Erst mit mehreren Laufzeiten laesst sich die Zinskurve rechnen (10 Jahre
+  // minus 3 Monate). Das 2-Jahres-Symbol fuehrt Yahoo nicht (^UST2YR -> 404,
+  // geprueft 06.11.2026), darum 3 Monate als kurzes Ende.
+  { gruppe: "Zins",       name: "US-Zins 3 Monate",  symbol: "^IRX",      hinweis: "Rendite dreimonatiger US-Staatsanleihen", einheit: "%" },
+  { gruppe: "Zins",       name: "US-Zins 5 Jahre",   symbol: "^FVX",      hinweis: "Rendite fünfjähriger US-Staatsanleihen", einheit: "%" },
+  { gruppe: "Zins",       name: "US-Zins 30 Jahre",  symbol: "^TYX",      hinweis: "Rendite dreißigjähriger US-Staatsanleihen", einheit: "%" },
+
+  // --- Anleihen als ETFs: daraus wird Kreditstress und Inflationserwartung ---
+  { gruppe: "Anleihe",    name: "Hochzinsanleihen",  symbol: "HYG",       hinweis: "Anleihen schwächerer Schuldner - fallen zuerst, wenn Anleger nervös werden" },
+  { gruppe: "Anleihe",    name: "Staatsanleihen 7-10J", symbol: "IEF",    hinweis: "sichere US-Staatsanleihen mittlerer Laufzeit" },
+  { gruppe: "Anleihe",    name: "Unternehmensanleihen", symbol: "LQD",    hinweis: "Anleihen solider Unternehmen" },
+  { gruppe: "Anleihe",    name: "Inflationsgeschützt", symbol: "TIP",     hinweis: "Anleihen, deren Zins an die Inflation gekoppelt ist" },
+
+  // --- Waehrungen: Tiam investiert in Euro, die meisten Werte notieren in Dollar ---
+  { gruppe: "Währung",    name: "Euro/Dollar",       symbol: "EURUSD=X",  hinweis: "wie viele Dollar ein Euro kostet - entscheidet mit, was ein US-ETF in Euro wert ist" },
+  { gruppe: "Währung",    name: "Dollar/Yen",        symbol: "USDJPY=X",  hinweis: "gilt als Stimmungsmesser: fällt meist, wenn Anleger Sicherheit suchen", waehrung: "JPY" },
+  { gruppe: "Währung",    name: "Euro/Franken",      symbol: "EURCHF=X",  hinweis: "der Franken ist der europäische sichere Hafen", waehrung: "CHF" },
+
+  // --- Regionen, die bisher ganz fehlten ---
+  { gruppe: "Region",     name: "Schwellenländer",   symbol: "EEM",       hinweis: "ETF auf Aktien aus Schwellenländern" },
+  { gruppe: "Region",     name: "Japan",             symbol: "EWJ",       hinweis: "ETF auf japanische Aktien" },
+  { gruppe: "Region",     name: "China",             symbol: "MCHI",      hinweis: "ETF auf chinesische Aktien" },
+
+  // --- Krypto ausserhalb dessen, was die Engine handelt ---
+  { gruppe: "Krypto",     name: "Solana",            symbol: "SOL-USD",   hinweis: "handelt die Engine nicht - nur zur Einordnung neben Bitcoin" },
 
   // --- die sechs Werte, die die Engine wirklich handelt ---
   { gruppe: "Gehandelt",  name: "Bitcoin",           symbol: "BTC-USD",   hinweis: "handelt die Engine" },
@@ -59,7 +97,7 @@ const SYMBOLE = [
   { gruppe: "Gehandelt",  name: "GBP/USD",           symbol: "GBPUSD=X",  hinweis: "handelt die Engine" },
 ];
 
-const GRUPPEN_REIHENFOLGE = ["Index", "Rohstoff", "Umfeld", "Sektor", "Einzelwert", "Gehandelt"];
+const GRUPPEN_REIHENFOLGE = ["Gehandelt", "Index", "Region", "Sektor", "Rohstoff", "Zins", "Anleihe", "Währung", "Umfeld", "Krypto", "Einzelwert"];
 
 /* ---------------------------------------------------------------------------
  * Rollen fuer die Kennzahlen aus Etappe 2.

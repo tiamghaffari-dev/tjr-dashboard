@@ -44,10 +44,89 @@
   h1 { font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
   .stand { color: var(--leiser); font-size: 0.8125rem; margin-top: 5px; }
 
+  /* ===================================================================
+     KACHELN - Umbau 06.11.2026.
+     Tiam: "die Webseite da bei der Marktlage ein bisschen besser designen".
+
+     Der Lagebericht in ganzen Saetzen bleibt, er erklaert. Aber davor fehlte
+     die Ebene darueber: die fuenf Zahlen, die zaehlen, ohne einen einzigen
+     Satz lesen zu muessen. Genau dafuer sind die Kacheln da - sie stehen vor
+     dem Fliesstext, nicht statt seiner.
+
+     Bewusst zurueckhaltend: keine Verlaeufe, kein Schatten, keine Farbe als
+     Schmuck. Farbe traegt hier Bedeutung (rauf/runter/auffaellig) und wird
+     sonst weggelassen, sonst sagt sie nichts mehr.
+     =================================================================== */
+  .kacheln {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(186px, 1fr));
+    gap: 10px; margin-top: 26px;
+  }
+  .kachel {
+    border: 1px solid var(--rand); border-radius: 10px; background: var(--feld);
+    padding: 13px 15px 14px; min-width: 0;
+  }
+  .kachel .k-marke { color: var(--leise); font-size: 0.8125rem; line-height: 1.3; }
+  .kachel .k-wert {
+    font-size: 1.75rem; font-weight: 600; line-height: 1.15; margin-top: 7px;
+    letter-spacing: -0.015em; font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  /* Kacheln, deren Wert ein WORT ist und keine Zahl ("unauffaellig", ein
+     Terminname). In 28px zerbrach "US-Lohnentwicklung" mitten im Wort zu
+     "US-Lohnentwickl / ung". Woerter brauchen weniger Groesse und duerfen
+     nur an sinnvollen Stellen umbrechen. */
+  .kachel .k-wert.k-wort {
+    font-size: 1.125rem; line-height: 1.3; letter-spacing: -0.005em;
+    overflow-wrap: break-word; hyphens: auto;
+  }
+  .kachel .k-sub { color: var(--leiser); font-size: 0.8125rem; line-height: 1.45; margin-top: 6px; }
+  .kachel .rauf { color: var(--rauf); }
+  .kachel .runter { color: var(--runter); }
+  .kachel .warn { color: var(--warn); }
+  .kachel .ruhig { color: var(--akzent); }
+
+  /* ===================================================================
+     VERHAELTNISSE - Kennzahlen aus je zwei Werten.
+     Jede Karte beantwortet genau eine Frage. Die Frage steht klein darueber,
+     damit man die Karte ueberspringen kann, wenn einen die Frage nicht
+     interessiert. Der "sagt nicht"-Satz steht IMMER dabei und ist optisch
+     abgesetzt - er ist kein Kleingedrucktes, sondern Teil der Aussage.
+     =================================================================== */
+  .verh-block { margin-top: 38px; }
+  .verh-block h2 {
+    font-size: 1.125rem; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.01em;
+  }
+  .verh-block .verh-vor { color: var(--leiser); font-size: 0.875rem; margin: 0 0 16px; max-width: 46em; }
+  .verh {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 12px;
+  }
+  .v-karte {
+    border: 1px solid var(--rand); border-radius: 10px; background: var(--feld);
+    padding: 15px 17px 16px; min-width: 0;
+  }
+  .v-kopf { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .v-titel { font-size: 1rem; font-weight: 600; }
+  .v-stufe { font-size: 0.75rem; white-space: nowrap; color: var(--leiser); }
+  .v-stufe.deutlich { color: var(--akzent); }
+  .v-stufe.schwach { color: var(--warn); }
+  .v-frage { color: var(--leise); font-size: 0.8125rem; margin-top: 3px; }
+  .v-satz { font-size: 1rem; line-height: 1.55; margin-top: 11px; }
+  .v-zahl { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .v-nicht {
+    color: var(--leiser); font-size: 0.8125rem; line-height: 1.5; margin-top: 11px;
+    padding-left: 11px; border-left: 2px solid var(--rand);
+  }
+  .v-fehlt { color: var(--leiser); font-size: 0.875rem; margin-top: 10px; }
+
   /* ---------- Lagebericht: der Kern der Seite ---------- */
   .lage { margin: 32px 0 0; }
   .lage p {
-    font-size: 1.5rem; line-height: 1.5; margin: 0 0 16px;
+    /* 06.11.2026 von 1.5rem auf 1.3125rem: acht Absaetze in 24px waren
+       zusammen wieder eine Wand - genau das, was der Umbau im Oktober
+       abstellen sollte. Deutlich groesser als der Fliesstext der uebrigen
+       Seiten bleibt es trotzdem, Tiams "zu klein" von damals gilt weiter. */
+    font-size: 1.3125rem; line-height: 1.5; margin: 0 0 14px;
     letter-spacing: -0.005em; max-width: 36em;   /* Zeilenlaenge gedeckelt, nicht die Seite */
   }
   .lage p:last-child { margin-bottom: 0; }
@@ -263,6 +342,10 @@
     </div>
   </div>
 
+  <!-- Die Kachelzeile: die wenigen Zahlen, die zaehlen, ohne einen Satz zu
+       lesen. Steht VOR dem Lagebericht, ersetzt ihn aber nicht. -->
+  <div class="kacheln" id="kacheln"></div>
+
   <!-- Lagebericht und Tafel bilden zusammen den Kopf der Seite. Auf breiten
        Schirmen stehen sie NEBENEINANDER: der Fliesstext darf nicht ueber die
        ganze Breite laufen (unlesbar), und der Platz daneben bliebe sonst leer.
@@ -280,6 +363,16 @@
     Diese Seite beschreibt nur, was ist &mdash; keine Prognose, keine Empfehlung, kein Kaufsignal.
     Und sie ist von der TJR-Engine getrennt: kein Wert von hier erzeugt oder blockiert einen Trade.
   </div>
+
+  <!-- Verhaeltnis-Kennzahlen. Bewusst OFFEN und nicht im Aufklapper: das ist
+       der neue Inhalt der Seite, nicht Nachschlagewerk. -->
+  <section class="verh-block">
+    <h2>Was zusammenh&auml;ngt</h2>
+    <p class="verh-vor">Jede Karte setzt zwei Werte ins Verh&auml;ltnis und beantwortet damit etwas,
+      das an keiner einzelnen Zeile der Tabellen abzulesen ist. Wo der Unterschied kleiner ist als das,
+      was Zufall in diesem Zeitraum ohnehin erzeugt, steht das ausdr&uuml;cklich da.</p>
+    <div class="verh" id="verh"></div>
+  </section>
 
   <div class="mehr">
     <h2>Zum Nachschauen</h2>
@@ -415,6 +508,156 @@ function heute() {
 function erklaerBox(titel, inhalt) {
   return '<details class="erklaer"><summary>' + titel + "</summary>"
     + '<div class="erklaer-text">' + inhalt + "</div></details>";
+}
+
+/* ====================================================================
+   DIE KACHELN (06.11.2026)
+
+   Die Ebene ueber dem Lagebericht: funf bis sechs Zahlen, ohne einen Satz
+   lesen zu muessen. Jede Kachel faellt einzeln aus, wenn ihre Daten fehlen -
+   lieber fuenf Kacheln als eine mit "-".
+
+   Farbe nur, wo sie etwas BEDEUTET. Beim Weltmarkt heisst gruen "gestiegen",
+   das ist eindeutig. Beim Wechselkurs waere Farbe eine Wertung ("Euro stark
+   = gut"), die hier niemand treffen darf - der bleibt deshalb farblos.
+   ==================================================================== */
+function kachel(marke, wert, klasse, sub) {
+  return '<div class="kachel"><div class="k-marke">' + marke + "</div>"
+    + '<div class="k-wert' + (klasse ? " " + klasse : "") + '">' + wert + "</div>"
+    + (sub ? '<div class="k-sub">' + sub + "</div>" : "") + "</div>";
+}
+
+function kacheln() {
+  const k = [];
+  const V = (DATA.kennzahlen && DATA.kennzahlen.verhaeltnisse) || {};
+
+  /* 1. Weltmarkt ueber ein Jahr - dieselbe Zahl wie im ersten Satz unten. */
+  const welt = beo("EUNL.DE") || beo("VWCE.DE") || beo("URTH");
+  if (welt && typeof welt.jahr1 === "number") {
+    const sp = welt.spanne;
+    let sub = "gegen&uuml;ber dem Stand vor einem Jahr";
+    if (sp && typeof sp.inSpanne === "number") {
+      sub = sp.inSpanne >= 90 ? "nahe dem Jahreshoch"
+          : sp.inSpanne <= 15 ? "nahe dem Jahrestief"
+          : (typeof sp.vomHoch === "number"
+              ? dz(Math.abs(sp.vomHoch), 0) + " % unter dem Jahreshoch" : sub);
+    }
+    k.push(kachel("Weltmarkt, 1 Jahr", proz(welt.jahr1, 0), farbe(welt.jahr1), sub));
+  }
+
+  /* 2. Nervositaet - der Perzentilrang sagt mehr als der VIX-Stand selbst. */
+  const n = DATA.kennzahlen && DATA.kennzahlen.nervositaet;
+  if (n && n.vix && typeof n.vix.perzentil === "number") {
+    const pz = n.vix.perzentil;
+    const kl = pz >= 75 ? "warn" : pz <= 25 ? "ruhig" : "";
+    const wort = pz >= 75 ? "unruhiger als &uuml;blich"
+               : pz <= 25 ? "ruhiger als &uuml;blich" : "so unruhig wie &uuml;blich";
+    k.push(kachel("Nervosit&auml;t", dz(pz, 0) + " %", kl,
+      wort + " &ndash; VIX " + dz(n.vix.stand, 2)));
+  }
+
+  /* 3. Zinskurve - neu. Invers ist der bemerkenswerte Fall, darum Warnfarbe;
+        "normal" ist der Normalfall und bekommt keine. */
+  const zk = V.zinskurve;
+  if (zk && zk.ok && typeof zk.jetzt === "number") {
+    k.push(kachel("Zinskurve 10J &minus; 3M",
+      (zk.jetzt > 0 ? "+" : "") + dz(zk.jetzt, 2) + " pp",
+      zk.form === "invers" ? "warn" : "",
+      zk.form === "invers" ? "invers &ndash; kurzes Geld bringt mehr"
+        : zk.form === "flach" ? "flach &ndash; kaum Unterschied"
+        : "normal &ndash; lang bringt mehr als kurz"));
+  }
+
+  /* 4. Marktbreite - neu. Beim Rauschen bewusst OHNE Farbe und ohne Zahl im
+        grossen Feld: eine Zahl gross hinzuschreiben, die nichts bedeutet,
+        waere genau die Scheingenauigkeit, die diese Seite vermeiden soll. */
+  const mb = V.marktbreite;
+  if (mb && mb.ok) {
+    if (mb.stufe === "rauschen") {
+      k.push(kachel("Marktbreite", "unauff&auml;llig", "k-wort",
+        "gleichgewichteter und normaler S&amp;P 500 laufen im Rahmen des Zufalls gleich"));
+    } else {
+      k.push(kachel("Marktbreite",
+        (mb.vorsprung > 0 ? "+" : "") + dz(mb.vorsprung, 1) + " pp",
+        mb.vorsprung >= 0 ? "rauf" : "runter",
+        (mb.vorsprung >= 0 ? "breit getragen" : "h&auml;ngt an wenigen Riesen")
+          + " &ndash; " + mb.fenster + " Handelstage"));
+    }
+  }
+
+  /* 5. Euro/Dollar - fuer Tiam der praktischste Wert: er kauft in Euro.
+        Bewusst farblos, siehe Kommentar oben. */
+  const w = V.waehrung;
+  if (w && w.ok && typeof w.quartal === "number") {
+    k.push(kachel("Euro/Dollar, 3 Monate",
+      (w.quartal > 0 ? "+" : "") + dz(w.quartal, 1) + " %", "",
+      Math.abs(w.quartal) < 0.05 ? "praktisch unver&auml;ndert"
+        : "ein US-Wert war dadurch f&uuml;r dich um etwa " + dz(Math.abs(w.quartal), 1) + " %&nbsp;"
+          + (w.quartal > 0 ? "weniger" : "mehr") + " wert"));
+  }
+
+  /* 6. Naechster Termin. */
+  const t = DATA.kennzahlen && DATA.kennzahlen.termine;
+  if (t && t.kommende && t.kommende.length) {
+    const e = t.kommende[0];
+    const rest = t.kommende.length - 1;
+    // Feldname ist zeitIso, nicht iso/zeit - derselbe Zugriff wie im
+    // Lagebericht weiter unten, damit Kachel und Satz nie auseinanderlaufen.
+    const zeit = e.zeitIso
+      ? new Date(e.zeitIso).toLocaleString("de-AT",
+          { timeZone: "Europe/Vienna", weekday: "long", hour: "2-digit", minute: "2-digit" })
+      : "";
+    k.push(kachel("N&auml;chster Termin", esc(terminName(e)), "k-wort",
+      zeit + (rest > 0 ? (zeit ? " &ndash; " : "") + "danach noch " + rest : "")));
+  }
+
+  el("kacheln").innerHTML = k.join("");
+}
+
+/* ====================================================================
+   VERHAELTNISSE (06.11.2026)
+
+   Die Saetze kommen fertig aus marktlage_verhaeltnisse.js - die Seite
+   formuliert hier nichts eigenes und darf es auch nicht: sonst stuenden
+   Rauschpruefung und Text auseinander.
+   ==================================================================== */
+function verhKarte(k) {
+  if (!k) return "";
+  const stufeText = k.stufe === "deutlich" ? "belastbar"
+    : k.stufe === "schwach" ? "schwach"
+    : k.stufe === "rauschen" ? "im Zufallsbereich" : "";
+  const kopf = '<div class="v-kopf"><span class="v-titel">' + esc(k.titel || "") + "</span>"
+    + (stufeText ? '<span class="v-stufe ' + esc(k.stufe) + '">' + stufeText + "</span>" : "")
+    + "</div>"
+    + (k.frage ? '<div class="v-frage">' + esc(k.frage) + "</div>" : "");
+
+  if (!k.ok) {
+    return '<div class="v-karte">' + kopf
+      + '<div class="v-fehlt">Nicht rechenbar: ' + esc(k.grund || "unbekannt") + "</div>"
+      + (k.niemals ? '<div class="v-nicht">' + esc(k.niemals) + "</div>" : "")
+      + "</div>";
+  }
+  return '<div class="v-karte">' + kopf
+    + '<div class="v-satz">' + esc(k.satz || "") + "</div>"
+    + (k.niemals ? '<div class="v-nicht">' + esc(k.niemals) + "</div>" : "")
+    + "</div>";
+}
+
+function verhaeltnisse() {
+  const V = DATA.kennzahlen && DATA.kennzahlen.verhaeltnisse;
+  const block = document.querySelector(".verh-block");
+  if (!V || !Object.keys(V).length) {
+    // Lieber den ganzen Abschnitt ausblenden als eine leere Ueberschrift.
+    if (block) block.hidden = true;
+    return;
+  }
+  // Reihenfolge bewusst fest: erst was den ganzen Markt betrifft, dann das
+  // Engere, zuletzt der Waehrungseffekt, der nur Tiam betrifft.
+  const folge = ["zinskurve", "marktbreite", "risikoneigung", "kreditstress",
+                 "inflationserwartung", "goldSilber", "waehrung"];
+  const karten = folge.map((n) => verhKarte(V[n])).filter(Boolean);
+  if (!karten.length) { if (block) block.hidden = true; return; }
+  el("verh").innerHTML = karten.join("");
 }
 
 /* ====================================================================
@@ -1435,7 +1678,7 @@ function bedienung() {
     el("fuss-geprueft").innerHTML = " Jedes Symbol wurde vor dem Einbau einzeln auf Datenqualit&auml;t "
       + "gepr&uuml;ft (" + String(DATA.symboltestVom).slice(0, 10) + ").";
   }
-  for (const f of [lagebericht, tafel, gehandelt, maerkte, beobachtung, nachrichten, termine,
+  for (const f of [kacheln, lagebericht, tafel, verhaeltnisse, gehandelt, maerkte, beobachtung, nachrichten, termine,
                    treiber, haltedauer, etfListe, mitschrift, bedienung]) {
     try { f(); } catch (e) { console.error("Block fehlgeschlagen:", f.name, e); }
   }

@@ -24,6 +24,7 @@ const fs = require("fs");
 const path = require("path");
 const ml = require("./marktlage.js");
 const kz = require("./marktlage_kennzahlen.js");
+const vh = require("./marktlage_verhaeltnisse.js");
 const hist = require("./marktlage_historie.js");
 const lang = require("./marktlage_langfrist.js");
 const beob = require("./marktlage_beobachtung.js");
@@ -225,6 +226,28 @@ async function main() {
   } catch (e) {
     kennzahlen.gleichlaufFehler = String(e && e.message ? e.message : e).slice(0, 150);
     console.error("  Gleichlauf fehlgeschlagen:", kennzahlen.gleichlaufFehler);
+  }
+
+  /* -------------------------------------------------------------------------
+   * Verhaeltnis-Kennzahlen (06.11.2026). Jede entsteht aus ZWEI Reihen und
+   * beantwortet etwas, das man an keiner einzelnen Tabellenzeile ablesen kann
+   * - Zinskurve, Marktbreite, Risikoneigung, Kreditstress,
+   * Inflationserwartung, Gold/Silber, Waehrungseffekt.
+   * Eigenes Modul, eigenes try/catch: faellt es aus, fehlt genau dieser Block
+   * und sonst nichts.
+   * ---------------------------------------------------------------------- */
+  try {
+    kennzahlen.verhaeltnisse = vh.alle(reihen);
+    const vgut = Object.entries(kennzahlen.verhaeltnisse).filter(([, k]) => k && k.ok);
+    const vschlecht = Object.entries(kennzahlen.verhaeltnisse).filter(([, k]) => !k || !k.ok);
+    console.log("  Verhaeltnisse: " + vgut.length + " gerechnet"
+      + (vschlecht.length ? ", nicht rechenbar: " + vschlecht.map(([n, k]) => n + " (" + ((k && k.grund) || "?") + ")").join(", ") : ""));
+    for (const [n, k] of vgut) {
+      if (k.stufe) console.log("    " + n.padEnd(20) + k.stufe);
+    }
+  } catch (e) {
+    kennzahlen.verhaeltnisseFehler = String(e && e.message ? e.message : e).slice(0, 150);
+    console.error("  Verhaeltnisse fehlgeschlagen:", kennzahlen.verhaeltnisseFehler);
   }
 
   try {
