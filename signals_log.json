@@ -77259,10 +77259,27 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1794001800000,
+    "rMultiple": 2,
+    "benachrichtigt": true,
+    "exitPrice": 1.161896,
+    "postmortem": {
+      "holdHours": 12.2,
+      "mfeR": 2.07,
+      "maeR": -0.63,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.28,
+      "targetDistAdr": 0.56,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "^GSPC-1793977606967",
