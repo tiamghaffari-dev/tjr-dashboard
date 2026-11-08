@@ -180,3 +180,36 @@ meldung,transaktion,verzoegerungTage,symbol,firma,inhaber,rolle,stueck,preis,sum
 2026-11-05,2026-11-04,1,CBAN,COLONY BANKCORP INC,Canup Edward G,CHIEF BANKING OFFICER,1000,20.5,20500,https://www.sec.gov/Archives/edgar/data/2051327/0002051327-26-000020.txt
 2026-11-05,2026-11-04,1,PLSM,Pulsenmore Ltd.,Sonnenschein Elazar,Chief Executive Officer,9259,1.7,15740,https://www.sec.gov/Archives/edgar/data/2064764/0001493152-26-050241.txt
 2026-11-05,2026-11-03,2,DGICA,DONEGAL GROUP INC,DONEGAL MUTUAL INSURANCE CO,10% Eigner,7500,18.6941,140206,https://www.sec.gov/Archives/edgar/data/800457/0000935596-26-000027.txt
+2026-11-06,2026-11-06,0,KMI,KINDER MORGAN  INC.,KINDER RICHARD D,Executive Chairman,500000,29.9884,14994200,https://www.sec.gov/Archives/edgar/data/1031190/0001506307-26-000139.txt
+2026-11-06,2026-11-04,2,LKQ,LKQ CORP,GOVE SUE,Director,9795,20.5294,201085,https://www.sec.gov/Archives/edgar/data/1065696/0001214659-26-013801.txt
+2026-11-06,2026-08-20,78,VISM,VISIUM TECHNOLOGIES  INC.,Adler Bo Niclas,10% Eigner,120000000,0.0009,108000,https://www.sec.gov/Archives/edgar/data/1082733/0001493152-26-050368.txt
+2026-11-06,2026-11-04,2,KOD,Kodiak Sciences Inc.,BAKER BROS. ADVISORS LP,Director,8742,98.51,861174,https://www.sec.gov/Archives/edgar/data/1087939/0001193125-26-451994.txt
+2026-11-06,2026-11-04,2,KOD,Kodiak Sciences Inc.,BAKER BROS. ADVISORS LP,Director,151916,98.51,14965245,https://www.sec.gov/Archives/edgar/data/1087939/0001193125-26-451994.txt
+2026-11-06,2026-11-05,1,KOD,Kodiak Sciences Inc.,BAKER BROS. ADVISORS LP,Director,4703,98.51,463293,https://www.sec.gov/Archives/edgar/data/1087939/0001193125-26-451994.txt
+2026-11-06,2026-11-05,1,KOD,Kodiak Sciences Inc.,BAKER BROS. ADVISORS LP,Director,81729,98.51,8051124,https://www.sec.gov/Archives/edgar/data/1087939/0001193125-26-451994.txt
+2026-11-06,2026-11-04,2,MDGL,MADRIGAL PHARMACEUTICALS  INC.,BAKER BROS. ADVISORS LP,Director,5586,366.9922,2050018,https://www.sec.gov/Archives/edgar/data/1087939/0001193125-26-452132.txt
+2026-11-06,2026-11-04,2,MDGL,MADRIGAL PHARMACEUTICALS  INC.,BAKER BROS. ADVISORS LP,Director,10080,368.1134,3710583,https://www.sec.gov/Archives/edgar/data/1087939/0001193125-26-452132.txt
+2026-11-06,2026-11-06,0,MDGL,MADRIGAL PHARMACEUTICALS  INC.,BAKER BROS. ADVISORS LP,Director,60400,383.015,23134106,https://www.sec.gov/Archives/edgar/data/1087939/0001193125-26-452132.txt
+2026-11-06,2026-11-06,0,MDGL,MADRIGAL PHARMACEUTICALS  INC.,BAKER BROS. ADVISORS LP,Director,13740,388.29,5335105,https://www.sec.gov/Archives/edgar/data/1087939/0001193125-26-452132.txt
+2026-11-06,2026-11-06,0,MDGL,MADRIGAL PHARMACEUTICALS  INC.,BAKER BROS. ADVISORS LP,Director,2000,396.61,793220,https://www.sec.gov/Archives/edgar/data/1087939/0001193125-26-452132.txt
+2026-11-06,2026-11-05,1,GFS,GLOBALFOUNDRIES Inc.,MOORTHY GANESH,Director,2500,37.475,93688,https://www.sec.gov/Archives/edgar/data/1218184/0001628280-26-071813.txt
+2026-11-06,2026-11-06,0,ANVS,Annovis Bio  Inc.,Hoffman Michael B,Director,5000000,1,5000000,https://www.sec.gov/Archives/edgar/data/1290208/0001104659-26-123905.txt
+2026-11-06,2026-11-05,1,KYN,Kayne Anderson Energy Infrastructure Fund  Inc.,Baker James C,President,25000,13.2434,331085,https://www.sec.gov/Archives/edgar/data/1293613/0001331674-26-000005.txt
+2026-11-06,2026-11-05,1,KYN,Kayne Anderson Energy Infrastructure Fund  Inc.,Little Harrison James,Executive Vice President,3900,13.215,51539,https://www.sec.gov/Archives/edgar/data/1293613/0002025837-26-000003.txt
+2026-11-06,2026-11-04,2,TBBK,Bancorp  Inc.,Mudick Stephanie B,Director,1000,47.495,47495,https://www.sec.gov/Archives/edgar/data/1295401/0002039852-26-000136.txt
+2026-11-06,2026-11-04,2,PMN,ProMIS Neurosciences Inc.,Williams Eugene,Director,26500,3.43,90895,https://www.sec.gov/Archives/edgar/data/1374339/0001374339-26-000011.txt
+2026-11-06,2026-11-05,1,GRX,Gabelli Healthcare &amp; WellnessRx Trust,Saba Capital Management  L.P.,10% Eigner,8916,10.44,93083,https://www.sec.gov/Archives/edgar/data/1391437/0001510281-26-000417.txt
+2026-11-06,2026-11-05,1,AGMB,AgomAb Therapeutics NV,Epstein David R,Director,5000,6.81,34050,https://www.sec.gov/Archives/edgar/data/1445826/0001445826-26-000018.txt
+2026-11-06,2026-11-05,1,ECF,ELLSWORTH GROWTH &amp; INCOME FUND LTD,Saba Capital Management  L.P.,10% Eigner,7747,11.34,87851,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000418.txt
+2026-11-06,2026-11-05,1,MXF,MEXICO EQUITY &amp; INCOME FUND INC,Saba Capital Management  L.P.,10% Eigner,24115,20.72,499663,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000419.txt
+2026-11-06,2026-11-05,1,JOF,JAPAN SMALLER CAPITALIZATION FUND INC,Saba Capital Management  L.P.,10% Eigner,28208,10.61,299287,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000420.txt
+2026-11-06,2026-11-05,1,MTDR,Matador Resources Co,Elsener William Thomas,EVP  Reservoir Engineering,900,51.48,46332,https://www.sec.gov/Archives/edgar/data/1520006/0001934692-26-000008.txt
+2026-11-06,2026-11-05,1,MTDR,Matador Resources Co,Erman Bryan A,President,915,50.79,46473,https://www.sec.gov/Archives/edgar/data/1520006/0002015754-26-000003.txt
+2026-11-06,2025-10-15,387,FICO,FAIR ISAAC CORP,Rey David A,Director,8,1636.65,13093,https://www.sec.gov/Archives/edgar/data/1532167/0001214659-26-013844.txt
+2026-11-06,2026-11-05,1,TRNS,TRANSCAT INC,IRICK JAIME A,President and CEO,2275,101.26,230367,https://www.sec.gov/Archives/edgar/data/1695807/0000891839-26-000478.txt
+2026-11-06,2026-11-05,1,KMT,KENNAMETAL INC,Chowbey Sanjay,President and CEO,7000,23.624,165368,https://www.sec.gov/Archives/edgar/data/1782435/0001782435-26-000005.txt
+2026-11-06,2026-11-04,2,DFH,Dream Finders Homes  Inc.,Sturm Len,Director,1000,10.53,10530,https://www.sec.gov/Archives/edgar/data/1825088/0000897069-26-001897.txt
+2026-11-06,2026-11-04,2,CLST,Catalyst Bancorp  Inc.,Kleiser Kirk E.,Director,714,17.755,12677,https://www.sec.gov/Archives/edgar/data/1849867/0001885818-26-000007.txt
+2026-11-06,2026-11-04,2,CLST,Catalyst Bancorp  Inc.,Kleiser Kirk E.,Director,990,17.755,17577,https://www.sec.gov/Archives/edgar/data/1849867/0001885818-26-000007.txt
+2026-11-06,2026-11-06,0,CVS,CVS HEALTH Corp,Shah Prem S,EVP and Group President,23855,83.895,2001315,https://www.sec.gov/Archives/edgar/data/1900910/0000064803-26-000112.txt
+2026-11-06,2026-07-26,103,YPF,YPF SOCIEDAD ANONIMA,Francos Guillermo Alberto,Director,6930,51.42,356341,https://www.sec.gov/Archives/edgar/data/2120097/0001292814-26-005166.txt
