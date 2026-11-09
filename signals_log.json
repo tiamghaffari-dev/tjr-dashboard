@@ -80001,9 +80001,36 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1794193800000,
+    "rMultiple": -1,
+    "exitPrice": 1.34023,
+    "postmortem": {
+      "holdHours": 1.8,
+      "mfeR": 0.04,
+      "maeR": -1.03,
+      "towardTargetPct": 4,
+      "stopDistAdr": 0.31,
+      "targetDistAdr": 0.34,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.1R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 4% entgegen (max +0.0R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.1R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   },
   {
     "id": "GCUSD-1794207503225",
