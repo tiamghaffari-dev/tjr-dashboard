@@ -85432,5 +85432,74 @@
       ],
       "summary": "Stop-Loss: in Ordnung · Analyse: These war falsch"
     }
+  },
+  {
+    "id": "BTCUSD-1794311307211",
+    "asset": "BTCUSD",
+    "direction": "SHORT",
+    "entryTs": 1794311307211,
+    "entry": 74336.03125,
+    "stop": 74758.795313,
+    "target": 73650.007813,
+    "rr": 1.62,
+    "target2": 73650.007813,
+    "rr2": 1.62,
+    "partialExit": true,
+    "trailStop": 74758.795313,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "OrderBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R11-kein-trade-nach-verlust"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.447,
+    "fillTs": 1794293319000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "5m",
+    "umfeld": {
+      "handelstag": "2026-11-09",
+      "quelle": "live",
+      "vix": 19.92,
+      "vixPerzentil": 80,
+      "schwankung": 33.6,
+      "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": false,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
