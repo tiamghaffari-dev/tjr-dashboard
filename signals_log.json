@@ -86152,5 +86152,76 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "^GSPC-1794333876760",
+    "asset": "^GSPC",
+    "direction": "LONG",
+    "entryTs": 1794333876760,
+    "entry": 746.158997,
+    "stop": 744.703198,
+    "target": 751.609985,
+    "rr": 3.74,
+    "target2": 752.138977,
+    "rr2": 4.11,
+    "partialExit": true,
+    "trailStop": 744.703198,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "Equilibrium",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 3,
+      "bewertbar": 6,
+      "fehlend": [
+        "R9-daily-bias",
+        "R11-kein-trade-nach-verlust",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bullish",
+    "zonentiefe": 0.101,
+    "fillTs": 1794315887000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "5m",
+    "umfeld": {
+      "handelstag": "2026-11-09",
+      "quelle": "live",
+      "vix": 20.06,
+      "vixPerzentil": 81,
+      "schwankung": 22.1,
+      "schwankungStufe": "hoch",
+      "sektorAllesRauschen": false,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
