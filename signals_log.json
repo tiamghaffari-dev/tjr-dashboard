@@ -80707,10 +80707,32 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1794299400000,
+    "rMultiple": 1.4,
+    "benachrichtigt": true,
+    "exitPrice": 2063.948096,
+    "postmortem": {
+      "holdHours": 28.5,
+      "mfeR": 2,
+      "maeR": -0.72,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.49,
+      "targetDistAdr": 0.69,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.7R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.4R, der Preis lief danach aber noch bis +2.8R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "GCUSD-1794214673874",
@@ -82732,9 +82754,31 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1794303000000,
+    "rMultiple": -1,
+    "exitPrice": 750.61238,
+    "postmortem": {
+      "holdHours": 18.7,
+      "mfeR": 0.73,
+      "maeR": -2.28,
+      "towardTargetPct": 39,
+      "stopDistAdr": 0.42,
+      "targetDistAdr": 0.8,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.5R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -2.0R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Analyse: These war falsch"
+    }
   },
   {
     "id": "BTCUSD-1794254058246",
@@ -83462,8 +83506,8 @@
     "target2": 1.340051,
     "rr2": 1.66,
     "partialExit": true,
-    "trailStop": 1.346337,
-    "tp1HitTs": null,
+    "trailStop": 1.341292,
+    "tp1HitTs": 1794299400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -83515,9 +83559,31 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794299700000,
+    "rMultiple": 1.4,
+    "exitPrice": 1.340051,
+    "postmortem": {
+      "holdHours": 13.4,
+      "mfeR": 2.01,
+      "maeR": -0.8,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.37,
+      "targetDistAdr": 0.42,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.1R, der Preis lief danach aber noch bis +3.8R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "GCUSD-1794270017383",
@@ -83965,8 +84031,8 @@
     "target2": 1.340051,
     "rr2": 1.39,
     "partialExit": true,
-    "trailStop": 1.346337,
-    "tp1HitTs": null,
+    "trailStop": 1.340051,
+    "tp1HitTs": 1794299400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -84019,9 +84085,31 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794299700000,
+    "rMultiple": 1.39,
+    "exitPrice": 1.340051,
+    "postmortem": {
+      "holdHours": 12.6,
+      "mfeR": 1.7,
+      "maeR": -0.82,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.41,
+      "targetDistAdr": 0.57,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.4R, der Preis lief danach aber noch bis +3.3R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "GCUSD-1794272202512",
@@ -84699,8 +84787,8 @@
     "target2": 1.340051,
     "rr2": 1.68,
     "partialExit": true,
-    "trailStop": 1.346337,
-    "tp1HitTs": null,
+    "trailStop": 1.341292,
+    "tp1HitTs": 1794299400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -84752,9 +84840,31 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794299700000,
+    "rMultiple": 1.42,
+    "exitPrice": 1.340051,
+    "postmortem": {
+      "holdHours": 10.9,
+      "mfeR": 2.04,
+      "maeR": -0.8,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.37,
+      "targetDistAdr": 0.42,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.2R, der Preis lief danach aber noch bis +3.8R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "GCUSD-1794278752531",
@@ -84945,8 +85055,8 @@
     "target2": 1.341292,
     "rr2": 1.8,
     "partialExit": true,
-    "trailStop": 1.346229,
-    "tp1HitTs": null,
+    "trailStop": 1.342192,
+    "tp1HitTs": 1794297900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -84998,9 +85108,31 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794298200000,
+    "rMultiple": 1.29,
+    "exitPrice": 1.342192,
+    "postmortem": {
+      "holdHours": 9.1,
+      "mfeR": 1.46,
+      "maeR": -0.79,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.28,
+      "targetDistAdr": 0.35,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.3R, der Preis lief danach aber noch bis +5.3R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "XRPUSD-1794284681005",
@@ -85106,8 +85238,8 @@
     "target2": 73644.921875,
     "rr2": 2.28,
     "partialExit": true,
-    "trailStop": 75037.015625,
-    "tp1HitTs": null,
+    "trailStop": 73644.921875,
+    "tp1HitTs": 1794299400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -85159,9 +85291,26 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794299700000,
+    "rMultiple": 2.28,
+    "exitPrice": 73644.921875,
+    "postmortem": {
+      "holdHours": 8.9,
+      "mfeR": 2.64,
+      "maeR": -0.68,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.46,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.7R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1794286867914",
@@ -85445,8 +85594,8 @@
     "target2": 73650.007813,
     "rr2": 1.62,
     "partialExit": true,
-    "trailStop": 74758.795313,
-    "tp1HitTs": null,
+    "trailStop": 73650.007813,
+    "tp1HitTs": 1794299400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -85498,9 +85647,26 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794299700000,
+    "rMultiple": 1.62,
+    "exitPrice": 73650.007813,
+    "postmortem": {
+      "holdHours": 1.8,
+      "mfeR": 1.99,
+      "maeR": -0.06,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.32,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.6R, der Preis lief danach aber noch bis +3.6R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   },
   {
     "id": "BTCUSD-1794312569036",
@@ -85514,8 +85680,8 @@
     "target2": 73650.007813,
     "rr2": 1.41,
     "partialExit": true,
-    "trailStop": 74666.75625,
-    "tp1HitTs": null,
+    "trailStop": 73650.007813,
+    "tp1HitTs": 1794299400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -85565,8 +85731,25 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794299700000,
+    "rMultiple": 1.41,
+    "exitPrice": 73650.007813,
+    "postmortem": {
+      "holdHours": 1.4,
+      "mfeR": 1.77,
+      "maeR": -0.27,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.28,
+      "findings": [
+        {
+          "area": "Take-Profit",
+          "verdict": "zu konservativ",
+          "text": "Gewonnen bei +1.4R, der Preis lief danach aber noch bis +3.4R weiter. Hier lag deutlich mehr drin."
+        }
+      ],
+      "summary": "Take-Profit: zu konservativ"
+    }
   }
 ]
