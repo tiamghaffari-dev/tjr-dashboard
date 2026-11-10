@@ -80959,8 +80959,8 @@
     "target2": 73644.921875,
     "rr2": 3.5,
     "partialExit": true,
-    "trailStop": 75553.578125,
-    "tp1HitTs": null,
+    "trailStop": 74237.25,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -81013,9 +81013,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794283534000,
+    "rMultiple": 2.1,
+    "exitPrice": 74237.25,
+    "postmortem": {
+      "holdHours": 17,
+      "mfeR": 2.28,
+      "maeR": -0.48,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.42,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794240744914",
@@ -81382,8 +81393,8 @@
     "target2": 73644.921875,
     "rr2": 3.12,
     "partialExit": true,
-    "trailStop": 75394.242188,
-    "tp1HitTs": null,
+    "trailStop": 74237.25,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -81436,9 +81447,26 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794283534000,
+    "rMultiple": 1.73,
+    "exitPrice": 74237.25,
+    "postmortem": {
+      "holdHours": 16.1,
+      "mfeR": 1.9,
+      "maeR": -0.85,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.35,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        }
+      ],
+      "summary": "Stop-Loss: knapp"
+    }
   },
   {
     "id": "GBPUSD-1794246453359",
@@ -82541,8 +82569,8 @@
     "target2": 73644.921875,
     "rr2": 3.07,
     "partialExit": true,
-    "trailStop": 75374.039063,
-    "tp1HitTs": null,
+    "trailStop": 74237.25,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -82594,9 +82622,26 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794283534000,
+    "rMultiple": 1.68,
+    "exitPrice": 74237.25,
+    "postmortem": {
+      "holdHours": 13.4,
+      "mfeR": 1.85,
+      "maeR": -0.9,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.34,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        }
+      ],
+      "summary": "Stop-Loss: knapp"
+    }
   },
   {
     "id": "^GSPC-1794253740453",
@@ -82960,8 +83005,8 @@
     "target2": 73644.921875,
     "rr2": 3.03,
     "partialExit": true,
-    "trailStop": 75354.023438,
-    "tp1HitTs": null,
+    "trailStop": 74237.25,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -83014,9 +83059,26 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794283534000,
+    "rMultiple": 1.63,
+    "exitPrice": 74237.25,
+    "postmortem": {
+      "holdHours": 12.8,
+      "mfeR": 1.81,
+      "maeR": -0.95,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.33,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        }
+      ],
+      "summary": "Stop-Loss: knapp"
+    }
   },
   {
     "id": "XRPUSD-1794256910466",
@@ -83121,8 +83183,8 @@
     "target2": 74237.25,
     "rr2": 2.3,
     "partialExit": true,
-    "trailStop": 75637.59375,
-    "tp1HitTs": null,
+    "trailStop": 74244.960938,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -83175,9 +83237,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794283534000,
+    "rMultiple": 2.28,
+    "exitPrice": 74244.960938,
+    "postmortem": {
+      "holdHours": 9,
+      "mfeR": 2.48,
+      "maeR": -0.28,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.46,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794269048388",
@@ -83516,8 +83589,8 @@
     "target2": 1.0759,
     "rr2": 1.51,
     "partialExit": true,
-    "trailStop": 1.117073,
-    "tp1HitTs": null,
+    "trailStop": 1.0827,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -83569,7 +83642,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -83585,8 +83658,8 @@
     "target2": 74237.25,
     "rr2": 1.8,
     "partialExit": true,
-    "trailStop": 75424.789063,
-    "tp1HitTs": null,
+    "trailStop": 74244.960938,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -83638,9 +83711,26 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794283534000,
+    "rMultiple": 1.78,
+    "exitPrice": 74244.960938,
+    "postmortem": {
+      "holdHours": 8.6,
+      "mfeR": 1.97,
+      "maeR": -0.44,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.36,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1794271266054",
@@ -83654,8 +83744,8 @@
     "target2": 1.0759,
     "rr2": 2.1,
     "partialExit": true,
-    "trailStop": 1.10854,
-    "tp1HitTs": null,
+    "trailStop": 1.0827,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -83707,7 +83797,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -83954,8 +84044,8 @@
     "target2": 74237.25,
     "rr2": 2.08,
     "partialExit": true,
-    "trailStop": 75544.539063,
-    "tp1HitTs": null,
+    "trailStop": 74244.960938,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -84007,9 +84097,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794283534000,
+    "rMultiple": 2.06,
+    "exitPrice": 74244.960938,
+    "postmortem": {
+      "holdHours": 8.1,
+      "mfeR": 2.26,
+      "maeR": -0.16,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.41,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794272515131",
@@ -84023,8 +84124,8 @@
     "target2": 1.0759,
     "rr2": 1.83,
     "partialExit": true,
-    "trailStop": 1.117073,
-    "tp1HitTs": null,
+    "trailStop": 1.0827,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -84076,7 +84177,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -84092,8 +84193,8 @@
     "target2": 1.0759,
     "rr2": 2.39,
     "partialExit": true,
-    "trailStop": 1.11164,
-    "tp1HitTs": null,
+    "trailStop": 1.0827,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -84145,7 +84246,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -84161,8 +84262,8 @@
     "target2": 74237.25,
     "rr2": 1.79,
     "partialExit": true,
-    "trailStop": 75420.726563,
-    "tp1HitTs": null,
+    "trailStop": 74244.960938,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -84214,9 +84315,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794283534000,
+    "rMultiple": 1.77,
+    "exitPrice": 74244.960938,
+    "postmortem": {
+      "holdHours": 7.1,
+      "mfeR": 1.96,
+      "maeR": -0.02,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.36,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794275948379",
@@ -84230,8 +84342,8 @@
     "target2": 1.0759,
     "rr2": 2.21,
     "partialExit": true,
-    "trailStop": 1.10974,
-    "tp1HitTs": null,
+    "trailStop": 1.0827,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -84283,7 +84395,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -84391,8 +84503,8 @@
     "target2": 1.0759,
     "rr2": 2.12,
     "partialExit": true,
-    "trailStop": 1.10874,
-    "tp1HitTs": null,
+    "trailStop": 1.0827,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -84444,7 +84556,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -84599,8 +84711,8 @@
     "target2": 1.0759,
     "rr2": 1.99,
     "partialExit": true,
-    "trailStop": 1.10744,
-    "tp1HitTs": null,
+    "trailStop": 1.0827,
+    "tp1HitTs": 1794283200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -84652,7 +84764,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
