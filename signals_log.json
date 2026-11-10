@@ -81247,9 +81247,31 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1794251100000,
+    "rMultiple": -1,
+    "exitPrice": 75333.289063,
+    "postmortem": {
+      "holdHours": 7.5,
+      "mfeR": 1.37,
+      "maeR": -1.02,
+      "towardTargetPct": 87,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.32,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.7R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 87% der Zielstrecke (max +1.4R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "GBPUSD-1794242644890",
