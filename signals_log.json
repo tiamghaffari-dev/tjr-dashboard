@@ -83916,9 +83916,31 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1794260700000,
+    "rMultiple": -1,
+    "exitPrice": 4121.460107,
+    "postmortem": {
+      "holdHours": 1.8,
+      "mfeR": 0.81,
+      "maeR": -1,
+      "towardTargetPct": 65,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.25,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.9R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 65% der Zielstrecke (max +0.8R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "BTCUSD-1794272515131",
@@ -84331,9 +84353,31 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1794260700000,
+    "rMultiple": -1,
+    "exitPrice": 4121.960107,
+    "postmortem": {
+      "holdHours": 0.8,
+      "mfeR": -0.07,
+      "maeR": -1.03,
+      "towardTargetPct": 0,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.24,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 0% entgegen (max -0.1R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "XRPUSD-1794276882500",
