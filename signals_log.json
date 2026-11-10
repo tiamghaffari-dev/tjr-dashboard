@@ -80943,9 +80943,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794289200000,
+    "rMultiple": 3.32,
+    "exitPrice": 1.0759,
+    "postmortem": {
+      "holdHours": 18.6,
+      "mfeR": 3.34,
+      "maeR": 0.08,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.72,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1794240427010",
@@ -81091,9 +81102,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794289200000,
+    "rMultiple": 3.17,
+    "exitPrice": 1.0759,
+    "postmortem": {
+      "holdHours": 18.5,
+      "mfeR": 3.19,
+      "maeR": -0.08,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.69,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1794241061711",
@@ -83264,8 +83286,8 @@
     "target2": 1.0759,
     "rr2": 1.33,
     "partialExit": true,
-    "trailStop": 1.117073,
-    "tp1HitTs": null,
+    "trailStop": 1.0759,
+    "tp1HitTs": 1794289200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -83317,9 +83339,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794289526000,
+    "rMultiple": 1.33,
+    "exitPrice": 1.0759,
+    "postmortem": {
+      "holdHours": 10.7,
+      "mfeR": 1.34,
+      "maeR": -0.3,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.36,
+      "targetDistAdr": 0.48,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1794269048388",
