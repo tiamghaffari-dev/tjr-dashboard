@@ -86765,9 +86765,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794366900000,
+    "rMultiple": 1.57,
+    "exitPrice": 1.330601,
+    "postmortem": {
+      "holdHours": 12,
+      "mfeR": 0.91,
+      "maeR": -0.44,
+      "towardTargetPct": 58,
+      "stopDistAdr": 0.39,
+      "targetDistAdr": 0.61,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1794342092039",
@@ -86905,9 +86916,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794366900000,
+    "rMultiple": 1.61,
+    "exitPrice": 1.330601,
+    "postmortem": {
+      "holdHours": 11.4,
+      "mfeR": 0.94,
+      "maeR": -0.43,
+      "towardTargetPct": 58,
+      "stopDistAdr": 0.38,
+      "targetDistAdr": 0.62,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1794347048298",
@@ -91208,6 +91230,75 @@
       "vix": 18.45,
       "vixPerzentil": 67,
       "schwankung": 32.3,
+      "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": false,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1794403598691",
+    "asset": "GCUSD",
+    "direction": "LONG",
+    "entryTs": 1794403598691,
+    "entry": 4053.600098,
+    "stop": 4037.440137,
+    "target": 4074.699951,
+    "rr": 1.31,
+    "target2": 4076.199951,
+    "rr2": 1.4,
+    "partialExit": true,
+    "trailStop": 4037.440137,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "BreakerBlock",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 5,
+      "bewertbar": 6,
+      "fehlend": [
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bullish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.447,
+    "fillTs": 1794385611000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "15m",
+    "umfeld": {
+      "handelstag": "2026-11-10",
+      "quelle": "live",
+      "vix": 18.45,
+      "vixPerzentil": 67,
+      "schwankung": 24.2,
       "schwankungStufe": "rauschen",
       "sektorAllesRauschen": false,
       "termineHeute": 0
