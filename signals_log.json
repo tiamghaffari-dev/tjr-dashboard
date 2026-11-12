@@ -92749,8 +92749,8 @@
     "target2": 1.323399,
     "rr2": 2.36,
     "partialExit": true,
-    "trailStop": 1.329678,
-    "tp1HitTs": null,
+    "trailStop": 1.325697,
+    "tp1HitTs": 1794432900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -92800,7 +92800,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -94969,8 +94969,8 @@
     "target2": 1.323399,
     "rr2": 2.2,
     "partialExit": true,
-    "trailStop": 1.32989,
-    "tp1HitTs": null,
+    "trailStop": 1.325697,
+    "tp1HitTs": 1794432900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -95020,7 +95020,7 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
