@@ -92800,9 +92800,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794414900000,
+    "rMultiple": 1.13,
+    "exitPrice": 1.325697,
+    "postmortem": {
+      "holdHours": 3.2,
+      "mfeR": 0.33,
+      "maeR": -0.14,
+      "towardTargetPct": 29,
+      "stopDistAdr": 0.26,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794421916966",
@@ -95020,9 +95031,10 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794414900000,
+    "rMultiple": 1.07,
+    "exitPrice": 1.325697
   },
   {
     "id": "XRPUSD-1794443088606",
