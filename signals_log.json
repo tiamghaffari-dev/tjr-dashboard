@@ -97013,9 +97013,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794475500000,
+    "rMultiple": 2,
+    "exitPrice": 71728.159156,
+    "postmortem": {
+      "holdHours": 0.6,
+      "mfeR": 2.12,
+      "maeR": 0.25,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.44,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1794492059999",
