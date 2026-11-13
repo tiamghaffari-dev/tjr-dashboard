@@ -99534,5 +99534,75 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "ETHUSD-1794562982198",
+    "asset": "ETHUSD",
+    "direction": "SHORT",
+    "entryTs": 1794562982198,
+    "entry": 1938.089966,
+    "stop": 1951.725952,
+    "target": 1910.817993,
+    "rr": 2,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 1951.725952,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.235,
+    "fillTs": 1794544993000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "5m",
+    "umfeld": {
+      "handelstag": "2026-11-12",
+      "quelle": "live",
+      "vix": 18.7,
+      "vixPerzentil": 70,
+      "schwankung": 48.2,
+      "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
