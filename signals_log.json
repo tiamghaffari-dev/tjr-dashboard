@@ -99253,8 +99253,8 @@
     "target2": 3883,
     "rr2": 2.18,
     "partialExit": true,
-    "trailStop": 3935.660156,
-    "tp1HitTs": null,
+    "trailStop": 3895.199951,
+    "tp1HitTs": 1794530700000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -99306,9 +99306,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794530986000,
+    "rMultiple": 1.44,
+    "exitPrice": 3895.199951,
+    "postmortem": {
+      "holdHours": 2.3,
+      "mfeR": 1.65,
+      "maeR": -0.27,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1794542154808",
@@ -99389,8 +99400,8 @@
     "target2": 3895.199951,
     "rr2": 1.65,
     "partialExit": true,
-    "trailStop": 3939.160156,
-    "tp1HitTs": null,
+    "trailStop": 3895.199951,
+    "tp1HitTs": 1794530700000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -99442,8 +99453,19 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794530986000,
+    "rMultiple": 1.65,
+    "exitPrice": 3895.199951,
+    "postmortem": {
+      "holdHours": 0.2,
+      "mfeR": 1.86,
+      "maeR": 0.31,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.33,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
