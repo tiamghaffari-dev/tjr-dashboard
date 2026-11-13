@@ -97559,9 +97559,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794517800000,
+    "rMultiple": 2,
+    "exitPrice": 70579.421875,
+    "postmortem": {
+      "holdHours": 4.6,
+      "mfeR": 2.29,
+      "maeR": -0.17,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1794520097362",
@@ -97766,9 +97777,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794517800000,
+    "rMultiple": 2,
+    "exitPrice": 70541.71875,
+    "postmortem": {
+      "holdHours": 4.1,
+      "mfeR": 2.21,
+      "maeR": -0.04,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794521349441",
@@ -98381,9 +98403,20 @@
       "sektorAllesRauschen": false,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794517800000,
+    "rMultiple": 2,
+    "exitPrice": 70535.710938,
+    "postmortem": {
+      "holdHours": 2.1,
+      "mfeR": 2.19,
+      "maeR": 0,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1794528550356",
