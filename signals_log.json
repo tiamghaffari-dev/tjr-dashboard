@@ -101384,9 +101384,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794587100000,
+    "rMultiple": 2.56,
+    "exitPrice": 0.9978,
+    "postmortem": {
+      "holdHours": 3.1,
+      "mfeR": 1.76,
+      "maeR": -0.65,
+      "towardTargetPct": 69,
+      "stopDistAdr": 0.18,
+      "targetDistAdr": 0.47,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "GCUSD-1794594748538",
@@ -101520,9 +101537,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794587100000,
+    "rMultiple": 2.67,
+    "exitPrice": 0.9978,
+    "postmortem": {
+      "holdHours": 2.3,
+      "mfeR": 1.87,
+      "maeR": -0.53,
+      "towardTargetPct": 70,
+      "stopDistAdr": 0.18,
+      "targetDistAdr": 0.49,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1794597264047",
@@ -101589,9 +101623,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794587100000,
+    "rMultiple": 2.64,
+    "exitPrice": 0.9978,
+    "postmortem": {
+      "holdHours": 2.2,
+      "mfeR": 1.84,
+      "maeR": -0.56,
+      "towardTargetPct": 70,
+      "stopDistAdr": 0.18,
+      "targetDistAdr": 0.49,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1794600093910",
@@ -102002,9 +102053,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794587100000,
+    "rMultiple": 1.22,
+    "exitPrice": 0.9978
   },
   {
     "id": "XRPUSD-1794612852028",
@@ -102210,9 +102262,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794587100000,
+    "rMultiple": 1.21,
+    "exitPrice": 0.9983
   },
   {
     "id": "BTCUSD-1794615656189",
@@ -102417,9 +102470,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794587100000,
+    "rMultiple": 1.11,
+    "exitPrice": 0.9983
   },
   {
     "id": "XRPUSD-1794617528474",
@@ -102486,9 +102540,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794587100000,
+    "rMultiple": 1.18,
+    "exitPrice": 0.9983
   },
   {
     "id": "BTCUSD-1794617840368",
