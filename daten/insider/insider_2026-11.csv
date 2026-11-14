@@ -553,3 +553,91 @@ meldung,transaktion,verzoegerungTage,symbol,firma,inhaber,rolle,stueck,preis,sum
 2026-11-12,2026-11-10,2,NTHI,NEONC TECHNOLOGIES HOLDINGS  INC.,CHEN THOMAS C,CMO,2284,4.379,10002,https://www.sec.gov/Archives/edgar/data/1979414/0001213900-26-118289.txt
 2026-11-12,2026-11-11,1,CLIK,Click Holdings Ltd.,Chan Chun Sing,Chief Executive Officer,20000,0.699,13980,https://www.sec.gov/Archives/edgar/data/2020027/0001493152-26-051250.txt
 2026-11-12,2026-11-10,2,LEE,LEE ENTERPRISES  Inc,Hoffmann David Henry,Director,7028,6.96,48915,https://www.sec.gov/Archives/edgar/data/2111899/0001183010-26-000067.txt
+2026-11-13,2026-11-11,2,ALDX,Aldeyra Therapeutics  Inc.,DOUGLAS RICHARD,Director,200000,0.6445,128900,https://www.sec.gov/Archives/edgar/data/1021015/0001193125-26-460743.txt
+2026-11-13,2026-11-11,2,INDI,indie Semiconductor  Inc.,ALDRICH DAVID J,Director,130000,2.3,299000,https://www.sec.gov/Archives/edgar/data/1025092/0001025092-26-000012.txt
+2026-11-13,2026-11-11,2,STWD,STARWOOD PROPERTY TRUST  INC.,STERNLICHT BARRY S,CEO  Chairman of the Board,830000,11.9146,9889118,https://www.sec.gov/Archives/edgar/data/1034657/0000905148-26-004805.txt
+2026-11-13,2026-11-12,1,STWD,STARWOOD PROPERTY TRUST  INC.,STERNLICHT BARRY S,CEO  Chairman of the Board,415000,11.5869,4808564,https://www.sec.gov/Archives/edgar/data/1034657/0000905148-26-004805.txt
+2026-11-13,2026-11-12,1,CRESY,CRESUD INC,Elsztain Alejandro Gustavo,Director,100000,0.89,89000,https://www.sec.gov/Archives/edgar/data/1034957/0002119764-26-000036.txt
+2026-11-13,2026-11-11,2,WY,WEYERHAEUSER CO,BECKWITT RICHARD,Director,15000,20.44,306600,https://www.sec.gov/Archives/edgar/data/106535/0001197193-26-000008.txt
+2026-11-13,2026-11-13,0,NGS,NATURAL GAS SERVICES GROUP INC,JACKSON JOHN EARL,Director,1900,28.9,54910,https://www.sec.gov/Archives/edgar/data/1084991/0001236849-26-000015.txt
+2026-11-13,2026-11-13,0,AKAM,AKAMAI TECHNOLOGIES INC,LEIGHTON F THOMSON,Chief Executive Officer,30000,85.08,2552400,https://www.sec.gov/Archives/edgar/data/1086222/0001106232-26-000012.txt
+2026-11-13,2026-11-11,2,SJT,SAN JUAN BASIN ROYALTY TRUST,OLIVER ERIC L,10% Eigner,251227,4.43,1112936,https://www.sec.gov/Archives/edgar/data/1168602/0001104659-26-127135.txt
+2026-11-13,2026-11-12,1,SJT,SAN JUAN BASIN ROYALTY TRUST,OLIVER ERIC L,10% Eigner,203962,4.41,899472,https://www.sec.gov/Archives/edgar/data/1168602/0001104659-26-127135.txt
+2026-11-13,2026-11-11,2,TXO,TXO Partners  L.P.,SIMPSON BOB R,Director,33591,13.8683,465850,https://www.sec.gov/Archives/edgar/data/1182684/0001182684-26-000024.txt
+2026-11-13,2026-11-12,1,TXO,TXO Partners  L.P.,SIMPSON BOB R,Director,33570,14.2797,479370,https://www.sec.gov/Archives/edgar/data/1182684/0001182684-26-000024.txt
+2026-11-13,2026-11-12,1,CCNE,CNB FINANCIAL CORP/PA,POWELL JEFFREY S,Director,560,35.66,19970,https://www.sec.gov/Archives/edgar/data/1195252/0001195252-26-000006.txt
+2026-11-13,2026-11-12,1,GLXZ,Galaxy Gaming  Inc.,BOUSHY JOHN M,Director,11250,1.58,17775,https://www.sec.gov/Archives/edgar/data/1200738/0001193125-26-461218.txt
+2026-11-13,2026-11-09,4,STIM,Neuronetics  Inc.,Chernett Jorey,10% Eigner,40000,1.99,79600,https://www.sec.gov/Archives/edgar/data/1227636/0001193805-26-001472.txt
+2026-11-13,2026-11-10,3,JYNT,JOINT Corp,JOBSON CHARLES E,10% Eigner,2825,6.65,18786,https://www.sec.gov/Archives/edgar/data/1232587/0001214659-26-014168.txt
+2026-11-13,2026-11-12,1,HPP,Hudson Pacific Properties  Inc.,LAMMAS MARK T,President,5000,8.73,43650,https://www.sec.gov/Archives/edgar/data/1246348/0001246348-26-000004.txt
+2026-11-13,2026-11-13,0,ALT,Altimmune  Inc.,WEAVER GREGORY L,Chief Financial Officer,10000,1.62,16200,https://www.sec.gov/Archives/edgar/data/1251779/0001251779-26-000017.txt
+2026-11-13,2026-11-12,1,VANI,Vivani Medical  Inc.,Dwyer Donald,Chief Business Officer,15000,1.033,15495,https://www.sec.gov/Archives/edgar/data/1266806/0001753926-26-002139.txt
+2026-11-13,2026-11-09,4,PSEC,PROSPECT CAPITAL CORP,Barry John F,CHIEF EXECUTIVE OFFICER,2604262,1.5082,3927748,https://www.sec.gov/Archives/edgar/data/1287032/0001294357-26-000020.txt
+2026-11-13,2026-11-10,3,PSEC,PROSPECT CAPITAL CORP,Barry John F,CHIEF EXECUTIVE OFFICER,1410633,1.5077,2126811,https://www.sec.gov/Archives/edgar/data/1287032/0001294357-26-000020.txt
+2026-11-13,2026-11-10,3,CTRI,Centuri Holdings  Inc.,MARIUCCI ANNE L,Director,4545,22,99990,https://www.sec.gov/Archives/edgar/data/1288050/0001981599-26-000139.txt
+2026-11-13,2026-11-13,0,GAM,GENERAL AMERICAN INVESTORS CO INC,Stark Eugene S,VP Administration,3000,22,66000,https://www.sec.gov/Archives/edgar/data/1315319/0000040417-26-000056.txt
+2026-11-13,2026-11-13,0,GAM,GENERAL AMERICAN INVESTORS CO INC,Stark Eugene S,VP Administration,1000,22,22000,https://www.sec.gov/Archives/edgar/data/1315319/0000040417-26-000056.txt
+2026-11-13,2026-11-11,2,GLP,GLOBAL PARTNERS LP,Global GP LLC,,2500,43.79,109475,https://www.sec.gov/Archives/edgar/data/1323468/0001339396-26-000088.txt
+2026-11-13,2026-11-12,1,GLP,GLOBAL PARTNERS LP,Global GP LLC,,5000,44.56,222800,https://www.sec.gov/Archives/edgar/data/1323468/0001339396-26-000088.txt
+2026-11-13,2026-11-13,0,ALT,Altimmune  Inc.,Durso Jerome Benedict,President and CEO,30700,1.6187,49694,https://www.sec.gov/Archives/edgar/data/1326190/0001698665-26-000011.txt
+2026-11-13,2026-11-13,0,ALT,Altimmune  Inc.,Pisano Wayne,Director,10000,1.635,16350,https://www.sec.gov/Archives/edgar/data/1326190/0001743611-26-000008.txt
+2026-11-13,2026-11-11,2,BH,Biglari Holdings Inc.,BIGLARI  SARDAR,Chairman and CEO,1017,1727.65,1757020,https://www.sec.gov/Archives/edgar/data/1334426/0000921895-26-003050.txt
+2026-11-13,2026-11-12,1,BH,Biglari Holdings Inc.,BIGLARI  SARDAR,Chairman and CEO,2012,1767.99,3557196,https://www.sec.gov/Archives/edgar/data/1334426/0000921895-26-003050.txt
+2026-11-13,2026-11-12,1,BH,Biglari Holdings Inc.,BIGLARI  SARDAR,Chairman and CEO,628,354.95,222909,https://www.sec.gov/Archives/edgar/data/1334426/0000921895-26-003050.txt
+2026-11-13,2026-11-12,1,FF,FutureFuel Corp.,SPARKS ROSE,Chief Financial Officer,10750,2.82,30315,https://www.sec.gov/Archives/edgar/data/1337298/0001437749-26-036876.txt
+2026-11-13,2026-11-12,1,FF,FutureFuel Corp.,Polet Roeland,Chief Executive Officer,48080,2.83,136066,https://www.sec.gov/Archives/edgar/data/1337298/0001437749-26-036877.txt
+2026-11-13,2026-11-12,1,FF,FutureFuel Corp.,Butcher Pamela R,Director,10000,2.82,28200,https://www.sec.gov/Archives/edgar/data/1337298/0001437749-26-036878.txt
+2026-11-13,2026-11-12,1,FF,FutureFuel Corp.,Bedell Donald C.,Director,40000,2.83,113200,https://www.sec.gov/Archives/edgar/data/1337298/0001437749-26-036880.txt
+2026-11-13,2026-11-10,3,IONS,IONIS PHARMACEUTICALS INC,Hayden Michael R,Director,5000,29.64,148200,https://www.sec.gov/Archives/edgar/data/1352908/0000874015-26-000273.txt
+2026-11-13,2026-11-12,1,VISN,Vistance Networks  Inc.,Yates Timothy T,Director,25000,3.9473,98683,https://www.sec.gov/Archives/edgar/data/1354697/0001193125-26-460596.txt
+2026-11-13,2026-11-11,2,FUN,Six Flags Entertainment Corporation/NEW,JAFFER REHAN,Director,350000,11.09,3881500,https://www.sec.gov/Archives/edgar/data/1364501/0001999001-26-000119.txt
+2026-11-13,2026-11-12,1,FUN,Six Flags Entertainment Corporation/NEW,JAFFER REHAN,Director,250000,11.18,2795000,https://www.sec.gov/Archives/edgar/data/1364501/0001999001-26-000119.txt
+2026-11-13,2026-11-13,0,FUN,Six Flags Entertainment Corporation/NEW,JAFFER REHAN,Director,225000,11.42,2569500,https://www.sec.gov/Archives/edgar/data/1364501/0001999001-26-000119.txt
+2026-11-13,2026-11-13,0,BW,Babcock &amp; Wilcox Enterprises  Inc.,Young Kenneth M,Chief Executive Officer,10000,4.35,43500,https://www.sec.gov/Archives/edgar/data/1365572/0001630805-26-000087.txt
+2026-11-13,2026-11-13,0,CCNE,CNB FINANCIAL CORP/PA,Peduzzi Michael D,President &amp; CEO,400,35.63,14252,https://www.sec.gov/Archives/edgar/data/1409722/0001409722-26-000015.txt
+2026-11-13,2026-11-12,1,DTI,Drilling Tools International Corp,Neuman Eric C,Director,37267,1.78,66335,https://www.sec.gov/Archives/edgar/data/1413613/0001193125-26-460560.txt
+2026-11-13,2026-11-13,0,ARR,Armour Residential REIT  Inc.,Macauley Desmond,Co-Chief Investment Officer,1000,11.8299,11830,https://www.sec.gov/Archives/edgar/data/1428205/0002016620-26-000011.txt
+2026-11-13,2026-11-13,0,NTHI,NEONC TECHNOLOGIES HOLDINGS  INC.,Heshmatpour Amir F,CEO  President,30000,5.0167,150501,https://www.sec.gov/Archives/edgar/data/1443035/0001213900-26-119920.txt
+2026-11-13,2026-11-11,2,STWD,STARWOOD PROPERTY TRUST  INC.,Pollack Jonathan Lee,Director,85000,11.8361,1006069,https://www.sec.gov/Archives/edgar/data/1465128/0000905148-26-004807.txt
+2026-11-13,2026-11-11,2,STWD,STARWOOD PROPERTY TRUST  INC.,Pollack Jonathan Lee,Director,84800,11.8795,1007382,https://www.sec.gov/Archives/edgar/data/1465128/0000905148-26-004807.txt
+2026-11-13,2026-11-10,3,NXGL,NEXGEL  INC.,glassman steven mark,Director,4546,5.5,25003,https://www.sec.gov/Archives/edgar/data/1468929/0001493152-26-051917.txt
+2026-11-13,2026-11-10,3,NXGL,NEXGEL  INC.,Kieser Brian Joseph,Interim CEO,133216,5.5,732688,https://www.sec.gov/Archives/edgar/data/1468929/0001493152-26-051920.txt
+2026-11-13,2026-11-11,2,CTRI,Centuri Holdings  Inc.,Patton Charles R.,Director,11000,22.72,249920,https://www.sec.gov/Archives/edgar/data/1473188/0001981599-26-000141.txt
+2026-11-13,2026-11-12,1,CAT,CATERPILLAR INC,MacLennan David,Director,350,596.1,208635,https://www.sec.gov/Archives/edgar/data/1498535/0001104659-26-127088.txt
+2026-11-13,2026-11-12,1,LPCN,Lipocine Inc.,Patel Mahesh V.,Chief Executive Officer,25000,1.5796,39490,https://www.sec.gov/Archives/edgar/data/1535955/0001493152-26-051673.txt
+2026-11-13,2026-11-13,0,FCPT,Four Corners Property Trust  Inc.,Lenehan William H,President and CEO,6468,23.1899,149992,https://www.sec.gov/Archives/edgar/data/1548409/0001193125-26-460757.txt
+2026-11-13,2026-11-11,2,ZPTA,Zapata Quantum  Inc.,Golestani Clark,Director,40000,0.75,30000,https://www.sec.gov/Archives/edgar/data/1563786/0001079973-26-001494.txt
+2026-11-13,2026-11-06,7,GROW,U S GLOBAL INVESTORS INC,Gator Capital Management  LLC,10% Eigner,33034,2.5032,82691,https://www.sec.gov/Archives/edgar/data/1570284/0001062993-26-006003.txt
+2026-11-13,2026-11-12,1,EOSE,Eos Energy Enterprises  Inc.,DIMITRIEF ALEXANDER,Director,25000,1.86,46500,https://www.sec.gov/Archives/edgar/data/1614732/0001628280-26-073597.txt
+2026-11-13,2026-11-10,3,NXRT,NexPoint Residential Trust  Inc.,McGraner Matt,See Remarks,6365,15.7,99931,https://www.sec.gov/Archives/edgar/data/1620393/0001437749-26-036918.txt
+2026-11-13,2026-11-03,10,XBIT,XBiotech Inc.,SIMARD JOHN,Director,70000,2.0487,143409,https://www.sec.gov/Archives/edgar/data/1626878/0001193125-26-460514.txt
+2026-11-13,2026-11-11,2,CRVS,Corvus Pharmaceuticals  Inc.,Arcara Jeffrey,Chief Business Officer,3000,11.4602,34381,https://www.sec.gov/Archives/edgar/data/1626971/0001610717-26-000454.txt
+2026-11-13,2026-11-12,1,TRTX,TPG RE Finance Trust  Inc.,Gillmore Michael,Director,2500,6.5,16250,https://www.sec.gov/Archives/edgar/data/1630472/0001193125-26-460638.txt
+2026-11-13,2026-11-11,2,TRTX,TPG RE Finance Trust  Inc.,Smith Michael Bradley,Director,5000,6.47,32350,https://www.sec.gov/Archives/edgar/data/1630472/0001193125-26-460639.txt
+2026-11-13,2026-11-11,2,BW,Babcock &amp; Wilcox Enterprises  Inc.,Tato Joseph A,Director,8304,5.27,43762,https://www.sec.gov/Archives/edgar/data/1630805/0001630805-26-000089.txt
+2026-11-13,2026-11-12,1,BW,Babcock &amp; Wilcox Enterprises  Inc.,Moeller Philip D,Director,3000,4.65,13950,https://www.sec.gov/Archives/edgar/data/1630805/0001630805-26-000091.txt
+2026-11-13,2026-11-11,2,UPST,Upstart Holdings  Inc.,Gu Paul,Chief Executive Officer,50000,20.568,1028400,https://www.sec.gov/Archives/edgar/data/1647639/0001832812-26-000012.txt
+2026-11-13,2026-11-12,1,TEAM,Atlassian Corp,Cannon-Brookes Michael,CEO  Co-Founder,1500,152.8193,229229,https://www.sec.gov/Archives/edgar/data/1650372/0001666120-26-000034.txt
+2026-11-13,2026-11-12,1,TEAM,Atlassian Corp,Cannon-Brookes Michael,CEO  Co-Founder,200,153.63,30726,https://www.sec.gov/Archives/edgar/data/1650372/0001666120-26-000034.txt
+2026-11-13,2026-11-12,1,TEAM,Atlassian Corp,Cannon-Brookes Michael,CEO  Co-Founder,5099,149.46,762097,https://www.sec.gov/Archives/edgar/data/1650372/0001666120-26-000034.txt
+2026-11-13,2026-11-12,1,TEAM,Atlassian Corp,Cannon-Brookes Michael,CEO  Co-Founder,901,151.3553,136371,https://www.sec.gov/Archives/edgar/data/1650372/0001666120-26-000034.txt
+2026-11-13,2026-11-12,1,TEAM,Atlassian Corp,Cannon-Brookes Michael,CEO  Co-Founder,5700,148.421,846000,https://www.sec.gov/Archives/edgar/data/1650372/0001666120-26-000034.txt
+2026-11-13,2026-11-11,2,NXTC,NextCure  Inc.,ADAR1 Capital Management  LLC,10% Eigner,12333,5.0999,62897,https://www.sec.gov/Archives/edgar/data/1661059/0001940272-26-000032.txt
+2026-11-13,2026-11-13,0,ABCL,AbCellera Biologics Inc.,Booth Andrew,Chief Financial Officer,8600,11.33,97438,https://www.sec.gov/Archives/edgar/data/1703057/0001834411-26-000010.txt
+2026-11-13,2026-11-10,3,ZLAB,Zai Lab Ltd,GAYNOR RICHARD,Director,1228,27.19,33389,https://www.sec.gov/Archives/edgar/data/1704292/0000905148-26-004801.txt
+2026-11-13,2026-11-13,0,MRBK,Meridian Corp,Warriner Kenneth Thomas,Director,1000,16.185,16185,https://www.sec.gov/Archives/edgar/data/1750735/0002131880-26-000008.txt
+2026-11-13,2026-11-11,2,KGS,Kodiak Gas Services  Inc.,Darden Alexander Newsom,Director,10000,44.99,449900,https://www.sec.gov/Archives/edgar/data/1767042/0001193125-26-460648.txt
+2026-11-13,2026-11-12,1,KGS,Kodiak Gas Services  Inc.,Holloway Gretchen Lynn,Director,1145,43.629,49955,https://www.sec.gov/Archives/edgar/data/1767042/0001193125-26-460666.txt
+2026-11-13,2026-11-11,2,TRIN,Trinity Capital Inc.,Brown Kyle Steven,CEO  President and CIO,3215.1,18.04,58000,https://www.sec.gov/Archives/edgar/data/1786108/0001193125-26-460772.txt
+2026-11-13,2026-11-11,2,CTEV,Claritev Corp,Dalton Travis,Pres.  CEO &amp; Executive Chair,5110,29.34,149927,https://www.sec.gov/Archives/edgar/data/1793229/0001628280-26-073944.txt
+2026-11-13,2026-11-10,3,KEEL,Keel Infrastructure Corp.,Freedman Amy,Director,25000,1.88,47000,https://www.sec.gov/Archives/edgar/data/1812477/0002115914-26-000003.txt
+2026-11-13,2026-11-12,1,KEEL,Keel Infrastructure Corp.,Freedman Amy,Director,15000,1.94,29100,https://www.sec.gov/Archives/edgar/data/1812477/0002115914-26-000003.txt
+2026-11-13,2026-11-11,2,ECX,ECARX Holdings Inc.,Shen Ziyu,Chief Executive Officer,300000,0.7789,233670,https://www.sec.gov/Archives/edgar/data/1861974/0001104659-26-126498.txt
+2026-11-13,2026-11-12,1,DTI,Drilling Tools International Corp,Prejean Robert Wayne,Chief Executive Officer,10000,1.773,17730,https://www.sec.gov/Archives/edgar/data/1884516/0001193125-26-460561.txt
+2026-11-13,2026-11-11,2,FISN,DEEP FISSION  INC.,Muller Elizabeth,CEO  President,10000,2.1612,21612,https://www.sec.gov/Archives/edgar/data/1918102/0001104659-26-127276.txt
+2026-11-13,2026-11-12,1,CATX,Perspective Therapeutics  Inc.,Puhlmann Markus,Chief Medical Officer,35000,0.8447,29565,https://www.sec.gov/Archives/edgar/data/1965071/0001193125-26-459395.txt
+2026-11-13,2026-11-11,2,IOND,Ionic Digital Inc.,Abbate Michael,Director,12493,66.2,827037,https://www.sec.gov/Archives/edgar/data/2007691/0001185185-26-005414.txt
+2026-11-13,2026-11-12,1,IOND,Ionic Digital Inc.,Abbate Michael,Director,7149,64.98,464542,https://www.sec.gov/Archives/edgar/data/2007691/0001185185-26-005414.txt
+2026-11-13,2026-11-12,1,OWLS,OBOOK HOLDINGS INC.,WANG CHUN KAI,Chief Executive Officer,6171,2.172,13403,https://www.sec.gov/Archives/edgar/data/2025416/0002109337-26-000016.txt
+2026-11-13,2026-11-12,1,AEBI,Aebi Schmidt Holding AG,Schroeder Henning,CEO Europe and ROW,1156,10.5,12138,https://www.sec.gov/Archives/edgar/data/2048519/0001437749-26-036915.txt
+2026-11-13,2026-11-11,2,CSQR,Csquare  Inc.,Cook Steven R. E.,Chief Financial Officer,2027.8053,17.26,35000,https://www.sec.gov/Archives/edgar/data/2105398/0000950142-26-003016.txt
