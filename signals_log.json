@@ -101085,9 +101085,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 2.73,
+    "exitPrice": 67624.929688,
+    "postmortem": {
+      "holdHours": 8.7,
+      "mfeR": 4.34,
+      "maeR": -0.49,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.55,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "GCUSD-1794592223888",
@@ -101709,9 +101726,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 3.34,
+    "exitPrice": 1896.589966,
+    "postmortem": {
+      "holdHours": 6.4,
+      "mfeR": 4.43,
+      "maeR": -0.24,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.66,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1794600093910",
@@ -101915,9 +101943,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 1.42,
+    "exitPrice": 67624.929688,
+    "postmortem": {
+      "holdHours": 4.3,
+      "mfeR": 3.03,
+      "maeR": -0.34,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1794608593138",
@@ -101984,9 +102023,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 1.4,
+    "exitPrice": 67624.929688,
+    "postmortem": {
+      "holdHours": 4,
+      "mfeR": 3,
+      "maeR": -0.36,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.28,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794608593138",
@@ -102124,9 +102174,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 2,
+    "exitPrice": 0.9882,
+    "postmortem": {
+      "holdHours": 2.8,
+      "mfeR": 2.37,
+      "maeR": -0.49,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.19,
+      "targetDistAdr": 0.37,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "BTCUSD-1794614413007",
@@ -102193,9 +102260,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 1.43,
+    "exitPrice": 67627.453125,
+    "postmortem": {
+      "holdHours": 2.4,
+      "mfeR": 3.04,
+      "maeR": -0.26,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794615345467",
@@ -102332,9 +102410,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 1.43,
+    "exitPrice": 67627.453125,
+    "postmortem": {
+      "holdHours": 2.1,
+      "mfeR": 3.05,
+      "maeR": -0.22,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1794616281386",
@@ -102401,9 +102490,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 1.34,
+    "exitPrice": 67627.453125,
+    "postmortem": {
+      "holdHours": 1.9,
+      "mfeR": 2.96,
+      "maeR": -0.31,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.27,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794616281386",
@@ -102610,9 +102710,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 1.33,
+    "exitPrice": 67627.453125,
+    "postmortem": {
+      "holdHours": 1.5,
+      "mfeR": 2.94,
+      "maeR": -0.26,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.27,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1794619401031",
@@ -102679,9 +102790,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 1.34,
+    "exitPrice": 67627.453125,
+    "postmortem": {
+      "holdHours": 1,
+      "mfeR": 2.96,
+      "maeR": -0.25,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.27,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1794620023769",
@@ -102746,9 +102868,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 1.24,
+    "exitPrice": 67627.453125,
+    "postmortem": {
+      "holdHours": 0.9,
+      "mfeR": 2.85,
+      "maeR": -0.35,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.25,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1794621274091",
@@ -102813,8 +102946,19 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794605100000,
+    "rMultiple": 1.37,
+    "exitPrice": 67627.453125,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 2.99,
+      "maeR": -0.03,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.27,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
