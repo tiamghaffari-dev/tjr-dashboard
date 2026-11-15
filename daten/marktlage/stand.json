@@ -1,6 +1,6 @@
 {
-  "stand": "2026-11-15 02:08 UTC",
-  "standIso": "2026-11-15T02:08:05.327Z",
+  "stand": "2026-11-15 20:18 UTC",
+  "standIso": "2026-11-15T20:18:04.951Z",
   "gruppen": [
     "Gehandelt",
     "Index",
@@ -16,8 +16,8 @@
   ],
   "veraltetTage": 4,
   "symboltestVom": "2026-11-06T12:32:49.625Z",
-  "anzahl": 50,
-  "anzahlOk": 50,
+  "anzahl": 52,
+  "anzahlOk": 52,
   "eintraege": [
     {
       "gruppe": "Index",
@@ -30,7 +30,7 @@
       "boerse": "PCX",
       "stand": 204.56,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -63,7 +63,7 @@
       "boerse": "AMS",
       "stand": 130.49,
       "standDatum": "2026-11-13",
-      "alterTage": 1.4,
+      "alterTage": 2.2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -96,7 +96,7 @@
       "boerse": "SNP",
       "stand": 7561.67,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 1.9,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -129,7 +129,7 @@
       "boerse": "NIM",
       "stand": 27943.74,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 1.9,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -162,7 +162,7 @@
       "boerse": "GER",
       "stand": 26749.95,
       "standDatum": "2026-11-13",
-      "alterTage": 1.4,
+      "alterTage": 2.1,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -195,7 +195,7 @@
       "boerse": "ZRH",
       "stand": 6386.86,
       "standDatum": "2026-11-13",
-      "alterTage": 1.4,
+      "alterTage": 2.1,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -228,7 +228,7 @@
       "boerse": "PCX",
       "stand": 221.16,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -261,11 +261,11 @@
       "boerse": "NYM",
       "stand": 88.56,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 1.9,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
-      "tage": 251,
+      "tage": 250,
       "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
@@ -294,11 +294,11 @@
       "boerse": "NYM",
       "stand": 95.84,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 1.9,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
-      "tage": 251,
+      "tage": 250,
       "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
@@ -327,11 +327,11 @@
       "boerse": "CMX",
       "stand": 3886.3,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 1.9,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
-      "tage": 251,
+      "tage": 250,
       "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
@@ -360,21 +360,21 @@
       "boerse": "CMX",
       "stand": 49.12,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 1.9,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
-      "tage": 251,
+      "tage": 250,
       "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
-      "tag": -1.88,
+      "tag": -1.7,
       "tagVon": 49.97,
       "tagVonDatum": "2026-11-12",
-      "woche": -5.35,
+      "woche": -5.18,
       "wocheVon": 51.8,
       "wocheVonDatum": "2026-11-06",
-      "monat": -11.74,
+      "monat": -11.57,
       "monatVon": 55.55,
       "monatVonDatum": "2026-10-14",
       "jahr": null,
@@ -393,11 +393,11 @@
       "boerse": "NYM",
       "stand": 3.23,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 1.9,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
-      "tage": 251,
+      "tage": 250,
       "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
@@ -426,21 +426,21 @@
       "boerse": "CMX",
       "stand": 6.09,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 1.9,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
-      "tage": 251,
+      "tage": 250,
       "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
-      "tag": -1.67,
+      "tag": -1.49,
       "tagVon": 6.1825,
       "tagVonDatum": "2026-11-12",
-      "woche": -2.23,
+      "woche": -2.05,
       "wocheVon": 6.218,
       "wocheVonDatum": "2026-11-06",
-      "monat": -8.05,
+      "monat": -7.88,
       "monatVon": 6.6115,
       "monatVonDatum": "2026-10-14",
       "jahr": null,
@@ -459,11 +459,11 @@
       "boerse": "CBT",
       "stand": 593.25,
       "standDatum": "2026-11-13",
-      "alterTage": 1.3,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
-      "tage": 251,
+      "tage": 250,
       "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
@@ -492,7 +492,7 @@
       "boerse": "CXI",
       "stand": 19.3,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -525,7 +525,7 @@
       "boerse": "CGI",
       "stand": 5.154,
       "standDatum": "2026-11-13",
-      "alterTage": 1.3,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -558,11 +558,11 @@
       "boerse": "NYB",
       "stand": 103.41,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 1.9,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
-      "tage": 251,
+      "tage": 250,
       "luecken": 52,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
@@ -591,7 +591,7 @@
       "boerse": "WCB",
       "stand": 29.38,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -624,7 +624,7 @@
       "boerse": "PCX",
       "stand": 170.28,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -657,7 +657,7 @@
       "boerse": "PCX",
       "stand": 64.96,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -690,7 +690,7 @@
       "boerse": "PCX",
       "stand": 58.68,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -723,7 +723,7 @@
       "boerse": "PCX",
       "stand": 52.23,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -756,7 +756,7 @@
       "boerse": "BTS",
       "stand": 71.51,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -789,7 +789,7 @@
       "boerse": "PCX",
       "stand": 119.98,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -822,7 +822,7 @@
       "boerse": "PCX",
       "stand": 92.35,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -855,7 +855,7 @@
       "boerse": "PCX",
       "stand": 44.04,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -888,7 +888,7 @@
       "boerse": "PCX",
       "stand": 188.85,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -921,7 +921,7 @@
       "boerse": "NGM",
       "stand": 486.75,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -954,7 +954,7 @@
       "boerse": "GER",
       "stand": 765.5,
       "standDatum": "2026-11-13",
-      "alterTage": 1.4,
+      "alterTage": 2.2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -987,7 +987,7 @@
       "boerse": "NMS",
       "stand": 390.22,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1011,6 +1011,72 @@
     },
     {
       "gruppe": "Einzelwert",
+      "name": "Nvidia",
+      "symbol": "NVDA",
+      "hinweis": "Nasdaq",
+      "einheit": null,
+      "ok": true,
+      "waehrung": "USD",
+      "boerse": "NMS",
+      "stand": 162.85,
+      "standDatum": "2026-11-13",
+      "alterTage": 2,
+      "veraltet": false,
+      "standAusLivekurs": true,
+      "letzteKerzeDatum": "2026-11-13",
+      "tage": 251,
+      "luecken": 0,
+      "stempelKorrigiert": false,
+      "stempelVerworfen": 0,
+      "tag": -2.01,
+      "tagVon": 166.19,
+      "tagVonDatum": "2026-11-12",
+      "woche": -12.75,
+      "wocheVon": 186.64,
+      "wocheVonDatum": "2026-11-06",
+      "monat": -26.41,
+      "monatVon": 221.3,
+      "monatVonDatum": "2026-10-14",
+      "jahr": null,
+      "jahrVon": null,
+      "jahrVonDatum": null,
+      "versuche": 1
+    },
+    {
+      "gruppe": "Einzelwert",
+      "name": "AMD",
+      "symbol": "AMD",
+      "hinweis": "Nasdaq - Vergleichswert zu Nvidia",
+      "einheit": null,
+      "ok": true,
+      "waehrung": "USD",
+      "boerse": "NMS",
+      "stand": 534.06,
+      "standDatum": "2026-11-13",
+      "alterTage": 2,
+      "veraltet": false,
+      "standAusLivekurs": true,
+      "letzteKerzeDatum": "2026-11-13",
+      "tage": 251,
+      "luecken": 0,
+      "stempelKorrigiert": false,
+      "stempelVerworfen": 0,
+      "tag": -8.75,
+      "tagVon": 585.3,
+      "tagVonDatum": "2026-11-12",
+      "woche": 18.93,
+      "wocheVon": 449.04,
+      "wocheVonDatum": "2026-11-06",
+      "monat": -6.44,
+      "monatVon": 570.82,
+      "monatVonDatum": "2026-10-14",
+      "jahr": null,
+      "jahrVon": null,
+      "jahrVonDatum": null,
+      "versuche": 1
+    },
+    {
+      "gruppe": "Einzelwert",
       "name": "Hensoldt",
       "symbol": "HAG.DE",
       "hinweis": "Rüstungselektronik, Frankfurt",
@@ -1020,7 +1086,7 @@
       "boerse": "GER",
       "stand": 80.42,
       "standDatum": "2026-11-13",
-      "alterTage": 1.4,
+      "alterTage": 2.2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1053,7 +1119,7 @@
       "boerse": "GER",
       "stand": 49.63,
       "standDatum": "2026-11-13",
-      "alterTage": 1.4,
+      "alterTage": 2.2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1086,7 +1152,7 @@
       "boerse": "CGI",
       "stand": 4.122,
       "standDatum": "2026-11-13",
-      "alterTage": 1.3,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1119,7 +1185,7 @@
       "boerse": "CGI",
       "stand": 4.981,
       "standDatum": "2026-11-13",
-      "alterTage": 1.3,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1152,7 +1218,7 @@
       "boerse": "CGI",
       "stand": 5.481,
       "standDatum": "2026-11-13",
-      "alterTage": 1.3,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1185,7 +1251,7 @@
       "boerse": "PCX",
       "stand": 76.94,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1218,7 +1284,7 @@
       "boerse": "NGM",
       "stand": 90.04,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1251,7 +1317,7 @@
       "boerse": "PCX",
       "stand": 102.81,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1284,7 +1350,7 @@
       "boerse": "PCX",
       "stand": 104.61,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1315,16 +1381,16 @@
       "ok": true,
       "waehrung": "USD",
       "boerse": "CCY",
-      "stand": 1.1028,
-      "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "stand": 1.1031,
+      "standDatum": "2026-11-15",
+      "alterTage": 0,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
       "tage": 260,
       "luecken": 2,
       "stempelKorrigiert": true,
-      "stempelVerworfen": 0,
+      "stempelVerworfen": 1,
       "tag": -0.41,
       "tagVon": 1.1095,
       "tagVonDatum": "2026-11-12",
@@ -1348,16 +1414,16 @@
       "ok": true,
       "waehrung": "JPY",
       "boerse": "CCY",
-      "stand": 159.69,
-      "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "stand": 159.54,
+      "standDatum": "2026-11-15",
+      "alterTage": 0,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
       "tage": 260,
       "luecken": 2,
       "stempelKorrigiert": true,
-      "stempelVerworfen": 0,
+      "stempelVerworfen": 1,
       "tag": 0.09,
       "tagVon": 159.73,
       "tagVonDatum": "2026-11-12",
@@ -1381,16 +1447,16 @@
       "ok": true,
       "waehrung": "CHF",
       "boerse": "CCY",
-      "stand": 0.9243,
-      "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "stand": 0.9251,
+      "standDatum": "2026-11-15",
+      "alterTage": 0,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
       "tage": 260,
       "luecken": 2,
       "stempelKorrigiert": true,
-      "stempelVerworfen": 0,
+      "stempelVerworfen": 1,
       "tag": 0.03,
       "tagVon": 0.92337,
       "tagVonDatum": "2026-11-12",
@@ -1416,7 +1482,7 @@
       "boerse": "PCX",
       "stand": 60.92,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1449,7 +1515,7 @@
       "boerse": "PCX",
       "stand": 91.76,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1482,7 +1548,7 @@
       "boerse": "NGM",
       "stand": 49.57,
       "standDatum": "2026-11-13",
-      "alterTage": 1.2,
+      "alterTage": 2,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1513,26 +1579,26 @@
       "ok": true,
       "waehrung": "USD",
       "boerse": "CCC",
-      "stand": 69.56,
+      "stand": 71.27,
       "standDatum": "2026-11-15",
       "alterTage": 0,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-15",
-      "tage": 365,
-      "luecken": 1,
+      "tage": 366,
+      "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
-      "tag": -10.93,
-      "tagVon": 78.1,
-      "tagVonDatum": "2026-11-13",
-      "woche": -19.34,
+      "tag": 1.56,
+      "tagVon": 70.18,
+      "tagVonDatum": "2026-11-14",
+      "woche": -17.36,
       "wocheVon": 86.24,
       "wocheVonDatum": "2026-11-08",
-      "monat": -33.31,
+      "monat": -31.67,
       "monatVon": 104.3,
       "monatVonDatum": "2026-10-16",
-      "jahr": -50.15,
+      "jahr": -48.92,
       "jahrVon": 139.54,
       "jahrVonDatum": "2025-11-15",
       "versuche": 1
@@ -1546,26 +1612,26 @@
       "ok": true,
       "waehrung": "USD",
       "boerse": "CCC",
-      "stand": 63567.62,
+      "stand": 64685.88,
       "standDatum": "2026-11-15",
       "alterTage": 0,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-15",
-      "tage": 365,
-      "luecken": 1,
+      "tage": 366,
+      "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
-      "tag": -6.86,
-      "tagVon": 68249.27,
-      "tagVonDatum": "2026-11-13",
-      "woche": -14.77,
+      "tag": 0.87,
+      "tagVon": 64128.05,
+      "tagVonDatum": "2026-11-14",
+      "woche": -13.27,
       "wocheVon": 74584.65,
       "wocheVonDatum": "2026-11-08",
-      "monat": -22,
+      "monat": -20.63,
       "monatVon": 81500.8,
       "monatVonDatum": "2026-10-16",
-      "jahr": -33.47,
+      "jahr": -32.3,
       "jahrVon": 95549.15,
       "jahrVonDatum": "2025-11-15",
       "versuche": 1
@@ -1579,26 +1645,26 @@
       "ok": true,
       "waehrung": "USD",
       "boerse": "CCC",
-      "stand": 1759.19,
+      "stand": 1817.09,
       "standDatum": "2026-11-15",
       "alterTage": 0,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-15",
-      "tage": 365,
-      "luecken": 1,
+      "tage": 366,
+      "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
-      "tag": -8.74,
-      "tagVon": 1927.59,
-      "tagVonDatum": "2026-11-13",
-      "woche": -17.06,
+      "tag": 2.71,
+      "tagVon": 1769.12,
+      "tagVonDatum": "2026-11-14",
+      "woche": -14.33,
       "wocheVon": 2120.98,
       "wocheVonDatum": "2026-11-08",
-      "monat": -27.3,
+      "monat": -24.91,
       "monatVon": 2419.77,
       "monatVonDatum": "2026-10-16",
-      "jahr": -44.45,
+      "jahr": -42.62,
       "jahrVon": 3166.63,
       "jahrVonDatum": "2025-11-15",
       "versuche": 1
@@ -1612,26 +1678,26 @@
       "ok": true,
       "waehrung": "USD",
       "boerse": "CCC",
-      "stand": 0.9294,
+      "stand": 0.9555,
       "standDatum": "2026-11-15",
       "alterTage": 0,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-15",
-      "tage": 365,
-      "luecken": 1,
+      "tage": 366,
+      "luecken": 0,
       "stempelKorrigiert": false,
       "stempelVerworfen": 0,
-      "tag": -7.93,
-      "tagVon": 1.0094,
-      "tagVonDatum": "2026-11-13",
-      "woche": -16.31,
+      "tag": 4.65,
+      "tagVon": 0.913031,
+      "tagVonDatum": "2026-11-14",
+      "woche": -13.95,
       "wocheVon": 1.1105,
       "wocheVonDatum": "2026-11-08",
-      "monat": -29.06,
+      "monat": -27.06,
       "monatVon": 1.31,
       "monatVonDatum": "2026-10-16",
-      "jahr": -58.42,
+      "jahr": -57.25,
       "jahrVon": 2.2352,
       "jahrVonDatum": "2025-11-15",
       "versuche": 1
@@ -1645,9 +1711,9 @@
       "ok": true,
       "waehrung": "USD",
       "boerse": "CCY",
-      "stand": 1.3212,
+      "stand": 1.3223,
       "standDatum": "2026-11-15",
-      "alterTage": 0.1,
+      "alterTage": 0,
       "veraltet": false,
       "standAusLivekurs": true,
       "letzteKerzeDatum": "2026-11-13",
@@ -1685,29 +1751,29 @@
         {
           "name": "Bitcoin",
           "symbol": "BTC-USD",
-          "schwankung": 42.9,
+          "schwankung": 41.8,
           "jahrMedian": 32.3,
-          "perzentil": 87,
-          "stufe": "hoch",
-          "urteil": "Schwankt stärker als üblich - höher als an 87 % der Tage im letzten Jahr."
+          "perzentil": 84,
+          "stufe": "rauschen",
+          "urteil": "Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."
         },
         {
           "name": "Ethereum",
           "symbol": "ETH-USD",
-          "schwankung": 57,
-          "jahrMedian": 44,
-          "perzentil": 72,
+          "schwankung": 57.7,
+          "jahrMedian": 44.3,
+          "perzentil": 74,
           "stufe": "rauschen",
           "urteil": "Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."
         },
         {
           "name": "XRP",
           "symbol": "XRP-USD",
-          "schwankung": 50.9,
-          "jahrMedian": 41.3,
-          "perzentil": 70,
-          "stufe": "rauschen",
-          "urteil": "Unterschied zum üblichen Wert des Jahres kleiner als die Messungenauigkeit (±32 %) - also kein Unterschied, den man behaupten sollte."
+          "schwankung": 58,
+          "jahrMedian": 41.4,
+          "perzentil": 75,
+          "stufe": "hoch",
+          "urteil": "Schwankt stärker als üblich - höher als an 75 % der Tage im letzten Jahr."
         },
         {
           "name": "GBP/USD",
@@ -1850,23 +1916,23 @@
       "herkunft": [
         {
           "symbol": "BTC-USD",
-          "eigeneTage": 365,
+          "eigeneTage": 366,
           "ohneDiesen": 0,
-          "stempelzeit": "00:00 (365x)",
+          "stempelzeit": "00:00 (366x)",
           "fehlen": null
         },
         {
           "symbol": "ETH-USD",
-          "eigeneTage": 365,
+          "eigeneTage": 366,
           "ohneDiesen": 0,
-          "stempelzeit": "00:00 (365x)",
+          "stempelzeit": "00:00 (366x)",
           "fehlen": null
         },
         {
           "symbol": "XRP-USD",
-          "eigeneTage": 365,
+          "eigeneTage": 366,
           "ohneDiesen": 0,
-          "stempelzeit": "00:00 (365x)",
+          "stempelzeit": "00:00 (366x)",
           "fehlen": null
         },
         {
@@ -1885,9 +1951,9 @@
         },
         {
           "symbol": "GC=F",
-          "eigeneTage": 251,
+          "eigeneTage": 250,
           "ohneDiesen": 0,
-          "stempelzeit": "04:00 (165x), 05:00 (84x)",
+          "stempelzeit": "04:00 (165x), 05:00 (83x)",
           "fehlen": null
         }
       ],
@@ -2111,11 +2177,11 @@
         "ok": true,
         "titel": "Gold je Silber",
         "frage": "Wie viele Unzen Silber kostet eine Unze Gold?",
-        "jetzt": 79.3,
+        "jetzt": 79.1,
         "perzentil": 96,
-        "tage": 251,
+        "tage": 250,
         "bisTag": "2026-11-13",
-        "satz": "Eine Unze Gold kostet gerade 79,3 Unzen Silber - höher als an 96 % der letzten 251 Handelstage.",
+        "satz": "Eine Unze Gold kostet gerade 79,1 Unzen Silber - höher als an 96 % der letzten 250 Handelstage.",
         "niemals": "Ist kein Kauf- oder Verkaufssignal für eines der beiden Metalle. Das Verhältnis kann jahrelang in eine Richtung laufen, ohne zurückzukehren."
       },
       "waehrung": {
@@ -2144,17 +2210,552 @@
         "niemals": "Sagt nichts über die künftige Kursrichtung des Euro. Und es gilt nur für Werte, die wirklich in Dollar notieren - ein in Euro gehandelter Welt-ETF trägt denselben Effekt bereits eingebaut in sich."
       }
     },
+    "ereignisse": {
+      "eingetragen": [
+        {
+          "datum": "2026-11-06",
+          "titel": "Spionageverdacht im Umfeld des Nvidia-Chefs wird öffentlich",
+          "text": "Die New York Times berichtet, dass US-Behörden eine hochrangige Managerin des Singapurer Unternehmens Megaspeed für eine mutmaßliche chinesische Spionin halten. Megaspeed steht im Verdacht, Nvidia-Chips unter Umgehung von US-Sanktionen nach China geliefert zu haben. Am 8. November räumte Nvidia-Chef Jensen Huang eine außereheliche Beziehung zu ihr ein, nachdem er sie zuvor bestritten hatte; ein Verwandtschaftsverhältnis besteht nicht. Der Verwaltungsrat setzte eine Untersuchung durch unabhängige Mitglieder und externe Berater ein, Huang führt das Unternehmen weiter. Nvidia erklärte, es gebe derzeit keinen Anlass zur Annahme, dass nationale Sicherheit oder Geschäftsgeheimnisse gefährdet wurden. China wies die Spionagevorwürfe zurück.",
+          "quelle": "https://www.zdfheute.de/wirtschaft/unternehmen/nvidia-affaere-china-spionage-aktien-100.html",
+          "nachlauf": 7,
+          "ok": true,
+          "satz": "17 von 52 verfolgten Werten bewegten sich in den 7 Tagen danach stärker als gewohnt: US-Zins 3 Monate +3,39 %, AMD +32,06 %, US-Zins 5 Jahre +8,09 %.",
+          "bewegt": [
+            {
+              "symbol": "^IRX",
+              "name": "US-Zins 3 Monate",
+              "gruppe": "Zins",
+              "vonTag": "2026-11-05",
+              "bisTag": "2026-11-13",
+              "tage": 6,
+              "veraenderung": 3.39,
+              "gewohnt": 0.96,
+              "vielfaches": 3.51,
+              "auffaellig": true
+            },
+            {
+              "symbol": "AMD",
+              "name": "AMD",
+              "gruppe": "Einzelwert",
+              "vonTag": "2026-11-05",
+              "bisTag": "2026-11-13",
+              "tage": 6,
+              "veraenderung": 32.06,
+              "gewohnt": 9.6,
+              "vielfaches": 3.34,
+              "auffaellig": true
+            },
+            {
+              "symbol": "^FVX",
+              "name": "US-Zins 5 Jahre",
+              "gruppe": "Zins",
+              "vonTag": "2026-11-05",
+              "bisTag": "2026-11-13",
+              "tage": 6,
+              "veraenderung": 8.09,
+              "gewohnt": 2.6,
+              "vielfaches": 3.11,
+              "auffaellig": true
+            },
+            {
+              "symbol": "ETH-USD",
+              "name": "Ethereum",
+              "gruppe": "Gehandelt",
+              "vonTag": "2026-11-05",
+              "bisTag": "2026-11-13",
+              "tage": 8,
+              "veraenderung": -13.73,
+              "gewohnt": 4.51,
+              "vielfaches": 3.05,
+              "auffaellig": true
+            },
+            {
+              "symbol": "BTC-USD",
+              "name": "Bitcoin",
+              "gruppe": "Gehandelt",
+              "vonTag": "2026-11-05",
+              "bisTag": "2026-11-13",
+              "tage": 8,
+              "veraenderung": -10.13,
+              "gewohnt": 3.44,
+              "vielfaches": 2.95,
+              "auffaellig": true
+            },
+            {
+              "symbol": "DX-Y.NYB",
+              "name": "Dollar-Index",
+              "gruppe": "Umfeld",
+              "vonTag": "2026-11-05",
+              "bisTag": "2026-11-13",
+              "tage": 6,
+              "veraenderung": 1.83,
+              "gewohnt": 0.63,
+              "vielfaches": 2.89,
+              "auffaellig": true
+            },
+            {
+              "symbol": "XRP-USD",
+              "name": "XRP",
+              "gruppe": "Gehandelt",
+              "vonTag": "2026-11-05",
+              "bisTag": "2026-11-13",
+              "tage": 8,
+              "veraenderung": -16.3,
+              "gewohnt": 5.72,
+              "vielfaches": 2.85,
+              "auffaellig": true
+            },
+            {
+              "symbol": "EURUSD=X",
+              "name": "Euro/Dollar",
+              "gruppe": "Währung",
+              "vonTag": "2026-11-05",
+              "bisTag": "2026-11-13",
+              "tage": 6,
+              "veraenderung": -1.64,
+              "gewohnt": 0.61,
+              "vielfaches": 2.7,
+              "auffaellig": true
+            }
+          ],
+          "ruhig": [
+            {
+              "name": "Dollar/Yen",
+              "veraenderung": 0.96
+            },
+            {
+              "name": "Nvidia",
+              "veraenderung": -10.32
+            },
+            {
+              "name": "China",
+              "veraenderung": -4.75
+            },
+            {
+              "name": "Gold",
+              "veraenderung": -5.52
+            },
+            {
+              "name": "Rheinmetall",
+              "veraenderung": -9.03
+            },
+            {
+              "name": "MSCI World (EUR)",
+              "veraenderung": 2.37
+            }
+          ],
+          "anzahlGeprueft": 52,
+          "niemals": "Das ist gemessen, nicht erklärt. Dass dieses Ereignis die Bewegung ausgelöst hat, steht hier ausdrücklich nicht - an jedem Tag passiert vieles gleichzeitig. Die ruhig gebliebenen Werte stehen bewusst daneben: sie zeigen am schnellsten, wenn eine Erklärung zu weit greift."
+        }
+      ],
+      "auffaellig": [
+        {
+          "tag": "2026-11-14",
+          "anzahl": 4,
+          "werte": [
+            {
+              "name": "Solana",
+              "symbol": "SOL-USD",
+              "gruppe": "Krypto",
+              "veraenderung": -10.14,
+              "vielfaches": 5.4
+            },
+            {
+              "name": "Ethereum",
+              "symbol": "ETH-USD",
+              "gruppe": "Gehandelt",
+              "veraenderung": -8.22,
+              "vielfaches": 5.4
+            },
+            {
+              "name": "Bitcoin",
+              "symbol": "BTC-USD",
+              "gruppe": "Gehandelt",
+              "veraenderung": -6.04,
+              "vielfaches": 4.9
+            },
+            {
+              "name": "XRP",
+              "symbol": "XRP-USD",
+              "gruppe": "Gehandelt",
+              "veraenderung": -9.55,
+              "vielfaches": 4.8
+            }
+          ],
+          "satz": "4 Werte bewegten sich um mehr als das 3-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-11-13",
+          "anzahl": 1,
+          "werte": [
+            {
+              "name": "Bitcoin",
+              "symbol": "BTC-USD",
+              "gruppe": "Gehandelt",
+              "veraenderung": -4.34,
+              "vielfaches": 3.5
+            }
+          ],
+          "satz": "Bitcoin bewegte sich um das 3,5-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-11-11",
+          "anzahl": 1,
+          "werte": [
+            {
+              "name": "Rheinmetall",
+              "symbol": "RHM.DE",
+              "gruppe": "Einzelwert",
+              "veraenderung": -6.94,
+              "vielfaches": 3.2
+            }
+          ],
+          "satz": "Rheinmetall bewegte sich um das 3,2-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-11-10",
+          "anzahl": 2,
+          "werte": [
+            {
+              "name": "US-Zins 3 Monate",
+              "symbol": "^IRX",
+              "gruppe": "Zins",
+              "veraenderung": 1.98,
+              "vielfaches": 4.6
+            },
+            {
+              "name": "US-Zins 5 Jahre",
+              "symbol": "^FVX",
+              "gruppe": "Zins",
+              "veraenderung": 3.18,
+              "vielfaches": 3
+            }
+          ],
+          "satz": "2 Werte bewegten sich um mehr als das 3-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-11-09",
+          "anzahl": 5,
+          "werte": [
+            {
+              "name": "VIX",
+              "symbol": "^VIX",
+              "gruppe": "Umfeld",
+              "veraenderung": -22.31,
+              "vielfaches": 4.1
+            },
+            {
+              "name": "MSCI World",
+              "symbol": "URTH",
+              "gruppe": "Index",
+              "veraenderung": 2.58,
+              "vielfaches": 3.7
+            },
+            {
+              "name": "Japan",
+              "symbol": "EWJ",
+              "gruppe": "Region",
+              "veraenderung": 3.65,
+              "vielfaches": 3.6
+            },
+            {
+              "name": "S&P 500",
+              "symbol": "^GSPC",
+              "gruppe": "Index",
+              "veraenderung": 2.35,
+              "vielfaches": 3.3
+            },
+            {
+              "name": "Hensoldt",
+              "symbol": "HAG.DE",
+              "gruppe": "Einzelwert",
+              "veraenderung": 6.92,
+              "vielfaches": 3
+            }
+          ],
+          "satz": "5 Werte bewegten sich um mehr als das 3-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-11-08",
+          "anzahl": 1,
+          "werte": [
+            {
+              "name": "Ethereum",
+              "symbol": "ETH-USD",
+              "gruppe": "Gehandelt",
+              "veraenderung": -5.16,
+              "vielfaches": 3.3
+            }
+          ],
+          "satz": "Ethereum bewegte sich um das 3,3-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-11-05",
+          "anzahl": 22,
+          "werte": [
+            {
+              "name": "VIX",
+              "symbol": "^VIX",
+              "gruppe": "Umfeld",
+              "veraenderung": 69.66,
+              "vielfaches": 8.6
+            },
+            {
+              "name": "Rheinmetall",
+              "symbol": "RHM.DE",
+              "gruppe": "Einzelwert",
+              "veraenderung": -16.14,
+              "vielfaches": 7.8
+            },
+            {
+              "name": "Nasdaq-Volatilität",
+              "symbol": "^VXN",
+              "gruppe": "Umfeld",
+              "veraenderung": 52.55,
+              "vielfaches": 7
+            },
+            {
+              "name": "S&P 500",
+              "symbol": "^GSPC",
+              "gruppe": "Index",
+              "veraenderung": -4.36,
+              "vielfaches": 6.4
+            },
+            {
+              "name": "Japan",
+              "symbol": "EWJ",
+              "gruppe": "Region",
+              "veraenderung": -5.97,
+              "vielfaches": 6.1
+            },
+            {
+              "name": "MSCI World",
+              "symbol": "URTH",
+              "gruppe": "Index",
+              "veraenderung": -3.96,
+              "vielfaches": 5.8
+            }
+          ],
+          "satz": "22 Werte bewegten sich um mehr als das 3-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-11-04",
+          "anzahl": 12,
+          "werte": [
+            {
+              "name": "China",
+              "symbol": "MCHI",
+              "gruppe": "Region",
+              "veraenderung": 4.37,
+              "vielfaches": 4.3
+            },
+            {
+              "name": "Finanzen",
+              "symbol": "XLF",
+              "gruppe": "Sektor",
+              "veraenderung": 3.51,
+              "vielfaches": 4
+            },
+            {
+              "name": "Ethereum",
+              "symbol": "ETH-USD",
+              "gruppe": "Gehandelt",
+              "veraenderung": 6.58,
+              "vielfaches": 4
+            },
+            {
+              "name": "VIX",
+              "symbol": "^VIX",
+              "gruppe": "Umfeld",
+              "veraenderung": -20.26,
+              "vielfaches": 3.7
+            },
+            {
+              "name": "Konsum zyklisch",
+              "symbol": "XLY",
+              "gruppe": "Sektor",
+              "veraenderung": 4.26,
+              "vielfaches": 3.7
+            },
+            {
+              "name": "Energie",
+              "symbol": "XLE",
+              "gruppe": "Sektor",
+              "veraenderung": -4.74,
+              "vielfaches": 3.5
+            }
+          ],
+          "satz": "12 Werte bewegten sich um mehr als das 3-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-11-02",
+          "anzahl": 2,
+          "werte": [
+            {
+              "name": "Oel Brent",
+              "symbol": "BZ=F",
+              "gruppe": "Rohstoff",
+              "veraenderung": -10.94,
+              "vielfaches": 4.1
+            },
+            {
+              "name": "Hochzinsanleihen",
+              "symbol": "HYG",
+              "gruppe": "Anleihe",
+              "veraenderung": -0.7,
+              "vielfaches": 3.3
+            }
+          ],
+          "satz": "2 Werte bewegten sich um mehr als das 3-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-10-29",
+          "anzahl": 3,
+          "werte": [
+            {
+              "name": "Solana",
+              "symbol": "SOL-USD",
+              "gruppe": "Krypto",
+              "veraenderung": -6.66,
+              "vielfaches": 3.5
+            },
+            {
+              "name": "Bitcoin",
+              "symbol": "BTC-USD",
+              "gruppe": "Gehandelt",
+              "veraenderung": -4.3,
+              "vielfaches": 3.5
+            },
+            {
+              "name": "XRP",
+              "symbol": "XRP-USD",
+              "gruppe": "Gehandelt",
+              "veraenderung": -6.75,
+              "vielfaches": 3.3
+            }
+          ],
+          "satz": "3 Werte bewegten sich um mehr als das 3-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-10-23",
+          "anzahl": 1,
+          "werte": [
+            {
+              "name": "Dollar/Yen",
+              "symbol": "USDJPY=X",
+              "gruppe": "Währung",
+              "veraenderung": -1.04,
+              "vielfaches": 4.8
+            }
+          ],
+          "satz": "Dollar/Yen bewegte sich um das 4,8-fache einer gewöhnlichen Tagesbewegung."
+        },
+        {
+          "tag": "2026-10-22",
+          "anzahl": 6,
+          "werte": [
+            {
+              "name": "US-Zins 10 Jahre",
+              "symbol": "^TNX",
+              "gruppe": "Umfeld",
+              "veraenderung": -3.75,
+              "vielfaches": 4
+            },
+            {
+              "name": "US-Zins 5 Jahre",
+              "symbol": "^FVX",
+              "gruppe": "Zins",
+              "veraenderung": -4.1,
+              "vielfaches": 4
+            },
+            {
+              "name": "US-Zins 30 Jahre",
+              "symbol": "^TYX",
+              "gruppe": "Zins",
+              "veraenderung": -2.79,
+              "vielfaches": 3.5
+            },
+            {
+              "name": "Unternehmensanleihen",
+              "symbol": "LQD",
+              "gruppe": "Anleihe",
+              "veraenderung": 1.04,
+              "vielfaches": 3.4
+            },
+            {
+              "name": "Staatsanleihen 7-10J",
+              "symbol": "IEF",
+              "gruppe": "Anleihe",
+              "veraenderung": 1.08,
+              "vielfaches": 3.1
+            },
+            {
+              "name": "Inflationsgeschützt",
+              "symbol": "TIP",
+              "gruppe": "Anleihe",
+              "veraenderung": 0.74,
+              "vielfaches": 3.1
+            }
+          ],
+          "satz": "6 Werte bewegten sich um mehr als das 3-fache einer gewöhnlichen Tagesbewegung."
+        }
+      ],
+      "quelleDatei": "daten/marktlage/ereignisse.json"
+    },
     "termine": {
       "ok": true,
-      "geprueft": "2026-11-15T02:08:05.327Z",
-      "gesamtImFeed": 106,
+      "geprueft": "2026-11-15T20:18:04.951Z",
+      "gesamtImFeed": 119,
       "feedFehler": null,
       "waehrungen": [
         "USD",
         "GBP",
         "EUR"
       ],
-      "kommende": []
+      "kommende": [
+        {
+          "zeitIso": "2026-11-16T12:00:00-05:00",
+          "titel": "Fed Chairman Warsh Speaks",
+          "waehrung": "USD",
+          "ts": 1794848400000
+        },
+        {
+          "zeitIso": "2026-11-17T08:30:00-05:00",
+          "titel": "Core Retail Sales m/m",
+          "waehrung": "USD",
+          "ts": 1794922200000
+        },
+        {
+          "zeitIso": "2026-11-17T08:30:00-05:00",
+          "titel": "Retail Sales m/m",
+          "waehrung": "USD",
+          "ts": 1794922200000
+        },
+        {
+          "zeitIso": "2026-11-18T02:00:00-05:00",
+          "titel": "CPI y/y",
+          "waehrung": "GBP",
+          "ts": 1794985200000
+        },
+        {
+          "zeitIso": "2026-11-18T02:30:00-05:00",
+          "titel": "BOE Gov Bailey Speaks",
+          "waehrung": "GBP",
+          "ts": 1794987000000
+        },
+        {
+          "zeitIso": "2026-11-18T10:00:00-05:00",
+          "titel": "BOE Gov Bailey Speaks",
+          "waehrung": "GBP",
+          "ts": 1795014000000
+        },
+        {
+          "zeitIso": "2026-11-18T14:00:00-05:00",
+          "titel": "FOMC Meeting Minutes",
+          "waehrung": "USD",
+          "ts": 1795028400000
+        }
+      ]
     }
   }
 }
