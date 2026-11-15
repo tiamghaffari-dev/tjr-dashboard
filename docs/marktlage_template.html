@@ -119,6 +119,46 @@
   }
   .v-fehlt { color: var(--leiser); font-size: 0.875rem; margin-top: 10px; }
 
+  /* ===================================================================
+     EREIGNIS-CHRONIK (15.11.2026)
+     Was passiert ist - und daneben, was sich messbar bewegt hat. Die
+     Messung steht optisch GLEICHWERTIG neben dem Text, nicht darunter als
+     Fussnote: sie ist der eigentliche Inhalt, der Text nur der Anlass.
+     =================================================================== */
+  .ereig-block { margin-top: 38px; }
+  .ereig-block h2 { font-size: 1.125rem; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .ereig-block .ereig-vor { color: var(--leiser); font-size: 0.875rem; margin: 0 0 16px; max-width: 46em; }
+  .e-karte {
+    border: 1px solid var(--rand); border-radius: 10px; background: var(--feld);
+    padding: 16px 18px 17px; margin-bottom: 12px;
+  }
+  .e-datum { color: var(--leise); font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+  .e-titel { font-size: 1.0625rem; font-weight: 600; margin-top: 3px; line-height: 1.35; }
+  .e-text { font-size: 0.9375rem; line-height: 1.6; margin-top: 9px; max-width: 54em; }
+  .e-quelle { font-size: 0.8125rem; margin-top: 8px; }
+  .e-quelle a { color: var(--akzent); }
+  .e-messung { margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--rand); }
+  .e-messung-titel { font-size: 0.8125rem; color: var(--leise); margin-bottom: 7px; }
+  .e-satz { font-size: 0.9375rem; line-height: 1.55; }
+  .e-liste { list-style: none; padding: 0; margin: 10px 0 0; }
+  .e-liste li {
+    display: flex; gap: 10px; align-items: baseline; justify-content: space-between;
+    font-size: 0.875rem; padding: 4px 0; border-bottom: 1px solid var(--rand);
+  }
+  .e-liste li:last-child { border-bottom: 0; }
+  .e-liste .e-name { color: var(--schrift); min-width: 0; overflow-wrap: anywhere; }
+  .e-liste .e-zahl { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+  .e-liste .e-norm { color: var(--leiser); font-size: 0.8125rem; white-space: nowrap; }
+  .e-ruhig { color: var(--leiser); font-size: 0.8125rem; margin-top: 9px; line-height: 1.5; }
+  .e-nicht {
+    color: var(--leiser); font-size: 0.8125rem; line-height: 1.5; margin-top: 12px;
+    padding-left: 11px; border-left: 2px solid var(--rand);
+  }
+  .e-auff { font-size: 0.875rem; line-height: 1.5; padding: 9px 0; border-bottom: 1px solid var(--rand); }
+  .e-auff:last-child { border-bottom: 0; }
+  .e-auff .e-auff-tag { font-variant-numeric: tabular-nums; color: var(--leise); }
+  .e-auff .e-auff-werte { color: var(--leiser); font-size: 0.8125rem; margin-top: 3px; }
+
   /* ---------- Lagebericht: der Kern der Seite ---------- */
   .lage { margin: 32px 0 0; }
   .lage p {
@@ -374,6 +414,18 @@
     <div class="verh" id="verh"></div>
   </section>
 
+  <!-- Ereignis-Chronik. Offen, nicht im Aufklapper: Tiam hat ausdruecklich
+       darum gebeten, dass grosse Ereignisse festgehalten werden. -->
+  <section class="ereig-block" id="ereigBlock">
+    <h2>Was passiert ist</h2>
+    <p class="ereig-vor">Gro&szlig;e Ereignisse mit Datum und Quelle &ndash; und daneben, was sich im
+      selben Zeitraum tats&auml;chlich bewegt hat, gemessen an dem, was der jeweilige Wert an
+      gew&ouml;hnlichen Tagen ohnehin macht. Was sich <em>nicht</em> bewegt hat, steht bewusst
+      daneben.</p>
+    <div id="ereigEingetragen"></div>
+    <div id="ereigAuffaellig"></div>
+  </section>
+
   <div class="mehr">
     <h2>Zum Nachschauen</h2>
 
@@ -508,6 +560,95 @@ function heute() {
 function erklaerBox(titel, inhalt) {
   return '<details class="erklaer"><summary>' + titel + "</summary>"
     + '<div class="erklaer-text">' + inhalt + "</div></details>";
+}
+
+/* ====================================================================
+   EREIGNIS-CHRONIK (15.11.2026)
+
+   Anlass war Tiams Frage zur Spionageaffaere um den Nvidia-Chef. Seine
+   Erklaerung dazu: Affaere -> Nvidia faellt -> der ganze Markt faellt ->
+   deshalb faellt Bitcoin. Die Kurse sagten etwas anderes: der Absturz begann
+   vor der Meldung, am Meldetag stieg die Aktie, und AMD legte im selben
+   Zeitraum zweistellig zu. Die Geschichte klang zwingend und war falsch.
+
+   Deshalb zeigt dieser Block IMMER beides - was sich bewegt hat UND was
+   ruhig geblieben ist. Die ruhigen Werte sind kein Beiwerk; sie sind das,
+   was eine zu grosse Erzaehlung am schnellsten auffliegen laesst.
+   ==================================================================== */
+function zahlFarbe(x) {
+  return x > 0 ? "rauf" : x < 0 ? "runter" : "";
+}
+
+function ereignisKarte(e) {
+  const kopf = '<div class="e-datum">' + esc(e.datum || "") + "</div>"
+    + '<div class="e-titel">' + esc(e.titel || "") + "</div>"
+    + (e.text ? '<div class="e-text">' + esc(e.text) + "</div>" : "")
+    + (sichererLink(e.quelle)
+        ? '<div class="e-quelle"><a href="' + esc(sichererLink(e.quelle))
+          + '" target="_blank" rel="noopener noreferrer">Quelle ansehen</a></div>'
+        : "");
+
+  if (!e.ok) {
+    return '<div class="e-karte">' + kopf
+      + '<div class="e-messung"><div class="e-satz">Noch nicht messbar: '
+      + esc(e.grund || "unbekannt") + "</div></div></div>";
+  }
+
+  const zeilen = (e.bewegt || []).map((b) =>
+    "<li><span class=\"e-name\">" + esc(b.name) + "</span>"
+    + '<span class="e-norm">gewohnt &plusmn;' + dz(b.gewohnt, 1) + " %</span>"
+    + '<span class="e-zahl ' + zahlFarbe(b.veraenderung) + '">'
+    + (b.veraenderung > 0 ? "+" : "") + dz(b.veraenderung, 1) + " %</span></li>").join("");
+
+  const ruhig = (e.ruhig || []).length
+    ? '<div class="e-ruhig">Im gewohnten Rahmen geblieben: '
+      + e.ruhig.map((r) => esc(r.name) + " " + (r.veraenderung > 0 ? "+" : "")
+        + dz(r.veraenderung, 1) + "&nbsp;%").join(", ") + ".</div>"
+    : "";
+
+  return '<div class="e-karte">' + kopf
+    + '<div class="e-messung">'
+    + '<div class="e-messung-titel">Was sich im selben Zeitraum bewegt hat</div>'
+    + '<div class="e-satz">' + esc(e.satz || "") + "</div>"
+    + (zeilen ? '<ul class="e-liste">' + zeilen + "</ul>" : "")
+    + ruhig
+    + '<div class="e-nicht">' + esc(e.niemals || "") + "</div>"
+    + "</div></div>";
+}
+
+function ereignisse() {
+  const E = DATA.kennzahlen && DATA.kennzahlen.ereignisse;
+  const block = el("ereigBlock");
+  if (!E || ((!E.eingetragen || !E.eingetragen.length) && (!E.auffaellig || !E.auffaellig.length))) {
+    if (block) block.hidden = true;
+    return;
+  }
+
+  el("ereigEingetragen").innerHTML = (E.eingetragen || []).map(ereignisKarte).join("");
+
+  // Auffaellige Tage: laeuft ohne Zutun weiter und sammelt die Grundlage,
+  // mit der sich irgendwann pruefen laesst, ob Ereignisse ueberhaupt etwas
+  // vorhersagen. Heute sind es dafuer viel zu wenige - steht auch so da.
+  const auf = E.auffaellig || [];
+  if (!auf.length) { el("ereigAuffaellig").innerHTML = ""; return; }
+  const zeilen = auf.map((t) =>
+    '<div class="e-auff"><span class="e-auff-tag">' + esc(t.tag) + "</span> &ndash; "
+    + esc(t.satz)
+    + '<div class="e-auff-werte">'
+    + t.werte.map((w) => esc(w.name) + " " + (w.veraenderung > 0 ? "+" : "")
+      + dz(w.veraenderung, 1) + "&nbsp;% (" + dz(w.vielfaches, 1) + "-fach)").join(" &middot; ")
+    + "</div></div>").join("");
+
+  el("ereigAuffaellig").innerHTML =
+    '<div class="e-karte"><div class="e-titel">Auff&auml;llige Tage der letzten Wochen</div>'
+    + '<div class="e-text">Automatisch gefunden: Tage, an denen sich ein verfolgter Wert um mehr '
+    + 'als das Dreifache seiner gew&ouml;hnlichen Tagesbewegung bewegt hat. Hier steht nicht, '
+    + 'warum &ndash; nur, dass an diesen Tagen etwas los war.</div>'
+    + zeilen
+    + '<div class="e-nicht">Ein auff&auml;lliger Tag ist kein Signal und keine Erkl&auml;rung. '
+    + 'Die Liste wird mitgeschrieben, damit sich sp&auml;ter einmal pr&uuml;fen l&auml;sst, ob '
+    + 'solche Tage &uuml;berhaupt etwas &uuml;ber die Folgezeit aussagen. Daf&uuml;r sind es '
+    + 'bisher viel zu wenige.</div></div>';
 }
 
 /* ====================================================================
@@ -1678,7 +1819,7 @@ function bedienung() {
     el("fuss-geprueft").innerHTML = " Jedes Symbol wurde vor dem Einbau einzeln auf Datenqualit&auml;t "
       + "gepr&uuml;ft (" + String(DATA.symboltestVom).slice(0, 10) + ").";
   }
-  for (const f of [kacheln, lagebericht, tafel, verhaeltnisse, gehandelt, maerkte, beobachtung, nachrichten, termine,
+  for (const f of [kacheln, lagebericht, tafel, verhaeltnisse, ereignisse, gehandelt, maerkte, beobachtung, nachrichten, termine,
                    treiber, haltedauer, etfListe, mitschrift, bedienung]) {
     try { f(); } catch (e) { console.error("Block fehlgeschlagen:", f.name, e); }
   }

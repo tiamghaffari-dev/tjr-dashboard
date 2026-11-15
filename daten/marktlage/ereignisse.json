@@ -1,0 +1,27 @@
+{
+  "_hinweis": [
+    "Chronik grosser Ereignisse. Von Hand gepflegt - hier steht NUR, was passiert ist,",
+    "mit Datum und Quelle. Was sich daraufhin bewegt hat, rechnet marktlage_ereignisse.js",
+    "aus den Kursreihen aus; das gehoert NICHT in diese Datei.",
+    "",
+    "Felder je Eintrag:",
+    "  datum    Pflicht. JJJJ-MM-TT, der Tag, an dem es oeffentlich wurde (nicht der Tag,",
+    "           an dem es passierte - gemessen wird gegen den letzten Handelstag davor).",
+    "  titel    Pflicht. Eine Zeile, nuechtern, ohne Wertung.",
+    "  text     Was belegt ist. Keine Vermutung ueber Kursursachen - dafuer ist die",
+    "           Messung da. Was unklar ist, wird als unklar benannt.",
+    "  quelle   Link auf einen Bericht, der das belegt.",
+    "  nachlauf Optional, Kalendertage fuer die Messung (Standard 7).",
+    "",
+    "Regel: kein Eintrag ohne Quelle. Eine Zahl, die niemand belegen kann, ist keine Zahl."
+  ],
+  "ereignisse": [
+    {
+      "datum": "2026-11-06",
+      "titel": "Spionageverdacht im Umfeld des Nvidia-Chefs wird öffentlich",
+      "text": "Die New York Times berichtet, dass US-Behörden eine hochrangige Managerin des Singapurer Unternehmens Megaspeed für eine mutmaßliche chinesische Spionin halten. Megaspeed steht im Verdacht, Nvidia-Chips unter Umgehung von US-Sanktionen nach China geliefert zu haben. Am 8. November räumte Nvidia-Chef Jensen Huang eine außereheliche Beziehung zu ihr ein, nachdem er sie zuvor bestritten hatte; ein Verwandtschaftsverhältnis besteht nicht. Der Verwaltungsrat setzte eine Untersuchung durch unabhängige Mitglieder und externe Berater ein, Huang führt das Unternehmen weiter. Nvidia erklärte, es gebe derzeit keinen Anlass zur Annahme, dass nationale Sicherheit oder Geschäftsgeheimnisse gefährdet wurden. China wies die Spionagevorwürfe zurück.",
+      "quelle": "https://www.zdfheute.de/wirtschaft/unternehmen/nvidia-affaere-china-spionage-aktien-100.html",
+      "nachlauf": 7
+    }
+  ]
+}

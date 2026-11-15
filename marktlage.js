@@ -60,6 +60,14 @@ const SYMBOLE = [
   // --- Einzelwerte, die Tiam ausdruecklich sehen wollte ---
   { gruppe: "Einzelwert", name: "Rheinmetall",       symbol: "RHM.DE",    hinweis: "Rüstung, Frankfurt" },
   { gruppe: "Einzelwert", name: "Tesla",             symbol: "TSLA",      hinweis: "Nasdaq" },
+  // 15.11.2026 ergaenzt: Tiam fragte nach der Spionageaffaere um den
+  // Nvidia-Chef - und stellte dabei fest, dass ausgerechnet der Wert, um den
+  // es ging, hier gar nicht verfolgt wurde. AMD daneben, weil erst der
+  // Vergleich mit einem Nachbarn zeigt, ob eine Bewegung die Firma betrifft
+  // oder die ganze Branche. Genau dieser Vergleich war es, der Tiams
+  // Erklaerung zur Affaere widerlegt hat.
+  { gruppe: "Einzelwert", name: "Nvidia",            symbol: "NVDA",      hinweis: "Nasdaq" },
+  { gruppe: "Einzelwert", name: "AMD",               symbol: "AMD",       hinweis: "Nasdaq - Vergleichswert zu Nvidia" },
   { gruppe: "Einzelwert", name: "Hensoldt",          symbol: "HAG.DE",    hinweis: "Rüstungselektronik, Frankfurt" },
   { gruppe: "Einzelwert", name: "Rüstung Europa",    symbol: "DFEN.DE",   hinweis: "ETF auf europäische Rüstungswerte" },
 

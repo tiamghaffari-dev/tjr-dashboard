@@ -25,6 +25,7 @@ const path = require("path");
 const ml = require("./marktlage.js");
 const kz = require("./marktlage_kennzahlen.js");
 const vh = require("./marktlage_verhaeltnisse.js");
+const er = require("./marktlage_ereignisse.js");
 const hist = require("./marktlage_historie.js");
 const lang = require("./marktlage_langfrist.js");
 const beob = require("./marktlage_beobachtung.js");
@@ -248,6 +249,22 @@ async function main() {
   } catch (e) {
     kennzahlen.verhaeltnisseFehler = String(e && e.message ? e.message : e).slice(0, 150);
     console.error("  Verhaeltnisse fehlgeschlagen:", kennzahlen.verhaeltnisseFehler);
+  }
+
+  /* -------------------------------------------------------------------------
+   * Ereignis-Chronik (15.11.2026). Haelt fest, WAS passiert ist, und misst,
+   * was sich danach bewegt hat - ohne zu behaupten, dass das eine das andere
+   * verursacht hat. Dazu automatisch erkannte auffaellige Tage.
+   * ---------------------------------------------------------------------- */
+  try {
+    kennzahlen.ereignisse = er.alle(reihen, ml.SYMBOLE, 90);
+    const ein = kennzahlen.ereignisse.eingetragen || [];
+    const auf = kennzahlen.ereignisse.auffaellig || [];
+    console.log("  Ereignisse: " + ein.filter((e) => e.ok).length + "/" + ein.length
+      + " eingetragene ausgewertet, " + auf.length + " auffaellige Tage erkannt");
+  } catch (e) {
+    kennzahlen.ereignisseFehler = String(e && e.message ? e.message : e).slice(0, 150);
+    console.error("  Ereignisse fehlgeschlagen:", kennzahlen.ereignisseFehler);
   }
 
   try {
