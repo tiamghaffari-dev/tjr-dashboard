@@ -13260,7 +13260,7 @@
   },
   "2026-11-13": {
     "handelstag": "2026-11-13",
-    "geschriebenAm": "2026-11-14T12:25:14.362Z",
+    "geschriebenAm": "2026-11-15T02:08:05.327Z",
     "kurse": {
       "URTH": 204.56,
       "IWDA.AS": 130.49,
@@ -13307,24 +13307,24 @@
       "EEM": 60.92,
       "EWJ": 91.76,
       "MCHI": 49.57,
-      "SOL-USD": 75.72,
-      "BTC-USD": 67088.46,
-      "ETH-USD": 1905.29,
-      "XRP-USD": 0.9928,
-      "GBPUSD=X": 1.3209
+      "SOL-USD": 69.56,
+      "BTC-USD": 63567.62,
+      "ETH-USD": 1759.19,
+      "XRP-USD": 0.9294,
+      "GBPUSD=X": 1.3212
     },
     "vix": 19.3,
     "vixPerzentil": 74,
     "schwankung": {
-      "BTC-USD": 36.8,
-      "ETH-USD": 49.1,
-      "XRP-USD": 44.5,
+      "BTC-USD": 42.9,
+      "ETH-USD": 57,
+      "XRP-USD": 50.9,
       "GBPUSD=X": 6.1,
       "^GSPC": 22.1,
       "GC=F": 25.3
     },
     "schwankungStufe": {
-      "BTC-USD": "rauschen",
+      "BTC-USD": "hoch",
       "ETH-USD": "rauschen",
       "XRP-USD": "rauschen",
       "GBPUSD=X": "rauschen",
