@@ -103322,9 +103322,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794783900000,
+    "rMultiple": 1.11,
+    "exitPrice": 1793.910034
   },
   {
     "id": "GCUSD-1794819200416",
