@@ -1286,6 +1286,124 @@ async function sendNtfyFuellung(asset, rec) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// ERGEBNIS-MELDUNG (16.11.2026)
+//
+// Tiam: "Ich bekomme schon immer eine Benachrichtigung, dass es einen Trade
+// gibt. Perfekt. Aber ich wuerde auch gerne dann eine Benachrichtigung
+// bekommen, was daraus passiert ist, ob es ein Profit geworden ist, ob es ein
+// Lose ist. Weil ich muss immer selber nachschauen, das ist nach einer Zeit
+// ein bisschen bloed." Und: "vielleicht ein anderes Icon, wenn positiv oder
+// negativ ausgefallen ist, damit ich es direkt erkennen kann, ohne es
+// nachzulesen."
+//
+// Das Icon ist bei ntfy der Tags-Header. Die Eroeffnungsmeldung nutzt die
+// beiden Trendpfeile; fuer Ergebnisse kommen deshalb bewusst ganz andere
+// Zeichen, die man im Sperrbildschirm nicht verwechseln kann:
+//      Gewinn  white_check_mark   gruener Haken
+//      Verlust x                  rotes Kreuz
+//      Null    heavy_minus_sign   Strich
+//
+// Gemessen am bisherigen Bestand waeren das 2,1 Meldungen je Meldetag - also
+// etwa so viele wie die Eroeffnungen. Nicht gemeldet wird "unfilled": dort
+// wurde nie ein Trade eroeffnet, Tiam hat dazu auch nie eine Eroeffnungs-
+// meldung bekommen, eine Ergebnismeldung waere die Antwort auf eine Frage,
+// die nie gestellt wurde.
+//
+// Grosszuegiger als bei der Eroeffnung, weil ein Ergebnis auch dann noch
+// interessiert, wenn es ein paar Stunden alt ist - und weil vier von 102
+// Altdatensaetzen eine um Stunden verschobene resolvedTs tragen (siehe den
+// Befund zur doppelten Zeitumrechnung in resolveSignals).
+const ERGEBNIS_MAX_ALTER_MIN = 360;
+
+// Laufende Bilanz fuer die Fusszeile der Meldung. Dieselbe Auswahl wie
+// ueberall sonst: keine Beobachtungen, keine als unzuverlaessig markierten
+// Altdatensaetze, nur abgeschlossene Trades.
+function bilanzKurz(signalsLog) {
+  const s = signalsLog.filter((r) => !r.beobachtung && !r.unzuverlaessig
+    && typeof r.rMultiple === "number"
+    && r.status !== "unfilled" && r.status !== "open" && r.status !== "partial");
+  if (!s.length) return null;
+  const summe = s.reduce((a, r) => a + r.rMultiple, 0);
+  const treffer = s.filter((r) => r.rMultiple > 0).length;
+  return { anzahl: s.length, treffer: Math.round((100 * treffer) / s.length), summe };
+}
+
+function dezimal(x, n) {
+  if (typeof x !== "number" || !isFinite(x)) return "?";
+  return x.toFixed(n).replace(".", ",");
+}
+
+// Preise haben je nach Wert voellig verschiedene Groessenordnungen
+// (GBP/USD 1,31 gegen Bitcoin 76.000). Feste Nachkommastellen waeren bei dem
+// einen unlesbar und bei dem anderen falsch.
+function preis(x) {
+  if (typeof x !== "number" || !isFinite(x)) return "?";
+  const n = Math.abs(x) >= 1000 ? 2 : Math.abs(x) >= 10 ? 2 : 4;
+  return x.toFixed(n).replace(".", ",");
+}
+
+function ausstiegsGrund(rec) {
+  const istGewinn = typeof rec.rMultiple === "number" && rec.rMultiple > 0;
+  if (rec.tp1HitTs) {
+    if (typeof rec.rr2 === "number" && typeof rec.rMultiple === "number"
+        && rec.rMultiple > rec.rr + 0.005) return "zweites Ziel erreicht";
+    return "erste Haelfte am Ziel, Rest am nachgezogenen Stop";
+  }
+  if (istGewinn) return "Ziel erreicht";
+  return "Stop";
+}
+
+async function sendNtfyErgebnis(asset, rec, bilanz) {
+  if (!NTFY_TOPIC) return;
+  const r = typeof rec.rMultiple === "number" ? rec.rMultiple : null;
+  if (r === null) return;
+
+  const gewinn = r > 0, verlust = r < 0;
+  const tag = gewinn ? "white_check_mark" : verlust ? "x" : "heavy_minus_sign";
+  const wort = gewinn ? "Gewinn" : verlust ? "Verlust" : "Null";
+  const vz = r > 0 ? "+" : "";
+
+  const zeilen = [
+    `${rec.direction} ${asset.display}`,
+    `Einstieg  ${preis(rec.entry)}`,
+    `Ausstieg  ${preis(rec.exitPrice)}`,
+    `Grund     ${ausstiegsGrund(rec)}`,
+  ];
+  // Dauer nur, wenn sie plausibel ist. Bei den Altdatensaetzen mit
+  // doppelt umgerechneter resolvedTs waere sie negativ - dann lieber
+  // weglassen als Unsinn melden.
+  if (rec.fillTs && rec.resolvedTs && rec.resolvedTs > rec.fillTs) {
+    const min = Math.round((rec.resolvedTs - rec.fillTs) / 60000);
+    const std = Math.floor(min / 60);
+    zeilen.push(`Dauer     ${std ? std + " h " : ""}${min % 60} min`);
+  }
+  if (bilanz) {
+    zeilen.push("");
+    zeilen.push(`Bilanz    ${bilanz.anzahl} Trades, ${bilanz.treffer} % Treffer, `
+      + `${bilanz.summe >= 0 ? "+" : ""}${dezimal(bilanz.summe, 1)} R gesamt`);
+  }
+
+  try {
+    await fetch(`https://ntfy.sh/${encodeURIComponent(NTFY_TOPIC)}`, {
+      method: "POST",
+      signal: AbortSignal.timeout(15000),
+      headers: {
+        Title: `${wort} ${vz}${dezimal(r, 2)} R: ${asset.name} ${rec.direction}`,
+        // Bewusst "default": ein Ergebnis steht schon fest, es gibt nichts
+        // mehr zu entscheiden. Nur die Eroeffnung ist eilig.
+        Priority: "default",
+        Tags: tag,
+        Click: "https://tiamghaffari-dev.github.io/tjr-dashboard/history.html",
+      },
+      body: zeilen.join("\n"),
+    });
+    console.log(`ERGEBNIS gesendet: ${asset.name} ${rec.direction} ${vz}${dezimal(r, 2)}R`);
+  } catch (e) {
+    console.error(`ntfy-Ergebnismeldung fehlgeschlagen fuer ${asset.name}:`, e.message || e);
+  }
+}
+
 // Tiam, 2026-07-24 ("Live-Analyse im Browser (Phase 3)"): engine.js ist ein
 // reines CommonJS-Modul (kein require() drinnen, kein "use strict", nur
 // top-level function-Deklarationen + ein `if (typeof module !== "undefined")`-
@@ -1645,6 +1763,28 @@ async function main() {
         rec.benachrichtigt = true;
         if ((jetztPseudo - rec.fillTs) / 60000 > ALERT_MAX_ALTER_MIN) continue;
         await sendNtfyFuellung(item.asset, rec);
+      }
+
+      // Ergebnis melden, sobald ein Trade dieses Assets fertig ist.
+      // Tiam, 16.11.2026: "ich muss immer selber nachschauen, das ist nach
+      // einer Zeit ein bisschen bloed."
+      //
+      // Derselbe Schutz wie oben, und aus denselben Gruenden:
+      //   - nur gefuellte Trades (ohne Fuellung gab es nie eine Eroeffnungs-
+      //     meldung, also auch keine Ergebnismeldung),
+      //   - "open" und "partial" sind Zwischenstaende, kein Ergebnis,
+      //   - IMMER abhaken, auch wenn nichts gesendet wird, sonst schickt der
+      //     erste Lauf nach dem Einbau den gesamten Altbestand auf einmal
+      //     (das waeren gerade 102 Nachrichten).
+      const bilanz = bilanzKurz(signalsLog);
+      for (const rec of signalsLog) {
+        if (rec.asset !== item.asset.symbol) continue;
+        if (rec.beobachtung || !rec.fillTs || rec.ergebnisGemeldet) continue;
+        if (rec.status === "open" || rec.status === "partial" || rec.status === "unfilled") continue;
+        rec.ergebnisGemeldet = true;
+        if (!rec.resolvedTs) continue;
+        if ((jetztPseudo - rec.resolvedTs) / 60000 > ERGEBNIS_MAX_ALTER_MIN) continue;
+        await sendNtfyErgebnis(item.asset, rec, bilanz);
       }
     }
   }
