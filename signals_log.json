@@ -103674,10 +103674,11 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1794816000000,
+    "rMultiple": 1.19,
+    "benachrichtigt": true,
+    "exitPrice": 3854.199951
   },
   {
     "id": "^GSPC-1794844079119",
