@@ -1,0 +1,112 @@
+name: Probe-Meldung
+
+# Tiam, 16.11.2026: "also geht es jetzt?"
+#
+# Berechtigte Frage, und bis eben nicht ehrlich zu beantworten: die
+# Ergebnismeldung war eingebaut und abgesichert, aber noch nie wirklich
+# abgefeuert - seit dem Einbau ist schlicht kein Trade fertig geworden.
+# Bis zum naechsten echten Ergebnis haette er warten muessen, um zu merken,
+# ob ueberhaupt etwas ankommt.
+#
+# Dieser Lauf schickt deshalb auf Knopfdruck je eine Probe der drei
+# Ergebnisarten, damit die Icons auf dem Handy sichtbar werden, bevor es
+# darauf ankommt. Laeuft NUR von Hand (workflow_dispatch), nie nach Zeitplan,
+# und ruehrt weder Daten noch Seiten an - der Lauf schreibt nichts.
+#
+# Die Meldungen sind im Titel als Probe gekennzeichnet, damit sie sich nicht
+# mit echten Ergebnissen vermischen.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Probe-Meldungen senden
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          if [ -z "$NTFY_TOPIC" ]; then
+            echo "NTFY_TOPIC ist nicht gesetzt - ohne das Geheimnis kann nichts gesendet werden."
+            exit 1
+          fi
+          node - <<'NODE'
+          const topic = process.env.NTFY_TOPIC;
+
+          // Genau dieselben Header wie sendNtfyErgebnis() in build.js.
+          // Wenn hier etwas ankommt, kommt dort auch etwas an.
+          const proben = [
+            {
+              tag: "white_check_mark",
+              titel: "PROBE Gewinn +1,94 R: Bitcoin SHORT",
+              text: [
+                "SHORT Bitcoin",
+                "Einstieg  64029,92",
+                "Ausstieg  63104,12",
+                "Grund     erste Haelfte am Ziel, Rest am nachgezogenen Stop",
+                "Dauer     27 h 35 min",
+                "",
+                "Bilanz    102 Trades, 34 % Treffer, -5,6 R gesamt",
+                "",
+                "Das ist nur eine Probe - kein echter Trade.",
+              ],
+            },
+            {
+              tag: "x",
+              titel: "PROBE Verlust -1,00 R: S&P 500 LONG",
+              text: [
+                "LONG S&P 500",
+                "Einstieg  770,31",
+                "Ausstieg  768,84",
+                "Grund     Stop",
+                "Dauer     20 min",
+                "",
+                "Bilanz    102 Trades, 34 % Treffer, -5,6 R gesamt",
+                "",
+                "Das ist nur eine Probe - kein echter Trade.",
+              ],
+            },
+            {
+              tag: "heavy_minus_sign",
+              titel: "PROBE Null 0,00 R: Gold SHORT",
+              text: [
+                "SHORT Gold",
+                "Einstieg  4078,20",
+                "Ausstieg  4078,20",
+                "Grund     erste Haelfte am Ziel, Rest am nachgezogenen Stop",
+                "",
+                "Bilanz    102 Trades, 34 % Treffer, -5,6 R gesamt",
+                "",
+                "Das ist nur eine Probe - kein echter Trade.",
+              ],
+            },
+          ];
+
+          (async () => {
+            for (const p of proben) {
+              const r = await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
+                method: "POST",
+                signal: AbortSignal.timeout(15000),
+                headers: {
+                  Title: p.titel,
+                  Priority: "default",
+                  Tags: p.tag,
+                  Click: "https://tiamghaffari-dev.github.io/tjr-dashboard/history.html",
+                },
+                body: p.text.join("\n"),
+              });
+              console.log(`${p.tag}: HTTP ${r.status}`);
+              if (!r.ok) process.exitCode = 1;
+              // Kurz warten, damit die drei auf dem Handy in der richtigen
+              // Reihenfolge und nicht gebuendelt ankommen.
+              await new Promise((x) => setTimeout(x, 1500));
+            }
+          })();
+          NODE
