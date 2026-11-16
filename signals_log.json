@@ -101918,8 +101918,8 @@
     "target2": 1.317228,
     "rr2": 1.6,
     "partialExit": true,
-    "trailStop": 1.323842,
-    "tp1HitTs": null,
+    "trailStop": 1.317992,
+    "tp1HitTs": 1794835200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -101969,9 +101969,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794835543000,
+    "rMultiple": 1.3,
+    "exitPrice": 1.317992,
+    "postmortem": {
+      "holdHours": 68.5,
+      "mfeR": 1.34,
+      "maeR": -0.41,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.44,
+      "targetDistAdr": 0.58,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1794607647385",
