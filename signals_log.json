@@ -103745,9 +103745,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1794831600000,
+    "rMultiple": -1,
+    "exitPrice": 743.876001,
+    "postmortem": {
+      "holdHours": 1.5,
+      "mfeR": 0.86,
+      "maeR": -1.11,
+      "towardTargetPct": 25,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.7,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "^GSPC-1794845980214",
