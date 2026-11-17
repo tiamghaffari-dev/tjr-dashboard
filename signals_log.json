@@ -106127,9 +106127,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794870900000,
+    "rMultiple": 1.09,
+    "exitPrice": 1809.01001
   },
   {
     "id": "XRPUSD-1794896257567",
