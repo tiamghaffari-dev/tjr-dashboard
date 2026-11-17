@@ -108286,9 +108286,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 2
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794927600000,
+    "rMultiple": 2,
+    "exitPrice": 728.55149,
+    "postmortem": {
+      "holdHours": 1.5,
+      "mfeR": 2.29,
+      "maeR": -0.1,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1794940776011",
