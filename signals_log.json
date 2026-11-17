@@ -104077,8 +104077,8 @@
     "target2": 1776.420044,
     "rr2": 2.15,
     "partialExit": true,
-    "trailStop": 1844.028052,
-    "tp1HitTs": null,
+    "trailStop": 1785,
+    "tp1HitTs": 1794894900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -104130,9 +104130,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794895200000,
+    "rMultiple": 1.75,
+    "exitPrice": 1785,
+    "postmortem": {
+      "holdHours": 18.1,
+      "mfeR": 1.77,
+      "maeR": -0.89,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.35,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "BTCUSD-1794848193561",
@@ -104638,8 +104660,8 @@
     "target2": 1785,
     "rr2": 1.89,
     "partialExit": true,
-    "trailStop": 1847.148047,
-    "tp1HitTs": null,
+    "trailStop": 1785,
+    "tp1HitTs": 1794894900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -104689,9 +104711,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794895200000,
+    "rMultiple": 1.89,
+    "exitPrice": 1785,
+    "postmortem": {
+      "holdHours": 16.1,
+      "mfeR": 1.92,
+      "maeR": -0.75,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.38,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.7R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        }
+      ],
+      "summary": "Stop-Loss: knapp"
+    }
   },
   {
     "id": "XRPUSD-1794855152874",
@@ -104839,8 +104878,8 @@
     "target2": 1785,
     "rr2": 1.79,
     "partialExit": true,
-    "trailStop": 1844.807959,
-    "tp1HitTs": null,
+    "trailStop": 1785,
+    "tp1HitTs": 1794894900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -104890,9 +104929,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1794895200000,
+    "rMultiple": 1.79,
+    "exitPrice": 1785,
+    "postmortem": {
+      "holdHours": 14.9,
+      "mfeR": 1.81,
+      "maeR": -0.86,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.36,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1794879848653",
