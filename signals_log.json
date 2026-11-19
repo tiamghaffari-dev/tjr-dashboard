@@ -115878,9 +115878,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795083600000,
+    "rMultiple": 2,
+    "exitPrice": 3696.827297,
+    "postmortem": {
+      "holdHours": 9.4,
+      "mfeR": 2.03,
+      "maeR": -0.12,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.44,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1795068447672",
