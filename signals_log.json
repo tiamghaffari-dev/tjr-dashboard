@@ -112081,9 +112081,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795093500000,
+    "rMultiple": 1.69,
+    "exitPrice": 1.310045,
+    "postmortem": {
+      "holdHours": 21.6,
+      "mfeR": 1.79,
+      "maeR": -0.81,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.4,
+      "targetDistAdr": 0.68,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        }
+      ],
+      "summary": "Stop-Loss: knapp"
+    }
   },
   {
     "id": "^GSPC-1795034702362",
@@ -112435,9 +112452,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795093500000,
+    "rMultiple": 1.66,
+    "exitPrice": 1.309993,
+    "postmortem": {
+      "holdHours": 20.9,
+      "mfeR": 1.74,
+      "maeR": -0.81,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.41,
+      "targetDistAdr": 0.68,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        }
+      ],
+      "summary": "Stop-Loss: knapp"
+    }
   },
   {
     "id": "ETHUSD-1795037202015",
@@ -113882,9 +113916,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795093500000,
+    "rMultiple": 1.74,
+    "exitPrice": 1.310114,
+    "postmortem": {
+      "holdHours": 17.3,
+      "mfeR": 1.86,
+      "maeR": -0.8,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.39,
+      "targetDistAdr": 0.68,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        }
+      ],
+      "summary": "Stop-Loss: knapp"
+    }
   },
   {
     "id": "GBPUSD-1795049942685",
