@@ -115959,9 +115959,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795083900000,
+    "rMultiple": 2,
+    "exitPrice": 3694.427151,
+    "postmortem": {
+      "holdHours": 9.3,
+      "mfeR": 2.34,
+      "maeR": -0.15,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.23,
+      "targetDistAdr": 0.45,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GCUSD-1795069708231",
@@ -116028,9 +116039,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795083900000,
+    "rMultiple": 2.18,
+    "exitPrice": 3694.5,
+    "postmortem": {
+      "holdHours": 8.9,
+      "mfeR": 2.57,
+      "maeR": -0.25,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.44,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1795070023529",
@@ -116193,9 +116215,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795083900000,
+    "rMultiple": 2.22,
+    "exitPrice": 3694.5,
+    "postmortem": {
+      "holdHours": 8.2,
+      "mfeR": 2.61,
+      "maeR": -0.22,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.44,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1795073805179",
@@ -116545,9 +116578,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795066500000,
+    "rMultiple": 1.4,
+    "exitPrice": 1777.099976,
+    "postmortem": {
+      "holdHours": 1.6,
+      "mfeR": 0.21,
+      "maeR": -0.59,
+      "towardTargetPct": 15,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.28,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.6R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1795095103524",
@@ -116647,8 +116697,8 @@
     "target2": 3694.5,
     "rr2": 1.65,
     "partialExit": true,
-    "trailStop": 3748.040039,
-    "tp1HitTs": null,
+    "trailStop": 3694.5,
+    "tp1HitTs": 1795083900000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -116700,9 +116750,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795084200000,
+    "rMultiple": 1.65,
+    "exitPrice": 3694.5,
+    "postmortem": {
+      "holdHours": 1.8,
+      "mfeR": 2.06,
+      "maeR": 0.42,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.33,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1795097657049",
