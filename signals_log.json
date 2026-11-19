@@ -113951,9 +113951,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795089900000,
+    "rMultiple": 2,
+    "exitPrice": 1.310509,
+    "postmortem": {
+      "holdHours": 16.1,
+      "mfeR": 2.12,
+      "maeR": -0.77,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.35,
+      "targetDistAdr": 0.69,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.8R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        }
+      ],
+      "summary": "Stop-Loss: knapp"
+    }
   },
   {
     "id": "ETHUSD-1795051186032",
