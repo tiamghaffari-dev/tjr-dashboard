@@ -121983,9 +121983,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795151700000,
+    "rMultiple": 2.37,
+    "exitPrice": 0.9228
   },
   {
     "id": "GCUSD-1795184572577",
@@ -122203,9 +122204,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795151700000,
+    "rMultiple": 2.43,
+    "exitPrice": 0.9228
   },
   {
     "id": "XRPUSD-1795186775041",
@@ -122273,8 +122275,9 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795151700000,
+    "rMultiple": 1.82,
+    "exitPrice": 0.9228
   }
 ]
