@@ -121816,8 +121816,8 @@
     "target2": 1716.599976,
     "rr2": 1.97,
     "partialExit": true,
-    "trailStop": 1770.462061,
-    "tp1HitTs": null,
+    "trailStop": 1726.01001,
+    "tp1HitTs": 1795168200000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -121869,9 +121869,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795168460000,
+    "rMultiple": 1.45,
+    "exitPrice": 1726.01001,
+    "postmortem": {
+      "holdHours": 1,
+      "mfeR": 1.62,
+      "maeR": -0.29,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1795182690176",
