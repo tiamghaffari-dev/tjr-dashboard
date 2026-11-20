@@ -121288,8 +121288,8 @@
     "target2": 1716.599976,
     "rr2": 1.97,
     "partialExit": true,
-    "trailStop": 1770.462061,
-    "tp1HitTs": null,
+    "trailStop": 1716.599976,
+    "tp1HitTs": 1795169400000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -121341,9 +121341,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795169718000,
+    "rMultiple": 1.97,
+    "exitPrice": 1716.599976,
+    "postmortem": {
+      "holdHours": 3.8,
+      "mfeR": 2.26,
+      "maeR": -0.29,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.39,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1795174520965",
