@@ -122727,8 +122727,19 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795190100000,
+    "rMultiple": 2,
+    "exitPrice": 688.406006,
+    "postmortem": {
+      "holdHours": 0.1,
+      "mfeR": 2.65,
+      "maeR": -0.2,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   }
 ]
