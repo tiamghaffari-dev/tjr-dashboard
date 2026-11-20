@@ -119682,8 +119682,8 @@
     "target2": 1711.079956,
     "rr2": 1.43,
     "partialExit": true,
-    "trailStop": 1770.792225,
-    "tp1HitTs": null,
+    "trailStop": 1711.079956,
+    "tp1HitTs": 1795169700000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -119735,9 +119735,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795170029000,
+    "rMultiple": 1.43,
+    "exitPrice": 1711.079956,
+    "postmortem": {
+      "holdHours": 11.5,
+      "mfeR": 2.82,
+      "maeR": -0.62,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.27,
+      "targetDistAdr": 0.39,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "XRPUSD-1795149306890",
@@ -121918,8 +121929,8 @@
     "target2": 0.8988,
     "rr2": 4.79,
     "partialExit": true,
-    "trailStop": 0.95634,
-    "tp1HitTs": null,
+    "trailStop": 0.9228,
+    "tp1HitTs": 1795169700000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -121972,7 +121983,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -122138,8 +122149,8 @@
     "target2": 0.8988,
     "rr2": 4.85,
     "partialExit": true,
-    "trailStop": 0.95694,
-    "tp1HitTs": null,
+    "trailStop": 0.9228,
+    "tp1HitTs": 1795169700000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -122192,7 +122203,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -122208,8 +122219,8 @@
     "target2": 0.8988,
     "rr2": 4.04,
     "partialExit": true,
-    "trailStop": 0.953328,
-    "tp1HitTs": null,
+    "trailStop": 0.9228,
+    "tp1HitTs": 1795169700000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -122262,7 +122273,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   }
