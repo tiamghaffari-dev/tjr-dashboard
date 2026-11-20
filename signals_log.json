@@ -119655,9 +119655,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795169100000,
+    "rMultiple": 2,
+    "exitPrice": 61169.623438,
+    "postmortem": {
+      "holdHours": 11.3,
+      "mfeR": 2.09,
+      "maeR": -0.38,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.4,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1795146489571",
@@ -122087,10 +122098,22 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1795169100000,
+    "rMultiple": 1.51,
+    "benachrichtigt": true,
+    "exitPrice": 61171.460938,
+    "postmortem": {
+      "holdHours": 0.5,
+      "mfeR": 1.61,
+      "maeR": -0.09,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.3,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    },
+    "ergebnisGemeldet": true
   },
   {
     "id": "XRPUSD-1795185200351",
