@@ -119258,9 +119258,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795158300000,
+    "rMultiple": -1,
+    "exitPrice": 0.94306,
+    "postmortem": {
+      "holdHours": 9,
+      "mfeR": 1.77,
+      "maeR": -1.07,
+      "towardTargetPct": 60,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.62,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.7R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 60% der Zielstrecke (max +1.8R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "XRPUSD-1795144609913",
@@ -119328,9 +119350,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795158300000,
+    "rMultiple": -1,
+    "exitPrice": 0.94546,
+    "postmortem": {
+      "holdHours": 8.8,
+      "mfeR": 1.55,
+      "maeR": -1.3,
+      "towardTargetPct": 57,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.58,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.9R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "GBPUSD-1795144923295",
@@ -119881,9 +119920,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795158300000,
+    "rMultiple": 1.21,
+    "exitPrice": 61230.421875,
+    "postmortem": {
+      "holdHours": 6.2,
+      "mfeR": 1.31,
+      "maeR": -0.53,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.26,
+      "targetDistAdr": 0.31,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1795154634012",
@@ -120360,9 +120410,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795158300000,
+    "rMultiple": 1.28,
+    "exitPrice": 61230.421875,
+    "postmortem": {
+      "holdHours": 5.1,
+      "mfeR": 1.38,
+      "maeR": -0.52,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.25,
+      "targetDistAdr": 0.32,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1795158081432",
@@ -120496,9 +120557,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795158300000,
+    "rMultiple": 1.05,
+    "exitPrice": 61230.421875,
+    "postmortem": {
+      "holdHours": 4.9,
+      "mfeR": 1.14,
+      "maeR": -0.57,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.28,
+      "targetDistAdr": 0.29,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1795159337778",
@@ -120986,9 +121058,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795158300000,
+    "rMultiple": -1,
+    "exitPrice": 0.94586,
+    "postmortem": {
+      "holdHours": 0.9,
+      "mfeR": 0.08,
+      "maeR": -1.36,
+      "towardTargetPct": 5,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.33,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 5% entgegen (max +0.1R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Analyse",
+          "verdict": "These war falsch",
+          "text": "Auch 48h spaeter steht der Preis -1.0R gegen die Trade-Richtung. Das war keine Ausfuehrungsfrage - Bias/Sweep/Bestaetigung haben hier das Falsche angezeigt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Analyse: These war falsch"
+    }
   },
   {
     "id": "GCUSD-1795173227184",
