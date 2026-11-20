@@ -121307,8 +121307,8 @@
     "target2": 1.308079,
     "rr2": 1.37,
     "partialExit": true,
-    "trailStop": 1.313029,
-    "tp1HitTs": null,
+    "trailStop": 1.308079,
+    "tp1HitTs": 1795188600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -121360,9 +121360,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795188900000,
+    "rMultiple": 1.37,
+    "exitPrice": 1.308079,
+    "postmortem": {
+      "holdHours": 9.3,
+      "mfeR": 1.39,
+      "maeR": -0.89,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.29,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.9R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1795174205606",
@@ -121719,8 +121741,8 @@
     "target2": 1.308079,
     "rr2": 1.33,
     "partialExit": true,
-    "trailStop": 1.313029,
-    "tp1HitTs": null,
+    "trailStop": 1.308079,
+    "tp1HitTs": 1795188600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -121772,9 +121794,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795188900000,
+    "rMultiple": 1.33,
+    "exitPrice": 1.308079,
+    "postmortem": {
+      "holdHours": 7.9,
+      "mfeR": 1.35,
+      "maeR": -0.89,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.3,
+      "targetDistAdr": 0.39,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.9R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1795179551398",
@@ -121788,8 +121832,8 @@
     "target2": 1.308079,
     "rr2": 1.35,
     "partialExit": true,
-    "trailStop": 1.313029,
-    "tp1HitTs": null,
+    "trailStop": 1.308079,
+    "tp1HitTs": 1795188600000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -121841,9 +121885,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795188900000,
+    "rMultiple": 1.35,
+    "exitPrice": 1.308079,
+    "postmortem": {
+      "holdHours": 7.6,
+      "mfeR": 1.37,
+      "maeR": -0.89,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.29,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "knapp",
+          "text": "Gewonnen, aber der Trade lag zwischenzeitlich -0.9R im Minus - es fehlte wenig zum Stop-Out. Kein Fehler, aber knapper als es aussieht."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.9R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: knapp · Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1795181433819",
