@@ -125615,9 +125615,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795391700000,
+    "rMultiple": 1.57,
+    "exitPrice": 1.310994
   },
   {
     "id": "BTCUSD-1795427943901",
