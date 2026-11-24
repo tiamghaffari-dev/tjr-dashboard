@@ -129601,9 +129601,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795502100000,
+    "rMultiple": 1.57,
+    "exitPrice": 1665.349976,
+    "postmortem": {
+      "holdHours": 6.7,
+      "mfeR": 1.33,
+      "maeR": -0.41,
+      "towardTargetPct": 84,
+      "stopDistAdr": 0.21,
+      "targetDistAdr": 0.33,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1795496622352",
@@ -131661,8 +131678,8 @@
     "target2": 59079.679688,
     "rr2": 1.61,
     "partialExit": true,
-    "trailStop": 60710.838281,
-    "tp1HitTs": null,
+    "trailStop": 59316.988281,
+    "tp1HitTs": 1795520100000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -131714,10 +131731,22 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1795520400000,
+    "rMultiple": 1.23,
+    "benachrichtigt": true,
+    "exitPrice": 59316.988281,
+    "postmortem": {
+      "holdHours": 1.1,
+      "mfeR": 1.31,
+      "maeR": -0.02,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.25,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    },
+    "ergebnisGemeldet": true
   },
   {
     "id": "ETHUSD-1795534393127",
@@ -131731,8 +131760,8 @@
     "target2": 1644.939941,
     "rr2": 1.94,
     "partialExit": true,
-    "trailStop": 1705.369946,
-    "tp1HitTs": null,
+    "trailStop": 1662.589966,
+    "tp1HitTs": 1795520100000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "BOS",
@@ -131782,10 +131811,22 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null,
-    "benachrichtigt": true
+    "status": "win",
+    "resolvedTs": 1795520400000,
+    "rMultiple": 1.08,
+    "benachrichtigt": true,
+    "exitPrice": 1662.589966,
+    "postmortem": {
+      "holdHours": 1.1,
+      "mfeR": 1.11,
+      "maeR": -0.05,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.22,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    },
+    "ergebnisGemeldet": true
   },
   {
     "id": "GBPUSD-1795534709755",
