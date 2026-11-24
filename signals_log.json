@@ -130437,9 +130437,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795492800000,
+    "rMultiple": -1,
+    "exitPrice": 0.9341,
+    "postmortem": {
+      "holdHours": 0.7,
+      "mfeR": 0.25,
+      "maeR": -1.14,
+      "towardTargetPct": 13,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.39,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 13% entgegen (max +0.3R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "XRPUSD-1795509125794",
@@ -130718,8 +130740,30 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795492800000,
+    "rMultiple": -1,
+    "exitPrice": 0.9328,
+    "postmortem": {
+      "holdHours": 0.1,
+      "mfeR": -0.18,
+      "maeR": -1.02,
+      "towardTargetPct": 0,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.42,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.9R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 0% entgegen (max -0.2R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   }
 ]
