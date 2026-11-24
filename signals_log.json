@@ -128156,8 +128156,8 @@
     "target2": 0.9655,
     "rr2": 2.36,
     "partialExit": true,
-    "trailStop": 0.92706,
-    "tp1HitTs": null,
+    "trailStop": 0.9581,
+    "tp1HitTs": 1795480500000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -128210,7 +128210,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -128562,8 +128562,8 @@
     "target2": 0.9655,
     "rr2": 2.05,
     "partialExit": true,
-    "trailStop": 0.93056,
-    "tp1HitTs": null,
+    "trailStop": 0.9581,
+    "tp1HitTs": 1795480500000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "iFVG",
@@ -128616,7 +128616,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -128794,8 +128794,8 @@
     "target2": 0.9655,
     "rr2": 2.47,
     "partialExit": true,
-    "trailStop": 0.92586,
-    "tp1HitTs": null,
+    "trailStop": 0.9581,
+    "tp1HitTs": 1795480500000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -128848,7 +128848,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
