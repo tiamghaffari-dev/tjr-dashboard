@@ -129185,9 +129185,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795490700000,
+    "rMultiple": -1,
+    "exitPrice": 3608.439941,
+    "postmortem": {
+      "holdHours": 8.1,
+      "mfeR": 2.64,
+      "maeR": -1.11,
+      "towardTargetPct": 78,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.68,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.5R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 78% der Zielstrecke (max +2.6R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit"
+    }
   },
   {
     "id": "ETHUSD-1795495997018",
