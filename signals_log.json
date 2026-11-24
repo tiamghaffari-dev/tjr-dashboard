@@ -127801,9 +127801,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795482300000,
+    "rMultiple": -1,
+    "exitPrice": 3617.439941,
+    "postmortem": {
+      "holdHours": 8.9,
+      "mfeR": 2.16,
+      "maeR": -1.01,
+      "towardTargetPct": 74,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.58,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 74% der Zielstrecke (max +2.2R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit · Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1795468683909",
@@ -128140,9 +128167,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795482300000,
+    "rMultiple": -1,
+    "exitPrice": 3617.23999,
+    "postmortem": {
+      "holdHours": 8.5,
+      "mfeR": 2.17,
+      "maeR": -1,
+      "towardTargetPct": 74,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.59,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "zu weit",
+          "text": "Der Preis lief 74% der Zielstrecke (max +2.2R) und drehte dann. Ein naeheres Teilziel bzw. ein frueherer Teilausstieg haette diesen Trade in einen Gewinn verwandelt."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: zu weit · Entry: zu frueh"
+    }
   },
   {
     "id": "XRPUSD-1795470596910",
@@ -129515,6 +129569,73 @@
       "vixPerzentil": 97,
       "schwankung": 35,
       "schwankungStufe": "hoch",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GBPUSD-1795501000987",
+    "asset": "GBPUSD",
+    "direction": "SHORT",
+    "entryTs": 1795501000987,
+    "entry": 1.304104,
+    "stop": 1.306827,
+    "target": 1.301152,
+    "rr": 1.08,
+    "target2": 1.301152,
+    "rr2": 1.08,
+    "partialExit": true,
+    "trailStop": 1.306827,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "BOS",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 6,
+      "bewertbar": 6,
+      "fehlend": []
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.062,
+    "fillTs": 1795483010000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "15m",
+    "umfeld": {
+      "handelstag": "2026-11-23",
+      "quelle": "live",
+      "vix": 27.36,
+      "vixPerzentil": 97,
+      "schwankung": 5.8,
+      "schwankungStufe": "rauschen",
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
