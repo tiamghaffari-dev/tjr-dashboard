@@ -127312,9 +127312,36 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795459500000,
+    "rMultiple": -1,
+    "exitPrice": 3621.23999,
+    "postmortem": {
+      "holdHours": 3,
+      "mfeR": 0.07,
+      "maeR": -1.15,
+      "towardTargetPct": 3,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.54,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 3% entgegen (max +0.1R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        },
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich · Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1795467411151",
@@ -128629,6 +128656,76 @@
     "weeklyBiasAtEntry": "bearish",
     "zonentiefe": 0.284,
     "fillTs": 1795459612000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "5m",
+    "umfeld": {
+      "handelstag": "2026-11-23",
+      "quelle": "live",
+      "vix": 27.36,
+      "vixPerzentil": 97,
+      "schwankung": 5.8,
+      "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
+  },
+  {
+    "id": "GBPUSD-1795478550972",
+    "asset": "GBPUSD",
+    "direction": "SHORT",
+    "entryTs": 1795478550972,
+    "entry": 1.303594,
+    "stop": 1.306077,
+    "target": 1.299015,
+    "rr": 1.84,
+    "target2": null,
+    "rr2": null,
+    "partialExit": false,
+    "trailStop": 1.306077,
+    "tp1HitTs": null,
+    "bias": "bearish",
+    "sweepType": "buy_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "verletzt",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "ok",
+      "R10-htf-vorrang": "ok",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "verletzt",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R1-key-levels",
+        "R13-sweep-am-key-level"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.347,
+    "fillTs": 1795460563000,
     "fuellGeprueft": true,
     "beobachtung": true,
     "beobachtungGrund": "ausserhalb-fenster",
