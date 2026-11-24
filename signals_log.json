@@ -132329,8 +132329,8 @@
     "target2": 703.97998,
     "rr2": 6.02,
     "partialExit": true,
-    "trailStop": 721.901978,
-    "tp1HitTs": null,
+    "trailStop": 716.539978,
+    "tp1HitTs": 1795531800000,
     "bias": "bearish",
     "sweepType": "buy_side_sweep",
     "confirmationKind": "iFVG",
@@ -132380,7 +132380,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
