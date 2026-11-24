@@ -129785,5 +129785,76 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "GCUSD-1795503188651",
+    "asset": "GCUSD",
+    "direction": "LONG",
+    "entryTs": 1795503188651,
+    "entry": 3621.699951,
+    "stop": 3602.939941,
+    "target": 3641.600098,
+    "rr": 1.06,
+    "target2": 3651.600098,
+    "rr2": 1.59,
+    "partialExit": true,
+    "trailStop": 3602.939941,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "verletzt",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 3,
+      "bewertbar": 6,
+      "fehlend": [
+        "R9-daily-bias",
+        "R10-htf-vorrang",
+        "R11-kein-trade-nach-verlust"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.316,
+    "fillTs": 1795485198000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "5m",
+    "umfeld": {
+      "handelstag": "2026-11-23",
+      "quelle": "live",
+      "vix": 26.62,
+      "vixPerzentil": 95,
+      "schwankung": 33.9,
+      "schwankungStufe": "hoch",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
