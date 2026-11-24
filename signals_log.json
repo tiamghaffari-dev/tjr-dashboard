@@ -128210,9 +128210,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795462500000,
+    "rMultiple": 1.71,
+    "exitPrice": 0.9581,
+    "postmortem": {
+      "holdHours": 2.7,
+      "mfeR": 0.49,
+      "maeR": -0.45,
+      "towardTargetPct": 29,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.37,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1795473460207",
@@ -128616,9 +128633,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795462500000,
+    "rMultiple": 1.41,
+    "exitPrice": 0.9581,
+    "postmortem": {
+      "holdHours": 1.1,
+      "mfeR": 0.18,
+      "maeR": -0.5,
+      "towardTargetPct": 13,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.3,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.5R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "GBPUSD-1795476642207",
@@ -128848,9 +128882,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795462500000,
+    "rMultiple": 1.82,
+    "exitPrice": 0.9581,
+    "postmortem": {
+      "holdHours": 0.9,
+      "mfeR": 0.59,
+      "maeR": -0.09,
+      "towardTargetPct": 33,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.39,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "GBPUSD-1795477597289",
