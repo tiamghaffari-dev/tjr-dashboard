@@ -135406,9 +135406,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795577400000,
+    "rMultiple": 1.54,
+    "exitPrice": 3531.600098
   },
   {
     "id": "GCUSD-1795603302167",
@@ -135475,9 +135476,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795577400000,
+    "rMultiple": 1.41,
+    "exitPrice": 3531.600098
   },
   {
     "id": "GCUSD-1795603927669",
@@ -135544,9 +135546,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795577400000,
+    "rMultiple": 1.41,
+    "exitPrice": 3531.600098
   },
   {
     "id": "GBPUSD-1795604553359",
