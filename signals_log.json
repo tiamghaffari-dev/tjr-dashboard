@@ -132418,9 +132418,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795556100000,
+    "rMultiple": 1.74,
+    "exitPrice": 1644.939941,
+    "postmortem": {
+      "holdHours": 8.7,
+      "mfeR": 1.55,
+      "maeR": -0.28,
+      "towardTargetPct": 89,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.35,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "^GSPC-1795543258283",
