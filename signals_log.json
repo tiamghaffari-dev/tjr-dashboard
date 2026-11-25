@@ -133209,5 +133209,75 @@
     "status": "open",
     "resolvedTs": null,
     "rMultiple": null
+  },
+  {
+    "id": "GBPUSD-1795568497999",
+    "asset": "GBPUSD",
+    "direction": "LONG",
+    "entryTs": 1795568497999,
+    "entry": 1.311217,
+    "stop": 1.309542,
+    "target": 1.314423,
+    "rr": 1.91,
+    "target2": 1.314423,
+    "rr2": 1.91,
+    "partialExit": true,
+    "trailStop": 1.309542,
+    "tp1HitTs": null,
+    "bias": "bullish",
+    "sweepType": "sell_side_sweep",
+    "confirmationKind": "iFVG",
+    "zoneKind": "FVG",
+    "rules": {
+      "R1-key-levels": "ok",
+      "R2-session": "verletzt",
+      "R3-reversal-sweep": "ok",
+      "R4-confirmation": "ok",
+      "R5-continuation-zone": "ok",
+      "R6-discount-premium": "ok",
+      "R7-1min-confirmation": "ok",
+      "R8-stop-placement": "ok",
+      "R9-daily-bias": "verletzt",
+      "R10-htf-vorrang": "verletzt",
+      "R11-kein-trade-nach-verlust": "ok",
+      "R12-news-fenster": "ok",
+      "R13-sweep-am-key-level": "ok",
+      "R14-keine-doppelposition": "ok"
+    },
+    "confluence": {
+      "erfuellt": 4,
+      "bewertbar": 6,
+      "fehlend": [
+        "R9-daily-bias",
+        "R10-htf-vorrang"
+      ]
+    },
+    "tuningAtEntry": {
+      "MAX_TP1_ADR_MULT": 0.8,
+      "MAX_TP2_ADR_MULT": 1.25,
+      "NEWS_FENSTER_MIN": 45,
+      "KEY_LEVEL_MAX_ADR": 0.15
+    },
+    "dailyBiasAtEntry": "bearish",
+    "weeklyBiasAtEntry": "bearish",
+    "zonentiefe": 0.343,
+    "fillTs": 1795550511000,
+    "fuellGeprueft": true,
+    "beobachtung": true,
+    "beobachtungGrund": "ausserhalb-fenster",
+    "signalTf": "15m",
+    "umfeld": {
+      "handelstag": "2026-11-24",
+      "quelle": "live",
+      "vix": 28.29,
+      "vixPerzentil": 98,
+      "schwankung": 5.8,
+      "schwankungStufe": "rauschen",
+      "sektorAllesRauschen": true,
+      "termineHeute": 0
+    },
+    "status": "open",
+    "resolvedTs": null,
+    "rMultiple": null
   }
 ]
