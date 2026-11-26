@@ -137263,9 +137263,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795634400000,
+    "rMultiple": 2.08,
+    "exitPrice": 0.9604,
+    "postmortem": {
+      "holdHours": 1.8,
+      "mfeR": 1.28,
+      "maeR": -0.43,
+      "towardTargetPct": 62,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.45,
+      "findings": [
+        {
+          "area": "Entry",
+          "verdict": "zu frueh",
+          "text": "Innerhalb von 2h nach dem Einstieg gab es einen um 0.4R besseren Kurs, ohne dass der Stop verletzt worden waere. Ein Warten auf ein tieferes Retracement in die Zone haette Risiko gespart."
+        }
+      ],
+      "summary": "Entry: zu frueh"
+    }
   },
   {
     "id": "ETHUSD-1795646231496",
@@ -137690,9 +137707,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795634400000,
+    "rMultiple": 2.23,
+    "exitPrice": 0.9604,
+    "postmortem": {
+      "holdHours": 0.8,
+      "mfeR": 1.43,
+      "maeR": -0.02,
+      "towardTargetPct": 64,
+      "stopDistAdr": 0.22,
+      "targetDistAdr": 0.48,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1795664768763",
