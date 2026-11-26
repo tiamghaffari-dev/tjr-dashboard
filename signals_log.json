@@ -138678,8 +138678,8 @@
     "target2": 1724.810059,
     "rr2": 1.89,
     "partialExit": true,
-    "trailStop": 1665.409961,
-    "tp1HitTs": null,
+    "trailStop": 1706.51001,
+    "tp1HitTs": 1795676400000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -138733,9 +138733,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795676709000,
+    "rMultiple": 1,
+    "exitPrice": 1706.51001,
+    "postmortem": {
+      "holdHours": 6,
+      "mfeR": 1.03,
+      "maeR": -0.28,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.2,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "ETHUSD-1795674128818",
@@ -138749,8 +138760,8 @@
     "target2": 1724.810059,
     "rr2": 1.93,
     "partialExit": true,
-    "trailStop": 1664.68999,
-    "tp1HitTs": null,
+    "trailStop": 1706.51001,
+    "tp1HitTs": 1795676400000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -138804,9 +138815,20 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795676709000,
+    "rMultiple": 1.04,
+    "exitPrice": 1706.51001,
+    "postmortem": {
+      "holdHours": 5.7,
+      "mfeR": 1.07,
+      "maeR": -0.11,
+      "towardTargetPct": 100,
+      "stopDistAdr": 0.2,
+      "targetDistAdr": 0.21,
+      "findings": [],
+      "summary": "Keine auffaellige Schwachstelle gefunden."
+    }
   },
   {
     "id": "BTCUSD-1795674440536",
