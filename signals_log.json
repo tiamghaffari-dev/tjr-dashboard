@@ -138007,8 +138007,8 @@
     "target2": 3651.399902,
     "rr2": 2.29,
     "partialExit": true,
-    "trailStop": 3582.139941,
-    "tp1HitTs": null,
+    "trailStop": 3641.399902,
+    "tp1HitTs": 1795651140000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -138062,7 +138062,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
@@ -138160,8 +138160,8 @@
     "target2": 3651.399902,
     "rr2": 1.89,
     "partialExit": true,
-    "trailStop": 3590.540088,
-    "tp1HitTs": null,
+    "trailStop": 3641.399902,
+    "tp1HitTs": 1795651140000,
     "bias": "bullish",
     "sweepType": "sell_side_sweep",
     "confirmationKind": "BOS",
@@ -138215,7 +138215,7 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
+    "status": "partial",
     "resolvedTs": null,
     "rMultiple": null
   },
