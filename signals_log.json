@@ -144678,9 +144678,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795776300000,
+    "rMultiple": -1,
+    "exitPrice": 1.310161,
+    "postmortem": {
+      "holdHours": 8.4,
+      "mfeR": 0.54,
+      "maeR": -1.13,
+      "towardTargetPct": 53,
+      "stopDistAdr": 0.4,
+      "targetDistAdr": 0.41,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "GBPUSD-1795764580692",
@@ -144748,9 +144765,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795776300000,
+    "rMultiple": -1,
+    "exitPrice": 1.310161,
+    "postmortem": {
+      "holdHours": 8.3,
+      "mfeR": 0.58,
+      "maeR": -1.13,
+      "towardTargetPct": 57,
+      "stopDistAdr": 0.39,
+      "targetDistAdr": 0.39,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "GBPUSD-1795765518318",
@@ -144818,9 +144852,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795776300000,
+    "rMultiple": -1,
+    "exitPrice": 1.310161,
+    "postmortem": {
+      "holdHours": 8,
+      "mfeR": 0.55,
+      "maeR": -1.13,
+      "towardTargetPct": 54,
+      "stopDistAdr": 0.4,
+      "targetDistAdr": 0.4,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -0.8R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "BTCUSD-1795765830762",
