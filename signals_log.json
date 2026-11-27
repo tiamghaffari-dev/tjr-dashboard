@@ -144104,9 +144104,26 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795774500000,
+    "rMultiple": -1,
+    "exitPrice": 1.310453,
+    "postmortem": {
+      "holdHours": 8.9,
+      "mfeR": 0.49,
+      "maeR": -1.07,
+      "towardTargetPct": 26,
+      "stopDistAdr": 0.38,
+      "targetDistAdr": 0.71,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung"
+    }
   },
   {
     "id": "BTCUSD-1795761144347",
@@ -144271,9 +144288,31 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "open",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "loss",
+    "resolvedTs": 1795774500000,
+    "rMultiple": -1,
+    "exitPrice": 1.310453,
+    "postmortem": {
+      "holdHours": 8.7,
+      "mfeR": 0.43,
+      "maeR": -1.07,
+      "towardTargetPct": 24,
+      "stopDistAdr": 0.4,
+      "targetDistAdr": 0.7,
+      "findings": [
+        {
+          "area": "Stop-Loss",
+          "verdict": "in Ordnung",
+          "text": "Der Preis ist auch nach dem Stop-Out nicht mehr sinnvoll in Zielrichtung gelaufen (max -1.0R). Der Stop war nicht das Problem - die Richtung war falsch."
+        },
+        {
+          "area": "Take-Profit",
+          "verdict": "nicht ursaechlich",
+          "text": "Der Preis kam dem Ziel nur 24% entgegen (max +0.4R). Der Trade ist nicht am zu weiten Ziel gescheitert, sondern lief von Anfang an in die falsche Richtung."
+        }
+      ],
+      "summary": "Stop-Loss: in Ordnung · Take-Profit: nicht ursaechlich"
+    }
   },
   {
     "id": "ETHUSD-1795762705633",
