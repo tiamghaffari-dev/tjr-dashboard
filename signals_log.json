@@ -138062,9 +138062,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795633200000,
+    "rMultiple": 1.81,
+    "exitPrice": 3641.399902
   },
   {
     "id": "GBPUSD-1795666639582",
@@ -138215,9 +138216,10 @@
       "sektorAllesRauschen": true,
       "termineHeute": 0
     },
-    "status": "partial",
-    "resolvedTs": null,
-    "rMultiple": null
+    "status": "win",
+    "resolvedTs": 1795633200000,
+    "rMultiple": 1.41,
+    "exitPrice": 3641.399902
   },
   {
     "id": "XRPUSD-1795667577095",
