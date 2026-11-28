@@ -1664,3 +1664,43 @@ meldung,transaktion,verzoegerungTage,symbol,firma,inhaber,rolle,stueck,preis,sum
 2026-11-25,2006-11-25,7305,SHMD,SCHMID Group N.V.,Schuetz Arthur Josef Hermann,CFO Schmid Group N.V.,60000,1731429,103885740000,https://www.sec.gov/Archives/edgar/data/1987240/0002125667-26-000005.txt
 2026-11-25,2026-11-23,2,TMS,Teamshares Inc,Moore Evan Charles,Director,29104,4.41,128349,https://www.sec.gov/Archives/edgar/data/2048951/0001628280-26-076029.txt
 2026-11-25,2026-11-24,1,YPF,YPF SOCIEDAD ANONIMA,Ottino Eduardo Alberto,Director,13400,3.59,48106,https://www.sec.gov/Archives/edgar/data/2120094/0001292814-26-005402.txt
+2026-11-27,2026-11-24,3,IESC,IES Holdings  Inc.,Gendell David B.,Director,3000,163,489000,https://www.sec.gov/Archives/edgar/data/1048268/0001048268-26-000191.txt
+2026-11-27,2026-11-24,3,IESC,IES Holdings  Inc.,Gendell David B.,Director,1000,164,164000,https://www.sec.gov/Archives/edgar/data/1048268/0001048268-26-000191.txt
+2026-11-27,2026-11-24,3,IESC,IES Holdings  Inc.,Simmes Matthew J,President and CEO,247,166.6,41150,https://www.sec.gov/Archives/edgar/data/1048268/0001048268-26-000200.txt
+2026-11-27,2026-11-24,3,LAB,STANDARD BIOTOOLS INC.,Casdin Partners Master Fund  L.P.,Director,3361393,0.5908,1985911,https://www.sec.gov/Archives/edgar/data/1162194/0000919574-26-008286.txt
+2026-11-27,2026-11-25,2,LAB,STANDARD BIOTOOLS INC.,Casdin Partners Master Fund  L.P.,Director,100000,0.6217,62170,https://www.sec.gov/Archives/edgar/data/1162194/0000919574-26-008286.txt
+2026-11-27,2026-11-27,0,LAB,STANDARD BIOTOOLS INC.,Casdin Partners Master Fund  L.P.,Director,85000,0.6395,54358,https://www.sec.gov/Archives/edgar/data/1162194/0000919574-26-008286.txt
+2026-11-27,2026-11-25,2,SEI,Solaris Energy Infrastructure  Inc.,TEAGUE AJ,Director,400,55.97,22388,https://www.sec.gov/Archives/edgar/data/1183251/0001628280-26-076084.txt
+2026-11-27,2026-11-24,3,QTRX,Quanterix Corp,DONNELLY WILLIAM P,Director,250000,2.17,542500,https://www.sec.gov/Archives/edgar/data/1207928/0001207928-26-000012.txt
+2026-11-27,2026-11-24,3,SPCB,SuperCom Ltd,Trabelsi Arie,Director,9419,6.67,62825,https://www.sec.gov/Archives/edgar/data/1291855/0001178913-26-005389.txt
+2026-11-27,2026-11-25,2,THFF,FIRST FINANCIAL CORP /IN/,Brighton William Curtis,Director,500,73.2392,36620,https://www.sec.gov/Archives/edgar/data/1300058/0001300058-26-000002.txt
+2026-11-27,2026-11-24,3,LENZ,LENZ Therapeutics  Inc.,Leonard Braden Michael,10% Eigner,50000,2.9038,145190,https://www.sec.gov/Archives/edgar/data/1373603/0001373604-26-000085.txt
+2026-11-27,2026-11-25,2,LENZ,LENZ Therapeutics  Inc.,Leonard Braden Michael,10% Eigner,88620,2.8254,250387,https://www.sec.gov/Archives/edgar/data/1373603/0001373604-26-000085.txt
+2026-11-27,2026-11-25,2,OM,Outset Medical  Inc.,Leonard Braden Michael,10% Eigner,16187,2.7805,45008,https://www.sec.gov/Archives/edgar/data/1373603/0001373604-26-000086.txt
+2026-11-27,2026-11-25,2,GRX,Gabelli Healthcare &amp; WellnessRx Trust,Saba Capital Management  L.P.,10% Eigner,1373,10.34,14197,https://www.sec.gov/Archives/edgar/data/1391437/0001510281-26-000485.txt
+2026-11-27,2026-11-24,3,SKYD,Skydance Corp,Cardinale Gerald J.,Director,15060,6.6481,100120,https://www.sec.gov/Archives/edgar/data/1447258/0000895345-26-000510.txt
+2026-11-27,2026-11-25,2,SKYD,Skydance Corp,Cardinale Gerald J.,Director,7880,6.315,49762,https://www.sec.gov/Archives/edgar/data/1447258/0000895345-26-000510.txt
+2026-11-27,2026-11-24,3,GLBS,GLOBUS MARITIME LTD,Feidakis Georgios,Director,90000,2.45,220500,https://www.sec.gov/Archives/edgar/data/1499780/0001104659-26-132362.txt
+2026-11-27,2026-11-24,3,LND,BrasilAgro - Brazilian Agricultural Real Estate Co,Elsztain Alejandro Gustavo,Director,6310,2.8688,18102,https://www.sec.gov/Archives/edgar/data/1499849/0002119764-26-000041.txt
+2026-11-27,2026-11-25,2,LND,BrasilAgro - Brazilian Agricultural Real Estate Co,Elsztain Alejandro Gustavo,Director,4200,2.9272,12294,https://www.sec.gov/Archives/edgar/data/1499849/0002119764-26-000041.txt
+2026-11-27,2026-11-25,2,ECF,ELLSWORTH GROWTH &amp; INCOME FUND LTD,Saba Capital Management  L.P.,10% Eigner,15038,9.83,147824,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000484.txt
+2026-11-27,2026-11-25,2,GF,NEW GERMANY FUND INC,Saba Capital Management  L.P.,10% Eigner,10401,9.3,96729,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000486.txt
+2026-11-27,2026-11-25,2,DXYZ,Destiny Tech100 Inc.,Saba Capital Management  L.P.,10% Eigner,169040,23.35,3947084,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000487.txt
+2026-11-27,2026-11-25,2,MXF,MEXICO FUND INC,Saba Capital Management  L.P.,10% Eigner,13475,19.9,268153,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000488.txt
+2026-11-27,2026-11-25,2,MXF,MEXICO FUND INC,Saba Capital Management  L.P.,10% Eigner,99261,20.18,2003087,https://www.sec.gov/Archives/edgar/data/1510281/0001510281-26-000488.txt
+2026-11-27,2026-11-25,2,OBDC,Blue Owl Capital Corp,Nicholson Logan,President,2522,10.96,27641,https://www.sec.gov/Archives/edgar/data/1655888/0001193125-26-480287.txt
+2026-11-27,2026-11-25,2,OBDC,Blue Owl Capital Corp,Nicholson Logan,President,1580,10.96,17317,https://www.sec.gov/Archives/edgar/data/1655888/0001193125-26-480287.txt
+2026-11-27,2026-11-24,3,AARD,Aardvark Therapeutics  Inc.,Lee Tien-Li,Chief Executive Officer,50000,0.966,48300,https://www.sec.gov/Archives/edgar/data/1774857/0001193125-26-480461.txt
+2026-11-27,2026-11-24,3,BETA,BETA Technologies  Inc.,Stone Michael Robert,Director,40000,15.7406,629624,https://www.sec.gov/Archives/edgar/data/1784570/0001193125-26-480448.txt
+2026-11-27,2026-11-27,0,BETA,BETA Technologies  Inc.,Stone Michael Robert,Director,20000,17.053,341060,https://www.sec.gov/Archives/edgar/data/1784570/0001193125-26-480448.txt
+2026-11-27,2026-11-25,2,CCG,Cheche Group Inc.,Zhang Lei,Chief Executive Officer,120000,10.36,1243200,https://www.sec.gov/Archives/edgar/data/1786998/0001493152-26-054493.txt
+2026-11-27,2026-11-25,2,TMC,TMC the metals Co Inc.,Barron Gerard,Chairman &amp; CEO,20000,1.67,33400,https://www.sec.gov/Archives/edgar/data/1798562/0001104659-26-132347.txt
+2026-11-27,2026-11-24,3,PRFX,PRF Technologies Ltd.,Shavit Asaf,Director,37879,0.7,26515,https://www.sec.gov/Archives/edgar/data/1801834/0001178913-26-005398.txt
+2026-11-27,2026-11-24,3,API,Agora  Inc.,Zhao Bin,Chief Executive Officer,35911,3.2197,115623,https://www.sec.gov/Archives/edgar/data/1802883/0001193125-26-479131.txt
+2026-11-27,2026-11-25,2,API,Agora  Inc.,Zhao Bin,Chief Executive Officer,36697,3.1624,116051,https://www.sec.gov/Archives/edgar/data/1802883/0001193125-26-479131.txt
+2026-11-27,2026-11-24,3,WRD,WeRide Inc.,Han Tony Xu,Chairman and CEO,597918,0.9933,593912,https://www.sec.gov/Archives/edgar/data/1867729/0001104659-26-132349.txt
+2026-11-27,2026-11-24,3,GRNT,Granite Ridge Resources  Inc.,MCCARTNEY JOHN,Director,2000,5.57,11140,https://www.sec.gov/Archives/edgar/data/1928446/0001628280-26-076080.txt
+2026-11-27,2026-11-24,3,AMCI,AMC Robotics Corp,Da Shengwei (Sean),CEO,25000,1.0053,25133,https://www.sec.gov/Archives/edgar/data/1937891/0001094891-26-000325.txt
+2026-11-27,2026-11-26,1,CMCL,Caledonia Mining Corp Plc,Wildeschutt Geralda,Director,4988,17.69,88238,https://www.sec.gov/Archives/edgar/data/2118951/0002118951-26-000002.txt
+2026-11-27,2026-11-25,2,PCYO,PURE CYCLE CORP,Fink Christopher,Director,2500,10.01,25025,https://www.sec.gov/Archives/edgar/data/2155883/0002155883-26-000006.txt
+2026-11-27,2026-11-24,3,DGICA,DONEGAL GROUP INC,DONEGAL MUTUAL INSURANCE CO,10% Eigner,10000,19.0572,190572,https://www.sec.gov/Archives/edgar/data/800457/0000935596-26-000034.txt
